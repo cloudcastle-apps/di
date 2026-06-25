@@ -122,7 +122,7 @@ final class ClassScannerTest extends TestCase
             'CloudCastle\\DI\\Tests\\Fixtures\\Autowire\\Scan\\',
         );
 
-        self::assertSame(
+        self::assertEqualsCanonicalizing(
             [ScannedService::class, SpacedNamespaceService::class],
             $classNames,
         );
