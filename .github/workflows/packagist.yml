@@ -1,0 +1,51 @@
+name: Packagist
+
+on:
+  push:
+    branches:
+      - '**'
+    tags:
+      - '**'
+
+concurrency:
+  group: packagist-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  update:
+    name: Update Packagist index
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+
+    steps:
+      - name: Trigger Packagist update
+        env:
+          PACKAGIST_USERNAME: ${{ secrets.PACKAGIST_USERNAME }}
+          PACKAGIST_API_TOKEN: ${{ secrets.PACKAGIST_API_TOKEN }}
+        run: |
+          if [ -z "$PACKAGIST_USERNAME" ] || [ -z "$PACKAGIST_API_TOKEN" ]; then
+            echo "Packagist secrets are not configured, skipping."
+            exit 0
+          fi
+
+          response="$(curl -sS -w '\n%{http_code}' -X POST \
+            -H "Content-Type: application/json" \
+            -H "Authorization: Bearer ${PACKAGIST_USERNAME}:${PACKAGIST_API_TOKEN}" \
+            -H "User-Agent: cloudcastle-di-packagist-workflow/1.0" \
+            -d '{"repository":"https://github.com/cloudcastle-apps/di"}' \
+            "https://packagist.org/api/update-package")"
+
+          body="${response%$'\n'*}"
+          status="${response##*$'\n'}"
+
+          echo "$body"
+
+          if [ "$status" -lt 200 ] || [ "$status" -ge 300 ]; then
+            echo "Packagist update failed with HTTP ${status}"
+            exit 1
+          fi
+
+          echo "Packagist update queued successfully."
