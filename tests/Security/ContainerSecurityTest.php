@@ -82,8 +82,8 @@ final class ContainerSecurityTest extends TestCase
     public function testCircularDependencyAbortsResolution(): void
     {
         $container = new Container();
-        $container->set('alpha', static fn (Container $container): never => $container->get('beta'));
-        $container->set('beta', static fn (Container $container): never => $container->get('alpha'));
+        $container->set('alpha', static fn (Container $container): mixed => $container->get('beta'));
+        $container->set('beta', static fn (Container $container): mixed => $container->get('alpha'));
 
         try {
             $container->get('alpha');

@@ -10,6 +10,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
+use ReflectionClass;
 
 #[CoversClass(ContainerException::class)]
 #[CoversClass(NotFoundException::class)]
@@ -37,6 +38,12 @@ final class ExceptionTest extends TestCase
     public function testNotFoundExceptionIsAcceptedAsPsrInterface(): void
     {
         $this->assertNotFoundException(new NotFoundException('сервис не найден'));
+    }
+
+    public function testExceptionsAreFinal(): void
+    {
+        self::assertTrue((new ReflectionClass(ContainerException::class))->isFinal());
+        self::assertTrue((new ReflectionClass(NotFoundException::class))->isFinal());
     }
 
     private function assertContainerException(ContainerExceptionInterface $exception): void

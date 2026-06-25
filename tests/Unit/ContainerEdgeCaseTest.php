@@ -50,7 +50,7 @@ final class ContainerEdgeCaseTest extends TestCase
         self::assertSame(1, $factory->calls);
     }
 
-    public function testFactoryCanBeCallableArray(): void
+    public function testFactoryCanBeFirstClassCallable(): void
     {
         $container = new Container();
         $factory = new class () {
@@ -59,7 +59,7 @@ final class ContainerEdgeCaseTest extends TestCase
                 return new stdClass();
             }
         };
-        $container->set('service', [$factory, 'create']);
+        $container->set('service', $factory->create(...));
 
         self::assertInstanceOf(stdClass::class, $container->get('service'));
     }
@@ -98,13 +98,14 @@ final class ContainerEdgeCaseTest extends TestCase
         self::assertSame(0, $container->get('zero'));
         self::assertSame('', $container->get('empty'));
         self::assertFalse($container->get('disabled'));
-        self::assertSame(3, $calls);
+        $callsAfterFirstPass = $calls;
+        self::assertSame(3, $callsAfterFirstPass);
 
         $container->get('zero');
         $container->get('empty');
         $container->get('disabled');
 
-        self::assertSame(3, $calls);
+        self::assertSame($callsAfterFirstPass, $calls);
     }
 
     public function testGetReinvokesFactoryWhenItReturnsNull(): void

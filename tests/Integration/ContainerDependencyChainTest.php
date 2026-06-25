@@ -40,10 +40,14 @@ final class ContainerDependencyChainTest extends TestCase
         );
 
         $root = $container->get('level.one');
+        self::assertInstanceOf(stdClass::class, $root);
 
-        self::assertInstanceOf(stdClass::class, $root->child);
-        self::assertInstanceOf(stdClass::class, $root->child->child);
-        self::assertSame($container->get('level.three'), $root->child->child);
+        $levelTwo = $root->child;
+        self::assertInstanceOf(stdClass::class, $levelTwo);
+
+        $levelThree = $levelTwo->child;
+        self::assertInstanceOf(stdClass::class, $levelThree);
+        self::assertSame($container->get('level.three'), $levelThree);
     }
 
     public function testSharedDependencyIsResolvedOnceInGraph(): void
@@ -57,16 +61,28 @@ final class ContainerDependencyChainTest extends TestCase
         });
         $container->set(
             'consumer.a',
-            static fn (ContainerInterface $container): stdClass => $container->get('shared'),
+            static function (ContainerInterface $container): stdClass {
+                $shared = $container->get('shared');
+                self::assertInstanceOf(stdClass::class, $shared);
+
+                return $shared;
+            },
         );
         $container->set(
             'consumer.b',
-            static fn (ContainerInterface $container): stdClass => $container->get('shared'),
+            static function (ContainerInterface $container): stdClass {
+                $shared = $container->get('shared');
+                self::assertInstanceOf(stdClass::class, $shared);
+
+                return $shared;
+            },
         );
 
         $first = $container->get('consumer.a');
         $second = $container->get('consumer.b');
 
+        self::assertInstanceOf(stdClass::class, $first);
+        self::assertInstanceOf(stdClass::class, $second);
         self::assertSame($first, $second);
         self::assertSame(1, $calls);
     }

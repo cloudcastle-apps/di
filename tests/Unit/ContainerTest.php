@@ -9,6 +9,7 @@ use CloudCastle\DI\Contract\ContainerInterface;
 use CloudCastle\DI\Exception\NotFoundException;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
+use ReflectionClass;
 use stdClass;
 
 #[CoversClass(Container::class)]
@@ -95,5 +96,10 @@ final class ContainerTest extends TestCase
 
         self::assertTrue($container->has('service'));
         self::assertTrue($container->hasDefinition('service'));
+    }
+
+    public function testContainerIsFinal(): void
+    {
+        self::assertTrue((new ReflectionClass(Container::class))->isFinal());
     }
 }
