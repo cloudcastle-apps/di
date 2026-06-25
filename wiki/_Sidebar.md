@@ -3,6 +3,7 @@
 ### Руководство
 
 - [Быстрый старт](Quick-start)
+- [Примеры bootstrap](Bootstrap)
 - [Справочник API](API-reference)
 - [Фабрики и singleton](Factories-and-singleton)
 - [Тестирование](Testing)
