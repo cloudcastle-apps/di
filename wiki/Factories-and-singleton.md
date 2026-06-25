@@ -68,7 +68,7 @@ $container->get('token'); // 'prod'
 
 A → B → A через `set()` **не** обнаруживаются автоматически. Возможен бесконечный цикл или переполнение стека.
 
-При **autowiring** циклы обнаруживаются — см. [Autowiring](Autowiring.md).
+При **autowiring** циклы обнаруживаются — см. [Autowiring](Autowiring).
 
 ## Сравнение `has()` и `hasDefinition()`
 

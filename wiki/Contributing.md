@@ -72,12 +72,12 @@ wiki/                     — исходники GitHub Wiki (публикует
 
 Страницы wiki хранятся в каталоге `wiki/` репозитория. При push в `main` workflow **Publish wiki** синхронизирует их с вкладкой Wiki.
 
-**Ссылки между страницами Wiki** — относительные с суффиксом `.md` (например `[Autowiring](Autowiring.md)`): так они работают и в репозитории, и на опубликованной Wiki.
+**Ссылки между страницами Wiki** — без суффикса `.md` (например `[Autowiring](Autowiring)`): на GitHub Wiki открывается отрендеренная страница, а не сырой markdown.
 
 Основные страницы:
 
-- [Home.md](Home.md) — обзор
-- [Quick-start.md](Quick-start.md) · [Autowiring.md](Autowiring.md) · [API-reference.md](API-reference.md)
+- [Home](Home) — обзор
+- [Quick-start](Quick-start) · [Autowiring](Autowiring) · [API-reference](API-reference)
 
 ## Issues, Milestones и Views
 

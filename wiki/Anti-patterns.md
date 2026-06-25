@@ -76,7 +76,7 @@ CloudCastle DI **не** поддерживает:
 - конфиг YAML / compiled container;
 - autoconfigure и прочие возможности Symfony kernel.
 
-**Поддерживается:** autowiring конструктора, **свойств** и **методов**; attributes; intersection; autowiring по имени — см. [Autowiring](Autowiring.md).
+**Поддерживается:** autowiring конструктора, **свойств** и **методов**; attributes; intersection; autowiring по имени — см. [Autowiring](Autowiring).
 
 Не включайте `enablePropertyAutowiring()` / `enableMethodAutowiring()` глобально без необходимости — предпочитайте конструктор и явные attributes.
 

@@ -31,7 +31,7 @@ composer update cloudcastle/di
 
 3. Если используете `ContainerRegistry`, вызывайте `ContainerRegistry::reset()` в PHPUnit `tearDown`.
 
-4. Прочитайте [Autowiring](Autowiring.md) и [Анти-паттерны](Anti-patterns.md) перед `scan()` всего `src/`.
+4. Прочитайте [Autowiring](Autowiring) и [Анти-паттерны](Anti-patterns) перед `scan()` всего `src/`.
 
 ## 1.0.2 → 1.0.3
 

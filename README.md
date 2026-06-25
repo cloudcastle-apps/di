@@ -156,7 +156,7 @@ $mailer = ContainerRegistry::get()->get(App\Mailer::class);
 ## Документация
 
 - [Wiki — главная](https://github.com/cloudcastle-apps/di/wiki/Home) · [быстрый старт](https://github.com/cloudcastle-apps/di/wiki/Quick-start) · [autowiring](https://github.com/cloudcastle-apps/di/wiki/Autowiring) · [API](https://github.com/cloudcastle-apps/di/wiki/API-reference)
-- Исходники Wiki в каталоге [`wiki/`](wiki/Home.md) (внутренние ссылки с суффиксом `.md`)
+- Исходники Wiki в каталоге [`wiki/`](wiki/Home) (внутренние ссылки **без** суффикса `.md`)
 - [Поддержка](SUPPORT.md) — куда обратиться за помощью
 - [Руководство для разработчиков](CONTRIBUTING.md) — окружение, тесты, CI
 - [История изменений](CHANGELOG.md) · [Обновление версий](UPGRADING.md)

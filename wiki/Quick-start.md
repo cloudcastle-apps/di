@@ -41,7 +41,7 @@ $container->enableAutowiring();
 $userService = $container->get(App\Service\UserService::class);
 ```
 
-Класс `UserService` создаётся автоматически; зависимости разрешаются по типам, attributes и (опционально) по имени. Подробнее — [Autowiring](Autowiring.md).
+Класс `UserService` создаётся автоматически; зависимости разрешаются по типам, attributes и (опционально) по имени. Подробнее — [Autowiring](Autowiring).
 
 ### Property и method injection
 
@@ -77,7 +77,7 @@ $service = $container->get(App\Service\ReportService::class);
 $container->scan(__DIR__ . '/Services', 'App\\Services\\');
 ```
 
-Регистрирует все instantiable-классы в каталоге с namespace `App\Services\`. Существующие `set()` не перезаписываются. Подробнее — [Сканирование классов](Class-scanning.md).
+Регистрирует все instantiable-классы в каталоге с namespace `App\Services\`. Существующие `set()` не перезаписываются. Подробнее — [Сканирование классов](Class-scanning).
 
 ## Глобальный реестр
 
@@ -92,7 +92,7 @@ ContainerRegistry::set($container);
 $service = ContainerRegistry::get()->get(App\Service\UserService::class);
 ```
 
-Подробнее — [Глобальный реестр](Global-registry.md).
+Подробнее — [Глобальный реестр](Global-registry).
 
 ## Идентификаторы сервисов
 
@@ -141,12 +141,12 @@ function createContainer(): Container
 }
 ```
 
-В домен передавайте готовые объекты через конструктор — см. [Анти-паттерны](Anti-patterns.md).
+В домен передавайте готовые объекты через конструктор — см. [Анти-паттерны](Anti-patterns).
 
 ## Дальше
 
-- [Autowiring](Autowiring.md)
-- [Сканирование классов](Class-scanning.md)
-- [Теги и декораторы](Tags-and-decorators.md)
-- [Фабрики и singleton](Factories-and-singleton.md)
-- [Справочник API](API-reference.md)
+- [Autowiring](Autowiring)
+- [Сканирование классов](Class-scanning)
+- [Теги и декораторы](Tags-and-decorators)
+- [Фабрики и singleton](Factories-and-singleton)
+- [Справочник API](API-reference)

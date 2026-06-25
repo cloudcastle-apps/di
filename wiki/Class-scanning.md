@@ -100,5 +100,5 @@ function bootstrapContainer(): Container
 
 ## См. также
 
-- [Autowiring](Autowiring.md) — разрешение зависимостей после scan
-- [Справочник API](API-reference.md) — `scan()`, `ClassScanner`
+- [Autowiring](Autowiring) — разрешение зависимостей после scan
+- [Справочник API](API-reference) — `scan()`, `ClassScanner`

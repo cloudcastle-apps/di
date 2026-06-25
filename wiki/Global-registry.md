@@ -99,9 +99,9 @@ public function testSomething(): void
 | `ContainerRegistry` | bootstrap, legacy, procedural entry scripts |
 | `ContainerRegistry::reset()` | PHPUnit tearDown, integration suite |
 
-Подробнее о рисках service locator — [Анти-паттерны](Anti-patterns.md).
+Подробнее о рисках service locator — [Анти-паттерны](Anti-patterns).
 
 ## См. также
 
-- [Autowiring](Autowiring.md)
-- [Тестирование](Testing.md)
+- [Autowiring](Autowiring)
+- [Тестирование](Testing)

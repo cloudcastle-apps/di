@@ -118,7 +118,7 @@
 
 **Исключение:** `ContainerException`, если каталог не найден.
 
-Подробнее — [Сканирование классов](Class-scanning.md), [Autowiring](Autowiring.md).
+Подробнее — [Сканирование классов](Class-scanning), [Autowiring](Autowiring).
 
 ### Tagged services
 
@@ -237,4 +237,4 @@ interface ContainerInterface extends \Psr\Container\ContainerInterface
 | Цикл при **autowiring** | `ContainerException` |
 | `scan()` + существующий `set(FQCN)` | `set()` сохраняется, scan пропускает id |
 
-Подробнее — [Фабрики и singleton](Factories-and-singleton.md), [Autowiring](Autowiring.md).
+Подробнее — [Фабрики и singleton](Factories-and-singleton), [Autowiring](Autowiring).

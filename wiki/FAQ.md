@@ -15,7 +15,7 @@ $service = $container->get(App\Service\MyService::class);
 
 Или точечно: `$container->autowire(App\Service\MyService::class)`.
 
-Подробнее — [Autowiring](Autowiring.md).
+Подробнее — [Autowiring](Autowiring).
 
 ## Можно использовать id = FQCN класса?
 
@@ -27,15 +27,15 @@ $service = $container->get(App\Service\MyService::class);
 $container->scan(__DIR__ . '/Services', 'App\\Services\\');
 ```
 
-См. [Сканирование классов](Class-scanning.md).
+См. [Сканирование классов](Class-scanning).
 
 ## Есть глобальный контейнер?
 
-**Да** — `ContainerRegistry::set()` / `get()`. Рекомендуется инициализировать в bootstrap; в тестах вызывайте `ContainerRegistry::reset()`. См. [Глобальный реестр](Global-registry.md).
+**Да** — `ContainerRegistry::set()` / `get()`. Рекомендуется инициализировать в bootstrap; в тестах вызывайте `ContainerRegistry::reset()`. См. [Глобальный реестр](Global-registry).
 
 ## Поддерживаются tagged services и декораторы?
 
-**Да:** `tag()` / `getTagged()` и `decorate()`. См. [Теги и декораторы](Tags-and-decorators.md).
+**Да:** `tag()` / `getTagged()` и `decorate()`. См. [Теги и декораторы](Tags-and-decorators).
 
 ## Поддерживаются PHP attributes?
 
@@ -49,7 +49,7 @@ private ClockInterface $clock;
 protected function setClock(ClockInterface $clock): void {}
 ```
 
-Подробнее — [Autowiring](Autowiring.md).
+Подробнее — [Autowiring](Autowiring).
 
 ## Autowiring свойств и методов?
 
@@ -59,7 +59,7 @@ protected function setClock(ClockInterface $clock): void {}
 - **`enableMethodAutowiring()`** — public/protected setter и inject-методы с параметрами
 - Attributes `#[Inject]` / `#[Autowire]` на свойствах и методах работают **без** этих флагов
 
-Порядок: конструктор → свойства → методы. См. [Autowiring](Autowiring.md).
+Порядок: конструктор → свойства → методы. См. [Autowiring](Autowiring).
 
 ## Поддерживаются intersection-типы?
 

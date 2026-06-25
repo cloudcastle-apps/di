@@ -1,23 +1,23 @@
-**[Главная](Home.md)**
+**[Главная](Home)**
 
 ### Руководство
 
-- [Быстрый старт](Quick-start.md)
-- [Примеры bootstrap](Bootstrap.md)
-- [Autowiring](Autowiring.md)
-- [Сканирование классов](Class-scanning.md)
-- [Глобальный реестр](Global-registry.md)
-- [Теги и декораторы](Tags-and-decorators.md)
-- [Справочник API](API-reference.md)
-- [Фабрики и singleton](Factories-and-singleton.md)
-- [Тестирование](Testing.md)
-- [Анти-паттерны](Anti-patterns.md)
+- [Быстрый старт](Quick-start)
+- [Примеры bootstrap](Bootstrap)
+- [Autowiring](Autowiring)
+- [Сканирование классов](Class-scanning)
+- [Глобальный реестр](Global-registry)
+- [Теги и декораторы](Tags-and-decorators)
+- [Справочник API](API-reference)
+- [Фабрики и singleton](Factories-and-singleton)
+- [Тестирование](Testing)
+- [Анти-паттерны](Anti-patterns)
 
 ### Проект
 
-- [Обновление версий](Upgrading.md)
-- [Участие в разработке](Contributing.md)
-- [FAQ](FAQ.md)
+- [Обновление версий](Upgrading)
+- [Участие в разработке](Contributing)
+- [FAQ](FAQ)
 
 ### Внешние ссылки
 

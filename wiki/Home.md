@@ -73,19 +73,19 @@ $service = ContainerRegistry::get()->get(App\Services\OrderService::class);
 
 | Страница | Описание |
 |----------|----------|
-| [Быстрый старт](Quick-start.md) | установка, PSR-11, composition root |
-| [Примеры bootstrap](Bootstrap.md) | plain PHP, CLI, unit/integration тесты |
-| [Autowiring](Autowiring.md) | reflection, типы параметров, циклы, приоритеты |
-| [Сканирование классов](Class-scanning.md) | `scan()`, фильтр namespace, ограничения |
-| [Глобальный реестр](Global-registry.md) | `ContainerRegistry`, bootstrap, тесты |
-| [Теги и декораторы](Tags-and-decorators.md) | `tag()`, `getTagged()`, `decorate()` |
-| [Справочник API](API-reference.md) | все методы и исключения |
-| [Фабрики и singleton](Factories-and-singleton.md) | callable, кэш, `null`, циклы в фабриках |
-| [Тестирование](Testing.md) | unit/integration, моки, `ContainerRegistry::reset()` |
-| [Анти-паттерны](Anti-patterns.md) | service locator, autowiring, глобальный контейнер |
-| [Обновление версий](Upgrading.md) | миграция между релизами |
-| [Участие в разработке](Contributing.md) | `composer ci`, PR |
-| [FAQ](FAQ.md) | частые вопросы |
+| [Быстрый старт](Quick-start) | установка, PSR-11, composition root |
+| [Примеры bootstrap](Bootstrap) | plain PHP, CLI, unit/integration тесты |
+| [Autowiring](Autowiring) | reflection, типы параметров, циклы, приоритеты |
+| [Сканирование классов](Class-scanning) | `scan()`, фильтр namespace, ограничения |
+| [Глобальный реестр](Global-registry) | `ContainerRegistry`, bootstrap, тесты |
+| [Теги и декораторы](Tags-and-decorators) | `tag()`, `getTagged()`, `decorate()` |
+| [Справочник API](API-reference) | все методы и исключения |
+| [Фабрики и singleton](Factories-and-singleton) | callable, кэш, `null`, циклы в фабриках |
+| [Тестирование](Testing) | unit/integration, моки, `ContainerRegistry::reset()` |
+| [Анти-паттерны](Anti-patterns) | service locator, autowiring, глобальный контейнер |
+| [Обновление версий](Upgrading) | миграция между релизами |
+| [Участие в разработке](Contributing) | `composer ci`, PR |
+| [FAQ](FAQ) | частые вопросы |
 
 ## Ссылки
 

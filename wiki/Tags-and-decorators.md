@@ -90,7 +90,7 @@ Inner — экземпляр, созданный autowiring.
 
 ### Декоратор и `null`
 
-Если декорированный сервис или декоратор вернул `null`, singleton **не кэшируется** (как для фабрик) — см. [Фабрики и singleton](Factories-and-singleton.md).
+Если декорированный сервис или декоратор вернул `null`, singleton **не кэшируется** (как для фабрик) — см. [Фабрики и singleton](Factories-and-singleton).
 
 ## Комбинированный пример
 
@@ -114,5 +114,5 @@ foreach ($container->getTagged('listeners') as $listener) {
 
 ## См. также
 
-- [Справочник API](API-reference.md)
-- [Autowiring](Autowiring.md)
+- [Справочник API](API-reference)
+- [Autowiring](Autowiring)

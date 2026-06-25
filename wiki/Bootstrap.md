@@ -270,4 +270,4 @@ function createTestContainer(array $overrides = []): ContainerInterface
 - **Возвращайте интерфейс** — createContainer() возвращает ContainerInterface, а не конкретный Container.
 - **CLI vs HTTP** — для консольных команд собирайте облегчённый контейнер без middleware и HTTP-стека.
 - **Тесты изолированы** — новый Container на каждый тест гарантирует чистоту состояния.
-- **Не передавайте контейнер в доменный слой** — см. [Анти-паттерны](Anti-patterns.md).
+- **Не передавайте контейнер в доменный слой** — см. [Анти-паттерны](Anti-patterns).

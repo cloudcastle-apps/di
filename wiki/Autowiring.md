@@ -360,7 +360,7 @@ Autowiring **не** подставляет скаляры. Для парамет
 
 После ошибки контейнер не остаётся в «зависшем» состоянии.
 
-> Циклы в **фабриках** `set()` не отслеживаются. См. [Фабрики и singleton](Factories-and-singleton.md).
+> Циклы в **фабриках** `set()` не отслеживаются. См. [Фабрики и singleton](Factories-and-singleton).
 
 ## `has()` и `hasDefinition()`
 
@@ -390,6 +390,6 @@ CloudCastle DI **не** поддерживает:
 
 ## См. также
 
-- [Сканирование классов](Class-scanning.md)
-- [Справочник API](API-reference.md)
-- [Анти-паттерны](Anti-patterns.md)
+- [Сканирование классов](Class-scanning)
+- [Справочник API](API-reference)
+- [Анти-паттерны](Anti-patterns)
