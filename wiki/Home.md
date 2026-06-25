@@ -74,6 +74,7 @@ $service = ContainerRegistry::get()->get(App\Services\OrderService::class);
 | Страница | Описание |
 |----------|----------|
 | [Быстрый старт](Quick-start.md) | установка, PSR-11, composition root |
+| [Примеры bootstrap](Bootstrap.md) | plain PHP, CLI, unit/integration тесты |
 | [Autowiring](Autowiring.md) | reflection, типы параметров, циклы, приоритеты |
 | [Сканирование классов](Class-scanning.md) | `scan()`, фильтр namespace, ограничения |
 | [Глобальный реестр](Global-registry.md) | `ContainerRegistry`, bootstrap, тесты |

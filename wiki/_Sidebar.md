@@ -3,6 +3,7 @@
 ### Руководство
 
 - [Быстрый старт](Quick-start.md)
+- [Примеры bootstrap](Bootstrap.md)
 - [Autowiring](Autowiring.md)
 - [Сканирование классов](Class-scanning.md)
 - [Глобальный реестр](Global-registry.md)
