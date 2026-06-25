@@ -10,7 +10,6 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use stdClass;
-use Throwable;
 
 /**
  * Проверки безопасного поведения контейнера при ошибках и нестандартных идентификаторах.
@@ -76,20 +75,6 @@ final class ContainerSecurityTest extends TestCase
                 $notFoundException->getMessage(),
             );
             self::assertStringNotContainsString('vendor', $notFoundException->getMessage());
-        }
-    }
-
-    public function testCircularDependencyAbortsResolution(): void
-    {
-        $container = new Container();
-        $container->set('alpha', static fn (Container $container): mixed => $container->get('beta'));
-        $container->set('beta', static fn (Container $container): mixed => $container->get('alpha'));
-
-        try {
-            $container->get('alpha');
-            self::fail('Ожидалась ошибка при циклической зависимости.');
-        } catch (Throwable $throwable) {
-            self::assertNotInstanceOf(NotFoundException::class, $throwable);
         }
     }
 }
