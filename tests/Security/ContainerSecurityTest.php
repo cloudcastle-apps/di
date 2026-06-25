@@ -77,4 +77,18 @@ final class ContainerSecurityTest extends TestCase
             self::assertStringNotContainsString('vendor', $notFoundException->getMessage());
         }
     }
+
+    public function testCircularDependencyAbortsResolution(): void
+    {
+        $container = new Container();
+        $container->set('alpha', static fn (Container $container): never => $container->get('beta'));
+        $container->set('beta', static fn (Container $container): never => $container->get('alpha'));
+
+        try {
+            $container->get('alpha');
+            self::fail('Ожидалась ошибка при циклической зависимости.');
+        } catch (\Throwable $throwable) {
+            self::assertNotInstanceOf(NotFoundException::class, $throwable);
+        }
+    }
 }

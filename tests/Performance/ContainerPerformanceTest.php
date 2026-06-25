@@ -55,6 +55,20 @@ final class ContainerPerformanceTest extends TestCase
         self::assertLessThan(self::HAS_TIME_BUDGET_SECONDS, microtime(true) - $startedAt);
     }
 
+    public function testHasDefinitionCompletesWithinBudget(): void
+    {
+        $container = new Container();
+        $container->set('cached', new stdClass());
+
+        $startedAt = microtime(true);
+
+        for ($iteration = 0; $iteration < self::HAS_ITERATIONS; ++$iteration) {
+            self::assertTrue($container->hasDefinition('cached'));
+        }
+
+        self::assertLessThan(self::HAS_TIME_BUDGET_SECONDS, microtime(true) - $startedAt);
+    }
+
     public function testSetServiceCompletesWithinBudget(): void
     {
         $container = new Container();
