@@ -22,6 +22,9 @@
 composer require cloudcastle/di
 ```
 
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/cloudcastle/di.svg)](https://packagist.org/packages/cloudcastle/di)
+[![Total Downloads](https://img.shields.io/packagist/dt/cloudcastle/di.svg)](https://packagist.org/packages/cloudcastle/di)
+
 ## Быстрый старт
 
 ```php

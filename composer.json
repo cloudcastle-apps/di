@@ -3,7 +3,6 @@
     "description": "Контейнер внедрения зависимостей для PHP",
     "license": "MIT",
     "type": "library",
-    "version": "1.0.0",
     "keywords": [
         "di",
         "dependency-injection",
@@ -56,6 +55,11 @@
     "autoload-dev": {
         "psr-4": {
             "CloudCastle\\DI\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-main": "1.0-dev"
         }
     },
     "config": {
