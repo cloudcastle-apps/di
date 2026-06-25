@@ -2,6 +2,14 @@
 
 Руководство по переходу между версиями **cloudcastle/di**.
 
+## 1.0.2 → 1.0.3
+
+Изменений в публичном API нет. Wiki, CI и dev-зависимости:
+
+```bash
+composer update cloudcastle/di
+```
+
 ## 1.0.1 → 1.0.2
 
 Изменений в публичном API нет. Обновление метаданных Packagist и README для discoverability:

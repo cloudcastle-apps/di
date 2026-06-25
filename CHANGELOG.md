@@ -3,6 +3,19 @@
 Формат основан на [Keep a Changelog](https://keepachangelog.com/ru/1.1.0/),
 версионирование — [SemVer](https://semver.org/lang/ru/).
 
+## [1.0.3] — 2026-06-25
+
+### Добавлено
+
+- GitHub Wiki: 10 страниц документации, sidebar, workflow публикации из каталога `wiki/`
+- Защита ветки `main` (ruleset: PR, CI PHP 8.3–8.5)
+- Labels `dependencies`, `github-actions` для Dependabot
+
+### Изменено
+
+- GitHub Actions: `actions/checkout` 4 → 7, `actions/cache` 4 → 6
+- Dev-зависимости: Deptrac 4, PHPCS 4, Infection 0.33 (без изменений публичного API)
+
 ## [1.0.2] — 2026-06-25
 
 ### Добавлено
@@ -39,6 +52,7 @@
 - CI для GitHub Actions и GitLab CI
 - Инструменты качества: PHPStan max, Psalm level 1, PHPCS, PHPMD, Deptrac, Rector
 
+[1.0.3]: https://github.com/cloudcastle-apps/di/releases/tag/v1.0.3
 [1.0.2]: https://github.com/cloudcastle-apps/di/releases/tag/v1.0.2
 [1.0.1]: https://github.com/cloudcastle-apps/di/releases/tag/v1.0.1
 [1.0.0]: https://github.com/cloudcastle-apps/di/releases/tag/v1.0.0
