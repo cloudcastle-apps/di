@@ -4,7 +4,7 @@
 
 ## Service locator в домене
 
-**Плохо:** передавать `Container` в бизнес-классы и вызывать `get()` внутри методов.
+**Плохо:** передавать `Container` или `ContainerRegistry` в бизнес-классы и вызывать `get()` внутри методов.
 
 **Лучше:** собирать объектный граф в composition root (bootstrap), в домен передавать готовые зависимости через конструктор.
 
@@ -18,6 +18,8 @@ $container->set('orders', static fn (ContainerInterface $c) => new OrderService(
 $orderService = $container->get('orders');
 ```
 
+Autowiring не отменяет это правило: `get()` в домене по-прежнему скрывает зависимости.
+
 ## Недоверенные идентификаторы
 
 Не используйте пользовательский ввод напрямую как id сервиса:
@@ -29,17 +31,65 @@ $container->get($_GET['service']);
 
 Идентификаторы должны быть константами или ключами из известной конфигурации.
 
-## Глобальный singleton контейнера
+## Злоупотребление глобальным реестром
 
-Библиотека **не** предоставляет глобальный контейнер намеренно. Один `Container` на весь процесс усложняет тесты и скрывает зависимости.
+`ContainerRegistry` удобен в bootstrap, но **не** заменяет явные зависимости:
 
-**Лучше:** явно создавать и передавать `Container` (или фасад конфигурации) в точке входа приложения.
+| Допустимо | Избегать |
+|-----------|----------|
+| `ContainerRegistry::set()` в `index.php` / `bin/console` | `ContainerRegistry::get()` в каждом классе домена |
+| `reset()` в PHPUnit `tearDown` | общий mutable state между тестами без reset |
+| legacy-мigration с постепенным рефакторингом | новый код только через static `get()` |
 
-## Ожидание autowiring
+**Лучше:** передавать `ContainerInterface` или конкретные сервисы в конструктор там, где это возможно.
 
-Контейнер **не** анализирует конструкторы и **не** регистрирует классы автоматически. Каждый сервис нужно явно `set()`.
+## Слепое autowiring всего каталога
 
-Для autowiring, attributes и compiled container рассмотрите PHP-DI, Symfony DI или Laravel. CloudCastle DI — минимальная основа без магии.
+`scan()` без фильтра namespace регистрирует **все** instantiable-классы в дереве:
+
+```php
+// рискованно в большом src/
+$container->scan(__DIR__ . '/src');
+```
+
+**Лучше:**
+
+- фильтровать namespace: `scan($dir, 'App\\Services\\')`;
+- явно переопределять критичные сервисы через `set()` после scan;
+- не сканировать `vendor/`, `tests/`, generated code.
+
+## Слепое autowiring по имени параметра
+
+`enableParameterNameAutowiring()` связывает **имя параметра** с id сервиса. Включайте осознанно:
+
+```php
+// рискованно глобально без соглашения об именах id
+$container->enableParameterNameAutowiring();
+```
+
+**Лучше:** явный `#[Inject('app.logger')]`, `set(LoggerInterface::class, …)` или точечные id через `set('logger', …)` без глобального режима by-name.
+
+## Ожидание «магии» больших DI-фреймворков
+
+CloudCastle DI **не** поддерживает:
+
+- конфиг YAML / compiled container;
+- autoconfigure и прочие возможности Symfony kernel.
+
+**Поддерживается:** autowiring конструктора, **свойств** и **методов**; attributes; intersection; autowiring по имени — см. [Autowiring](Autowiring.md).
+
+Не включайте `enablePropertyAutowiring()` / `enableMethodAutowiring()` глобально без необходимости — предпочитайте конструктор и явные attributes.
+
+## Скрытые циклы в фабриках
+
+Autowiring обнаруживает циклы A → B → A. **Фабрики** `set()` — нет:
+
+```php
+$container->set('a', static fn ($c) => new A($c->get('b')));
+$container->set('b', static fn ($c) => new B($c->get('a'))); // бесконечный цикл
+```
+
+Разрывайте циклы на этапе проектирования или используйте lazy/proxy вручную.
 
 ## Сериализация контейнера
 
@@ -49,7 +99,9 @@ $container->get($_GET['service']);
 
 | CloudCastle DI | PHP-DI / Symfony |
 |----------------|------------------|
-| явный `set()` | autowiring, конфиг YAML/PHP |
-| ~80 строк кода | полноценный фреймворк DI |
-| без compiled container | опциональная компиляция |
-| идеален для micro-lib | идеален для крупных приложений |
+| reflection autowiring (constructor, property, method), attributes, by-name, intersection | + autoconfigure, YAML |
+| явный `set()` + опциональный scan | YAML/PHP config, compiler |
+| компактный код, `psr/container` | полноценный DI фреймворк |
+| `ContainerRegistry` опционален | часто интегрирован в kernel |
+
+CloudCastle DI — баланс между минимализмом Pimple и возможностями «среднего» DI без лишних зависимостей.

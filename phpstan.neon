@@ -3,6 +3,8 @@ parameters:
     paths:
         - src
         - tests
+    excludePaths:
+        - tests/Fixtures/*
     tmpDir: var/cache/phpstan
     treatPhpDocTypesAsCertain: true
     checkTooWideReturnTypesInProtectedAndPublicMethods: true

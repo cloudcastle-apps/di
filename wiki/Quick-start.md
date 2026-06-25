@@ -11,7 +11,7 @@
 composer require cloudcastle/di
 ```
 
-## Минимальный пример
+## Минимальный пример (явная регистрация)
 
 ```php
 <?php
@@ -29,18 +29,86 @@ $timezone = $container->get('config.timezone');
 $logger = $container->get('logger');
 ```
 
+## Autowiring
+
+```php
+use CloudCastle\DI\Container;
+
+$container = new Container();
+$container->enableAutowiring();
+
+// id = полное имя класса
+$userService = $container->get(App\Service\UserService::class);
+```
+
+Класс `UserService` создаётся автоматически; зависимости разрешаются по типам, attributes и (опционально) по имени. Подробнее — [Autowiring](Autowiring.md).
+
+### Property и method injection
+
+```php
+use CloudCastle\DI\Attribute\Inject;
+
+$container->set('app.metrics', $metrics);
+$container->enableAutowiring();
+$container->enablePropertyAutowiring(); // typed properties
+$container->enableMethodAutowiring();   // setter без attribute
+
+// #[Inject] на свойстве или inject-методе — без enableProperty/MethodAutowiring
+$service = $container->get(App\Service\ReportService::class);
+```
+
+### Attributes и autowiring по имени
+
+```php
+use CloudCastle\DI\Attribute\Inject;
+
+$container->set('app.clock', $clock);
+$container->set('logger', $logger);
+$container->enableAutowiring();
+$container->enableParameterNameAutowiring();
+
+// #[Inject('app.clock')] или параметр $logger → get('logger')
+$service = $container->get(App\Service\ReportService::class);
+```
+
+## Сканирование каталога
+
+```php
+$container->scan(__DIR__ . '/Services', 'App\\Services\\');
+```
+
+Регистрирует все instantiable-классы в каталоге с namespace `App\Services\`. Существующие `set()` не перезаписываются. Подробнее — [Сканирование классов](Class-scanning.md).
+
+## Глобальный реестр
+
+```php
+use CloudCastle\DI\Container;
+use CloudCastle\DI\ContainerRegistry;
+
+$container = new Container();
+$container->enableAutowiring();
+ContainerRegistry::set($container);
+
+$service = ContainerRegistry::get()->get(App\Service\UserService::class);
+```
+
+Подробнее — [Глобальный реестр](Global-registry.md).
+
 ## Идентификаторы сервисов
 
-Идентификаторы — произвольные строки (`'logger'`, `'config.timezone'`, `'app.mailer'`). Контейнер **не** резолвит классы по FQCN автоматически.
+Идентификаторы — произвольные строки:
+
+| Стиль | Пример | Когда |
+|-------|--------|-------|
+| Произвольный ключ | `'logger'`, `'config.db'` | явный `set()` |
+| FQCN | `App\Service\Mailer::class` | autowiring, `scan()` |
 
 ## PSR-11
 
 `CloudCastle\DI\Container` реализует:
 
 - `Psr\Container\ContainerInterface` — `get()`, `has()`;
-- `CloudCastle\DI\Contract\ContainerInterface` — дополнительно `set()`, `hasDefinition()`.
-
-Проверка наличия сервиса:
+- `CloudCastle\DI\Contract\ContainerInterface` — `set()`, `hasDefinition()`, autowiring, tags, decorators.
 
 ```php
 if ($container->has('logger')) {
@@ -48,19 +116,37 @@ if ($container->has('logger')) {
 }
 ```
 
-`hasDefinition()` проверяет регистрацию **без** создания экземпляра (удобно для фабрик):
+`hasDefinition()` — регистрация **без** создания экземпляра:
 
 ```php
 if ($container->hasDefinition('repository')) {
-    // определение есть, но get() ещё не вызывался
+    // set() или autowire() есть, get() ещё не вызывался
 }
 ```
 
 ## Composition root
 
-Собирайте граф зависимостей в одной точке входа приложения (bootstrap), а в домен передавайте готовые объекты через конструктор. Подробнее — [Анти-паттерны](Anti-patterns).
+Собирайте граф зависимостей в одной точке входа (bootstrap):
+
+```php
+function createContainer(): Container
+{
+    $container = new Container();
+    $container->enableAutowiring();
+    $container->scan(__DIR__ . '/../src/Application', 'App\\Application\\');
+
+    $container->set(Psr\Log\LoggerInterface::class, new MonologLogger(...));
+
+    return $container;
+}
+```
+
+В домен передавайте готовые объекты через конструктор — см. [Анти-паттерны](Anti-patterns.md).
 
 ## Дальше
 
-- [Фабрики и singleton](Factories-and-singleton)
-- [Справочник API](API-reference)
+- [Autowiring](Autowiring.md)
+- [Сканирование классов](Class-scanning.md)
+- [Теги и декораторы](Tags-and-decorators.md)
+- [Фабрики и singleton](Factories-and-singleton.md)
+- [Справочник API](API-reference.md)

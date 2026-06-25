@@ -8,6 +8,7 @@
 |--------|--------|
 | Packagist | https://packagist.org/packages/cloudcastle/di |
 | README и быстрый старт | [README.md](README.md) |
+| Wiki (руководство) | [wiki/Home.md](wiki/Home.md) · [на GitHub](https://github.com/cloudcastle-apps/di/wiki/Home) |
 | История изменений | [CHANGELOG.md](CHANGELOG.md) |
 
 ```bash

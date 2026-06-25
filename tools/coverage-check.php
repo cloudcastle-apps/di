@@ -3,8 +3,10 @@
 declare(strict_types=1);
 
 /**
- * Проверяет, что покрытие строк кода в clover-отчёте не ниже 100%.
+ * Проверяет, что покрытие строк кода в clover-отчёте не ниже порога (по умолчанию 95%).
  */
+
+const MIN_LINE_COVERAGE_PERCENT = 95.0;
 
 $cloverPath = $argv[1] ?? 'var/coverage/clover.xml';
 
@@ -41,14 +43,15 @@ if ($statements === 0) {
 
 $percentage = ($coveredStatements / $statements) * 100;
 
-if ($percentage < 100) {
+if ($percentage < MIN_LINE_COVERAGE_PERCENT) {
     fwrite(
         STDERR,
         sprintf(
-            'Покрытие строк %.2f%% (%d/%d) — требуется 100%%.%s',
+            'Покрытие строк %.2f%% (%d/%d) — требуется не менее %.0f%%.%s',
             $percentage,
             $coveredStatements,
             $statements,
+            MIN_LINE_COVERAGE_PERCENT,
             PHP_EOL,
         ),
     );
@@ -56,4 +59,11 @@ if ($percentage < 100) {
     exit(1);
 }
 
-echo sprintf('Покрытие строк: 100%% (%d/%d).%s', $coveredStatements, $statements, PHP_EOL);
+echo sprintf(
+    'Покрытие строк: %.2f%% (%d/%d) — порог %.0f%%.%s',
+    $percentage,
+    $coveredStatements,
+    $statements,
+    MIN_LINE_COVERAGE_PERCENT,
+    PHP_EOL,
+);

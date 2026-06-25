@@ -24,6 +24,27 @@ Unit-тесты
        }
    }
 
+ContainerRegistry
+-----------------
+
+Если тесты используют глобальный реестр, сбрасывайте его в ``tearDown``:
+
+.. code-block:: php
+
+   protected function tearDown(): void
+   {
+       ContainerRegistry::reset();
+       parent::tearDown();
+   }
+
+Autowiring в тестах
+-------------------
+
+.. code-block:: php
+
+   $container->enableAutowiring();
+   $container->set(ClockInterface::class, new FixedClock());
+
 Подмена зависимостей
 --------------------
 
@@ -58,6 +79,8 @@ Unit-тесты
 
    composer test:unit
    composer test:integration
+   composer test:coverage   # ≥95% строк
+   composer test:mutation   # MSI ≥95%
    composer ci
 
 См. также файл ``CONTRIBUTING.md`` в корне репозитория.

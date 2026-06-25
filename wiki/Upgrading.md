@@ -2,34 +2,51 @@
 
 Руководство по переходу между версиями **cloudcastle/di**.
 
-## 1.0.0 → 1.0.1
+## 1.0.3 → 1.1.0
 
-Изменений в публичном API нет:
+### Новые возможности (обратно совместимо)
+
+Добавлены без breaking changes:
+
+- **Autowiring:** `enableAutowiring()`, `disableAutowiring()`, `autowire()`, расширенный `get()` / `has()`
+- **Attributes:** `CloudCastle\DI\Attribute\Inject`, `Autowire`
+- **Intersection-типы** и **autowiring по имени:** `enableParameterNameAutowiring()` (по умолчанию выключен)
+- **Autowiring свойств и методов:** `enablePropertyAutowiring()`, `enableMethodAutowiring()`; attributes на property/method — всегда
+- **Сканирование:** `scan($directory, $namespace?)`
+- **Tagged services и декораторы:** `tag()`, `getTagged()`, `decorate()`
+- **Глобальный реестр:** `ContainerRegistry::set()` / `get()` / `has()` / `reset()`
+- Классы: `Autowirer`, `MemberResolver`, `PropertyInjector`, `MethodInjector`, `ClassScanner`, `ParameterTypeResolver`, `ClassDependencyResolver`, `IntersectionTypeResolver`, `AttributeServiceIdReader`
+
+Существующий код с только `set()` / `get()` **работает без изменений**.
+
+### Рекомендуемые шаги миграции
+
+1. Обновите пакет:
 
 ```bash
 composer update cloudcastle/di
 ```
 
-В 1.0.1 — метаданные Packagist/GitHub и community-файлы; поведение контейнера не менялось.
+2. При желании включите autowiring в bootstrap вместо ручного `set()` для каждого класса.
+
+3. Если используете `ContainerRegistry`, вызывайте `ContainerRegistry::reset()` в PHPUnit `tearDown`.
+
+4. Прочитайте [Autowiring](Autowiring.md) и [Анти-паттерны](Anti-patterns.md) перед `scan()` всего `src/`.
+
+## 1.0.2 → 1.0.3
+
+Изменений в публичном API нет. Wiki, CI и dev-зависимости.
 
 ## 1.0.1 → 1.0.2
 
-Изменений в публичном API нет. Расширены keywords/description на Packagist и README.
+Изменений в публичном API нет. Keywords/description на Packagist.
 
 ## 1.x → 2.0 (будущее)
 
-Major-версия будет описана здесь и в [CHANGELOG](https://github.com/cloudcastle-apps/di/blob/main/CHANGELOG.md) до выхода релиза.
-
-Планируется:
-
-- описать breaking changes;
-- указать минимальную версию PHP;
-- привести примеры миграции типичных сценариев.
-
-Следите за [Discussions → Ideas](https://github.com/cloudcastle-apps/di/discussions/categories/ideas) и [Releases](https://github.com/cloudcastle-apps/di/releases).
+Major-версия будет описана здесь и в [CHANGELOG](https://github.com/cloudcastle-apps/di/blob/main/CHANGELOG.md).
 
 ## Общие рекомендации
 
 1. Прочитайте CHANGELOG для выбранной версии.
 2. Запустите тесты проекта после `composer update`.
-3. При проблемах — [Issues](https://github.com/cloudcastle-apps/di/issues) или [Discussions Q&A](https://github.com/cloudcastle-apps/di/discussions/categories/q-a).
+3. [Issues](https://github.com/cloudcastle-apps/di/issues) · [Discussions Q&A](https://github.com/cloudcastle-apps/di/discussions/categories/q-a)

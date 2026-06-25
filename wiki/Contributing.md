@@ -18,14 +18,26 @@ composer install
 ## Структура
 
 ```
-src/                 — код библиотеки
-tests/Unit/          — unit-тесты
-tests/Integration/   — интеграционные
-tests/Security/      — безопасность
-tests/Load/          — нагрузка
-tests/Performance/   — производительность
-doc/guide/           — исходники пользовательской документации
-wiki/                — исходники GitHub Wiki (публикуется Actions)
+src/
+  Container.php           — основной контейнер
+  Autowirer.php           — autowiring: конструктор → свойства → методы
+  MemberResolver.php      — attributes, by-name, типы
+  PropertyInjector.php    — injection в свойства
+  MethodInjector.php      — inject-методы, setter
+  ParameterTypeResolver.php — union, intersection, named types
+  AttributeServiceIdReader.php — чтение Inject/Autowire
+  ClassScanner.php        — scan каталогов
+  ContainerRegistry.php   — глобальный реестр
+  Attribute/              — Inject, Autowire
+  Contract/               — ContainerInterface
+  Exception/              — NotFoundException, ContainerException
+tests/Unit/               — unit-тесты
+tests/Integration/        — интеграционные
+tests/Security/           — безопасность
+tests/Load/               — нагрузка
+tests/Performance/        — производительность
+doc/guide/                — исходники пользовательской документации (RST)
+wiki/                     — исходники GitHub Wiki (публикуется Actions)
 ```
 
 ## Архитектура (Deptrac)
@@ -44,8 +56,8 @@ wiki/                — исходники GitHub Wiki (публикуется 
 | `composer check` | быстрая проверка |
 | `composer ci` | полный пайплайн (как в GitHub Actions) |
 | `composer test:unit` | unit-тесты |
-| `composer test:coverage` | покрытие (100%) |
-| `composer test:mutation` | Infection (MSI 100%) |
+| `composer test:coverage` | покрытие (≥95% строк) |
+| `composer test:mutation` | Infection (MSI ≥95%) |
 | `composer docs` | API-документация в `docs/` |
 
 ## Pull Request
@@ -59,6 +71,38 @@ wiki/                — исходники GitHub Wiki (публикуется 
 ## Wiki
 
 Страницы wiki хранятся в каталоге `wiki/` репозитория. При push в `main` workflow **Publish wiki** синхронизирует их с вкладкой Wiki.
+
+**Ссылки между страницами Wiki** — относительные с суффиксом `.md` (например `[Autowiring](Autowiring.md)`): так они работают и в репозитории, и на опубликованной Wiki.
+
+Основные страницы:
+
+- [Home.md](Home.md) — обзор
+- [Quick-start.md](Quick-start.md) · [Autowiring.md](Autowiring.md) · [API-reference.md](API-reference.md)
+
+## Issues, Milestones и Views
+
+Репозиторий использует **Milestones** и **labels** для roadmap:
+
+| Milestone | Назначение |
+|-----------|------------|
+| [v1.1.0](https://github.com/cloudcastle-apps/di/milestone/1) | Autowiring, scan, registry, tags, релиз |
+| [Backlog](https://github.com/cloudcastle-apps/di/milestone/2) | Идеи без фиксированного релиза |
+| [v2.0](https://github.com/cloudcastle-apps/di/milestone/3) | Breaking changes (major) |
+
+Метки: `feat`, `fix`, `release`, `roadmap`, `area:*`, `good first issue`.
+
+**Рекомендуемые Issue Views** (Issues → Views → New view → сохранить поиск):
+
+| View | Фильтр |
+|------|--------|
+| Open roadmap | `is:issue is:open milestone:v1.1.0` |
+| Backlog | `is:issue is:open milestone:Backlog` |
+| Good first issue | `is:issue is:open label:"good first issue"` |
+| Bugs | `is:issue is:open label:bug` |
+
+Скрипты для maintainers (повторная инициализация): `scripts/github-bootstrap.sh`, `scripts/github-create-issues.sh`.
+
+Закреплённый roadmap: [issue #12](https://github.com/cloudcastle-apps/di/issues/12).
 
 ## Кодекс и governance
 

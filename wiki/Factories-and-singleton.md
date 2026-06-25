@@ -8,7 +8,7 @@ $container->set('mailer', new Mailer($dsn));
 
 ## Фабрика (callable)
 
-Если передан `callable`, он вызывается один раз; результат кэшируется до следующего `set()`:
+Если передан `callable`, он вызывается один раз; результат кэшируется до следующего `set()` или `decorate()`:
 
 ```php
 use CloudCastle\DI\Contract\ContainerInterface;
@@ -22,6 +22,17 @@ $container->set(
 ```
 
 В фабрику передаётся сам контейнер — так строятся цепочки зависимостей.
+
+## Autowiring vs фабрика
+
+| | `set()` + фабрика | autowiring |
+|---|-------------------|------------|
+| Контроль создания | полный | по конструктору |
+| Id | любая строка | обычно FQCN |
+| Циклы | не отслеживаются | `ContainerException` |
+| Приоритет | выше autowiring | ниже явного `set()` |
+
+Можно комбинировать: scan + явные `set()` для интерфейсов.
 
 ## Поддерживаемые callable
 
@@ -41,19 +52,23 @@ $container->set('token', 'prod');
 $container->get('token'); // 'prod'
 ```
 
+`autowire(FQCN)` также сбрасывает кэш для этого id.
+
 ## Ограничения
 
 ### `null` как значение
 
 `set('id', null)` не распознаётся как регистрация из-за `isset()` в PHP.
 
-### Фабрика, возвращающая `null`
+### Фабрика или autowire, возвращающие `null`
 
-Такой результат **не** кэшируется — при каждом `get()` фабрика вызывается снова.
+Такой результат **не** кэшируется — при каждом `get()` создание повторяется.
 
-### Циклические зависимости
+### Циклические зависимости в фабриках
 
-A → B → A не обнаруживаются автоматически. Возможен бесконечный цикл или переполнение стека. Разрывайте циклы на этапе проектирования wiring.
+A → B → A через `set()` **не** обнаруживаются автоматически. Возможен бесконечный цикл или переполнение стека.
+
+При **autowiring** циклы обнаруживаются — см. [Autowiring](Autowiring.md).
 
 ## Сравнение `has()` и `hasDefinition()`
 
@@ -61,9 +76,20 @@ A → B → A не обнаруживаются автоматически. Во
 $container->set('db', static fn () => new PDO(...));
 
 $container->hasDefinition('db'); // true
-$container->has('db');         // true
+$container->has('db');           // true
 // get() ещё не вызывался — PDO не создан
 
 $pdo = $container->get('db');
-$container->has('db'); // true (есть и definition, и resolved)
+$container->has('db'); // true (definition + resolved)
+```
+
+С autowiring:
+
+```php
+$container->enableAutowiring();
+$container->has(App\Service\UserService::class);           // true
+$container->hasDefinition(App\Service\UserService::class); // false
+
+$container->autowire(App\Service\UserService::class);
+$container->hasDefinition(App\Service\UserService::class); // true
 ```

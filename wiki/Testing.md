@@ -22,6 +22,30 @@ final class OrderServiceTest extends TestCase
 }
 ```
 
+## Autowiring в тестах
+
+```php
+$container = new Container();
+$container->enableAutowiring();
+$container->set(ClockInterface::class, new FixedClock('2026-01-01'));
+
+$service = $container->get(OrderService::class);
+```
+
+Property и method injection в тестах:
+
+```php
+$container = new Container();
+$container->enableAutowiring();
+$container->enablePropertyAutowiring();
+$container->enableMethodAutowiring();
+$container->set(LoggerInterface::class, new NullLogger());
+
+$service = $container->get(LegacyServiceWithSetters::class);
+```
+
+Явный `set()` переопределяет autowiring для того же типа.
+
 ## Подмена зависимостей
 
 Зарегистрируйте тестовый double **до** первого `get()`:
@@ -32,6 +56,29 @@ $container->set('mailer', $this->createMock(MailerInterface::class));
 
 После `get()` замена через `set()` сбросит кэш — при следующем `get()` будет новый singleton.
 
+## `ContainerRegistry`
+
+Если тесты используют глобальный реестр, сбрасывайте его:
+
+```php
+protected function tearDown(): void
+{
+    ContainerRegistry::reset();
+    parent::tearDown();
+}
+
+public function testWithRegistry(): void
+{
+    $container = new Container();
+    $container->set('clock', new FixedClock());
+    ContainerRegistry::set($container);
+
+    // код, вызывающий ContainerRegistry::get()
+}
+```
+
+Предпочтительнее передавать `Container` явно — без глобального состояния.
+
 ## Интеграционные тесты
 
 Вынесите регистрацию сервисов в функцию или класс:
@@ -40,12 +87,12 @@ $container->set('mailer', $this->createMock(MailerInterface::class));
 function createApplicationContainer(): Container
 {
     $container = new Container();
-    // register services...
+    $container->enableAutowiring();
+    $container->scan(__DIR__ . '/../src/Services', 'App\\Services\\');
+    // test doubles...
     return $container;
 }
 ```
-
-Так проще переиспользовать wiring в нескольких тестах.
 
 ## Команды в репозитории
 
@@ -58,11 +105,9 @@ composer ci
 
 ## Покрытие и мутации
 
-Проект поддерживает 100% line coverage и Infection MSI 100%:
-
 ```bash
-composer test:coverage
-composer test:mutation
+composer test:coverage   # порог ≥95% строк
+composer test:mutation   # Infection MSI ≥95%
 ```
 
 Требуется PCOV или Xdebug (`XDEBUG_MODE=coverage`).

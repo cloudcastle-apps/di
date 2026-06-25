@@ -11,6 +11,10 @@ return RectorConfig::configure()
         __DIR__ . '/src',
         __DIR__ . '/tests',
     ])
+    ->withSkip([
+        __DIR__ . '/tests/Fixtures',
+        Rector\EarlyReturn\Rector\If_\ChangeOrIfContinueToMultiContinueRector::class,
+    ])
     ->withPhpSets(php83: true)
     ->withPreparedSets(
         deadCode: true,

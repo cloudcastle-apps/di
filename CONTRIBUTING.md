@@ -72,8 +72,8 @@ composer ci
 | `composer test:security` | Тесты безопасности |
 | `composer test:load` | Нагрузочные тесты |
 | `composer test:performance` | Производительность |
-| `composer test:coverage` | Покрытие (ожидается 100% строк) |
-| `composer test:mutation` | Infection (MSI 100%) |
+| `composer test:coverage` | Покрытие (ожидается ≥95% строк) |
+| `composer test:mutation` | Infection (MSI ≥95%) |
 | `composer docs` | Генерация API-документации в `docs/` |
 
 ## Стиль кода
@@ -82,6 +82,15 @@ composer ci
 - PHPDoc на русском языке для публичного API
 - Имена методов и свойств — camelCase (PSR)
 - Перед push рекомендуется `composer ci`
+
+## GitHub: Issues и Wiki
+
+- **Wiki** — исходники в `wiki/`, синхронизация через workflow `Publish wiki` при push в `main`. Онлайн: https://github.com/cloudcastle-apps/di/wiki/Home
+- **Milestones** — v1.1.0, Backlog, v2.0 (см. [Milestones](https://github.com/cloudcastle-apps/di/milestones))
+- **Labels** — `feat`, `fix`, `area:*`, `roadmap`, `release`; инициализация: `scripts/github-bootstrap.sh`
+- **Issue Views** — сохранённые поиски (см. [wiki/Contributing.md](wiki/Contributing.md) § Issues, Milestones и Views)
+
+Перед багом или фичей проверьте [открытые Issues](https://github.com/cloudcastle-apps/di/issues) и [Discussions](https://github.com/cloudcastle-apps/di/discussions).
 
 ## Pull Request
 

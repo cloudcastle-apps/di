@@ -1,15 +1,15 @@
 # CloudCastle DI
 
-**English:** Lightweight [PSR-11](https://www.php-fig.org/psr/psr-11/) dependency injection container for PHP 8.3+. Explicit `set()` / `get()` wiring, singleton factories, zero autowiring — one runtime dependency (`psr/container`).
+**English:** Lightweight [PSR-11](https://www.php-fig.org/psr/psr-11/) dependency injection container for PHP 8.3+. Explicit `set()` / `get()` wiring, optional autowiring and directory scan, tagged services, decorators, global registry — one runtime dependency (`psr/container`).
 
-**Русский:** Лёгкий контейнер внедрения зависимостей для PHP 8.3+ с поддержкой PSR-11. Явная регистрация сервисов, singleton-фабрики, без autowiring.
+**Русский:** Лёгкий контейнер внедрения зависимостей для PHP 8.3+ с поддержкой PSR-11. Явная регистрация сервисов, singleton-фабрики, autowiring по типам конструктора, сканирование каталогов и глобальный реестр.
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/cloudcastle/di.svg)](https://packagist.org/packages/cloudcastle/di)
 [![Total Downloads](https://img.shields.io/packagist/dt/cloudcastle/di.svg)](https://packagist.org/packages/cloudcastle/di)
 [![PHP Version](https://img.shields.io/packagist/php-v/cloudcastle/di.svg)](https://packagist.org/packages/cloudcastle/di)
 [![License](https://img.shields.io/packagist/l/cloudcastle/di.svg)](https://packagist.org/packages/cloudcastle/di)
 [![Quality](https://github.com/cloudcastle-apps/di/actions/workflows/quality.yml/badge.svg)](https://github.com/cloudcastle-apps/di/actions/workflows/quality.yml)
-[![Coverage](https://img.shields.io/badge/coverage-100%25-brightgreen)](https://github.com/cloudcastle-apps/di/blob/main/CONTRIBUTING.md)
+[![Coverage](https://img.shields.io/badge/coverage-95%25+-brightgreen)](https://github.com/cloudcastle-apps/di/blob/main/CONTRIBUTING.md)
 [![GitHub Discussions](https://img.shields.io/github/discussions/cloudcastle-apps/di)](https://github.com/cloudcastle-apps/di/discussions)
 
 ## Когда выбрать CloudCastle DI
@@ -17,21 +17,48 @@
 | | CloudCastle DI | PHP-DI | Symfony DI | Pimple |
 |---|:---:|:---:|:---:|:---:|
 | PSR-11 | ✓ | ✓ | ✓ | частично |
-| Autowiring / attributes | — | ✓ | ✓ | — |
+| Autowiring (reflection) | ✓ | ✓ | ✓ | — |
+| PHP attributes / by-name / intersection / property / method | ✓ | ✓ | ✓ | — |
 | Явный `set()` API | ✓ | ✓ | ✓ | ✓ |
+| Сканирование каталогов | ✓ | ✓ | ✓ | — |
+| Tagged services / decorators | ✓ | ✓ | ✓ | — |
 | Минимум зависимостей | ✓ (`psr/container`) | больше | фреймворк | ✓ |
 | Подходит для micro-library / bootstrap | ✓ | ✓ | избыточен | ✓ |
 
-Идеален, когда нужен **простой контейнер** для composition root, тестов или небольшого приложения без магии reflection.
+Подходит, когда нужен **компактный контейнер** для composition root, тестов или небольшого приложения — с явным wiring и опциональной автоматикой без YAML и compiled container.
 
 ## Возможности
+
+### Базовый DI
 
 - Регистрация сервисов как готовых экземпляров или фабрик
 - Singleton-поведение: фабрика вызывается один раз, результат кэшируется
 - Передача контейнера в фабрику для разрешения зависимостей
 - Соответствие PSR-11 (`Psr\Container\ContainerInterface`)
-- Расширенный контракт с `set()` и `hasDefinition()`
-- Строгая типизация, статический анализ на максимальном уровне, 100% покрытие тестами
+
+### Autowiring и сканирование
+
+- **`enableAutowiring()`** — создание классов по FQCN при `get()` без явного `set()`
+- **`autowire(string $className)`** — точечная регистрация класса (id = полное имя класса)
+- **`enableParameterNameAutowiring()`** — параметр `$logger` → сервис с id `'logger'`
+- **`enablePropertyAutowiring()`** / **`enableMethodAutowiring()`** — typed properties и inject-методы после конструктора
+- **`scan(string $directory, ?string $namespace = null)`** — обход каталога и autowiring найденных instantiable-классов
+- Разрешение: PHP attributes (`Inject`, `Autowire`) на конструкторе, **свойствах** и **методах**; union, **intersection**, nullable, `ContainerInterface`
+- Обнаружение циклических зависимостей при autowiring
+
+### Расширения контракта
+
+- **`tag()` / `getTagged()`** — групповое получение сервисов
+- **`decorate()`** — цепочка декораторов при `get()`
+- **`hasDefinition()`** — проверка регистрации без создания экземпляра
+
+### Глобальный реестр
+
+- **`ContainerRegistry::set()` / `get()` / `has()` / `reset()`** — singleton-контейнер приложения (инициализация в точке входа, `reset()` для тестов)
+
+### Качество
+
+- Строгая типизация, PHPStan max, Psalm level 1, покрытие строк ≥95%, Infection MSI ≥95%
 
 ## Требования
 
@@ -46,6 +73,8 @@ composer require cloudcastle/di
 
 ## Быстрый старт
 
+### Явная регистрация
+
 ```php
 <?php
 
@@ -53,40 +82,85 @@ use CloudCastle\DI\Container;
 
 $container = new Container();
 
-// Готовый экземпляр
 $container->set('logger', new Psr\Log\NullLogger());
-
-// Фабрика с доступом к контейнеру
-$container->set('repository', static fn (Container $c) => new UserRepository($c->get('logger')));
+$container->set(
+    'repository',
+    static fn (Container $c) => new UserRepository($c->get('logger')),
+);
 
 $logger = $container->get('logger');
 $repository = $container->get('repository');
 ```
 
-## API
+### Autowiring
+
+```php
+use CloudCastle\DI\Attribute\Inject;
+use CloudCastle\DI\Container;
+
+$container = new Container();
+$container->set('app.clock', $clock);
+$container->enableAutowiring();
+$container->enableParameterNameAutowiring(); // опционально: $logger → id 'logger'
+
+// Классы создаются по типам конструктора; id = FQCN
+// #[Inject('app.clock')] на параметрах — явный id
+$userService = $container->get(App\Service\UserService::class);
+```
+
+### Сканирование каталога
+
+```php
+$container->scan(__DIR__ . '/Services', 'App\\Services\\');
+// Каждый instantiable-класс в каталоге регистрируется через autowire()
+// Существующие set() не перезаписываются
+```
+
+### Глобальный контейнер
+
+```php
+use CloudCastle\DI\Container;
+use CloudCastle\DI\ContainerRegistry;
+
+$container = new Container();
+$container->enableAutowiring();
+ContainerRegistry::set($container);
+
+$mailer = ContainerRegistry::get()->get(App\Mailer::class);
+```
+
+## API (кратко)
 
 | Метод | Описание |
 |-------|----------|
-| `get(string $id): mixed` | Возвращает сервис; бросает `NotFoundException`, если не зарегистрирован |
-| `has(string $id): bool` | Проверяет, доступен ли сервис (зарегистрирован или уже создан) |
-| `set(string $id, mixed $concrete): void` | Регистрирует экземпляр или фабрику; сбрасывает кэш singleton |
-| `hasDefinition(string $id): bool` | Проверяет регистрацию без создания экземпляра |
+| `get(string $id): mixed` | Сервис из кэша, `set()`, autowiring или `NotFoundException` |
+| `has(string $id): bool` | Доступен ли сервис (включая autowiring) |
+| `set(string $id, mixed $concrete): void` | Экземпляр или фабрика; сбрасывает singleton-кэш |
+| `hasDefinition(string $id): bool` | Есть `set()` или `autowire()` без создания |
+| `tag()` / `getTagged()` | Группы сервисов по тегам |
+| `decorate()` | Обёртки при `get()` |
+| `enableAutowiring()` / `disableAutowiring()` / `isAutowiringEnabled()` | Глобальный autowiring |
+| `enableParameterNameAutowiring()` / `disableParameterNameAutowiring()` | Autowiring по имени параметра |
+| `enablePropertyAutowiring()` / `disablePropertyAutowiring()` | Autowiring typed properties |
+| `enableMethodAutowiring()` / `disableMethodAutowiring()` | Autowiring inject-методов и setter |
+| `autowire(string $className): void` | Явная регистрация класса |
+| `scan(string $directory, ?string $namespace): void` | Autowiring классов из каталога |
+
+Подробнее — [Wiki](https://github.com/cloudcastle-apps/di/wiki/Home) ( [Autowiring](https://github.com/cloudcastle-apps/di/wiki/Autowiring) · [API](https://github.com/cloudcastle-apps/di/wiki/API-reference) ) и `doc/guide/` после `composer docs`.
 
 ## Сообщество
 
-- [GitHub Discussions](https://github.com/cloudcastle-apps/di/discussions) — вопросы, идеи, примеры использования (шаблоны Q&A, Ideas, Show and tell)
-- [Issues](https://github.com/cloudcastle-apps/di/issues) — баги и задачи на разработку
+- [GitHub Discussions](https://github.com/cloudcastle-apps/di/discussions) — вопросы, идеи, примеры
+- [Issues](https://github.com/cloudcastle-apps/di/issues) — баги и задачи
 
 ## Документация
 
+- [Wiki — главная](https://github.com/cloudcastle-apps/di/wiki/Home) · [быстрый старт](https://github.com/cloudcastle-apps/di/wiki/Quick-start) · [autowiring](https://github.com/cloudcastle-apps/di/wiki/Autowiring) · [API](https://github.com/cloudcastle-apps/di/wiki/API-reference)
+- Исходники Wiki в каталоге [`wiki/`](wiki/Home.md) (внутренние ссылки с суффиксом `.md`)
 - [Поддержка](SUPPORT.md) — куда обратиться за помощью
-- [Руководство для разработчиков](CONTRIBUTING.md) — настройка окружения, тесты, CI
-- [Кодекс поведения](CODE_OF_CONDUCT.md)
-- [Управление проектом](GOVERNANCE.md)
-- [Политика безопасности](SECURITY.md)
-- [История изменений](CHANGELOG.md)
-- [Обновление версий](UPGRADING.md)
-- API-документация: `composer docs` → каталог `docs/` (руководство в `doc/guide/`, генерируется локально)
+- [Руководство для разработчиков](CONTRIBUTING.md) — окружение, тесты, CI
+- [История изменений](CHANGELOG.md) · [Обновление версий](UPGRADING.md)
+- API-документация: `composer docs` → каталог `docs/`
 
 ## Качество
 
@@ -95,7 +169,7 @@ composer install
 composer ci
 ```
 
-Пайплайн включает линтеры, PHPStan (max), Psalm (level 1), PHPMD, Deptrac, Rector, unit/integration/security/load/performance-тесты, покрытие 100%, мутационное тестирование (Infection MSI 100%).
+Пайплайн: линтеры, PHPStan (max), Psalm (L1), PHPMD, Deptrac, Rector, unit/integration/security/load/performance-тесты, покрытие строк ≥95%, Infection MSI ≥95%.
 
 ## Лицензия
 

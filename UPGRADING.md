@@ -2,6 +2,27 @@
 
 Руководство по переходу между версиями **cloudcastle/di**.
 
+## 1.0.3 → 1.1.0
+
+### Новые возможности (обратно совместимо)
+
+- Autowiring: `enableAutowiring()`, `autowire()`, расширенные `get()` / `has()`
+- PHP attributes `Inject` / `Autowire` (конструктор, свойства, методы), intersection-типы, autowiring по имени параметра
+- Autowiring свойств и методов: `enablePropertyAutowiring()`, `enableMethodAutowiring()`
+- Сканирование каталогов: `scan()`
+- Tagged services и декораторы: `tag()`, `getTagged()`, `decorate()`
+- Глобальный реестр: `ContainerRegistry`
+
+Код, использующий только `set()` / `get()`, **не требует изменений**.
+
+### Рекомендации
+
+1. Обновите пакет: `composer update cloudcastle/di`
+2. При использовании `ContainerRegistry` добавьте `ContainerRegistry::reset()` в PHPUnit `tearDown`
+3. Перед `scan()` прочитайте Wiki «Autowiring» и «Анти-паттерны»
+
+Подробнее — [Wiki Upgrading](https://github.com/cloudcastle-apps/di/wiki/Upgrading) · [wiki/Upgrading.md](wiki/Upgrading.md).
+
 ## 1.0.2 → 1.0.3
 
 Изменений в публичном API нет. Wiki, CI и dev-зависимости:
