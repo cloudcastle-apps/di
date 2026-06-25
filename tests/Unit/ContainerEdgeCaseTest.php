@@ -33,7 +33,7 @@ final class ContainerEdgeCaseTest extends TestCase
     public function testFactoryCanBeInvokableObject(): void
     {
         $container = new Container();
-        $factory = new class {
+        $factory = new class () {
             public int $calls = 0;
 
             public function __invoke(): string
@@ -53,7 +53,7 @@ final class ContainerEdgeCaseTest extends TestCase
     public function testFactoryCanBeCallableArray(): void
     {
         $container = new Container();
-        $factory = new class {
+        $factory = new class () {
             public function create(): stdClass
             {
                 return new stdClass();

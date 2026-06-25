@@ -10,6 +10,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use stdClass;
+use Throwable;
 
 /**
  * Проверки безопасного поведения контейнера при ошибках и нестандартных идентификаторах.
@@ -87,7 +88,7 @@ final class ContainerSecurityTest extends TestCase
         try {
             $container->get('alpha');
             self::fail('Ожидалась ошибка при циклической зависимости.');
-        } catch (\Throwable $throwable) {
+        } catch (Throwable $throwable) {
             self::assertNotInstanceOf(NotFoundException::class, $throwable);
         }
     }
