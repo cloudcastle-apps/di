@@ -26,11 +26,27 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Publish to GitHub Wiki
-        uses: Andrew-Chen-Wang/github-wiki-action@v4
-        with:
-          path: wiki
-          token: ${{ secrets.GITHUB_TOKEN }}
-          commit-user-name: github-actions[bot]
-          commit-user-email: github-actions[bot]@users.noreply.github.com
-          commit-message: Sync wiki from repository
-          strategy: init
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          workdir="$(mktemp -d)"
+          cp -a wiki/. "$workdir/"
+          cd "$workdir"
+          git init -b master
+          git add -A
+          git commit -m "Sync wiki from repository"
+
+          remote="https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.wiki.git"
+          if git push -f "$remote" master; then
+            echo "Wiki published."
+            exit 0
+          fi
+
+          echo "::warning::Wiki git repo not initialized yet. Create the first page in the GitHub UI:"
+          echo "https://github.com/${GITHUB_REPOSITORY}/wiki/_new"
+          exit 1
