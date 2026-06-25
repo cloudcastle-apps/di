@@ -3,6 +3,15 @@
 Формат основан на [Keep a Changelog](https://keepachangelog.com/ru/1.1.0/),
 версионирование — [SemVer](https://semver.org/lang/ru/).
 
+## [1.0.2] — 2026-06-25
+
+### Добавлено
+
+- Расширенные `keywords` и двуязычное `description` в `composer.json` для поиска на Packagist
+- README: English lead, таблица сравнения с PHP-DI / Symfony / Pimple, badges CI и coverage
+- GitHub topics репозитория (`php`, `dependency-injection`, `psr-11`, …)
+- CODEOWNERS, Dependabot, `UPGRADING.md`, user guide в `doc/guide/`
+
 ## [1.0.1] — 2026-06-25
 
 ### Исправлено
@@ -30,5 +39,6 @@
 - CI для GitHub Actions и GitLab CI
 - Инструменты качества: PHPStan max, Psalm level 1, PHPCS, PHPMD, Deptrac, Rector
 
+[1.0.2]: https://github.com/cloudcastle-apps/di/releases/tag/v1.0.2
 [1.0.1]: https://github.com/cloudcastle-apps/di/releases/tag/v1.0.1
 [1.0.0]: https://github.com/cloudcastle-apps/di/releases/tag/v1.0.0

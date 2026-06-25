@@ -1,13 +1,24 @@
 {
     "name": "cloudcastle/di",
-    "description": "Контейнер внедрения зависимостей для PHP",
+    "description": "Lightweight PSR-11 dependency injection container for PHP 8.3+. Лёгкий DI-контейнер без autowiring, одна зависимость psr/container.",
     "license": "MIT",
     "type": "library",
     "keywords": [
-        "di",
-        "dependency-injection",
+        "cloudcastle",
         "container",
-        "psr-11"
+        "dependency-injection",
+        "dependency-injection-container",
+        "di",
+        "injection",
+        "ioc",
+        "lightweight",
+        "micro",
+        "minimal",
+        "php8",
+        "php83",
+        "psr-11",
+        "psr11",
+        "service-container"
     ],
     "authors": [
         {

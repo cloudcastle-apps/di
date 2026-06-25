@@ -1,6 +1,28 @@
 # CloudCastle DI
 
-Лёгкий контейнер внедрения зависимостей для PHP 8.3+ с поддержкой [PSR-11](https://www.php-fig.org/psr/psr-11/).
+**English:** Lightweight [PSR-11](https://www.php-fig.org/psr/psr-11/) dependency injection container for PHP 8.3+. Explicit `set()` / `get()` wiring, singleton factories, zero autowiring — one runtime dependency (`psr/container`).
+
+**Русский:** Лёгкий контейнер внедрения зависимостей для PHP 8.3+ с поддержкой PSR-11. Явная регистрация сервисов, singleton-фабрики, без autowiring.
+
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/cloudcastle/di.svg)](https://packagist.org/packages/cloudcastle/di)
+[![Total Downloads](https://img.shields.io/packagist/dt/cloudcastle/di.svg)](https://packagist.org/packages/cloudcastle/di)
+[![PHP Version](https://img.shields.io/packagist/php-v/cloudcastle/di.svg)](https://packagist.org/packages/cloudcastle/di)
+[![License](https://img.shields.io/packagist/l/cloudcastle/di.svg)](https://packagist.org/packages/cloudcastle/di)
+[![Quality](https://github.com/cloudcastle-apps/di/actions/workflows/quality.yml/badge.svg)](https://github.com/cloudcastle-apps/di/actions/workflows/quality.yml)
+[![Coverage](https://img.shields.io/badge/coverage-100%25-brightgreen)](https://github.com/cloudcastle-apps/di/blob/main/CONTRIBUTING.md)
+[![GitHub Discussions](https://img.shields.io/github/discussions/cloudcastle-apps/di)](https://github.com/cloudcastle-apps/di/discussions)
+
+## Когда выбрать CloudCastle DI
+
+| | CloudCastle DI | PHP-DI | Symfony DI | Pimple |
+|---|:---:|:---:|:---:|:---:|
+| PSR-11 | ✓ | ✓ | ✓ | частично |
+| Autowiring / attributes | — | ✓ | ✓ | — |
+| Явный `set()` API | ✓ | ✓ | ✓ | ✓ |
+| Минимум зависимостей | ✓ (`psr/container`) | больше | фреймворк | ✓ |
+| Подходит для micro-library / bootstrap | ✓ | ✓ | избыточен | ✓ |
+
+Идеален, когда нужен **простой контейнер** для composition root, тестов или небольшого приложения без магии reflection.
 
 ## Возможности
 
@@ -21,10 +43,6 @@
 ```bash
 composer require cloudcastle/di
 ```
-
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/cloudcastle/di.svg)](https://packagist.org/packages/cloudcastle/di)
-[![Total Downloads](https://img.shields.io/packagist/dt/cloudcastle/di.svg)](https://packagist.org/packages/cloudcastle/di)
-[![GitHub Discussions](https://img.shields.io/github/discussions/cloudcastle-apps/di)](https://github.com/cloudcastle-apps/di/discussions)
 
 ## Быстрый старт
 
