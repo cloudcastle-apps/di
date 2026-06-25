@@ -1,0 +1,59 @@
+<?php
+
+declare(strict_types=1);
+
+/**
+ * Проверяет, что покрытие строк кода в clover-отчёте не ниже 100%.
+ */
+
+$cloverPath = $argv[1] ?? 'var/coverage/clover.xml';
+
+if (!is_file($cloverPath)) {
+    fwrite(STDERR, sprintf('Файл отчёта покрытия не найден: %s%s', $cloverPath, PHP_EOL));
+
+    exit(1);
+}
+
+$xml = simplexml_load_file($cloverPath);
+
+if ($xml === false) {
+    fwrite(STDERR, 'Не удалось разобрать clover.xml.' . PHP_EOL);
+
+    exit(1);
+}
+
+$metrics = $xml->project->metrics ?? null;
+
+if ($metrics === null) {
+    fwrite(STDERR, 'В clover.xml отсутствуют метрики проекта.' . PHP_EOL);
+
+    exit(1);
+}
+
+$statements = (int) $metrics['statements'];
+$coveredStatements = (int) $metrics['coveredstatements'];
+
+if ($statements === 0) {
+    fwrite(STDERR, 'Нет исполняемых строк для покрытия.' . PHP_EOL);
+
+    exit(1);
+}
+
+$percentage = ($coveredStatements / $statements) * 100;
+
+if ($percentage < 100) {
+    fwrite(
+        STDERR,
+        sprintf(
+            'Покрытие строк %.2f%% (%d/%d) — требуется 100%%.%s',
+            $percentage,
+            $coveredStatements,
+            $statements,
+            PHP_EOL,
+        ),
+    );
+
+    exit(1);
+}
+
+echo sprintf('Покрытие строк: 100%% (%d/%d).%s', $coveredStatements, $statements, PHP_EOL);

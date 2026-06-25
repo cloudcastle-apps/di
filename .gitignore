@@ -1,0 +1,11 @@
+/vendor/
+/var/
+/docs/
+/.phpdoc/
+/.phpunit.cache/
+/.php-cs-fixer.cache
+/.psalm/
+/psalm.xml.baseline
+/phpstan-baseline.neon
+/.deptrac.cache
+/tools/*.phar

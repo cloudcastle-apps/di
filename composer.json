@@ -1,0 +1,197 @@
+{
+    "name": "cloudcastle/di",
+    "description": "Контейнер внедрения зависимостей для PHP",
+    "license": "MIT",
+    "type": "library",
+    "version": "1.0.0",
+    "keywords": [
+        "di",
+        "dependency-injection",
+        "container",
+        "psr-11"
+    ],
+    "authors": [
+        {
+            "name": "CloudCastle",
+            "homepage": "https://github.com/CloudCastle"
+        }
+    ],
+    "require": {
+        "php": "^8.3",
+        "psr/container": "^2.0"
+    },
+    "require-dev": {
+        "deptrac/deptrac": "^3.0",
+        "ergebnis/composer-normalize": "^2.45",
+        "friendsofphp/php-cs-fixer": "^3.75",
+        "icanhazstring/composer-unused": "^0.9",
+        "infection/infection": "^0.29",
+        "php-parallel-lint/php-parallel-lint": "^1.4",
+        "phpdocumentor/shim": "^3.7",
+        "phpmd/phpmd": "^2.15",
+        "phpstan/extension-installer": "^1.4",
+        "phpstan/phpstan": "^2.1",
+        "phpstan/phpstan-deprecation-rules": "^2.0",
+        "phpstan/phpstan-phpunit": "^2.0",
+        "phpstan/phpstan-strict-rules": "^2.0",
+        "phpunit/phpunit": "^11.5",
+        "psalm/plugin-phpunit": "^0.19",
+        "rector/rector": "^2.0",
+        "roave/security-advisories": "dev-latest",
+        "squizlabs/php_codesniffer": "^3.12",
+        "vimeo/psalm": "^6.0"
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true,
+    "autoload": {
+        "psr-4": {
+            "CloudCastle\\DI\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "CloudCastle\\DI\\Tests\\": "tests/"
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "ergebnis/composer-normalize": true,
+            "infection/extension-installer": true,
+            "php-http/discovery": true,
+            "phpdocumentor/shim": true,
+            "phpstan/extension-installer": true
+        },
+        "audit": {
+            "abandoned": "ignore"
+        },
+        "fund": false,
+        "platform": {
+            "php": "8.3.31"
+        },
+        "sort-packages": true
+    },
+    "scripts": {
+        "analyse": [
+            "@phpstan",
+            "@psalm"
+        ],
+        "check": [
+            "@lint",
+            "@analyse",
+            "@phpcs",
+            "@phpmd",
+            "@deptrac",
+            "@test"
+        ],
+        "ci": [
+            "@ci:meta",
+            "@ci:linters",
+            "@ci:static-analysis",
+            "@ci:tests",
+            "@docs:check"
+        ],
+        "ci:linters": [
+            "@lint",
+            "@cs-check",
+            "@phpcs"
+        ],
+        "ci:meta": [
+            "@ci:prepare",
+            "@composer-normalize-check",
+            "@deps-audit",
+            "@unused"
+        ],
+        "ci:prepare": "@php -r \"foreach (['var/cache', 'var/cache/phpstan', 'var/cache/infection', 'var/cache/phpdoc', 'var/coverage', 'var/infection'] as \\$dir) { is_dir(\\$dir) || mkdir(\\$dir, 0777, true); }\"",
+        "ci:static-analysis": [
+            "@phpstan",
+            "@psalm",
+            "@phpmd",
+            "@deptrac",
+            "@rector"
+        ],
+        "ci:tests": [
+            "@test:unit",
+            "@test:integration",
+            "@test:security",
+            "@test:load",
+            "@test:performance",
+            "@test:coverage",
+            "@test:mutation"
+        ],
+        "composer-normalize": "composer normalize",
+        "composer-normalize-check": "composer normalize --dry-run",
+        "coverage-check": "@php tools/coverage-check.php var/coverage/clover.xml",
+        "cs-check": "php-cs-fixer fix --dry-run --diff --verbose",
+        "cs-fix": "php-cs-fixer fix --verbose",
+        "deps-audit": "composer audit --no-ansi",
+        "deptrac": "deptrac analyse --fail-on-uncovered --report-uncovered",
+        "docs": "bash bin/generate-docs.sh",
+        "docs:check": "bash bin/generate-docs.sh",
+        "infection": "infection --quiet --threads=max --show-mutations --min-msi=100 --min-covered-msi=100",
+        "lint": "parallel-lint --colors src tests",
+        "phpcbf": "phpcbf",
+        "phpcs": "phpcs",
+        "phpmd": "phpmd src,tests text phpmd.xml",
+        "phpstan": "phpstan analyse --memory-limit=512M",
+        "phpunit": "phpunit",
+        "psalm": "psalm --no-cache --no-progress",
+        "rector": "rector process --dry-run",
+        "rector-fix": "rector process",
+        "test": [
+            "@test:unit",
+            "@test:integration",
+            "@test:security",
+            "@test:load"
+        ],
+        "test:coverage": [
+            "@putenv XDEBUG_MODE=coverage",
+            "phpunit --configuration phpunit.coverage.xml.dist --coverage-text --coverage-clover var/coverage/clover.xml",
+            "@coverage-check"
+        ],
+        "test:integration": "phpunit --testsuite integration",
+        "test:load": "phpunit --testsuite load",
+        "test:mutation": "@infection",
+        "test:performance": "phpunit --testsuite performance",
+        "test:security": "phpunit --testsuite security",
+        "test:unit": "phpunit --testsuite unit",
+        "unused": "composer-unused"
+    },
+    "scripts-descriptions": {
+        "analyse": "Статический анализ: PHPStan + Psalm",
+        "check": "Полный набор проверок качества перед коммитом",
+        "ci": "Полный CI-пайплайн: meta → linters → static-analysis → tests",
+        "ci:linters": "CI: синтаксис, PHP CS Fixer, PHPCS",
+        "ci:meta": "CI: normalize, audit, unused",
+        "ci:prepare": "Создание каталогов кэша для инструментов качества",
+        "ci:static-analysis": "CI: PHPStan, Psalm, PHPMD, Deptrac, Rector",
+        "ci:tests": "CI: unit, integration, security, load, performance, coverage, mutation",
+        "composer-normalize": "Нормализация composer.json",
+        "composer-normalize-check": "Проверка нормализации composer.json",
+        "coverage-check": "Проверка clover-отчёта на 100% покрытия строк",
+        "cs-check": "Проверка стиля кода без изменений",
+        "cs-fix": "Автоисправление стиля кода",
+        "deps-audit": "Проверка уязвимостей зависимостей (composer audit)",
+        "deptrac": "Проверка архитектурных слоёв",
+        "docs": "Генерация API-документации в docs/",
+        "docs:check": "Проверка сборки API-документации",
+        "infection": "Мутационное тестирование (алиас test:mutation)",
+        "lint": "Проверка синтаксиса PHP",
+        "phpcbf": "Автоисправление PHPCS",
+        "phpcs": "Проверка стандарта кодирования PSR-12",
+        "phpmd": "PHP Mess Detector",
+        "phpstan": "Статический анализ PHPStan",
+        "phpunit": "Запуск unit-тестов",
+        "psalm": "Статический анализ Psalm",
+        "rector": "Проверка правил рефакторинга (dry-run)",
+        "rector-fix": "Применение правил рефакторинга",
+        "test": "PHPUnit: unit + integration + security + load",
+        "test:coverage": "PHPUnit с проверкой 100% покрытия строк",
+        "test:integration": "Интеграционные тесты",
+        "test:load": "Нагрузочные тесты",
+        "test:mutation": "Мутационные тесты (Infection)",
+        "test:performance": "Тесты производительности (PHPUnit)",
+        "test:security": "Тесты безопасности",
+        "test:unit": "Unit-тесты",
+        "unused": "Поиск неиспользуемых зависимостей"
+    }
+}

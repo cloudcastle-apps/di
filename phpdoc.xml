@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpdocumentor
+    configVersion="3"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="https://www.phpdoc.org"
+    xsi:schemaLocation="https://www.phpdoc.org https://docs.phpdoc.org/latest/phpdoc.xsd"
+>
+    <title>CloudCastle DI</title>
+    <paths>
+        <output>docs</output>
+        <cache>var/cache/phpdoc</cache>
+    </paths>
+    <version number="1.0.0">
+        <api>
+            <source dsn=".">
+                <path>src</path>
+            </source>
+            <ignore hidden="true">
+                <path>tests</path>
+                <path>vendor</path>
+                <path>var</path>
+            </ignore>
+        </api>
+        <guide format="rst">
+            <source dsn=".">
+                <path>doc/guide</path>
+            </source>
+            <output>guide</output>
+        </guide>
+    </version>
+</phpdocumentor>

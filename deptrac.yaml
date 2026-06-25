@@ -1,0 +1,54 @@
+deptrac:
+    paths:
+        - ./src
+        - ./tests
+    exclude_files:
+        - '#.*Test\.php$#'
+    cache_file: var/cache/deptrac.cache
+
+    layers:
+        - name: External
+          collectors:
+              - type: classLike
+                value: Psr\\.*
+
+        - name: Contract
+          collectors:
+              - type: classLike
+                value: CloudCastle\\DI\\Contract\\.*
+
+        - name: Core
+          collectors:
+              - type: classLike
+                value: CloudCastle\\DI\\(?!Contract\\|Exception\\|Tests\\).*
+
+        - name: Exception
+          collectors:
+              - type: classLike
+                value: CloudCastle\\DI\\Exception\\.*
+
+        - name: Tests
+          collectors:
+              - type: classLike
+                value: CloudCastle\\DI\\Tests\\.*
+
+    ruleset:
+        Contract:
+            - Core
+            - Exception
+            - External
+            - Tests
+        Core:
+            - Contract
+            - Exception
+            - External
+            - Tests
+        Exception:
+            - Contract
+            - External
+            - Tests
+        Tests:
+            - Contract
+            - Core
+            - Exception
+            - External

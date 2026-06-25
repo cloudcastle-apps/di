@@ -1,0 +1,100 @@
+name: Quality
+
+on:
+  push:
+    branches:
+      - main
+      - master
+    tags:
+      - '**'
+  pull_request:
+
+concurrency:
+  group: quality-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  quality:
+    name: PHP ${{ matrix.php-version }}
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        php-version:
+          - '8.3'
+          - '8.4'
+          - '8.5'
+
+    env:
+      COMPOSER_ALLOW_SUPERUSER: '1'
+      COMPOSER_NO_INTERACTION: '1'
+      XDEBUG_MODE: coverage
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          extensions: zip, pcov
+          tools: composer:v2
+          coverage: pcov
+
+      - name: Get Composer cache directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> "$GITHUB_OUTPUT"
+
+      - name: Cache dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            vendor
+            ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-php-${{ matrix.php-version }}-composer-${{ hashFiles('composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-php-${{ matrix.php-version }}-composer-
+
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-progress --no-ansi
+
+      - name: PHP version
+        run: php -v
+
+      - name: Meta checks
+        run: composer ci:meta
+
+      - name: Linters
+        run: composer ci:linters
+
+      - name: Static analysis
+        run: composer ci:static-analysis
+
+      - name: Tests unit
+        run: composer test:unit
+
+      - name: Tests integration
+        run: composer test:integration
+
+      - name: Tests security
+        run: composer test:security
+
+      - name: Tests load
+        run: composer test:load
+
+      - name: Tests performance
+        run: composer test:performance
+
+      - name: Tests coverage
+        run: composer test:coverage
+
+      - name: Tests mutation
+        run: composer test:mutation
+
+      - name: Documentation
+        run: composer docs:check

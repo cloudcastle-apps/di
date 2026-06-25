@@ -1,0 +1,93 @@
+stages:
+  - quality
+
+variables:
+  COMPOSER_ALLOW_SUPERUSER: "1"
+  COMPOSER_CACHE_DIR: "$CI_PROJECT_DIR/.composer-cache"
+  COMPOSER_NO_INTERACTION: "1"
+  XDEBUG_MODE: "coverage"
+
+.default-php-quality:
+  stage: quality
+  image: php:${PHP_VERSION}-cli
+  before_script:
+    - apt-get update -qq
+    - apt-get install -y --no-install-recommends git unzip zip libzip-dev $PHPIZE_DEPS
+    - pecl install pcov
+    - docker-php-ext-enable pcov
+    - docker-php-ext-install -j"$(nproc)" zip
+    - curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+    - composer install --prefer-dist --no-progress --no-ansi
+  cache:
+    key:
+      files:
+        - composer.lock
+      prefix: "${CI_COMMIT_REF_SLUG}-php-${PHP_VERSION}"
+    paths:
+      - vendor/
+      - .composer-cache/
+    policy: pull-push
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - if: $CI_COMMIT_BRANCH == "main"
+    - if: $CI_COMMIT_BRANCH == "master"
+    - if: $CI_COMMIT_TAG
+
+quality:php83:
+  extends: .default-php-quality
+  variables:
+    PHP_VERSION: "8.3"
+  script:
+    - php -v
+    - echo "=== Meta ==="
+    - composer ci:meta
+    - echo "=== Linters ==="
+    - composer ci:linters
+    - echo "=== Static analysis ==="
+    - composer ci:static-analysis
+    - echo "=== Tests: unit ==="
+    - composer test:unit
+    - echo "=== Tests: integration ==="
+    - composer test:integration
+    - echo "=== Tests: security ==="
+    - composer test:security
+    - echo "=== Tests: load ==="
+    - composer test:load
+    - echo "=== Tests: performance ==="
+    - composer test:performance
+    - echo "=== Tests: coverage ==="
+    - composer test:coverage
+    - echo "=== Tests: mutation ==="
+    - composer test:mutation
+    - echo "=== Documentation ==="
+    - composer docs:check
+
+quality:php84:
+  extends: .default-php-quality
+  variables:
+    PHP_VERSION: "8.4"
+  script:
+    - php -v
+    - echo "=== Meta ==="
+    - composer ci:meta
+    - echo "=== Linters ==="
+    - composer ci:linters
+    - echo "=== Static analysis ==="
+    - composer ci:static-analysis
+    - echo "=== Tests: unit ==="
+    - composer test:unit
+    - echo "=== Tests: integration ==="
+    - composer test:integration
+    - echo "=== Tests: security ==="
+    - composer test:security
+    - echo "=== Tests: load ==="
+    - composer test:load
+    - echo "=== Tests: performance ==="
+    - composer test:performance
+    - echo "=== Tests: coverage ==="
+    - composer test:coverage
+    - echo "=== Tests: mutation ==="
+    - composer test:mutation
+    - echo "=== Documentation ==="
+    - composer docs:check

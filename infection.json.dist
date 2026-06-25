@@ -1,0 +1,25 @@
+{
+    "$schema": "vendor/infection/infection/resources/schema.json",
+    "source": {
+        "directories": [
+            "src"
+        ]
+    },
+    "logs": {
+        "text": "var/infection/infection.log",
+        "html": "var/infection/infection.html",
+        "summary": "var/infection/summary.log",
+        "json": "var/infection/infection.json",
+        "perMutator": "var/infection/per-mutator.md"
+    },
+    "mutators": {
+        "@default": true
+    },
+    "minMsi": 100,
+    "minCoveredMsi": 100,
+    "bootstrap": "vendor/autoload.php",
+    "phpUnit": {
+        "configDir": "."
+    },
+    "tmpDir": "var/cache/infection"
+}
