@@ -16,4 +16,4 @@
 - CI для GitHub Actions и GitLab CI
 - Инструменты качества: PHPStan max, Psalm level 1, PHPCS, PHPMD, Deptrac, Rector
 
-[1.0.0]: https://github.com/Zorin-Alexey/di/releases/tag/v1.0.0
+[1.0.0]: https://github.com/cloudcastle-apps/di/releases/tag/v1.0.0
