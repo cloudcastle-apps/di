@@ -16,6 +16,11 @@
             "homepage": "https://github.com/CloudCastle"
         }
     ],
+    "homepage": "https://github.com/Zorin-Alexey/di",
+    "support": {
+        "issues": "https://github.com/Zorin-Alexey/di/issues",
+        "source": "https://github.com/Zorin-Alexey/di"
+    },
     "require": {
         "php": "^8.3",
         "psr/container": "^2.0"
