@@ -1,0 +1,43 @@
+title: "[Idea] "
+labels: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Предложите улучшение **CloudCastle DI**: новый API, поведение контейнера, документация, DX.
+
+        Крупные изменения лучше сначала обсудить здесь, затем оформить Issue или PR.
+  - type: input
+    id: summary
+    attributes:
+      label: Кратко
+      description: Одна строка — суть идеи
+      placeholder: "Поддержка tagged services по атрибутам"
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: Какую проблему решает
+      description: Какой сценарий сейчас неудобен или невозможен?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Предложение
+      description: Как бы вы это реализовали или использовали?
+    validations:
+      required: true
+  - type: dropdown
+    id: scope
+    attributes:
+      label: Область
+      options:
+        - API контейнера
+        - Производительность
+        - Документация
+        - Инструменты / CI
+        - Другое
+    validations:
+      required: true

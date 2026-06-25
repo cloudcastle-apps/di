@@ -1,0 +1,34 @@
+title: "[Poll] "
+labels: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Опрос для сообщества **CloudCastle DI**.
+
+        После публикации добавьте варианты ответа через **Poll** в редакторе обсуждения (кнопка в тулбаре).
+  - type: input
+    id: poll_title
+    attributes:
+      label: Тема опроса
+      placeholder: "Какой PHP минимум поддерживать в 2.x?"
+    validations:
+      required: true
+  - type: textarea
+    id: options
+    attributes:
+      label: Варианты (черновик)
+      description: Перечислите варианты — перенесёте их в Poll после создания
+      value: |
+        1.
+        2.
+        3.
+    validations:
+      required: true
+  - type: textarea
+    id: rationale
+    attributes:
+      label: Зачем этот опрос
+      description: Какое решение зависит от результата?
+    validations:
+      required: false

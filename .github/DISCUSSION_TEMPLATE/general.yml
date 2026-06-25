@@ -1,0 +1,28 @@
+title: "[General] "
+labels: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Добро пожаловать в сообщество **CloudCastle DI**!
+
+        Здесь можно обсудить использование библиотеки, поделиться опытом или задать общий вопрос.
+        Для багов и фич — лучше [Issue](https://github.com/cloudcastle-apps/di/issues/new/choose).
+  - type: textarea
+    id: topic
+    attributes:
+      label: Тема
+      description: О чём хотите поговорить?
+      placeholder: "Например: как организовать фабрики для нескольких окружений"
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: Контекст
+      description: Версия пакета, PHP, фреймворк (если применимо)
+      placeholder: |
+        cloudcastle/di: v1.0.0
+        PHP: 8.3
+    validations:
+      required: false

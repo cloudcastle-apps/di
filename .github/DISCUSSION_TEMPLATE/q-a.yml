@@ -1,0 +1,41 @@
+title: "[Q&A] "
+labels: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Задайте вопрос по **CloudCastle DI**. Если нашли баг — оформите [Issue](https://github.com/cloudcastle-apps/di/issues/new/choose).
+
+        Отметьте **Answer** на комментарии, который помог — так проще найти решение другим.
+  - type: input
+    id: package_version
+    attributes:
+      label: Версия cloudcastle/di
+      placeholder: "v1.0.0 или dev-main"
+    validations:
+      required: true
+  - type: dropdown
+    id: php_version
+    attributes:
+      label: Версия PHP
+      options:
+        - "8.3"
+        - "8.4"
+        - "8.5"
+        - "Другая"
+    validations:
+      required: true
+  - type: textarea
+    id: question
+    attributes:
+      label: Вопрос
+      description: Что вы пытаетесь сделать и что не получается?
+    validations:
+      required: true
+  - type: textarea
+    id: tried
+    attributes:
+      label: Что уже пробовали
+      placeholder: "Минимальный пример кода, если есть"
+    validations:
+      required: false

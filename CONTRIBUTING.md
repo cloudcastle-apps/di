@@ -97,5 +97,8 @@ composer ci
 
 ## Сообщить о проблеме
 
-- Баги и предложения — через Issues репозитория
-- Уязвимости — см. [SECURITY.md](SECURITY.md)
+| Куда | Когда |
+|------|--------|
+| [Discussions](https://github.com/cloudcastle-apps/di/discussions) | Вопросы по использованию, идеи API, обмен опытом — выберите шаблон (Q&A, Ideas, …) |
+| [Issues](https://github.com/cloudcastle-apps/di/issues) | Подтверждённые баги, конкретные задачи на PR |
+| [SECURITY.md](SECURITY.md) | Уязвимости (не публикуйте детали в Issues/Discussions) |

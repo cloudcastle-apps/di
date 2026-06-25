@@ -1,0 +1,35 @@
+title: "[Announcement] "
+labels: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Только для maintainers:** релизы, breaking changes, важные новости проекта.
+
+        Для обычных вопросов используйте категории General или Q&A.
+  - type: input
+    id: headline
+    attributes:
+      label: Заголовок
+      placeholder: "Выпущен cloudcastle/di v1.1.0"
+    validations:
+      required: true
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Тип
+      options:
+        - Релиз
+        - Breaking change
+        - Безопасность
+        - Обслуживание / CI
+        - Другое
+    validations:
+      required: true
+  - type: textarea
+    id: body
+    attributes:
+      label: Текст объявления
+      description: Что изменилось, кому важно, ссылки на CHANGELOG / migration guide
+    validations:
+      required: true

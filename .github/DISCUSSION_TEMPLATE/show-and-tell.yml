@@ -1,0 +1,30 @@
+title: "[Show and tell] "
+labels: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Покажите, как вы используете **CloudCastle DI** в своём проекте — интеграция, паттерны, примеры конфигурации.
+
+        Скриншоты, сниппеты и ссылки на репозитории приветствуются.
+  - type: input
+    id: project
+    attributes:
+      label: Проект или контекст
+      placeholder: "Мой SaaS / внутренний сервис / pet-project"
+    validations:
+      required: true
+  - type: textarea
+    id: story
+    attributes:
+      label: Рассказ
+      description: Что сделали, как устроен контейнер, что понравилось или было сложно
+    validations:
+      required: true
+  - type: input
+    id: link
+    attributes:
+      label: Ссылка (опционально)
+      placeholder: "https://github.com/..."
+    validations:
+      required: false

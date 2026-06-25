@@ -24,6 +24,7 @@ composer require cloudcastle/di
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/cloudcastle/di.svg)](https://packagist.org/packages/cloudcastle/di)
 [![Total Downloads](https://img.shields.io/packagist/dt/cloudcastle/di.svg)](https://packagist.org/packages/cloudcastle/di)
+[![GitHub Discussions](https://img.shields.io/github/discussions/cloudcastle-apps/di)](https://github.com/cloudcastle-apps/di/discussions)
 
 ## Быстрый старт
 
@@ -52,6 +53,11 @@ $repository = $container->get('repository');
 | `has(string $id): bool` | Проверяет, доступен ли сервис (зарегистрирован или уже создан) |
 | `set(string $id, mixed $concrete): void` | Регистрирует экземпляр или фабрику; сбрасывает кэш singleton |
 | `hasDefinition(string $id): bool` | Проверяет регистрацию без создания экземпляра |
+
+## Сообщество
+
+- [GitHub Discussions](https://github.com/cloudcastle-apps/di/discussions) — вопросы, идеи, примеры использования (шаблоны Q&A, Ideas, Show and tell)
+- [Issues](https://github.com/cloudcastle-apps/di/issues) — баги и задачи на разработку
 
 ## Документация
 
