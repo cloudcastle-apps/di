@@ -3,11 +3,10 @@
 # Кнопка «Sponsor» на странице репозитория.
 # https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/displaying-a-sponsor-button-in-your-repository
 #
-# github — нативная интеграция GitHub Sponsors (после одобрения org cloudcastle-apps).
-# custom — дополнительные ссылки в меню кнопки (до 4 URL).
-
-github:
-  - cloudcastle-apps
+# После одобрения GitHub Sponsors для cloudcastle-apps раскомментируйте блок github:
+#
+# github:
+#   - cloudcastle-apps
 
 custom:
   - https://github.com/sponsors/cloudcastle-apps
