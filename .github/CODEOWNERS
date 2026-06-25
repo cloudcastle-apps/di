@@ -1,0 +1,8 @@
+# Владельцы кода — автоназначение ревьюеров на Pull Request.
+# https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+* @Zorin-Alexey
+
+/src/ @Zorin-Alexey
+/tests/ @Zorin-Alexey
+/.github/ @Zorin-Alexey

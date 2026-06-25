@@ -94,8 +94,10 @@ composer ci
 
 ## CI
 
-- GitHub Actions: `.github/workflows/quality.yml`
+- GitHub Actions: `.github/workflows/quality.yml`, `.github/workflows/packagist.yml`
 - GitLab CI: `.gitlab-ci.yml`
+- Dependabot: `.github/dependabot.yml` (Composer dev, GitHub Actions)
+- CODEOWNERS: `.github/CODEOWNERS`
 
 Оба пайплайна запускают PHP 8.3 и 8.4 с тем же набором проверок, что и `composer ci`.
 

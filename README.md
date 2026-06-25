@@ -67,7 +67,8 @@ $repository = $container->get('repository');
 - [Управление проектом](GOVERNANCE.md)
 - [Политика безопасности](SECURITY.md)
 - [История изменений](CHANGELOG.md)
-- API-документация: `composer docs` → каталог `docs/` (генерируется локально)
+- [Обновление версий](UPGRADING.md)
+- API-документация: `composer docs` → каталог `docs/` (руководство в `doc/guide/`, генерируется локально)
 
 ## Качество
 

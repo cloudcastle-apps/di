@@ -10,7 +10,7 @@
         <output>docs</output>
         <cache>var/cache/phpdoc</cache>
     </paths>
-    <version number="1.0.0">
+    <version number="1.0.1">
         <api>
             <source dsn=".">
                 <path>src</path>
