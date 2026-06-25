@@ -1,0 +1,16 @@
+cff-version: 1.2.0
+title: CloudCastle DI
+message: "If you use this software, please cite it as below."
+type: software
+authors:
+  - name: CloudCastle
+    affiliation: cloudcastle-apps
+repository-code: https://github.com/cloudcastle-apps/di
+url: https://packagist.org/packages/cloudcastle/di
+license: MIT
+version: 1.0.0
+keywords:
+  - php
+  - dependency-injection
+  - container
+  - psr-11

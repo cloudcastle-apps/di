@@ -1,0 +1,54 @@
+name: Баг
+description: Сообщить о воспроизводимой ошибке
+title: "[Bug] "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Для вопросов «как использовать» — [Discussions Q&A](https://github.com/cloudcastle-apps/di/discussions/new?category=q-a).
+  - type: input
+    id: version
+    attributes:
+      label: Версия cloudcastle/di
+      placeholder: v1.0.0 или dev-main
+    validations:
+      required: true
+  - type: dropdown
+    id: php
+    attributes:
+      label: PHP
+      options:
+        - "8.3"
+        - "8.4"
+        - "8.5"
+        - Другая
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Шаги воспроизведения
+      placeholder: "1. ... 2. ..."
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Ожидаемое поведение
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Фактическое поведение
+    validations:
+      required: true
+  - type: textarea
+    id: sample
+    attributes:
+      label: Минимальный пример кода
+      render: php
+    validations:
+      required: false

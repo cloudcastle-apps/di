@@ -1,0 +1,34 @@
+name: Улучшение
+description: Предложить новую возможность или изменение API
+title: "[Feature] "
+labels:
+  - enhancement
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Крупные идеи лучше сначала обсудить в [Discussions → Ideas](https://github.com/cloudcastle-apps/di/discussions/new?category=ideas).
+  - type: textarea
+    id: problem
+    attributes:
+      label: Какую задачу решаем
+      description: Какой сценарий сейчас неудобен?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Предложение
+      description: Как бы вы это реализовали?
+    validations:
+      required: true
+  - type: dropdown
+    id: breaking
+    attributes:
+      label: Breaking change?
+      options:
+        - Нет
+        - Да
+        - Не уверен
+    validations:
+      required: true

@@ -61,7 +61,10 @@ $repository = $container->get('repository');
 
 ## Документация
 
+- [Поддержка](SUPPORT.md) — куда обратиться за помощью
 - [Руководство для разработчиков](CONTRIBUTING.md) — настройка окружения, тесты, CI
+- [Кодекс поведения](CODE_OF_CONDUCT.md)
+- [Управление проектом](GOVERNANCE.md)
 - [Политика безопасности](SECURITY.md)
 - [История изменений](CHANGELOG.md)
 - API-документация: `composer docs` → каталог `docs/` (генерируется локально)

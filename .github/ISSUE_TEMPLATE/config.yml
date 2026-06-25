@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Вопрос (Discussions Q&A)
+    url: https://github.com/cloudcastle-apps/di/discussions/new?category=q-a
+    about: Задайте вопрос по использованию библиотеки — не создавайте Issue
+  - name: Идея (Discussions Ideas)
+    url: https://github.com/cloudcastle-apps/di/discussions/new?category=ideas
+    about: Обсудите улучшение API до оформления задачи
+  - name: Безопасность
+    url: https://github.com/cloudcastle-apps/di/security/advisories/new
+    about: Сообщите об уязвимости конфиденциально (не Issue)
