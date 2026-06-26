@@ -100,6 +100,7 @@
             "@phpstan",
             "@psalm"
         ],
+        "benchmark-report": "@php tools/benchmark-report.php --markdown",
         "check": [
             "@lint",
             "@analyse",
@@ -183,6 +184,7 @@
     },
     "scripts-descriptions": {
         "analyse": "Статический анализ: PHPStan + Psalm",
+        "benchmark-report": "Markdown-отчёт фактических времён бенчмарков",
         "check": "Полный набор проверок качества перед коммитом",
         "ci": "Полный CI-пайплайн: meta → linters → static-analysis → tests",
         "ci:linters": "CI: синтаксис, PHP CS Fixer, PHPCS",

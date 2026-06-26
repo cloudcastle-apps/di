@@ -1,0 +1,142 @@
+<?php
+
+declare(strict_types=1);
+
+namespace CloudCastle\DI;
+
+use Closure;
+use CloudCastle\DI\Contract\ContainerInterface;
+use CloudCastle\DI\Exception\ContainerException;
+use ReflectionFunction;
+use ReflectionFunctionAbstract;
+use ReflectionMethod;
+
+/**
+ * Вызывает callable с autowiring параметров через {@see MemberResolver}.
+ *
+ * Поддерживаемые формы callable:
+ * - `Closure` и first-class callable (`$obj->method(...)`);
+ * - массив `[object|class-string, string]` (метод экземпляра или static);
+ * - объект с методом `__invoke`;
+ * - строка с именем глобальной функции.
+ *
+ * Правила разрешения параметров совпадают с конструктором при {@see ContainerInterface::get()}:
+ * PHP attributes, autowiring по имени (если включён), разрешение по типу.
+ * Явные значения в `$parameters` переопределяют autowire по имени параметра.
+ *
+ * @see Container::call() Публичная точка входа в контейнере
+ */
+final readonly class CallableInvoker
+{
+    /**
+     * Разрешает зависимости параметров callable из контейнера.
+     */
+    private MemberResolver $memberResolver;
+
+    /**
+     * @param ContainerInterface $container Контейнер для autowiring параметров callable
+     */
+    public function __construct(ContainerInterface $container)
+    {
+        $this->memberResolver = new MemberResolver($container);
+    }
+
+    /**
+     * Вызывает callable, подставляя аргументы через autowiring и явные `$parameters`.
+     *
+     * @param callable $callable Вызываемая функция, closure, метод или invokable-объект
+     * @param array<string, mixed> $parameters Явные значения по имени параметра (переопределяют autowire)
+     *
+     * @throws ContainerException Если обязательный параметр не разрешается или callable некорректен
+     *
+     * @return mixed Результат вызова callable
+     */
+    public function invoke(callable $callable, array $parameters = []): mixed
+    {
+        $reflection = $this->reflectCallable($callable);
+        /** @var list<mixed> $arguments */
+        $arguments = [];
+
+        foreach ($reflection->getParameters() as $parameter) {
+            $name = $parameter->getName();
+
+            if (\array_key_exists($name, $parameters)) {
+                /** @psalm-suppress MixedAssignment */
+                $arguments[] = $parameters[$name];
+
+                continue;
+            }
+
+            /** @psalm-suppress MixedAssignment */
+            $arguments[] = $this->memberResolver->resolveParameter($parameter);
+        }
+
+        return $this->invokeWithArguments($callable, $reflection, $arguments);
+    }
+
+    /**
+     * Строит reflection для поддерживаемых форм callable.
+     *
+     * @param callable $callable Вызываемый callable
+     *
+     * @throws ContainerException Если тип callable не поддерживается
+     */
+    private function reflectCallable(callable $callable): ReflectionFunctionAbstract
+    {
+        if ($callable instanceof Closure) {
+            return new ReflectionFunction($callable);
+        }
+
+        if (\is_array($callable)) {
+            return new ReflectionMethod($callable[0], $callable[1]);
+        }
+
+        if (\is_object($callable)) {
+            return new ReflectionMethod($callable, '__invoke');
+        }
+
+        /** @psalm-suppress RedundantCondition — ветка нужна PHPStan для сужения callable до string */
+        if (\is_string($callable)) {
+            return new ReflectionFunction($callable);
+        }
+
+        throw new ContainerException('Неподдерживаемый тип callable.');
+    }
+
+    /**
+     * Выполняет callable с уже собранным списком аргументов.
+     *
+     * @param callable $callable Исходный callable
+     * @param ReflectionFunctionAbstract $reflection Reflection параметров callable
+     * @param list<mixed> $arguments Аргументы в порядке параметров
+     *
+     * @throws ContainerException Если для нестатического метода не найден объект-получатель
+     *
+     * @return mixed Результат вызова
+     */
+    private function invokeWithArguments(
+        callable $callable,
+        ReflectionFunctionAbstract $reflection,
+        array $arguments,
+    ): mixed {
+        if ($reflection instanceof ReflectionMethod) {
+            $target = null;
+
+            if (!$reflection->isStatic()) {
+                $target = \is_array($callable) ? $callable[0] : $callable;
+
+                if (!\is_object($target)) {
+                    throw new ContainerException('Callable метода требует объект.');
+                }
+            }
+
+            return $reflection->invokeArgs($target, $arguments);
+        }
+
+        if (!$reflection instanceof ReflectionFunction) {
+            throw new ContainerException('Неподдерживаемый тип reflection callable.');
+        }
+
+        return $reflection->invokeArgs($arguments);
+    }
+}

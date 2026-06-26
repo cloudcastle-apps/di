@@ -5,13 +5,17 @@ declare(strict_types=1);
 namespace CloudCastle\DI\Contract;
 
 use CloudCastle\DI\LazyService;
+use CloudCastle\DI\TaggedServiceIterator;
+use CloudCastle\DI\TaggedServiceLocator;
 use Psr\Container\ContainerInterface as PsrContainerInterface;
 
 /**
  * Контракт DI-контейнера CloudCastle, расширяющий PSR-11.
  *
  * Поверх {@see PsrContainerInterface} добавляет регистрацию сервисов ({@see set()}),
- * группировку по тегам, декораторы, autowiring и сканирование каталогов.
+ * группировку по тегам, декораторы, autowiring, сканирование каталогов, вызов callable ({@see call()}),
+ * привязку абстракций ({@see bind()}), массовую регистрацию ({@see addDefinitions()})
+ * и пост-обработку resolve ({@see afterResolving()}).
  *
  * Идентификатор сервиса — произвольная строка или FQCN при autowiring.
  * Явная регистрация через {@see set()} имеет приоритет над autowiring для того же id.
@@ -212,4 +216,84 @@ interface ContainerInterface extends PsrContainerInterface
      * @param string $serviceId Id сервиса для отложенного разрешения
      */
     public function lazy(string $serviceId): LazyService;
+
+    /**
+     * Регистрирует несколько определений за один вызов (последовательный {@see set()}).
+     *
+     * Каждая пара id → concrete обрабатывается как отдельный {@see set()}: сбрасывается singleton-кэш
+     * для id, явная регистрация имеет приоритет над autowiring.
+     *
+     * @param array<string, mixed> $definitions Карта id → экземпляр, скаляр или фабрика `callable(self): mixed`
+     */
+    public function addDefinitions(array $definitions): void;
+
+    /**
+     * Привязывает абстракцию к реализации одним вызовом.
+     *
+     * Если `$concrete` — имя **instantiable-класса**: вызываются {@see autowire()} и {@see alias()}.
+     * Если `$concrete` — существующий id, интерфейс с autowiring или alias: только {@see alias()}.
+     * Иначе — {@see \CloudCastle\DI\Exception\ContainerException}.
+     *
+     * @param string $abstract Интерфейс, абстрактный id или FQCN-алиас (то, по чему будут вызывать {@see get()})
+     * @param string $concrete FQCN реализации, id зарегистрированного сервиса или интерфейс
+     *
+     * @throws \CloudCastle\DI\Exception\ContainerException Если concrete нельзя привязать или цикл alias
+     */
+    public function bind(string $abstract, string $concrete): void;
+
+    /**
+     * Вызывает callable с autowiring параметров (те же правила, что у конструктора при {@see get()}).
+     *
+     * Поддерживаются closure, first-class callable, `[object, 'method']`, invokable-объекты
+     * и строки с именем глобальной функции. Ключи `$parameters` — имена параметров callable.
+     *
+     * @param callable $callable Вызываемая функция, метод или closure
+     * @param array<string, mixed> $parameters Явные аргументы по имени (переопределяют autowire)
+     *
+     * @throws \CloudCastle\DI\Exception\ContainerException Если обязательный параметр не разрешается
+     *
+     * @return mixed Результат вызова callable
+     */
+    public function call(callable $callable, array $parameters = []): mixed;
+
+    /**
+     * Регистрирует callback после **нового** создания сервиса при {@see get()} или {@see make()}.
+     *
+     * Не вызывается при повторном {@see get()}, если экземпляр уже в singleton-кэше.
+     * Каждый {@see make()} создаёт новый экземпляр и снова вызывает callback.
+     * Несколько callback для одного id выполняются в порядке регистрации.
+     * Callback получает id, созданный экземпляр и контейнер.
+     *
+     * @param string $id Идентификатор сервиса (как в {@see get()})
+     * @param callable(string, mixed, self): void $callback
+     */
+    public function afterResolving(string $id, callable $callback): void;
+
+    /**
+     * Возвращает id сервисов с тегом **без** вызова {@see get()} (без создания экземпляров).
+     *
+     * @param string $tag Имя тега
+     *
+     * @return list<string> Id в порядке {@see tag()}; пустой список для неизвестного тега
+     */
+    public function getTaggedIds(string $tag): array;
+
+    /**
+     * Возвращает итератор только **значений** сервисов тега (без ключей id).
+     *
+     * Порядок — как в {@see tag()}. Недоступные id пропускаются. При итерации вызывается {@see get()}.
+     *
+     * @param string $tag Имя тега
+     */
+    public function getTaggedIterator(string $tag): TaggedServiceIterator;
+
+    /**
+     * Возвращает locator: {@see TaggedServiceLocator::has()}, {@see TaggedServiceLocator::get()}
+     * и итерация `id => instance` по тегу.
+     *
+     * Список id фиксируется при создании locator. Итерация делегирует {@see getTagged()}.
+     *
+     * @param string $tag Имя тега
+     */
+    public function getTaggedLocator(string $tag): TaggedServiceLocator;
 }

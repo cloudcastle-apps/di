@@ -3,6 +3,25 @@
 Формат основан на [Keep a Changelog](https://keepachangelog.com/ru/1.1.0/),
 версионирование — [SemVer](https://semver.org/lang/ru/).
 
+## [1.3.0] — 2026-06-25
+
+### Добавлено
+
+- **`Container::call()`** — вызов callable с autowiring параметров; класс **`CallableInvoker`**
+- **`Container::bind()`** — привязка абстракции к классу (`autowire` + `alias`) или к существующему id
+- **`Container::addDefinitions()`** — массовая регистрация через `set()`
+- **`Container::afterResolving()`** — callback после создания сервиса (не при чтении из singleton-кэша); класс **`AfterResolvingDispatcher`**
+- **`getTaggedIds()`**, **`getTaggedIterator()`**, **`getTaggedLocator()`** — доступ к тегам без полного `getTagged()`; классы **`TaggedServiceIterator`**, **`TaggedServiceLocator`**
+- Wiki: [call(), bind(), afterResolving](wiki/Call-bind-callbacks.md); обновлены API, теги, архитектура
+
+### Изменено
+
+- README, CHANGELOG, UPGRADING, Wiki (Home, Architecture, API, FAQ, Quick-start, Bootstrap, Tags) под v1.3.0
+- Расширен PHPDoc классов v1.3 (`CallableInvoker`, `AfterResolvingDispatcher`, `TaggedServiceIterator`, `TaggedServiceLocator`, `Container`)
+- PHPMD: порог сложности `Container` и ignorepattern публичных методов API
+- **Тесты:** load 3→15, performance 4→12; `ContainerV13LoadTest`, `ContainerTaggedLoadTest`, `ContainerV13PerformanceTest`, `ContainerAutowirePerformanceTest`; `tools/benchmark-report.php`, `composer benchmark-report`
+- Wiki: [Нагрузка и производительность](wiki/Performance-and-load.md), обновлены [Testing](wiki/Testing.md), README, CONTRIBUTING
+
 ## [1.2.0] — 2026-06-26
 
 ### Добавлено

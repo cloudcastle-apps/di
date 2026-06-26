@@ -2,6 +2,29 @@
 
 Руководство по переходу между версиями **cloudcastle/di**.
 
+## 1.2.0 → 1.3.0
+
+### Новые возможности (обратно совместимо)
+
+- **`call()`**, **`bind()`**, **`addDefinitions()`**, **`afterResolving()`**
+- **`getTaggedIds()`**, **`getTaggedIterator()`**, **`getTaggedLocator()`**
+
+Существующий код с только `set()` / `get()` **работает без изменений**.
+
+### Рекомендуемые шаги
+
+```bash
+composer update cloudcastle/di
+```
+
+См. [call(), bind(), afterResolving](Call-bind-callbacks) · [Теги и декораторы](Tags-and-decorators).
+
+### Рекомендации
+
+- `bind()` вместо пары `autowire()` + `alias()` для интерфейсов
+- `getTaggedIds()` когда не нужно создавать все сервисы тега сразу
+- `afterResolving()` для warmup/аудита после первого `get()`, не при каждом чтении из кэша
+
 ## 1.1.0 → 1.2.0
 
 ### Новые возможности (обратно совместимо)

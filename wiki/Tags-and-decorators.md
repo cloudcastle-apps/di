@@ -51,6 +51,51 @@ $container->tag(App\Handler\EmailHandler::class, 'handlers');
 $handlers = $container->getTagged('handlers');
 ```
 
+### `getTaggedIds(string $tag): array`
+
+Список id **без** создания экземпляров — удобно для отложенной загрузки или проверки конфигурации.
+
+```php
+$ids = $container->getTaggedIds('handlers'); // ['handler.email', 'handler.sms']
+```
+
+### `getTaggedIterator(string $tag): TaggedServiceIterator`
+
+Итерация только **значений** (без ключей id):
+
+```php
+foreach ($container->getTaggedIterator('handlers') as $handler) {
+    $handler->handle($event);
+}
+```
+
+### `getTaggedLocator(string $tag): TaggedServiceLocator`
+
+Доступ по id внутри тега:
+
+```php
+$locator = $container->getTaggedLocator('handlers');
+
+if ($locator->has('handler.email')) {
+    $locator->get('handler.email')->send($message);
+}
+
+foreach ($locator as $id => $handler) {
+    // id => instance
+}
+```
+
+### Сравнение API тегов
+
+| Метод | Результат | Создаёт экземпляры | Когда использовать |
+|-------|-----------|-------------------|-------------------|
+| `getTagged($tag)` | `array<id, instance>` | сразу все | нужна карта id → объект |
+| `getTaggedIds($tag)` | `list<id>` | нет | проверка конфигурации, отложенная загрузка |
+| `getTaggedIterator($tag)` | только values | при `foreach` | pipeline обработчиков без id |
+| `getTaggedLocator($tag)` | `has` / `get` / iterate | при `get()` | выборочный доступ по id в теге |
+
+`TaggedServiceLocator` фиксирует список id в конструкторе; `has()` дополнительно проверяет `container->has($id)`.
+
 ## Декораторы
 
 ### `decorate(string $id, callable $decorator): void`
@@ -114,5 +159,6 @@ foreach ($container->getTagged('listeners') as $listener) {
 
 ## См. также
 
+- [call(), bind(), afterResolving](Call-bind-callbacks)
 - [Справочник API](API-reference)
 - [Autowiring](Autowiring)

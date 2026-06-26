@@ -53,7 +53,9 @@ $container->alias(ClockInterface::class, 'clock.alias');
 
 `has()` и `hasDefinition()` возвращают `true` для зарегистрированного alias. `getTagged()` разрешает alias у id в теге.
 
-Внутренняя реализация — класс `ServiceAliasResolver`.
+С v1.3.0 для привязки интерфейса к классу удобнее **`bind(Interface::class, Implementation::class)`** — эквивалент `autowire()` + `alias()`. См. [call(), bind(), afterResolving](Call-bind-callbacks).
+
+Внутренняя реализация alias — класс `ServiceAliasResolver`.
 
 ## `lazy()` — отложенное создание
 

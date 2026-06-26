@@ -70,8 +70,9 @@ composer ci
 | `composer test:unit` | Unit-тесты |
 | `composer test:integration` | Интеграционные тесты |
 | `composer test:security` | Тесты безопасности |
-| `composer test:load` | Нагрузочные тесты |
-| `composer test:performance` | Производительность |
+| `composer test:load` | Нагрузочные тесты (15) |
+| `composer test:performance` | Производительность (12) |
+| `composer benchmark-report` | Markdown-отчёт фактических времён |
 | `composer test:coverage` | Покрытие (ожидается ≥95% строк) |
 | `composer test:mutation` | Infection (MSI ≥95%) |
 | `composer docs` | Генерация API-документации в `docs/` |

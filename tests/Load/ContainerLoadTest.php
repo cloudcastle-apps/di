@@ -74,4 +74,61 @@ final class ContainerLoadTest extends TestCase
 
         self::assertLessThan(2.0, $elapsedSeconds);
     }
+
+    public function testResolvesManyServicesThroughAliasChains(): void
+    {
+        $container = new Container();
+
+        for ($index = 0; $index < self::SERVICE_COUNT; ++$index) {
+            $container->set('root.' . $index, new stdClass());
+            $container->alias('alias.a.' . $index, 'root.' . $index);
+            $container->alias('alias.b.' . $index, 'alias.a.' . $index);
+            $container->alias('alias.c.' . $index, 'alias.b.' . $index);
+        }
+
+        for ($index = 0; $index < self::SERVICE_COUNT; ++$index) {
+            self::assertSame(
+                $container->get('root.' . $index),
+                $container->get('alias.c.' . $index),
+            );
+        }
+    }
+
+    public function testDecoratedSingletonFactoriesResolveOnceUnderLoad(): void
+    {
+        $container = new Container();
+        $factoryCalls = 0;
+        $decoratorCalls = 0;
+
+        for ($index = 0; $index < 500; ++$index) {
+            $serviceId = 'decorated.' . $index;
+            $container->set(
+                $serviceId,
+                static function () use (&$factoryCalls): stdClass {
+                    ++$factoryCalls;
+
+                    return new stdClass();
+                },
+            );
+            $container->decorate(
+                $serviceId,
+                static function (mixed $inner) use (&$decoratorCalls): stdClass {
+                    ++$decoratorCalls;
+
+                    \assert($inner instanceof stdClass);
+
+                    return $inner;
+                },
+            );
+        }
+
+        for ($index = 0; $index < 500; ++$index) {
+            $serviceId = 'decorated.' . $index;
+            $container->get($serviceId);
+            $container->get($serviceId);
+        }
+
+        self::assertSame(500, $factoryCalls);
+        self::assertSame(500, $decoratorCalls);
+    }
 }

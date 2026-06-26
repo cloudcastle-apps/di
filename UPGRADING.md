@@ -2,6 +2,28 @@
 
 Руководство по переходу между версиями **cloudcastle/di**.
 
+## 1.2.0 → 1.3.0
+
+### Новые возможности (обратно совместимо)
+
+- **`call($callable, $parameters)`** — autowiring при вызове функций и методов
+- **`bind($abstract, $concrete)`** — alias + autowire для классов
+- **`addDefinitions(array)`** — массовый `set()`
+- **`afterResolving($id, $callback)`** — хуки после создания сервиса
+- **`getTaggedIds()`**, **`getTaggedIterator()`**, **`getTaggedLocator()`** — работа с тегами без eager `getTagged()`
+
+Код, использующий только `set()` / `get()`, **не требует изменений**.
+
+### Рекомендации
+
+1. Обновите пакет: `composer update cloudcastle/di`
+2. Интерфейсы можно регистрировать одной строкой: `bind(Interface::class, Implementation::class)`
+3. Для plugin/handler-списков используйте `getTaggedIterator()` вместо `getTagged()`, если не нужна карта id → instance
+4. Для вызова action/controller с autowiring — `call()` вместо ручного `get()` + вызова метода
+5. Для пост-инициализации сервисов — `afterResolving()` (не срабатывает при чтении из singleton-кэша)
+
+Подробнее — [Wiki: call(), bind(), afterResolving](https://github.com/cloudcastle-apps/di/wiki/Call-bind-callbacks).
+
 ## 1.1.0 → 1.2.0
 
 ### Новые возможности (обратно совместимо)

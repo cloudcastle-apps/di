@@ -150,6 +150,43 @@ $container = createContainer(require __DIR__ . '/../config/app.php');
 $container = createContainer(require __DIR__ . '/../config/cli.php');
 ```
 
+### Модульная регистрация (v1.3)
+
+```php
+function registerInfrastructure(Container $c, array $config): void
+{
+    $c->addDefinitions([
+        'config' => $config,
+        'logger' => static fn (): LoggerInterface => new ConsoleLogger(),
+    ]);
+
+    $c->enableAutowiring();
+    $c->bind(LoggerInterface::class, FileLogger::class);
+    $c->bind(ClockInterface::class, SystemClock::class);
+
+    $c->afterResolving(CacheInterface::class, static function ($id, $cache, $container): void {
+        $cache->warm($container->get('config'));
+    });
+}
+```
+
+### Обработчики по тегу
+
+```php
+$container->enableAutowiring();
+$container->scan(__DIR__ . '/../src/Handler', 'App\\Handler\\');
+
+// scan() регистрирует классы через autowire(); теги — явно:
+$scanner = new \CloudCastle\DI\ClassScanner();
+foreach ($scanner->scan(__DIR__ . '/../src/Handler', 'App\\Handler\\') as $handlerClass) {
+    $container->tag($handlerClass, 'app.handlers');
+}
+
+foreach ($container->getTaggedIterator('app.handlers') as $handler) {
+    $handler->register($container->get('event.bus'));
+}
+```
+
 ## Тесты
 
 ### Unit-тест с полным bootstrap

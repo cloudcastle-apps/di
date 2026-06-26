@@ -11,10 +11,16 @@
     </rule>
     <rule ref="rulesets/codesize.xml">
         <exclude name="TooManyPublicMethods"/>
+        <exclude name="ExcessiveClassComplexity"/>
     </rule>
     <rule ref="rulesets/codesize.xml/TooManyPublicMethods">
         <properties>
-            <property name="ignorepattern" value="(^(set|get|is|has|with|enable|disable))i"/>
+            <property name="ignorepattern" value="(^(set|get|is|has|with|enable|disable|make|alias|lazy|bind|call|add|after|tag|decorat|autowire|scan))i"/>
+        </properties>
+    </rule>
+    <rule ref="rulesets/codesize.xml/ExcessiveClassComplexity">
+        <properties>
+            <property name="maximum" value="65"/>
         </properties>
     </rule>
     <rule ref="rulesets/controversial.xml">

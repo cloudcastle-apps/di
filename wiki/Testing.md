@@ -1,5 +1,26 @@
 # Тестирование
 
+## Наборы тестов
+
+| Команда | Каталог | Тестов | Описание |
+|---------|---------|--------|----------|
+| `composer test:unit` | `tests/Unit/` | 208 | Поведение API, autowiring, v1.2/v1.3 |
+| `composer test:integration` | `tests/Integration/` | 5 | Графы зависимостей, PSR-11 |
+| `composer test:security` | `tests/Security/` | 4 | Безопасность контейнера |
+| `composer test:load` | `tests/Load/` | 15 | Массовые регистрации и resolve |
+| `composer test:performance` | `tests/Performance/` | 12 | Латентность операций |
+| `composer test:coverage` | — | — | Покрытие строк ≥95% |
+| `composer test:mutation` | — | — | Infection MSI ≥95% |
+
+**Всего:** 244 PHPUnit-теста (без coverage/mutation).
+
+Подробные сценарии нагрузки, пороги времени и референсные бенчмарки — **[Нагрузка и производительность](Performance-and-load)**.
+
+```bash
+composer ci                  # полный пайплайн
+composer benchmark-report    # фактические времена бенчмарков (markdown)
+```
+
 ## Unit-тесты
 
 Создавайте новый `Container` в каждом тесте — экземпляры не разделяют состояние:
@@ -94,14 +115,11 @@ function createApplicationContainer(): Container
 }
 ```
 
-## Команды в репозитории
+## Нагрузка и производительность
 
-```bash
-composer test:unit
-composer test:integration
-composer test:security
-composer ci
-```
+Load-тесты проверяют корректность при 1000–2000 сервисах и верхние границы времени. Performance-тесты — латентность `get`, `has`, `set`, `make`, `call`, `bind`, tagged API, autowiring.
+
+См. **[Нагрузка и производительность](Performance-and-load)** — таблицы сценариев, пороги CI, референсный прогон.
 
 ## Покрытие и мутации
 

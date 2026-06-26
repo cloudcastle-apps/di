@@ -2,10 +2,12 @@
 
 Лёгкий контейнер внедрения зависимостей для **PHP 8.3+** с поддержкой [PSR-11](https://www.php-fig.org/psr/psr-11/). Одна runtime-зависимость — `psr/container`.
 
+**Текущая версия:** 1.3.x — см. [Releases](https://github.com/cloudcastle-apps/di/releases).
+
 ## Установка
 
 ```bash
-composer require cloudcastle/di
+composer require cloudcastle/di:^1.3
 ```
 
 Packagist: https://packagist.org/packages/cloudcastle/di
@@ -17,7 +19,7 @@ Packagist: https://packagist.org/packages/cloudcastle/di
 - готовые экземпляры и фабрики через `set()`;
 - singleton-кэш: фабрика вызывается один раз до следующего `set()`;
 - PSR-11: `get()`, `has()`;
-- расширенный контракт: `hasDefinition()`.
+- расширенный контракт: `hasDefinition()`, `addDefinitions()`.
 
 ### Autowiring
 
@@ -37,16 +39,25 @@ Packagist: https://packagist.org/packages/cloudcastle/di
 - фильтр по префиксу namespace;
 - только instantiable-классы (`enum` пропускаются); существующие `set()` не перезаписываются.
 
-### Прототипы, alias и lazy
+### Прототипы, alias и lazy (v1.2)
 
 - **`make($id)`** — новый экземпляр без singleton-кэша;
 - **`alias($alias, $targetId)`** — альтернативный id (цепочки, детекция циклов);
 - **`lazy($serviceId)`** — `LazyService` с отложенным `get()`.
 
+### call(), bind(), afterResolving (v1.3)
+
+- **`call($callable, $parameters?)`** — autowiring параметров callable (`CallableInvoker`);
+- **`bind($abstract, $concrete)`** — интерфейс → класс (`autowire` + `alias`) или id;
+- **`afterResolving($id, $callback)`** — пост-обработка после нового resolve (`AfterResolvingDispatcher`).
+
 ### Tagged services и декораторы
 
 - **`tag()` / `getTagged()`** — группы сервисов (порядок = порядок `tag()`);
-- **`decorate()`** — цепочка обёрток при `get()` (первый декоратор ближе к inner).
+- **`getTaggedIds()`** — только id, без создания экземпляров;
+- **`getTaggedIterator()`** — итерация значений (`TaggedServiceIterator`);
+- **`getTaggedLocator()`** — `has` / `get` по id в теге (`TaggedServiceLocator`);
+- **`decorate()`** — цепочка обёрток при `get()` / `make()` (первый декоратор ближе к inner).
 
 ### Глобальный реестр
 
@@ -64,17 +75,24 @@ PHPStan max, Psalm L1, покрытие строк ≥95%, Infection MSI ≥95%.
 flowchart LR
     subgraph api [API]
         get[get / make]
-        reg[set / autowire / scan / alias]
+        call[call]
+        reg[set / bind / autowire / scan]
+        tag[getTaggedIds / Iterator / Locator]
     end
     subgraph core [Ядро]
         aliasR[ServiceAliasResolver]
         instR[ServiceInstanceResolver]
+        hooks[AfterResolvingDispatcher]
+        invoker[CallableInvoker]
         aw[Autowirer]
     end
     reg --> instR
     get --> aliasR --> instR
+    instR -->|новый resolve| hooks
+    call --> invoker --> aw
     instR -->|autowire| aw
     aw -->|get зависимостей| get
+    tag --> get
 ```
 
 Подробные схемы всех потоков — на странице **[Архитектура](Architecture)**.
@@ -90,6 +108,7 @@ use CloudCastle\DI\ContainerRegistry;
 $container = new Container();
 $container->enableAutowiring();
 $container->scan(__DIR__ . '/App/Services', 'App\\Services\\');
+$container->bind(LoggerInterface::class, FileLogger::class);
 
 ContainerRegistry::set($container);
 
@@ -100,17 +119,19 @@ $service = ContainerRegistry::get()->get(App\Services\OrderService::class);
 
 | Страница | Описание |
 |----------|----------|
-| [Архитектура](Architecture) | схемы работы контейнера, autowiring, scan, alias, lazy |
+| [Архитектура](Architecture) | схемы контейнера, autowiring, call, afterResolving, теги |
 | [Быстрый старт](Quick-start) | установка, PSR-11, composition root |
 | [Примеры bootstrap](Bootstrap) | plain PHP, CLI, unit/integration тесты |
 | [Autowiring](Autowiring) | reflection, типы параметров, циклы, приоритеты |
 | [Сканирование классов](Class-scanning) | `scan()`, фильтр namespace, ограничения |
 | [Глобальный реестр](Global-registry) | `ContainerRegistry`, bootstrap, тесты |
-| [Теги и декораторы](Tags-and-decorators) | `tag()`, `getTagged()`, `decorate()` |
+| [Теги и декораторы](Tags-and-decorators) | `tag()`, `getTagged()`, iterator, locator |
+| [call(), bind(), afterResolving](Call-bind-callbacks) | v1.3: call, bind, addDefinitions, hooks |
 | [Прототипы, alias и lazy](Prototypes-alias-lazy) | `make()`, `alias()`, `lazy()` |
 | [Справочник API](API-reference) | все методы и исключения |
 | [Фабрики и singleton](Factories-and-singleton) | callable, кэш, `null`, циклы в фабриках |
 | [Тестирование](Testing) | unit/integration, моки, `ContainerRegistry::reset()` |
+| [Нагрузка и производительность](Performance-and-load) | load/performance тесты, пороги, бенчмарки |
 | [Анти-паттерны](Anti-patterns) | service locator, autowiring, глобальный контейнер |
 | [Обновление версий](Upgrading) | миграция между релизами |
 | [Участие в разработке](Contributing) | `composer ci`, PR |

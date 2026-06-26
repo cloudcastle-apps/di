@@ -17,7 +17,9 @@ use ReflectionClass;
  * singleton-кэш → явное {@see set()} → autowiring ({@see autowire()} или глобальный режим).
  *
  * Autowiring делегируется {@see Autowirer}; массовая регистрация классов — {@see scan()}
- * через {@see ClassScanner}. Глобальный доступ к контейнеру приложения — {@see ContainerRegistry}.
+ * через {@see ClassScanner}. Вызов callable — {@see call()} через {@see CallableInvoker}.
+ * Пост-обработка resolve — {@see afterResolving()} через {@see AfterResolvingDispatcher}.
+ * Глобальный доступ к контейнеру приложения — {@see ContainerRegistry}.
  *
  * @see ContainerInterface Контракт публичного API
  */
@@ -56,14 +58,26 @@ final class Container implements ContainerInterface
     /** Ленивый экземпляр {@see Autowirer}, общий для всех autowire-операций контейнера */
     private ?Autowirer $autowirer = null;
 
+    /** Разрешение цепочек {@see alias()} и детекция циклов */
     private readonly ServiceAliasResolver $aliasResolver;
 
+    /** Создание экземпляров, singleton-кэш, фабрики и декораторы для {@see get()} / {@see make()} */
     private readonly ServiceInstanceResolver $instanceResolver;
 
+    /** Диспетчер callback {@see afterResolving()} после создания экземпляра */
+    private readonly AfterResolvingDispatcher $resolveHooks;
+
+    /** Ленивый {@see CallableInvoker} для {@see call()} */
+    private ?CallableInvoker $callableInvoker = null;
+
+    /**
+     * Создаёт пустой контейнер с внутренними резолверами alias, экземпляров и after-resolving.
+     */
     public function __construct()
     {
         $this->aliasResolver = new ServiceAliasResolver();
         $this->instanceResolver = new ServiceInstanceResolver($this);
+        $this->resolveHooks = new AfterResolvingDispatcher();
     }
 
     /**
@@ -110,6 +124,85 @@ final class Container implements ContainerInterface
     public function lazy(string $serviceId): LazyService
     {
         return new LazyService($this, $serviceId);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    #[Override]
+    public function addDefinitions(array $definitions): void
+    {
+        /** @psalm-suppress MixedAssignment */
+        foreach ($definitions as $id => $concrete) {
+            $this->set($id, $concrete);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    #[Override]
+    public function bind(string $abstract, string $concrete): void
+    {
+        if (class_exists($concrete)) {
+            $this->assertInstantiableClass($concrete);
+            $this->autowire($concrete);
+        } elseif (!interface_exists($concrete) && !$this->hasDefinition($concrete) && !$this->canAutowire($concrete)) {
+            throw new ContainerException(\sprintf(
+                'Нельзя привязать "%s" к "%s": цель не класс, не интерфейс и не зарегистрированный id.',
+                $abstract,
+                $concrete,
+            ));
+        }
+
+        $this->alias($abstract, $concrete);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    #[Override]
+    public function call(callable $callable, array $parameters = []): mixed
+    {
+        return $this->callableInvoker()->invoke($callable, $parameters);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    #[Override]
+    public function afterResolving(string $id, callable $callback): void
+    {
+        $this->resolveHooks->register($id, $callback);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return list<string>
+     */
+    #[Override]
+    public function getTaggedIds(string $tag): array
+    {
+        return $this->tags[$tag] ?? [];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    #[Override]
+    public function getTaggedIterator(string $tag): TaggedServiceIterator
+    {
+        return new TaggedServiceIterator($this, $tag);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    #[Override]
+    public function getTaggedLocator(string $tag): TaggedServiceLocator
+    {
+        return new TaggedServiceLocator($this, $tag);
     }
 
     /**
@@ -340,12 +433,24 @@ final class Container implements ContainerInterface
     }
 
     /**
-     * @throws NotFoundException
-     * @throws ContainerException
+     * Разрешает сервис через {@see ServiceInstanceResolver}.
+     *
+     * При новом создании вызывает callback {@see afterResolving()}.
+     *
+     * @param string $id Конечный id после разрешения alias
+     * @param bool $singleton Сохранять ли экземпляр в singleton-кэше (`get()` — да, `make()` — нет)
+     *
+     * @throws NotFoundException Если сервис недоступен
+     * @throws ContainerException При ошибке autowiring, фабрики или циклической зависимости
+     *
+     * @return mixed Экземпляр сервиса или скалярное значение
      */
     private function resolveService(string $id, bool $singleton): mixed
     {
-        return $this->instanceResolver->resolve(
+        $wasCached = $singleton && isset($this->resolved[$id]);
+
+        /** @psalm-suppress MixedAssignment */
+        $instance = $this->instanceResolver->resolve(
             $id,
             $singleton,
             $this->definitions,
@@ -355,6 +460,12 @@ final class Container implements ContainerInterface
             $this->canAutowire(...),
             $this->autowirer()->instantiate(...),
         );
+
+        if (!$wasCached) {
+            $this->resolveHooks->dispatch($id, $instance, $this);
+        }
+
+        return $instance;
     }
 
     /**
@@ -407,5 +518,15 @@ final class Container implements ContainerInterface
     private function autowirer(): Autowirer
     {
         return $this->autowirer ??= new Autowirer($this);
+    }
+
+    /**
+     * Возвращает общий {@see CallableInvoker} для {@see call()}.
+     *
+     * @return CallableInvoker Создаётся при первом обращении
+     */
+    private function callableInvoker(): CallableInvoker
+    {
+        return $this->callableInvoker ??= new CallableInvoker($this);
     }
 }

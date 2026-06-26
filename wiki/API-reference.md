@@ -143,6 +143,40 @@
 
 Подробнее — [Прототипы, alias и lazy](Prototypes-alias-lazy).
 
+### call(), bind(), addDefinitions(), afterResolving
+
+#### `call(callable $callable, array $parameters = []): mixed`
+
+Вызывает callable с autowiring параметров через `CallableInvoker` и `MemberResolver`.
+
+**Поддерживаемые формы:** `Closure`, first-class callable, `[object, 'method']`, invokable-объект, имя глобальной функции.
+
+**Порядок разрешения параметра:** явное значение в `$parameters` → PHP attributes → autowiring по имени (если включён) → разрешение по типу.
+
+**Исключение:** `ContainerException`, если обязательный параметр не разрешается.
+
+#### `bind(string $abstract, string $concrete): void`
+
+| `$concrete` | Действие |
+|------------|----------|
+| instantiable class | `autowire($concrete)` + `alias($abstract, $concrete)` |
+| зарегистрированный id / autowire / interface с autowiring | `alias($abstract, $concrete)` |
+| иначе | `ContainerException` |
+
+#### `addDefinitions(array $definitions): void`
+
+Эквивалент цикла `set($id, $concrete)` для каждой пары массива. Сбрасывает singleton-кэш для каждого id, как `set()`.
+
+#### `afterResolving(string $id, callable $callback): void`
+
+`callable(string $id, mixed $instance, ContainerInterface $container): void` после **нового** создания при `get()` / `make()`.
+
+- повторный `get()` из singleton-кэша — **без** callback;
+- каждый `make()` — callback снова;
+- несколько callback — порядок регистрации.
+
+Подробнее — [call(), bind(), afterResolving](Call-bind-callbacks).
+
 ### Tagged services
 
 #### `tag(string $id, string $tag): void`
@@ -153,6 +187,20 @@
 
 `array<string, mixed>` — сервисы с тегом в порядке `tag()`. Id без definition и без autowiring пропускаются.
 
+#### `getTaggedIds(string $tag): array`
+
+`list<string>` — только id в порядке `tag()`, **без** вызова `get()`.
+
+#### `getTaggedIterator(string $tag): TaggedServiceIterator`
+
+`IteratorAggregate` — только **значения** сервисов (порядок `tag()`). Пропускает недоступные id, как `getTagged()`.
+
+#### `getTaggedLocator(string $tag): TaggedServiceLocator`
+
+`get($id)` / `has($id)` внутри тега + итерация `id => instance` через `getIterator()`.
+
+**Исключение:** `NotFoundException` из `TaggedServiceLocator::get()` для id вне тега или недоступного сервиса.
+
 ### Декораторы
 
 #### `decorate(string $id, callable $decorator): void`
@@ -160,6 +208,57 @@
 `(mixed $inner, ContainerInterface $container): mixed` — обёртка при `get()` и `make()`. Порядок: первый зарегистрированный декоратор ближе к inner. Сбрасывает singleton-кэш id.
 
 ---
+
+## `CloudCastle\DI\CallableInvoker`
+
+Внутренний класс; создаётся лениво в `Container::call()`.
+
+Вызывает callable с autowiring параметров через `MemberResolver` (тот же путь, что у конструктора `Autowirer`).
+
+| Метод | Описание |
+|-------|----------|
+| `invoke(callable, array $parameters = []): mixed` | Собирает аргументы и вызывает callable |
+
+**Исключение:** `ContainerException` — неразрешимый параметр или некорректный callable.
+
+---
+
+## `CloudCastle\DI\AfterResolvingDispatcher`
+
+Внутренний класс; хранит callback для `Container::afterResolving()`.
+
+| Метод | Описание |
+|-------|----------|
+| `register(string $id, callable $callback): void` | Добавляет callback в очередь для id |
+| `dispatch(string $id, mixed $instance, ContainerInterface $container): void` | Вызывает все callback для id |
+
+---
+
+## `CloudCastle\DI\TaggedServiceIterator`
+
+`IteratorAggregate<int, mixed>` — итератор **значений** сервисов одного тега.
+
+Создаётся через `Container::getTaggedIterator()`. При итерации делегирует `getTagged()` — недоступные id пропускаются.
+
+### `getIterator(): Traversable<int, mixed>`
+
+Экземпляры в порядке `tag()`, без ключей id.
+
+---
+
+## `CloudCastle\DI\TaggedServiceLocator`
+
+`IteratorAggregate<string, mixed>` — доступ к сервисам тега по id.
+
+Снимок id фиксируется в конструкторе (`getTaggedIds()`). Создаётся через `Container::getTaggedLocator()`.
+
+| Метод | Описание |
+|-------|----------|
+| `has(string $id): bool` | id в теге **и** `container->has($id)` |
+| `get(string $id): mixed` | `container->get($id)` |
+| `getIterator(): Traversable<string, mixed>` | `id => instance` через `getTagged()` |
+
+**Исключение:** `NotFoundException` из `get()` — id не в теге или сервис недоступен.
 
 ## `CloudCastle\DI\LazyService`
 
@@ -262,6 +361,14 @@ interface ContainerInterface extends \Psr\Container\ContainerInterface
     public function make(string $id): mixed;
     public function alias(string $alias, string $targetId): void;
     public function lazy(string $serviceId): \CloudCastle\DI\LazyService;
+    public function addDefinitions(array $definitions): void;
+    public function bind(string $abstract, string $concrete): void;
+    public function call(callable $callable, array $parameters = []): mixed;
+    public function afterResolving(string $id, callable $callback): void;
+    /** @return list<string> */
+    public function getTaggedIds(string $tag): array;
+    public function getTaggedIterator(string $tag): \CloudCastle\DI\TaggedServiceIterator;
+    public function getTaggedLocator(string $tag): \CloudCastle\DI\TaggedServiceLocator;
 }
 ```
 
@@ -288,6 +395,8 @@ interface ContainerInterface extends \Psr\Container\ContainerInterface
 | Цикл A→B→A в **фабриках** | не обнаруживается |
 | Цикл при **autowiring** | `ContainerException` |
 | `make()` | новый экземпляр, кэш не заполняется |
+| `afterResolving()` | только при новом создании, не из singleton-кэша |
+| `make()` + `afterResolving()` | callback на каждый `make()` |
 | Циклический **alias** | `ContainerException` при `alias()` или `resolve()` |
 | `scan()` + существующий `set(FQCN)` | `set()` сохраняется, scan пропускает id |
 

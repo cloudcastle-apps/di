@@ -94,6 +94,51 @@ $container->set('reports', $container->lazy(ReportGenerator::class));
 
 Подробнее — [Прототипы, alias и lazy](Prototypes-alias-lazy).
 
+## call(), bind() и afterResolving (v1.3)
+
+```php
+$container->enableAutowiring();
+
+// bind вместо autowire + alias
+$container->bind(LoggerInterface::class, FileLogger::class);
+
+// Массовая регистрация
+$container->addDefinitions([
+    'config' => require __DIR__ . '/config.php',
+    'logger' => static fn () => new FileLogger(),
+]);
+
+// Вызов с autowiring
+$container->call(static fn (OrderService $s) => $s->processPending());
+
+// Пост-обработка после первого создания
+$container->afterResolving(CacheWarmer::class, static function ($id, $w, $c): void {
+    $w->warm($c->get('config'));
+});
+```
+
+Подробнее — [call(), bind(), afterResolving](Call-bind-callbacks).
+
+## Теги: iterator и locator (v1.3)
+
+```php
+$container->tag('handler.a', 'handlers');
+$container->tag('handler.b', 'handlers');
+
+$ids = $container->getTaggedIds('handlers'); // без get()
+
+foreach ($container->getTaggedIterator('handlers') as $handler) {
+    $handler->run();
+}
+
+$locator = $container->getTaggedLocator('handlers');
+if ($locator->has('handler.a')) {
+    $locator->get('handler.a');
+}
+```
+
+Подробнее — [Теги и декораторы](Tags-and-decorators).
+
 ## Глобальный реестр
 
 ```php
@@ -123,7 +168,7 @@ $service = ContainerRegistry::get()->get(App\Service\UserService::class);
 `CloudCastle\DI\Container` реализует:
 
 - `Psr\Container\ContainerInterface` — `get()`, `has()`;
-- `CloudCastle\DI\Contract\ContainerInterface` — `set()`, `hasDefinition()`, `make()`, `alias()`, `lazy()`, autowiring, tags, decorators.
+- `CloudCastle\DI\Contract\ContainerInterface` — `set()`, `hasDefinition()`, `make()`, `alias()`, `lazy()`, `call()`, `bind()`, `addDefinitions()`, `afterResolving()`, autowiring, tags, decorators.
 
 ```php
 if ($container->has('logger')) {
@@ -160,6 +205,7 @@ function createContainer(): Container
 
 ## Дальше
 
+- [call(), bind(), afterResolving](Call-bind-callbacks)
 - [Autowiring](Autowiring)
 - [Сканирование классов](Class-scanning)
 - [Теги и декораторы](Tags-and-decorators)

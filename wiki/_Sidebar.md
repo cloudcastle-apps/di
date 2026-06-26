@@ -9,10 +9,12 @@
 - [Сканирование классов](Class-scanning)
 - [Глобальный реестр](Global-registry)
 - [Теги и декораторы](Tags-and-decorators)
+- [call(), bind(), afterResolving](Call-bind-callbacks)
 - [Прототипы, alias и lazy](Prototypes-alias-lazy)
 - [Справочник API](API-reference)
 - [Фабрики и singleton](Factories-and-singleton)
 - [Тестирование](Testing)
+- [Нагрузка и производительность](Performance-and-load)
 - [Анти-паттерны](Anti-patterns)
 
 ### Проект

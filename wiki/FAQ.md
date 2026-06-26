@@ -2,7 +2,7 @@
 
 ## Чем CloudCastle DI отличается от PHP-DI / Symfony / Pimple?
 
-CloudCastle DI — **компактный** PSR-11 контейнер с явным `set()`, singleton-фабриками, прототипами (`make()`), alias, lazy-сервисами, reflection autowiring (конструктор, **свойства**, **методы**; типы, union, intersection, PHP attributes, autowiring по имени), scan каталогов, tagged services и декораторами. Одна runtime-зависимость (`psr/container`). Без YAML и compiled container.
+CloudCastle DI — **компактный** PSR-11 контейнер с явным `set()`, singleton-фабриками, прототипами (`make()`), alias, lazy-сервисами, **`call()` с autowiring**, **`bind()`**, **`afterResolving()`**, reflection autowiring (конструктор, **свойства**, **методы**; типы, union, intersection, PHP attributes, autowiring по имени), scan каталогов, tagged services (ids / iterator / locator) и декораторами. Одна runtime-зависимость (`psr/container`). Без YAML и compiled container.
 
 ## Есть autowiring?
 
@@ -35,7 +35,18 @@ $container->scan(__DIR__ . '/Services', 'App\\Services\\');
 
 ## Поддерживаются tagged services и декораторы?
 
-**Да:** `tag()` / `getTagged()` и `decorate()`. См. [Теги и декораторы](Tags-and-decorators).
+**Да:** `tag()` / `getTagged()` и `decorate()`. С v1.3.0 также `getTaggedIds()`, `getTaggedIterator()`, `getTaggedLocator()`. См. [Теги и декораторы](Tags-and-decorators).
+
+## Есть call(), bind() и afterResolving?
+
+**Да** (с v1.3.0):
+
+- **`call($callable, $parameters?)`** — autowiring параметров при вызове функции/метода (`CallableInvoker`)
+- **`bind($abstract, $concrete)`** — `autowire` + `alias` для класса или только `alias` для id
+- **`addDefinitions(array)`** — массовый `set()`
+- **`afterResolving($id, $callback)`** — callback после нового создания (не из singleton-кэша)
+
+См. [call(), bind(), afterResolving](Call-bind-callbacks).
 
 ## Есть прототипы, alias и lazy?
 

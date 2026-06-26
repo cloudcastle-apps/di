@@ -13,11 +13,15 @@ flowchart TB
         C[Container]
         CR[ContainerRegistry]
         LS[LazyService]
+        TSI[TaggedServiceIterator]
+        TSL[TaggedServiceLocator]
     end
 
     subgraph resolve [Разрешение сервисов]
         SAR[ServiceAliasResolver]
         SIR[ServiceInstanceResolver]
+        ARD[AfterResolvingDispatcher]
+        CI_INV[CallableInvoker]
     end
 
     subgraph autowire [Autowiring]
@@ -38,9 +42,13 @@ flowchart TB
     CI --> C
     C --> SAR
     C --> SIR
+    C --> ARD
+    C --> CI_INV
     C --> AW
     C --> CS
     C --> LS
+    C --> TSI
+    C --> TSL
     CR -.->|хранит ссылку| CI
     SIR -->|get в фабриках| CI
     AW --> MR
@@ -57,9 +65,12 @@ flowchart TB
 
 | Компонент | Роль |
 |-----------|------|
-| `Container` | Регистрация (`set`, `autowire`, `tag`, `decorate`, `alias`), флаги autowiring, делегирование resolve |
+| `Container` | Регистрация (`set`, `autowire`, `tag`, `decorate`, `alias`, `bind`, `addDefinitions`), `call()`, `afterResolving()`, флаги autowiring, делегирование resolve |
 | `ServiceAliasResolver` | Цепочки `alias → targetId`, детекция циклов |
 | `ServiceInstanceResolver` | Кэш, definitions, autowiring, декораторы; общий для `get()` и `make()` |
+| `AfterResolvingDispatcher` | Callback после нового resolve |
+| `CallableInvoker` | Autowiring вызова callable |
+| `TaggedServiceIterator` / `TaggedServiceLocator` | Итерация и доступ к сервисам по тегу |
 | `Autowirer` | `new` + property + method injection |
 | `ClassScanner` | Парсинг PHP-файлов без выполнения, список FQCN |
 | `LazyService` | Отложенный `get()` при первом `getValue()` |
@@ -398,7 +409,9 @@ flowchart TB
         S2[autowire FQCN]
         S3[scan directory]
         S4[alias a, b]
-        S5[enableAutowiring]
+        S5[bind abstract, concrete]
+        S6[addDefinitions array]
+        S7[enableAutowiring]
     end
 
     subgraph obtain [Получение]
@@ -406,18 +419,25 @@ flowchart TB
         G2[make id]
         G3[lazy id → getValue]
         G4[getTagged tag]
+        G5[getTaggedIds / Iterator / Locator]
+        G6[call callable]
     end
 
     S1 --> definitions[(definitions)]
     S2 --> autowired[(autowired)]
     S3 --> autowired
     S4 --> aliases[(aliases)]
-    S5 --> flag[autowiringEnabled]
+    S5 --> aliases
+    S5 --> autowired
+    S6 --> definitions
+    S7 --> flag[autowiringEnabled]
 
     G1 --> resolve[ServiceInstanceResolver singleton=true]
     G2 --> resolve2[ServiceInstanceResolver singleton=false]
     G3 --> lazy[LazyService → get]
     G4 --> G1
+    G5 --> G1
+    G6 --> invoker[CallableInvoker]
 
     definitions --> resolve
     definitions --> resolve2
@@ -427,13 +447,104 @@ flowchart TB
     flag --> resolve2
     aliases --> resolve
     aliases --> resolve2
+    invoker --> autowired
 ```
+
+---
+
+## `Container::call()` и `CallableInvoker`
+
+Вызов callable не проходит через `ServiceInstanceResolver` — отдельный путь через `CallableInvoker` и общий `MemberResolver` / `ParameterTypeResolver`.
+
+```mermaid
+sequenceDiagram
+    participant App as Приложение
+    participant C as Container
+    participant CI as CallableInvoker
+    participant MR as MemberResolver
+    participant PTR as ParameterTypeResolver
+
+    App->>C: call(callable, parameters)
+    C->>CI: invoke()
+    CI->>CI: reflectCallable()
+    loop параметры reflection
+        alt ключ в parameters
+            CI->>CI: явное значение
+        else autowire
+            CI->>MR: resolveParameter()
+            MR->>PTR: тип / attribute / имя
+            PTR->>C: get(FQCN)
+        end
+    end
+    CI->>CI: invokeArgs()
+    CI-->>App: mixed
+```
+
+Поддерживаемые формы: `Closure`, first-class callable, `[object, method]`, invokable, имя функции. Подробнее — [call(), bind(), afterResolving](Call-bind-callbacks).
+
+---
+
+## `afterResolving` и `AfterResolvingDispatcher`
+
+Callback регистрируется в `AfterResolvingDispatcher` и вызывается из `Container::resolveService()` **после** успешного создания, если экземпляр не был прочитан из singleton-кэша до resolve.
+
+```mermaid
+sequenceDiagram
+    participant C as Container
+    participant SIR as ServiceInstanceResolver
+    participant ARD as AfterResolvingDispatcher
+
+    C->>C: wasCached = singleton && isset(resolved[id])
+    C->>SIR: resolve(...)
+    SIR-->>C: instance
+    alt not wasCached
+        C->>ARD: dispatch(id, instance, container)
+        loop callbacks[id]
+            ARD->>ARD: callback(id, instance, container)
+        end
+    end
+    C-->>C: return instance
+```
+
+| `get()` | `make()` |
+|---------|----------|
+| callback при первом создании | callback при **каждом** вызове |
+| повторный `get()` из кэша — без callback | всегда новый экземпляр → всегда callback |
+
+---
+
+## Сравнение API тегов
+
+```mermaid
+flowchart LR
+    tag[tag id, name]
+    ids[getTaggedIds]
+    eager[getTagged]
+    iter[getTaggedIterator]
+    loc[getTaggedLocator]
+
+    tag --> ids
+    ids --> iter
+    ids --> loc
+    eager --> iter
+    eager --> loc
+    iter -->|get внутри| eager
+    loc -->|get/has| eager
+```
+
+| API | Ключи | Eager `get()` |
+|-----|-------|---------------|
+| `getTagged()` | id → instance | все id тега |
+| `getTaggedIds()` | — | нет |
+| `getTaggedIterator()` | только values | при foreach |
+| `getTaggedLocator()` | id при iterate | при `get()` / foreach |
 
 ---
 
 ## См. также
 
 - [Быстрый старт](Quick-start)
+- [call(), bind(), afterResolving](Call-bind-callbacks)
 - [Autowiring](Autowiring)
 - [Сканирование классов](Class-scanning)
 - [Прототипы, alias и lazy](Prototypes-alias-lazy)
