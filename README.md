@@ -1,8 +1,8 @@
 # CloudCastle DI
 
-**English:** Lightweight [PSR-11](https://www.php-fig.org/psr/psr-11/) dependency injection container for PHP 8.3+. Explicit `set()` / `get()` wiring, optional constructor/property/method autowiring, directory scan, tagged services, decorators, global registry — one runtime dependency (`psr/container`).
+**English:** Lightweight [PSR-11](https://www.php-fig.org/psr/psr-11/) dependency injection container for PHP 8.3+. Explicit `set()` / `get()` wiring, optional constructor/property/method autowiring, directory scan, **prototypes (`make`)**, **aliases**, **lazy services**, tagged services, decorators, global registry — one runtime dependency (`psr/container`).
 
-**Русский:** Лёгкий контейнер внедрения зависимостей для PHP 8.3+ с поддержкой PSR-11. Явная регистрация сервисов, singleton-фабрики, autowiring конструктора, **свойств** и **методов**, сканирование каталогов, теги, декораторы и глобальный реестр.
+**Русский:** Лёгкий контейнер внедрения зависимостей для PHP 8.3+ с поддержкой PSR-11. Явная регистрация сервисов, singleton-фабрики, autowiring конструктора, **свойств** и **методов**, сканирование каталогов, **прототипы**, **alias**, **lazy**, теги, декораторы и глобальный реестр.
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/cloudcastle/di.svg)](https://packagist.org/packages/cloudcastle/di)
 [![Total Downloads](https://img.shields.io/packagist/dt/cloudcastle/di.svg)](https://packagist.org/packages/cloudcastle/di)
@@ -22,10 +22,50 @@
 | Явный `set()` API | ✓ | ✓ | ✓ | ✓ |
 | Сканирование каталогов | ✓ | ✓ | ✓ | — |
 | Tagged services / decorators | ✓ | ✓ | ✓ | — |
+| Прототипы (`make`) / alias / lazy | ✓ | ✓ | ✓ | — |
 | Минимум зависимостей | ✓ (`psr/container`) | больше | фреймворк | ✓ |
 | Подходит для micro-library / bootstrap | ✓ | ✓ | избыточен | ✓ |
 
 Подходит, когда нужен **компактный контейнер** для composition root, тестов или небольшого приложения — с явным wiring и опциональной автоматикой без YAML и compiled container.
+
+## Как это устроено
+
+```mermaid
+flowchart TB
+    subgraph entry [Точки входа]
+        GET["get() — singleton"]
+        MAKE["make() — прототип"]
+        LAZY["lazy() → getValue()"]
+    end
+
+    subgraph container [Container]
+        ALIAS[ServiceAliasResolver]
+        RESOLVE[ServiceInstanceResolver]
+        DEF[(definitions)]
+        CACHE[(resolved)]
+        DECO[decorators]
+    end
+
+    subgraph create [Создание]
+        FACTORY[фабрика set]
+        AUTO[Autowirer]
+        SCAN[ClassScanner + scan]
+    end
+
+    GET --> ALIAS
+    MAKE --> ALIAS
+    ALIAS --> RESOLVE
+    RESOLVE --> CACHE
+    RESOLVE --> DEF
+    RESOLVE --> FACTORY
+    RESOLVE --> AUTO
+    RESOLVE --> DECO
+    SCAN --> DEF
+    LAZY -.->|отложенный| GET
+    AUTO -->|рекурсивный get| GET
+```
+
+Полный набор схем (bootstrap, autowiring, типы параметров, циклы, теги) — в [Wiki: Архитектура](https://github.com/cloudcastle-apps/di/wiki/Architecture).
 
 ## Возможности
 
@@ -44,7 +84,7 @@
 - **`autowire(string $className)`** — точечная регистрация класса (id = полное имя класса)
 - **`enableParameterNameAutowiring()`** — параметр `$logger` → сервис с id `'logger'` (по умолчанию выключен)
 - **`enablePropertyAutowiring()`** / **`enableMethodAutowiring()`** — typed properties и inject-методы/setter после конструктора
-- **`scan(string $directory, ?string $namespace = null)`** — обход каталога и autowiring найденных instantiable-классов
+- **`scan(string $directory, ?string $namespace = null)`** — обход каталога и autowiring найденных instantiable-классов (несколько `class` в одном файле; `enum` парсятся, но не регистрируются)
 - PHP attributes **`Inject`** / **`Autowire`** на конструкторе, **свойствах** и **методах** (attributes работают без флагов property/method)
 - Разрешение по типам: union, **intersection**, nullable, `ContainerInterface` / PSR-11
 - Обнаружение циклических зависимостей при autowiring
@@ -52,8 +92,11 @@
 
 ### Расширения контракта
 
+- **`make(string $id)`** — новый экземпляр без singleton-кэша (прототип)
+- **`alias(string $alias, string $targetId)`** — альтернативный id для того же сервиса
+- **`lazy(string $serviceId)`** — обёртка `LazyService` с отложенным `get()`
 - **`tag()` / `getTagged()`** — групповое получение сервисов
-- **`decorate()`** — цепочка декораторов при `get()`
+- **`decorate()`** — цепочка декораторов при `get()` / `make()`
 - **`hasDefinition()`** — проверка регистрации без создания экземпляра
 
 ### Глобальный реестр
@@ -73,7 +116,7 @@
 ## Установка
 
 ```bash
-composer require cloudcastle/di:^1.1
+composer require cloudcastle/di:^1.2
 ```
 
 ## Быстрый старт
@@ -137,6 +180,24 @@ $container->scan(__DIR__ . '/Services', 'App\\Services\\');
 // Существующие set() не перезаписываются
 ```
 
+### Прототипы, alias и lazy
+
+```php
+// Прототип: новый объект при каждом вызове
+$container->set('job', static fn () => new Job());
+$jobA = $container->make('job');
+$jobB = $container->make('job'); // !== $jobA
+
+// Alias: интерфейс → конкретная регистрация
+$container->set('app.clock', $clock);
+$container->alias(ClockInterface::class, 'app.clock');
+
+// Lazy: создание при первом getValue()
+$container->set('reports', $container->lazy(ReportGenerator::class));
+$lazy = $container->get('reports');
+$generator = $lazy->getValue();
+```
+
 ### Глобальный контейнер
 
 ```php
@@ -155,7 +216,10 @@ $mailer = ContainerRegistry::get()->get(App\Mailer::class);
 | Метод | Описание |
 |-------|----------|
 | `get(string $id): mixed` | Сервис из кэша, `set()`, autowiring или `NotFoundException` |
-| `has(string $id): bool` | Доступен ли сервис (включая autowiring) |
+| `make(string $id): mixed` | Новый экземпляр без singleton-кэша |
+| `alias(string $alias, string $targetId): void` | Привязка альтернативного id |
+| `lazy(string $serviceId): LazyService` | Отложенное разрешение сервиса |
+| `has(string $id): bool` | Доступен ли сервис (включая autowiring и alias) |
 | `set(string $id, mixed $concrete): void` | Экземпляр или фабрика; сбрасывает singleton-кэш |
 | `hasDefinition(string $id): bool` | Есть `set()` или `autowire()` без создания |
 | `tag()` / `getTagged()` | Группы сервисов по тегам |
@@ -167,7 +231,7 @@ $mailer = ContainerRegistry::get()->get(App\Mailer::class);
 | `autowire(string $className): void` | Явная регистрация класса |
 | `scan(string $directory, ?string $namespace): void` | Autowiring классов из каталога |
 
-Подробнее — [Wiki](https://github.com/cloudcastle-apps/di/wiki/Home) ( [Autowiring](https://github.com/cloudcastle-apps/di/wiki/Autowiring) · [API](https://github.com/cloudcastle-apps/di/wiki/API-reference) · [Bootstrap](https://github.com/cloudcastle-apps/di/wiki/Bootstrap) ) и `doc/guide/` после `composer docs`.
+Подробнее — [Wiki](https://github.com/cloudcastle-apps/di/wiki/Home) ( [Autowiring](https://github.com/cloudcastle-apps/di/wiki/Autowiring) · [API](https://github.com/cloudcastle-apps/di/wiki/API-reference) · [Прототипы, alias и lazy](https://github.com/cloudcastle-apps/di/wiki/Prototypes-alias-lazy) · [Bootstrap](https://github.com/cloudcastle-apps/di/wiki/Bootstrap) ) и `doc/guide/` после `composer docs`.
 
 ## Сообщество
 
@@ -176,7 +240,7 @@ $mailer = ContainerRegistry::get()->get(App\Mailer::class);
 
 ## Документация
 
-- [Wiki — главная](https://github.com/cloudcastle-apps/di/wiki/Home) · [быстрый старт](https://github.com/cloudcastle-apps/di/wiki/Quick-start) · [autowiring](https://github.com/cloudcastle-apps/di/wiki/Autowiring) · [примеры bootstrap](https://github.com/cloudcastle-apps/di/wiki/Bootstrap) · [API](https://github.com/cloudcastle-apps/di/wiki/API-reference)
+- [Wiki — главная](https://github.com/cloudcastle-apps/di/wiki/Home) · [архитектура](https://github.com/cloudcastle-apps/di/wiki/Architecture) · [быстрый старт](https://github.com/cloudcastle-apps/di/wiki/Quick-start) · [autowiring](https://github.com/cloudcastle-apps/di/wiki/Autowiring) · [прототипы, alias и lazy](https://github.com/cloudcastle-apps/di/wiki/Prototypes-alias-lazy) · [примеры bootstrap](https://github.com/cloudcastle-apps/di/wiki/Bootstrap) · [API](https://github.com/cloudcastle-apps/di/wiki/API-reference)
 - Исходники Wiki в каталоге [`wiki/`](wiki/Home) (внутренние ссылки **без** суффикса `.md`)
 - [Поддержка](SUPPORT.md) — куда обратиться за помощью
 - [Руководство для разработчиков](CONTRIBUTING.md) — окружение, тесты, CI

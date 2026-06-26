@@ -10,10 +10,11 @@
 
 **Порядок разрешения:**
 
-1. Singleton-кэш (`resolved`) — если уже создан.
-2. Явное определение (`set()`) — фабрика или экземпляр.
-3. Autowiring — если id зарегистрирован через `autowire()` или включён глобальный autowiring и id — instantiable FQCN.
-4. `NotFoundException` — если ничего не подошло.
+1. Разрешение **alias** → конечный id.
+2. Singleton-кэш (`resolved`) — если уже создан.
+3. Явное определение (`set()`) — фабрика или экземпляр.
+4. Autowiring — если id зарегистрирован через `autowire()` или включён глобальный autowiring и id — instantiable FQCN.
+5. `NotFoundException` — если ничего не подошло.
 
 Для фабрики (`callable`):
 
@@ -34,6 +35,7 @@
 
 - зарегистрирован через `set()`;
 - уже создан (есть в кэше);
+- зарегистрирован как **alias**;
 - **или** может быть создан через autowiring (`autowire()` / глобальный режим + instantiable class).
 
 ### `set(string $id, mixed $concrete): void`
@@ -52,7 +54,8 @@
 `true`, если есть:
 
 - регистрация через `set()` (включая callable);
-- **или** явная регистрация через `autowire()`.
+- **или** явная регистрация через `autowire()`;
+- **или** id зарегистрирован как **alias**.
 
 Не учитывает только singleton-кэш без definition. Не означает, что `get()` уже вызывался.
 
@@ -120,6 +123,26 @@
 
 Подробнее — [Сканирование классов](Class-scanning), [Autowiring](Autowiring).
 
+### Прототипы, alias и lazy
+
+#### `make(string $id): mixed`
+
+Создаёт **новый** экземпляр при каждом вызове. Не заполняет singleton-кэш. Декораторы и alias — как у `get()`.
+
+**Исключения:** те же, что у `get()`.
+
+#### `alias(string $alias, string $targetId): void`
+
+Регистрирует альтернативный id. `get($alias)` и `make($alias)` разрешают `$targetId` (с учётом цепочек).
+
+**Исключение:** `ContainerException` при циклической цепочке alias.
+
+#### `lazy(string $serviceId): LazyService`
+
+Возвращает обёртку; первый `getValue()` вызывает `$container->get($serviceId)` и кэширует результат внутри `LazyService`.
+
+Подробнее — [Прототипы, alias и lazy](Prototypes-alias-lazy).
+
 ### Tagged services
 
 #### `tag(string $id, string $tag): void`
@@ -134,7 +157,33 @@
 
 #### `decorate(string $id, callable $decorator): void`
 
-`(mixed $inner, ContainerInterface $container): mixed` — обёртка при `get()`. Порядок: первый зарегистрированный декоратор ближе к inner. Сбрасывает singleton-кэш id.
+`(mixed $inner, ContainerInterface $container): mixed` — обёртка при `get()` и `make()`. Порядок: первый зарегистрированный декоратор ближе к inner. Сбрасывает singleton-кэш id.
+
+---
+
+## `CloudCastle\DI\LazyService`
+
+### `getValue(): mixed`
+
+Откладывает `Container::get($serviceId)` до первого вызова; повторные вызовы возвращают тот же экземпляр из внутреннего кэша обёртки.
+
+---
+
+## `CloudCastle\DI\ServiceAliasResolver`
+
+Внутренний класс; используется `Container::alias()`.
+
+| Метод | Описание |
+|-------|----------|
+| `alias(string $alias, string $targetId): void` | Регистрация alias |
+| `resolve(string $id): string` | Конечный id после цепочки |
+| `isAlias(string $id): bool` | Зарегистрирован ли id как alias |
+
+---
+
+## `CloudCastle\DI\ServiceInstanceResolver`
+
+Внутренний класс; создаёт экземпляры для `get()` / `make()` (с опциональным singleton-кэшированием).
 
 ---
 
@@ -210,6 +259,9 @@ interface ContainerInterface extends \Psr\Container\ContainerInterface
     public function isMethodAutowiringEnabled(): bool;
     public function autowire(string $className): void;
     public function scan(string $directory, ?string $namespace = null): void;
+    public function make(string $id): mixed;
+    public function alias(string $alias, string $targetId): void;
+    public function lazy(string $serviceId): \CloudCastle\DI\LazyService;
 }
 ```
 
@@ -220,7 +272,7 @@ interface ContainerInterface extends \Psr\Container\ContainerInterface
 | Класс | Когда |
 |-------|-------|
 | `NotFoundException` | `get()` — сервис недоступен |
-| `ContainerException` | autowiring, scan, registry, PSR-11 container error |
+| `ContainerException` | autowiring, alias, scan, registry, PSR-11 container error |
 
 Обе реализуют интерфейсы PSR-11.
 
@@ -235,6 +287,8 @@ interface ContainerInterface extends \Psr\Container\ContainerInterface
 | Фабрика / autowire вернули `null` после декораторов | **не** кэшируется |
 | Цикл A→B→A в **фабриках** | не обнаруживается |
 | Цикл при **autowiring** | `ContainerException` |
+| `make()` | новый экземпляр, кэш не заполняется |
+| Циклический **alias** | `ContainerException` при `alias()` или `resolve()` |
 | `scan()` + существующий `set(FQCN)` | `set()` сохраняется, scan пропускает id |
 
 Подробнее — [Фабрики и singleton](Factories-and-singleton), [Autowiring](Autowiring).

@@ -79,6 +79,21 @@ $container->scan(__DIR__ . '/Services', 'App\\Services\\');
 
 Регистрирует все instantiable-классы в каталоге с namespace `App\Services\`. Существующие `set()` не перезаписываются. Подробнее — [Сканирование классов](Class-scanning).
 
+## Прототипы, alias и lazy
+
+```php
+// Прототип
+$job = $container->make(Job::class);
+
+// Alias интерфейса
+$container->alias(LoggerInterface::class, 'logger');
+
+// Lazy-обёртка
+$container->set('reports', $container->lazy(ReportGenerator::class));
+```
+
+Подробнее — [Прототипы, alias и lazy](Prototypes-alias-lazy).
+
 ## Глобальный реестр
 
 ```php
@@ -108,7 +123,7 @@ $service = ContainerRegistry::get()->get(App\Service\UserService::class);
 `CloudCastle\DI\Container` реализует:
 
 - `Psr\Container\ContainerInterface` — `get()`, `has()`;
-- `CloudCastle\DI\Contract\ContainerInterface` — `set()`, `hasDefinition()`, autowiring, tags, decorators.
+- `CloudCastle\DI\Contract\ContainerInterface` — `set()`, `hasDefinition()`, `make()`, `alias()`, `lazy()`, autowiring, tags, decorators.
 
 ```php
 if ($container->has('logger')) {
@@ -149,4 +164,5 @@ function createContainer(): Container
 - [Сканирование классов](Class-scanning)
 - [Теги и декораторы](Tags-and-decorators)
 - [Фабрики и singleton](Factories-and-singleton)
+- [Прототипы, alias и lazy](Prototypes-alias-lazy)
 - [Справочник API](API-reference)

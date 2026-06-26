@@ -93,3 +93,29 @@ $container->hasDefinition(App\Service\UserService::class); // false
 $container->autowire(App\Service\UserService::class);
 $container->hasDefinition(App\Service\UserService::class); // true
 ```
+
+## `make()` — прототип без singleton
+
+```php
+$container->set('dto', static fn () => new stdClass());
+
+$a = $container->make('dto');
+$b = $container->make('dto'); // новый объект при каждом вызове
+```
+
+`make()` не заполняет singleton-кэш; декораторы применяются. Подробнее — [Прототипы, alias и lazy](Prototypes-alias-lazy).
+
+## `alias()` — несколько id на один сервис
+
+```php
+$container->set('app.clock', $clock);
+$container->alias(ClockInterface::class, 'app.clock');
+```
+
+## `lazy()` — отложенное создание
+
+```php
+$container->set('heavy', $container->lazy(HeavyService::class));
+$lazy = $container->get('heavy');
+$service = $lazy->getValue(); // первый get() внутри LazyService
+```

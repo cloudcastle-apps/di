@@ -2,7 +2,7 @@
 
 ## Чем CloudCastle DI отличается от PHP-DI / Symfony / Pimple?
 
-CloudCastle DI — **компактный** PSR-11 контейнер с явным `set()`, singleton-фабриками, reflection autowiring (конструктор, **свойства**, **методы**; типы, union, intersection, PHP attributes, autowiring по имени), scan каталогов, tagged services и декораторами. Одна runtime-зависимость (`psr/container`). Без YAML и compiled container.
+CloudCastle DI — **компактный** PSR-11 контейнер с явным `set()`, singleton-фабриками, прототипами (`make()`), alias, lazy-сервисами, reflection autowiring (конструктор, **свойства**, **методы**; типы, union, intersection, PHP attributes, autowiring по имени), scan каталогов, tagged services и декораторами. Одна runtime-зависимость (`psr/container`). Без YAML и compiled container.
 
 ## Есть autowiring?
 
@@ -36,6 +36,16 @@ $container->scan(__DIR__ . '/Services', 'App\\Services\\');
 ## Поддерживаются tagged services и декораторы?
 
 **Да:** `tag()` / `getTagged()` и `decorate()`. См. [Теги и декораторы](Tags-and-decorators).
+
+## Есть прототипы, alias и lazy?
+
+**Да** (с v1.2.0):
+
+- **`make($id)`** — новый экземпляр без singleton-кэша
+- **`alias($alias, $targetId)`** — альтернативный id
+- **`lazy($serviceId)`** — отложенное создание через `LazyService::getValue()`
+
+См. [Прототипы, alias и lazy](Prototypes-alias-lazy).
 
 ## Поддерживаются PHP attributes?
 
@@ -87,7 +97,7 @@ protected function setClock(ClockInterface $clock): void {}
 composer docs
 ```
 
-Результат в `docs/` (генерируется локально). Руководство — `doc/guide/` и эта Wiki.
+Результат в `docs/` (генерируется локально). Руководство — `doc/guide/` и эта Wiki. **Схемы архитектуры** — [Архитектура](Architecture).
 
 ## Куда задавать вопросы?
 

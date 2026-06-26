@@ -33,9 +33,15 @@ Packagist: https://packagist.org/packages/cloudcastle/di
 ### Сканирование каталогов
 
 - **`scan($directory, $namespace?)`** — рекурсивный обход `.php`-файлов;
-- парсинг `namespace` и `class` без выполнения файла;
+- парсинг `namespace`, нескольких `class` и `enum` без выполнения файла;
 - фильтр по префиксу namespace;
-- только instantiable-классы; существующие `set()` не перезаписываются.
+- только instantiable-классы (`enum` пропускаются); существующие `set()` не перезаписываются.
+
+### Прототипы, alias и lazy
+
+- **`make($id)`** — новый экземпляр без singleton-кэша;
+- **`alias($alias, $targetId)`** — альтернативный id (цепочки, детекция циклов);
+- **`lazy($serviceId)`** — `LazyService` с отложенным `get()`.
 
 ### Tagged services и декораторы
 
@@ -51,6 +57,27 @@ Packagist: https://packagist.org/packages/cloudcastle/di
 ### Качество
 
 PHPStan max, Psalm L1, покрытие строк ≥95%, Infection MSI ≥95%.
+
+## Архитектура (кратко)
+
+```mermaid
+flowchart LR
+    subgraph api [API]
+        get[get / make]
+        reg[set / autowire / scan / alias]
+    end
+    subgraph core [Ядро]
+        aliasR[ServiceAliasResolver]
+        instR[ServiceInstanceResolver]
+        aw[Autowirer]
+    end
+    reg --> instR
+    get --> aliasR --> instR
+    instR -->|autowire| aw
+    aw -->|get зависимостей| get
+```
+
+Подробные схемы всех потоков — на странице **[Архитектура](Architecture)**.
 
 ## Минимальный пример
 
@@ -73,12 +100,14 @@ $service = ContainerRegistry::get()->get(App\Services\OrderService::class);
 
 | Страница | Описание |
 |----------|----------|
+| [Архитектура](Architecture) | схемы работы контейнера, autowiring, scan, alias, lazy |
 | [Быстрый старт](Quick-start) | установка, PSR-11, composition root |
 | [Примеры bootstrap](Bootstrap) | plain PHP, CLI, unit/integration тесты |
 | [Autowiring](Autowiring) | reflection, типы параметров, циклы, приоритеты |
 | [Сканирование классов](Class-scanning) | `scan()`, фильтр namespace, ограничения |
 | [Глобальный реестр](Global-registry) | `ContainerRegistry`, bootstrap, тесты |
 | [Теги и декораторы](Tags-and-decorators) | `tag()`, `getTagged()`, `decorate()` |
+| [Прототипы, alias и lazy](Prototypes-alias-lazy) | `make()`, `alias()`, `lazy()` |
 | [Справочник API](API-reference) | все методы и исключения |
 | [Фабрики и singleton](Factories-and-singleton) | callable, кэш, `null`, циклы в фабриках |
 | [Тестирование](Testing) | unit/integration, моки, `ContainerRegistry::reset()` |

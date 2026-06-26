@@ -3,6 +3,25 @@
 Формат основан на [Keep a Changelog](https://keepachangelog.com/ru/1.1.0/),
 версионирование — [SemVer](https://semver.org/lang/ru/).
 
+## [1.2.0] — 2026-06-26
+
+### Добавлено
+
+- **`Container::make()`** — создание сервиса без singleton-кэша (прототип)
+- **`Container::alias()`** — привязка альтернативного id к целевому сервису; цепочки alias и детекция циклов
+- **`Container::lazy()`** и класс **`LazyService`** — отложенное `get()` при первом `getValue()`
+- Классы **`ServiceAliasResolver`**, **`ServiceInstanceResolver`** — разрешение alias и создание экземпляров
+- **`ClassScanner`:** парсинг нескольких `class` в одном файле; объявления `enum` в regex (enum не регистрируются — не instantiable)
+- Wiki: [Архитектура](wiki/Architecture.md) — Mermaid-схемы работы пакета
+- Wiki: [Прототипы, alias и lazy](wiki/Prototypes-alias-lazy.md); обновлены API, scan, factories
+
+### Изменено
+
+- `has()` / `hasDefinition()` учитывают alias
+- `getTagged()` разрешает alias у id в теге
+- Логика resolve вынесена в `ServiceInstanceResolver` (снижение сложности `Container`)
+- README, CHANGELOG, UPGRADING под v1.2.0
+
 ## [1.1.0] — 2026-06-25
 
 ### Добавлено
@@ -76,6 +95,7 @@
 - CI для GitHub Actions и GitLab CI
 - Инструменты качества: PHPStan max, Psalm level 1, PHPCS, PHPMD, Deptrac, Rector
 
+[1.2.0]: https://github.com/cloudcastle-apps/di/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/cloudcastle-apps/di/compare/v1.0.3...v1.1.0
 [1.0.3]: https://github.com/cloudcastle-apps/di/releases/tag/v1.0.3
 [1.0.2]: https://github.com/cloudcastle-apps/di/releases/tag/v1.0.2

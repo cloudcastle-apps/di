@@ -2,12 +2,14 @@
 
 ### Руководство
 
+- [Архитектура](Architecture)
 - [Быстрый старт](Quick-start)
 - [Примеры bootstrap](Bootstrap)
 - [Autowiring](Autowiring)
 - [Сканирование классов](Class-scanning)
 - [Глобальный реестр](Global-registry)
 - [Теги и декораторы](Tags-and-decorators)
+- [Прототипы, alias и lazy](Prototypes-alias-lazy)
 - [Справочник API](API-reference)
 - [Фабрики и singleton](Factories-and-singleton)
 - [Тестирование](Testing)

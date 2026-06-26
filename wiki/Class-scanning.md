@@ -2,6 +2,8 @@
 
 Метод `Container::scan()` находит PHP-классы в каталоге и регистрирует их для autowiring через `autowire()`.
 
+> Блок-схема `ClassScanner` и `scan()` — [Архитектура](Architecture#сканирование-каталога-scan).
+
 ## Базовый пример
 
 ```php
@@ -28,9 +30,9 @@ $container->scan(__DIR__ . '/src');
 1. Рекурсивно обходит каталог (`RecursiveDirectoryIterator`).
 2. Берёт только файлы с расширением `.php`.
 3. Читает содержимое файла **без выполнения** (`file_get_contents`).
-4. Извлекает `namespace` и имя `class` регулярными выражениями.
+4. Извлекает объявления `class` и `enum` регулярными выражениями (несколько типов в одном файле).
 5. Проверяет через `class_exists()` (срабатывает autoload).
-6. Оставляет только **instantiable** классы (не abstract, не interface, не trait).
+6. Оставляет только **instantiable** классы (не abstract, не interface, не trait, не enum).
 
 Поддерживаются модификаторы `abstract`, `final`, `readonly` в объявлении класса в regex.
 
@@ -56,7 +58,7 @@ foreach ($scanner->scan($directory, $namespace) as $className) {
 ## Требования к структуре проекта
 
 - **PSR-4 autoload** должен быть настроен: после парсинга имени класса вызывается `class_exists()`.
-- Один класс на файл — стандартная практика PSR-4; иначе autoload может не найти класс.
+- Несколько классов в одном файле поддерживаются (нестандартно для PSR-4, но допустимо при корректном autoload).
 - Файлы с синтаксическими ошибками могут не загрузиться — класс будет пропущен.
 
 ## Фильтр namespace
@@ -93,10 +95,9 @@ function bootstrapContainer(): Container
 
 ## Ограничения
 
-- Не находит **enum** (regex ищет `class`, не `enum`).
-- Не парсит **несколько классов** в одном файле.
-- Не выполняет static side effects при сканировании — но `class_exists()` **загружает** класс через autoload.
+- **`enum`** парсятся из файла, но **не регистрируются** (не instantiable).
 - Anonymous classes и файлы только с `return` / функциями — пропуск.
+- Не выполняет static side effects при сканировании — но `class_exists()` **загружает** класс через autoload.
 
 ## См. также
 

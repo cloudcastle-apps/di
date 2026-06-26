@@ -26,6 +26,25 @@
 
 В фабрику передаётся сам контейнер — так строятся цепочки зависимостей.
 
+``make()`` — прототип
+---------------------
+
+``make($id)`` создаёт **новый** экземпляр при каждом вызове и **не** заполняет singleton-кэш. Декораторы применяются так же, как при ``get()``:
+
+.. code-block:: php
+
+   $container->set('dto', static fn () => new stdClass());
+   $a = $container->make('dto');
+   $b = $container->make('dto'); // !== $a
+
+``alias()`` и ``lazy()``
+------------------------
+
+.. code-block:: php
+
+   $container->alias(ClockInterface::class, 'app.clock');
+   $container->set('heavy', $container->lazy(HeavyService::class));
+
 Поддерживаемые callable
 -----------------------
 
