@@ -112,7 +112,7 @@ composer ci
 | `logo.png` | Растровая копия 512×512 |
 | `social-preview.png` | Баннер 1280×640 для GitHub Social preview |
 
-**Social preview** (карточка репозитория при шаринге ссылки): [Settings → Social preview](https://github.com/cloudcastle-apps/di/settings) → Edit → загрузить `.github/social-preview.png` или `assets/social-preview.png`. Публичного API для загрузки нет; локально — `node tools/upload-social-preview.mjs` (Playwright + `GH_TOKEN`).
+**Social preview** (карточка репозитория при шаринге ссылки): [Settings → Social preview](https://github.com/cloudcastle-apps/di/settings#social-preview) → Edit → Upload an image → выбрать `.github/social-preview.png` или `assets/social-preview.png` (1280×640, &lt; 1 MB). Публичного API нет.
 
 ## CI
 
