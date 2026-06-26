@@ -81,7 +81,7 @@ PHPStan max, Psalm L1, покрытие строк ≥95%, Infection MSI ≥95%.
 flowchart LR
     subgraph api [API]
         get[get / make]
-        call[call]
+        apiCall[call]
         reg[set / bind / autowire / scan]
         tag[getTaggedIds / Iterator / Locator]
     end
@@ -95,7 +95,7 @@ flowchart LR
     reg --> instR
     get --> aliasR --> instR
     instR -->|новый resolve| hooks
-    call --> invoker --> aw
+    apiCall --> invoker --> aw
     instR -->|autowire| aw
     aw -->|get зависимостей| get
     tag --> get
