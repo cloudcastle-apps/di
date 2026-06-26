@@ -296,4 +296,45 @@ interface ContainerInterface extends PsrContainerInterface
      * @param string $tag Имя тега
      */
     public function getTaggedLocator(string $tag): TaggedServiceLocator;
+
+    /**
+     * Замораживает контейнер: запрещает изменение определений и настроек autowiring.
+     *
+     * {@see get()}, {@see make()} и {@see call()} продолжают работать.
+     * Повторный вызов безопасен (идемпотентен).
+     */
+    public function freeze(): void;
+
+    /**
+     * Проверяет, заморожен ли контейнер.
+     */
+    public function isFrozen(): bool;
+
+    /**
+     * Возвращает все зарегистрированные id (definitions, autowire, alias).
+     *
+     * @return list<string> Отсортированный список без дубликатов
+     */
+    public function getDefinitionIds(): array;
+
+    /**
+     * Возвращает снимок состояния контейнера для отладки (без создания сервисов).
+     *
+     * @return array{
+     *     frozen: bool,
+     *     definitions: list<string>,
+     *     autowired: list<string>,
+     *     aliases: array<string, string>,
+     *     tags: array<string, list<string>>,
+     *     decorators: list<string>,
+     *     resolved: list<string>,
+     *     autowiring: array{
+     *         enabled: bool,
+     *         parameterName: bool,
+     *         property: bool,
+     *         method: bool
+     *     }
+     * }
+     */
+    public function dump(): array;
 }

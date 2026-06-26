@@ -112,4 +112,26 @@ final class ContainerSecurityTest extends TestCase
             self::assertFalse($container->has('nowhere'));
         }
     }
+
+    public function testFrozenContainerRejectsMutationWithoutChangingDefinitions(): void
+    {
+        $container = new Container();
+        $container->set('safe', new stdClass());
+        $container->freeze();
+
+        $idsBefore = $container->getDefinitionIds();
+
+        try {
+            $container->set('evil', new stdClass());
+            self::fail('Ожидалось исключение ContainerException.');
+        } catch (ContainerException $containerException) {
+            self::assertSame(
+                'Контейнер заморожен: изменение определений запрещено.',
+                $containerException->getMessage(),
+            );
+        }
+
+        self::assertSame($idsBefore, $container->getDefinitionIds());
+        self::assertFalse($container->hasDefinition('evil'));
+    }
 }

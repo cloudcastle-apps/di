@@ -3,6 +3,17 @@
 Формат основан на [Keep a Changelog](https://keepachangelog.com/ru/1.1.0/),
 версионирование — [SemVer](https://semver.org/lang/ru/).
 
+## [1.4.0] — 2026-06-26
+
+### Добавлено
+
+- **`freeze()`** / **`isFrozen()`** — блокировка изменения определений после bootstrap
+- **`getDefinitionIds()`** — список зарегистрированных id без resolve
+- **`dump()`** — снимок состояния контейнера для отладки
+- **`ServiceAliasResolver::getAliases()`** — доступ к карте alias (для dump)
+- Unit-тесты: `ContainerFreezeTest`, `ContainerIntrospectionTest`
+- Wiki: API, Bootstrap — примеры freeze и dump
+
 ## [1.3.1] — 2026-06-26
 
 ### Исправлено
@@ -129,6 +140,7 @@
 - CI для GitHub Actions и GitLab CI
 - Инструменты качества: PHPStan max, Psalm level 1, PHPCS, PHPMD, Deptrac, Rector
 
+[1.4.0]: https://github.com/cloudcastle-apps/di/compare/v1.3.1...v1.4.0
 [1.3.1]: https://github.com/cloudcastle-apps/di/compare/v1.3.0...v1.3.1
 [1.3.0]: https://github.com/cloudcastle-apps/di/compare/v1.2.0...v1.3.0
 [1.2.0]: https://github.com/cloudcastle-apps/di/compare/v1.1.0...v1.2.0

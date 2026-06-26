@@ -1,10 +1,10 @@
 # Тесты безопасности
 
-Каталог: `tests/Security/`. **16 тестов** в двух классах:
+Каталог: `tests/Security/`. **17 тестов** в двух классах:
 
 | Класс | Тестов | Фокус |
 |-------|--------|-------|
-| `ContainerSecurityTest` | 6 | id, сообщения, registry, alias |
+| `ContainerSecurityTest` | 7 | id, сообщения, registry, alias, freeze |
 | `ContainerSecurityResolveTest` | 10 | кэш при сбоях, autowiring, теги |
 
 Команда: `composer test:security` (входит в `composer ci`).

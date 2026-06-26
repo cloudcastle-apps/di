@@ -4,21 +4,21 @@
 
 | Команда | Каталог | Тестов | Описание |
 |---------|---------|--------|----------|
-| `composer test:unit` | `tests/Unit/` | 208 | Поведение API, autowiring, v1.2/v1.3 |
+| `composer test:unit` | `tests/Unit/` | 238 | Поведение API, autowiring, freeze, introspection |
 | `composer test:integration` | `tests/Integration/` | 5 | Графы зависимостей, PSR-11 |
-| `composer test:security` | `tests/Security/` | 16 | Безопасность resolve, id, autowiring, сообщения |
+| `composer test:security` | `tests/Security/` | 17 | Безопасность resolve, id, autowiring, freeze |
 | `composer test:load` | `tests/Load/` | 15 | Массовые регистрации и resolve (1000–3000 ops) |
 | `composer test:performance` | `tests/Performance/` | 12 | Латентность hot path (до 10 000 итераций) |
 | `composer test:coverage` | — | — | Покрытие строк ≥95% |
 | `composer test:mutation` | — | — | Infection MSI ≥95% |
 
-**Всего:** 256 PHPUnit-тестов (без coverage/mutation).
+**Всего:** 287 PHPUnit-тестов (без coverage/mutation).
 
 ### Подробная документация по наборам
 
 | Набор | Wiki |
 |-------|------|
-| Security (16) | **[Тесты безопасности](Security-tests)** — кэш, autowire, id, исключения |
+| Security (17) | **[Тесты безопасности](Security-tests)** — кэш, autowire, freeze, id |
 | Load (15) + Performance (12) | **[Нагрузка и производительность](Performance-and-load)** — методология, все 27 сценариев, пороги, бенчмарки |
 
 ```bash
@@ -127,7 +127,7 @@ function createApplicationContainer(): Container
 
 Кратко — в таблице выше. **Подробно:**
 
-- [Тесты безопасности](Security-tests) — 16 сценариев, шаги, риски
+- [Тесты безопасности](Security-tests) — 17 сценариев, шаги, риски
 - [Нагрузка и производительность](Performance-and-load) — 15 load + 12 performance, пороги CI, `benchmark-report`
 
 ## Покрытие и мутации

@@ -177,6 +177,24 @@
 
 Подробнее — [call(), bind(), afterResolving](Call-bind-callbacks).
 
+### Заморозка и интроспекция (v1.4)
+
+#### `freeze(): void`
+
+Запрещает изменение определений (`set`, `autowire`, `alias`, `tag`, `decorate`, `bind`, `scan`, `addDefinitions`, `afterResolving`, переключатели autowiring). `get()`, `make()`, `call()` работают. Идемпотентен.
+
+#### `isFrozen(): bool`
+
+`true` после `freeze()`.
+
+#### `getDefinitionIds(): array`
+
+`list<string>` — все id из definitions, autowire и alias (отсортированы, без дубликатов). Без создания сервисов.
+
+#### `dump(): array`
+
+Снимок состояния для отладки: `frozen`, `definitions`, `autowired`, `aliases`, `tags`, `decorators`, `resolved`, флаги autowiring. Без вызова `get()` для неразрешённых сервисов.
+
 ### Tagged services
 
 #### `tag(string $id, string $tag): void`

@@ -67,6 +67,16 @@ final class ServiceAliasResolver
         return isset($this->aliases[$id]);
     }
 
+    /**
+     * Возвращает карту alias → targetId (копия внутреннего состояния).
+     *
+     * @return array<string, string>
+     */
+    public function getAliases(): array
+    {
+        return $this->aliases;
+    }
+
     private function hasCycle(string $startAlias): bool
     {
         $visited = [];

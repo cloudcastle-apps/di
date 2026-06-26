@@ -71,6 +71,9 @@ final class Container implements ContainerInterface
     /** Ленивый {@see CallableInvoker} для {@see call()} */
     private ?CallableInvoker $callableInvoker = null;
 
+    /** Запрет изменения определений после {@see freeze()} */
+    private bool $frozen = false;
+
     /**
      * Создаёт пустой контейнер с внутренними резолверами alias, экземпляров и after-resolving.
      */
@@ -115,6 +118,7 @@ final class Container implements ContainerInterface
     #[Override]
     public function alias(string $alias, string $targetId): void
     {
+        $this->assertMutable();
         $this->aliasResolver->alias($alias, $targetId);
     }
 
@@ -174,6 +178,7 @@ final class Container implements ContainerInterface
     #[Override]
     public function afterResolving(string $id, callable $callback): void
     {
+        $this->assertMutable();
         $this->resolveHooks->register($id, $callback);
     }
 
@@ -207,6 +212,76 @@ final class Container implements ContainerInterface
     }
 
     /**
+     * {@inheritDoc}
+     */
+    #[Override]
+    public function freeze(): void
+    {
+        $this->frozen = true;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    #[Override]
+    public function isFrozen(): bool
+    {
+        return $this->frozen;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return list<string>
+     */
+    #[Override]
+    public function getDefinitionIds(): array
+    {
+        return $this->introspector()->definitionIds();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    #[Override]
+    public function dump(): array
+    {
+        return $this->introspector()->dump();
+    }
+
+    /**
+     * @return array{
+     *     enabled: bool,
+     *     parameterName: bool,
+     *     property: bool,
+     *     method: bool
+     * }
+     */
+    private function autowiringFlags(): array
+    {
+        return [
+            'enabled' => $this->autowiringEnabled,
+            'parameterName' => $this->nameAutowiring,
+            'property' => $this->propertyAutowiring,
+            'method' => $this->methodAutowiring,
+        ];
+    }
+
+    private function introspector(): ContainerIntrospector
+    {
+        return new ContainerIntrospector(
+            $this->frozen,
+            $this->definitions,
+            $this->autowired,
+            $this->aliasResolver->getAliases(),
+            $this->tags,
+            $this->decorators,
+            $this->resolved,
+            $this->autowiringFlags(),
+        );
+    }
+
+    /**
      * Проверяет, доступен ли сервис для получения через {@see get()}.
      *
      * Учитывает явную регистрацию, singleton-кэш и возможность autowiring
@@ -236,6 +311,7 @@ final class Container implements ContainerInterface
     #[Override]
     public function set(string $id, mixed $concrete): void
     {
+        $this->assertMutable();
         unset($this->resolved[$id]);
         $this->definitions[$id] = $concrete;
     }
@@ -257,6 +333,8 @@ final class Container implements ContainerInterface
     #[Override]
     public function tag(string $id, string $tag): void
     {
+        $this->assertMutable();
+
         $taggedIds = $this->tags[$tag] ?? [];
 
         if (!\in_array($id, $taggedIds, true)) {
@@ -295,6 +373,7 @@ final class Container implements ContainerInterface
     #[Override]
     public function decorate(string $id, callable $decorator): void
     {
+        $this->assertMutable();
         unset($this->resolved[$id]);
         $this->decorators[$id][] = $decorator;
     }
@@ -305,6 +384,7 @@ final class Container implements ContainerInterface
     #[Override]
     public function enableAutowiring(): void
     {
+        $this->assertMutable();
         $this->autowiringEnabled = true;
     }
 
@@ -314,6 +394,7 @@ final class Container implements ContainerInterface
     #[Override]
     public function disableAutowiring(): void
     {
+        $this->assertMutable();
         $this->autowiringEnabled = false;
     }
 
@@ -332,6 +413,7 @@ final class Container implements ContainerInterface
     #[Override]
     public function enableParameterNameAutowiring(): void
     {
+        $this->assertMutable();
         $this->nameAutowiring = true;
     }
 
@@ -341,6 +423,7 @@ final class Container implements ContainerInterface
     #[Override]
     public function disableParameterNameAutowiring(): void
     {
+        $this->assertMutable();
         $this->nameAutowiring = false;
     }
 
@@ -359,6 +442,7 @@ final class Container implements ContainerInterface
     #[Override]
     public function enablePropertyAutowiring(): void
     {
+        $this->assertMutable();
         $this->propertyAutowiring = true;
     }
 
@@ -368,6 +452,7 @@ final class Container implements ContainerInterface
     #[Override]
     public function disablePropertyAutowiring(): void
     {
+        $this->assertMutable();
         $this->propertyAutowiring = false;
     }
 
@@ -386,6 +471,7 @@ final class Container implements ContainerInterface
     #[Override]
     public function enableMethodAutowiring(): void
     {
+        $this->assertMutable();
         $this->methodAutowiring = true;
     }
 
@@ -395,6 +481,7 @@ final class Container implements ContainerInterface
     #[Override]
     public function disableMethodAutowiring(): void
     {
+        $this->assertMutable();
         $this->methodAutowiring = false;
     }
 
@@ -413,6 +500,7 @@ final class Container implements ContainerInterface
     #[Override]
     public function autowire(string $className): void
     {
+        $this->assertMutable();
         $this->assertInstantiableClass($className);
         unset($this->resolved[$className]);
         $this->autowired[$className] = true;
@@ -537,5 +625,15 @@ final class Container implements ContainerInterface
     private function callableInvoker(): CallableInvoker
     {
         return $this->callableInvoker ??= new CallableInvoker($this);
+    }
+
+    /**
+     * @throws ContainerException Если контейнер заморожен
+     */
+    private function assertMutable(): void
+    {
+        if ($this->frozen) {
+            throw new ContainerException('Контейнер заморожен: изменение определений запрещено.');
+        }
     }
 }

@@ -2,6 +2,20 @@
 
 Руководство по переходу между версиями **cloudcastle/di**.
 
+## 1.3.1 → 1.4.0
+
+### Новые возможности (обратно совместимо)
+
+- **`freeze()`** — запрет `set` / `autowire` / `alias` и др. после bootstrap; `get` / `make` / `call` работают
+- **`getDefinitionIds()`** — список id определений
+- **`dump()`** — отладочный снимок (tags, aliases, resolved, флаги autowiring)
+
+Рекомендуется вызывать `freeze()` в конце composition root в production.
+
+```bash
+composer update cloudcastle/di
+```
+
 ## 1.3.0 → 1.3.1
 
 ### Исправления (обратно совместимо)

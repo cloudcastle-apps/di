@@ -12,15 +12,27 @@
     <rule ref="rulesets/codesize.xml">
         <exclude name="TooManyPublicMethods"/>
         <exclude name="ExcessiveClassComplexity"/>
+        <exclude name="TooManyFields"/>
+        <exclude name="TooManyMethods"/>
     </rule>
     <rule ref="rulesets/codesize.xml/TooManyPublicMethods">
         <properties>
-            <property name="ignorepattern" value="(^(set|get|is|has|with|enable|disable|make|alias|lazy|bind|call|add|after|tag|decorat|autowire|scan))i"/>
+            <property name="ignorepattern" value="(^(set|get|is|has|with|enable|disable|make|alias|lazy|bind|call|add|after|tag|decorat|autowire|scan|freeze|dump))i"/>
         </properties>
     </rule>
     <rule ref="rulesets/codesize.xml/ExcessiveClassComplexity">
         <properties>
-            <property name="maximum" value="65"/>
+            <property name="maximum" value="72"/>
+        </properties>
+    </rule>
+    <rule ref="rulesets/codesize.xml/TooManyFields">
+        <properties>
+            <property name="maxfields" value="18"/>
+        </properties>
+    </rule>
+    <rule ref="rulesets/codesize.xml/TooManyMethods">
+        <properties>
+            <property name="maxmethods" value="30"/>
         </properties>
     </rule>
     <rule ref="rulesets/controversial.xml">

@@ -170,6 +170,27 @@ function registerInfrastructure(Container $c, array $config): void
 }
 ```
 
+### Prod: заморозка после bootstrap (v1.4)
+
+```php
+function createContainer(array $config): Container
+{
+    $container = new Container();
+    registerInfrastructure($container, $config);
+    registerApplication($container);
+    $container->freeze();
+
+    return $container;
+}
+```
+
+Отладка wiring без `get()`:
+
+```php
+$ids = $container->getDefinitionIds();
+$state = $container->dump(); // aliases, tags, resolved, флаги autowiring
+```
+
 ### Обработчики по тегу
 
 ```php

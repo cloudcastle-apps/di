@@ -2,6 +2,16 @@
 
 Руководство по переходу между версиями **cloudcastle/di**.
 
+## 1.3.1 → 1.4.0
+
+### Новые возможности (обратно совместимо)
+
+- **`freeze()`** / **`isFrozen()`** — блокировка изменений после bootstrap
+- **`getDefinitionIds()`** — список id без resolve
+- **`dump()`** — снимок состояния для отладки
+
+См. [Wiki: API-reference](https://github.com/cloudcastle-apps/di/wiki/API-reference).
+
 ## 1.3.0 → 1.3.1
 
 ### Исправления (обратно совместимо)
