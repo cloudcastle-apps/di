@@ -23,10 +23,12 @@ final readonly class Autowirer
 
     public function __construct(
         ContainerInterface $container,
+        ?AttributeServiceIdReader $attributeReader = null,
     ) {
-        $this->memberResolver = new MemberResolver($container);
-        $this->propertyInjector = new PropertyInjector($container);
-        $this->methodInjector = new MethodInjector($container);
+        $reader = $attributeReader ?? new AttributeServiceIdReader();
+        $this->memberResolver = new MemberResolver($container, $reader);
+        $this->propertyInjector = new PropertyInjector($container, $reader);
+        $this->methodInjector = new MethodInjector($container, $reader);
     }
 
     /**

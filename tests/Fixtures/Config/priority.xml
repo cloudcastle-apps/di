@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<container priority="50">
+    <services>
+        <service id="app.label" priority="100">from-xml</service>
+        <service id="app.mode">runtime</service>
+    </services>
+    <aliases>
+        <alias name="mode" target="app.mode"/>
+    </aliases>
+    <autowiring enabled="true"/>
+</container>

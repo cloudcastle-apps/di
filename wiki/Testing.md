@@ -4,15 +4,17 @@
 
 | Команда | Каталог | Тестов | Описание |
 |---------|---------|--------|----------|
-| `composer test:unit` | `tests/Unit/` | 238 | Поведение API, autowiring, freeze, introspection |
+| `composer test:unit` | `tests/Unit/` | 326 | Поведение API, autowiring, configuration, freeze |
 | `composer test:integration` | `tests/Integration/` | 5 | Графы зависимостей, PSR-11 |
 | `composer test:security` | `tests/Security/` | 17 | Безопасность resolve, id, autowiring, freeze |
 | `composer test:load` | `tests/Load/` | 15 | Массовые регистрации и resolve (1000–3000 ops) |
 | `composer test:performance` | `tests/Performance/` | 12 | Латентность hot path (до 10 000 итераций) |
 | `composer test:coverage` | — | — | Покрытие строк ≥95% |
-| `composer test:mutation` | — | — | Infection MSI ≥95% |
+| `composer test:mutation` | — | — | Infection MSI (цель ≥95%) |
 
-**Всего:** 287 PHPUnit-тестов (без coverage/mutation).
+**Всего:** 375 PHPUnit-тестов (без coverage/mutation).
+
+Фактические метрики (локальный прогон): покрытие строк **~96%**; MSI Infection **≥95%** по ядру (`src/`, без `Configuration/` — отдельный набор mutation-тестов для конфигурации в backlog).
 
 ### Подробная документация по наборам
 
@@ -134,7 +136,7 @@ function createApplicationContainer(): Container
 
 ```bash
 composer test:coverage   # порог ≥95% строк
-composer test:mutation   # Infection MSI ≥95%
+composer test:mutation   # Infection (цель MSI ≥95%)
 ```
 
 Требуется PCOV или Xdebug (`XDEBUG_MODE=coverage`).

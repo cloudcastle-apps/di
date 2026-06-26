@@ -2,7 +2,25 @@
 
 Ниже — пошаговые примеры сборки графа зависимостей (composition root) для разных сценариев использования CloudCastle DI.
 
-## Plain PHP (веб-приложение)
+## Схема composition root
+
+```mermaid
+flowchart TD
+    Start([точка входа]) --> New[new Container]
+    New --> Path{способ wiring}
+    Path -->|PHP API| Manual[set / bind / scan / registerAttribute]
+    Path -->|файлы v1.5| Config[ContainerConfigurator.configure]
+    Manual --> Flags[enableAutowiring flags]
+    Config --> Flags
+    Flags --> Optional{production?}
+    Optional -->|да| Freeze[freeze]
+    Optional -->|нет| Registry
+    Freeze --> Registry[ContainerRegistry::set]
+    Registry --> Resolve[get RootService]
+    Resolve --> App[обработчик запроса / CLI]
+```
+
+---
 
 Точка входа для простого PHP-приложения без фреймворка:
 
@@ -169,6 +187,30 @@ function registerInfrastructure(Container $c, array $config): void
     });
 }
 ```
+
+### Prod: конфигурация из файлов (v1.5)
+
+```php
+use CloudCastle\DI\Configuration\ContainerConfigurator;
+use CloudCastle\DI\Container;
+
+function createContainer(): Container
+{
+    $container = new Container();
+    $configurator = new ContainerConfigurator();
+
+    $configurator->configure($container, [
+        __DIR__ . '/../config/services.php',
+        __DIR__ . '/../config/' . (getenv('APP_ENV') ?: 'dev') . '.json',
+    ]);
+
+    $container->freeze();
+
+    return $container;
+}
+```
+
+См. [Конфигурация из файлов](Configuration).
 
 ### Prod: заморозка после bootstrap (v1.4)
 

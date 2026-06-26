@@ -21,8 +21,9 @@ final readonly class MemberResolver
 
     public function __construct(
         private ContainerInterface $container,
+        ?AttributeServiceIdReader $attributeReader = null,
     ) {
-        $this->attributeReader = new AttributeServiceIdReader();
+        $this->attributeReader = $attributeReader ?? new AttributeServiceIdReader();
         $this->typeResolver = new ParameterTypeResolver($container);
     }
 

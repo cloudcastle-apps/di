@@ -4,15 +4,21 @@ declare(strict_types=1);
 
 namespace CloudCastle\DI;
 
-use CloudCastle\DI\Attribute\Autowire;
-use CloudCastle\DI\Attribute\Inject;
+use CloudCastle\DI\Contract\ServiceIdAttribute;
 use ReflectionAttribute;
 
 /**
- * Извлекает id сервиса из PHP attributes {@see Inject} / {@see Autowire}.
+ * Извлекает id сервиса из PHP attributes при autowiring.
+ *
+ * Встроенные и зарегистрированные attributes перечислены в {@see AttributeServiceIdRegistry}.
  */
 final readonly class AttributeServiceIdReader
 {
+    public function __construct(
+        private AttributeServiceIdRegistry $registry = new AttributeServiceIdRegistry(),
+    ) {
+    }
+
     /**
      * @param list<ReflectionAttribute<object>> $attributes
      *
@@ -37,9 +43,7 @@ final readonly class AttributeServiceIdReader
     public function hasAny(array $attributes): bool
     {
         foreach ($attributes as $attribute) {
-            $attributeName = $attribute->getName();
-
-            if ($attributeName === Inject::class || $attributeName === Autowire::class) {
+            if ($this->registry->isKnown($attribute->getName())) {
                 return true;
             }
         }
@@ -52,20 +56,14 @@ final readonly class AttributeServiceIdReader
      */
     private function readOne(ReflectionAttribute $attribute): ?string
     {
-        $attributeName = $attribute->getName();
-
-        if ($attributeName !== Inject::class && $attributeName !== Autowire::class) {
+        if (!$this->registry->isKnown($attribute->getName())) {
             return null;
         }
 
         $instance = $attribute->newInstance();
 
-        if ($instance instanceof Inject && $instance->id !== null) {
-            return $instance->id;
-        }
-
-        if ($instance instanceof Autowire && $instance->service !== null) {
-            return $instance->service;
+        if ($instance instanceof ServiceIdAttribute) {
+            return $instance->serviceId();
         }
 
         return null;

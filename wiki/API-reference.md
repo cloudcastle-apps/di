@@ -179,9 +179,15 @@
 
 ### Заморозка и интроспекция (v1.4)
 
+#### `registerAttribute(string $attributeClass): void`
+
+Регистрирует пользовательский PHP attribute, реализующий `CloudCastle\DI\Contract\ServiceIdAttribute`. После регистрации attribute обрабатывается так же, как встроенные `Inject` / `Autowire` (конструктор, свойства, методы).
+
+Встроенные `Inject` и `Autowire` регистрировать не нужно.
+
 #### `freeze(): void`
 
-Запрещает изменение определений (`set`, `autowire`, `alias`, `tag`, `decorate`, `bind`, `scan`, `addDefinitions`, `afterResolving`, переключатели autowiring). `get()`, `make()`, `call()` работают. Идемпотентен.
+Запрещает изменение определений (`set`, `autowire`, `alias`, `tag`, `decorate`, `bind`, `scan`, `addDefinitions`, `afterResolving`, `registerAttribute`, переключатели autowiring). `get()`, `make()`, `call()` работают. Идемпотентен.
 
 #### `isFrozen(): bool`
 
@@ -224,6 +230,44 @@
 #### `decorate(string $id, callable $decorator): void`
 
 `(mixed $inner, ContainerInterface $container): mixed` — обёртка при `get()` и `make()`. Порядок: первый зарегистрированный декоратор ближе к inner. Сбрасывает singleton-кэш id.
+
+---
+
+## `CloudCastle\DI\Configuration\ContainerConfigurator`
+
+Опциональный сервис загрузки и применения конфигурации. Не входит в `Container` — создаётся отдельно.
+
+| Метод | Описание |
+|-------|----------|
+| `configure(ContainerInterface, array $sources): void` | Загрузить, объединить, применить |
+| `loadMany(array $sources): array` | Слияние без применения |
+| `load(string $path): array` | Один файл |
+| `apply(ContainerInterface, array $config): void` | Применить массив |
+
+`$sources` — `list<string|ConfigurationSource>`.
+
+Подробнее — [Configuration](Configuration).
+
+---
+
+## `CloudCastle\DI\Configuration\ConfigurationSource`
+
+| Свойство | Описание |
+|----------|----------|
+| `path` | Путь к файлу |
+| `priority` | `?int` — приоритет слоя при слиянии |
+
+---
+
+## `CloudCastle\DI\Contract\ServiceIdAttribute`
+
+Контракт пользовательского attribute с методом `serviceId(): ?string`. Регистрация: `Container::registerAttribute()`.
+
+---
+
+## `CloudCastle\DI\AttributeServiceIdRegistry`
+
+Внутренний реестр известных attributes (встроенные + зарегистрированные). Используется `Autowirer` / `MemberResolver`.
 
 ---
 

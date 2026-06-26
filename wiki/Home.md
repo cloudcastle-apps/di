@@ -8,12 +8,12 @@
 
 Лёгкий контейнер внедрения зависимостей для **PHP 8.3+** с поддержкой [PSR-11](https://www.php-fig.org/psr/psr-11/). Одна runtime-зависимость — `psr/container`.
 
-**Текущая версия:** 1.4.x — см. [Releases](https://github.com/cloudcastle-apps/di/releases) · [Packagist](https://packagist.org/packages/cloudcastle/di)
+**Текущая версия:** 1.5.x — см. [Releases](https://github.com/cloudcastle-apps/di/releases) · [Packagist](https://packagist.org/packages/cloudcastle/di)
 
 ## Установка
 
 ```bash
-composer require cloudcastle/di:^1.3
+composer require cloudcastle/di:^1.5
 ```
 
 Packagist: https://packagist.org/packages/cloudcastle/di
@@ -43,6 +43,7 @@ Packagist: https://packagist.org/packages/cloudcastle/di
 - **`enableParameterNameAutowiring()`** — id сервиса = имя параметра (`$logger` → `'logger'`);
 - **`enablePropertyAutowiring()`** / **`enableMethodAutowiring()`** — typed properties и inject-методы после конструктора;
 - PHP attributes **`Inject`** / **`Autowire`** на конструкторе, **свойствах** и **методах**;
+- **`registerAttribute()`** — пользовательские attributes с контрактом `ServiceIdAttribute`;
 - разрешение зависимостей: типы, union, **intersection**, nullable, `ContainerInterface` / PSR-11;
 - обнаружение **циклических зависимостей** при autowiring;
 - явный `set()` всегда имеет **приоритет** над autowiring.
@@ -74,6 +75,17 @@ Packagist: https://packagist.org/packages/cloudcastle/di
 - **`getTaggedLocator()`** — `has` / `get` по id в теге (`TaggedServiceLocator`);
 - **`decorate()`** — цепочка обёрток при `get()` / `make()` (первый декоратор ближе к inner).
 
+### Конфигурация из файлов (v1.5)
+
+- **`ContainerConfigurator`** — необязательный сервис: PHP (по умолчанию), JSON, YAML, XML;
+- несколько источников на один контейнер, слияние с **приоритетами**;
+- секции: `services`, `bind`, `aliases`, `autowire`, `tags`, `scan`, `register_attributes`, `autowiring`.
+
+### Заморозка и интроспекция (v1.4)
+
+- **`freeze()`** / **`isFrozen()`** — блокировка изменений после bootstrap;
+- **`getDefinitionIds()`**, **`dump()`** — отладка wiring.
+
 ### Глобальный реестр
 
 - **`ContainerRegistry`** — singleton-контейнер приложения;
@@ -82,32 +94,47 @@ Packagist: https://packagist.org/packages/cloudcastle/di
 
 ### Качество
 
-PHPStan max, Psalm L1, покрытие строк ≥95%, Infection MSI ≥95%.
+PHPStan max, Psalm L1, покрытие строк ≥95% (фактически ~96%), Infection MSI (цель ≥95%).
 
 ## Архитектура (кратко)
 
 ```mermaid
-flowchart LR
-    subgraph api [API]
+flowchart TB
+    subgraph api [Публичный API]
         get[get / make]
         apiCall[call]
         reg[set / bind / autowire / scan]
-        tag[getTaggedIds / Iterator / Locator]
+        cfg[ContainerConfigurator]
+        attr[registerAttribute]
+        frz[freeze / dump]
+        tag[getTagged / Iterator / Locator]
     end
+
     subgraph core [Ядро]
         aliasR[ServiceAliasResolver]
         instR[ServiceInstanceResolver]
         hooks[AfterResolvingDispatcher]
         invoker[CallableInvoker]
-        aw[Autowirer]
+        aw[Autowirer + MemberResolver]
+        attrR[AttributeServiceIdRegistry]
     end
+
+    subgraph external [Вне контейнера]
+        cr[ContainerRegistry]
+    end
+
     reg --> instR
+    cfg --> reg
+    attr --> attrR
+    attrR --> aw
     get --> aliasR --> instR
     instR -->|новый resolve| hooks
     apiCall --> invoker --> aw
     instR -->|autowire| aw
     aw -->|get зависимостей| get
     tag --> get
+    frz -.->|блокирует мутации| reg
+    reg -.->|ContainerRegistry::set| cr
 ```
 
 Подробные схемы всех потоков — на странице **[Архитектура](Architecture)**.
@@ -138,7 +165,8 @@ $service = ContainerRegistry::get()->get(App\Services\OrderService::class);
 | [Быстрый старт](Quick-start) | установка, PSR-11, composition root |
 | [Сравнение с PHP-DI, Symfony, Pimple](Comparison) | пошаговые таблицы, плюсы/минусы, миграция |
 | [Примеры bootstrap](Bootstrap) | plain PHP, CLI, unit/integration тесты |
-| [Autowiring](Autowiring) | reflection, типы параметров, циклы, приоритеты |
+| [Autowiring](Autowiring) | reflection, типы параметров, циклы, приоритеты, registerAttribute |
+| [Конфигурация из файлов](Configuration) | ContainerConfigurator, PHP/JSON/YAML/XML, приоритеты |
 | [Сканирование классов](Class-scanning) | `scan()`, фильтр namespace, ограничения |
 | [Глобальный реестр](Global-registry) | `ContainerRegistry`, bootstrap, тесты |
 | [Теги и декораторы](Tags-and-decorators) | `tag()`, `getTagged()`, iterator, locator |
@@ -147,7 +175,7 @@ $service = ContainerRegistry::get()->get(App\Services\OrderService::class);
 | [Справочник API](API-reference) | все методы и исключения |
 | [Фабрики и singleton](Factories-and-singleton) | callable, кэш, `null`, циклы в фабриках |
 | [Тестирование](Testing) | unit/integration, моки, `ContainerRegistry::reset()` |
-| [Тесты безопасности](Security-tests) | 16 сценариев: кэш, autowire, id, NotFound |
+| [Тесты безопасности](Security-tests) | 17 тестов: кэш, autowire, id, NotFound |
 | [Нагрузка и производительность](Performance-and-load) | 15 load + 12 performance, пороги, бенчмарки |
 | [Анти-паттерны](Anti-patterns) | service locator, autowiring, глобальный контейнер |
 | [Обновление версий](Upgrading) | миграция между релизами |

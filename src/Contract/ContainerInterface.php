@@ -159,6 +159,19 @@ interface ContainerInterface extends PsrContainerInterface
     public function isMethodAutowiringEnabled(): bool;
 
     /**
+     * Регистрирует пользовательский PHP attribute для autowiring.
+     *
+     * Класс должен быть помечен `#[\Attribute]` и реализовывать {@see ServiceIdAttribute}.
+     * После регистрации attribute обрабатывается так же, как встроенные
+     * {@see \CloudCastle\DI\Attribute\Inject} и {@see \CloudCastle\DI\Attribute\Autowire}.
+     *
+     * @param string $attributeClass Полное имя класса attribute
+     *
+     * @throws \CloudCastle\DI\Exception\ContainerException Если класс не attribute или не реализует контракт
+     */
+    public function registerAttribute(string $attributeClass): void;
+
+    /**
      * Регистрирует класс для autowiring по его полному имени (id = FQCN).
      *
      * Работает независимо от {@see isAutowiringEnabled()}. Сбрасывает singleton-кэш для className.

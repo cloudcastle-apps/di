@@ -1,6 +1,6 @@
 # Архитектура и принцип работы
 
-На этой странице — схемы жизненного цикла сервисов, autowiring, сканирования и вспомогательных механизмов пакета **cloudcastle/di**.
+На этой странице — схемы жизненного цикла сервисов, autowiring, конфигурации, заморозки, сканирования и вспомогательных механизмов пакета **cloudcastle/di**.
 
 ## Обзор компонентов
 
@@ -22,6 +22,7 @@ flowchart TB
         SIR[ServiceInstanceResolver]
         ARD[AfterResolvingDispatcher]
         CI_INV[CallableInvoker]
+        INTROS[ContainerIntrospector dump]
     end
 
     subgraph autowire [Autowiring]
@@ -30,13 +31,29 @@ flowchart TB
         PTR[ParameterTypeResolver]
         CDR[ClassDependencyResolver]
         ITR[IntersectionTypeResolver]
-        ASR[AttributeServiceIdReader]
+        ASIR[AttributeServiceIdReader]
         PI[PropertyInjector]
         MI[MethodInjector]
+        BUILTIN_ATTR[Inject / Autowire]
+        CUSTOM_ATTR[ServiceIdAttribute]
     end
 
     subgraph scan [Сканирование]
         CS[ClassScanner]
+    end
+
+    subgraph config [Конфигурация v1.5]
+        CC[ContainerConfigurator]
+        CLR[ConfigurationLoaderRegistry]
+        CM[ConfigurationMerger]
+        CA[ConfigurationApplicator]
+        ASR_REG[AttributeServiceIdRegistry]
+        subgraph loaders [Загрузчики]
+            L_PHP[PhpLoader]
+            L_JSON[JsonLoader]
+            L_YAML[YamlLoader]
+            L_XML[XmlLoader]
+        end
     end
 
     CI --> C
@@ -46,26 +63,38 @@ flowchart TB
     C --> CI_INV
     C --> AW
     C --> CS
+    C --> ASR_REG
+    C --> INTROS
     C --> LS
     C --> TSI
     C --> TSL
+    CC --> CLR
+    CLR --> loaders
+    CC --> CM
+    CC --> CA
+    CA --> C
+    ASR_REG --> ASIR
+    BUILTIN_ATTR --> ASIR
+    CUSTOM_ATTR --> ASR_REG
     CR -.->|хранит ссылку| CI
     SIR -->|get в фабриках| CI
     AW --> MR
     AW --> PI
     AW --> MI
-    MR --> ASR
+    MR --> ASIR
     MR --> PTR
     PTR --> CDR
     PTR --> ITR
     CDR -->|рекурсивный get| CI
     PI --> MR
     MI --> MR
+    CI_INV --> MR
 ```
 
 | Компонент | Роль |
 |-----------|------|
-| `Container` | Регистрация (`set`, `autowire`, `tag`, `decorate`, `alias`, `bind`, `addDefinitions`), `call()`, `afterResolving()`, флаги autowiring, делегирование resolve |
+| `Container` | Регистрация (`set`, `autowire`, `tag`, `decorate`, `alias`, `bind`, `addDefinitions`, `registerAttribute`), `call()`, `afterResolving()`, флаги autowiring, `freeze()` / `dump()`, делегирование resolve |
+| `ContainerIntrospector` | Снимок wiring для `dump()` / `getDefinitionIds()` |
 | `ServiceAliasResolver` | Цепочки `alias → targetId`, детекция циклов |
 | `ServiceInstanceResolver` | Кэш, definitions, autowiring, декораторы; общий для `get()` и `make()` |
 | `AfterResolvingDispatcher` | Callback после нового resolve |
@@ -73,6 +102,8 @@ flowchart TB
 | `TaggedServiceIterator` / `TaggedServiceLocator` | Итерация и доступ к сервисам по тегу |
 | `Autowirer` | `new` + property + method injection |
 | `ClassScanner` | Парсинг PHP-файлов без выполнения, список FQCN |
+| `ContainerConfigurator` | Загрузка конфигурации из PHP/JSON/YAML/XML, слияние по приоритетам, `apply()` к контейнеру |
+| `AttributeServiceIdRegistry` | Пользовательские PHP-attributes для autowiring (`registerAttribute()`) |
 | `LazyService` | Отложенный `get()` при первом `getValue()` |
 | `ContainerRegistry` | Глобальный singleton-контейнер приложения |
 
@@ -86,16 +117,28 @@ flowchart TB
 sequenceDiagram
     participant App as Точка входа
     participant C as Container
+    participant CC as ContainerConfigurator
     participant CS as ClassScanner
     participant CR as ContainerRegistry
 
     App->>C: new Container()
-    App->>C: set() / alias() / enableAutowiring()
-    App->>C: scan(directory, namespace)
-    C->>CS: scan()
-    CS-->>C: list FQCN
-    loop каждый класс без set()
-        C->>C: autowire(FQCN)
+    alt Ручной bootstrap
+        App->>C: registerAttribute() опционально
+        App->>C: set() / bind() / enableAutowiring()
+        App->>C: scan(directory, namespace)
+        C->>CS: scan()
+        CS-->>C: list FQCN
+        loop каждый класс без set()
+            C->>C: autowire(FQCN)
+        end
+    else Декларативный v1.5
+        App->>CC: configure(container, sources)
+        CC->>CC: loadMany → merge по priority
+        CC->>C: apply: register_attributes → autowiring → scan → services → autowire → bind → aliases → tags
+    end
+    opt production
+        App->>C: freeze()
+        Note over C: мутации set/tag/… → ContainerException
     end
     App->>CR: set(container)
     App->>C: get(RootService::class)
@@ -104,6 +147,8 @@ sequenceDiagram
 ```
 
 **Приоритет регистрации:** явный `set(id)` всегда сильнее autowiring для того же `id`. `scan()` не перезаписывает существующие `set()`.
+
+**Альтернатива (v1.5):** вместо ручного `set()` / `scan()` — `ContainerConfigurator::configure($container, …)` с одним или несколькими файлами (PHP, JSON, YAML, XML). Слои с большим `priority` перекрывают предыдущие. См. [Конфигурация из файлов](Configuration).
 
 ---
 
@@ -132,7 +177,10 @@ flowchart TD
     Inst --> Finalize
     CanAW -->|нет| ErrNF[NotFoundException]
     Finalize --> Deco[применить декораторы по порядку]
-    Deco --> Save{singleton и value !== null?}
+    Deco --> Hooks{singleton и не из кэша?}
+    Hooks -->|да| ARD[AfterResolvingDispatcher]
+    Hooks -->|нет| Save
+    ARD --> Save{singleton и value !== null?}
     Save -->|да| PutCache[resolved id = instance]
     Save -->|нет| Done
     PutCache --> Done([вернуть instance])
@@ -164,7 +212,7 @@ flowchart LR
 
     subgraph step2 [2. Свойства]
         PI[PropertyInjector.inject]
-        AttrP[Inject / Autowire на property]
+        AttrP[Inject / Autowire / custom attribute]
         TypedP[typed properties при enablePropertyAutowiring]
     end
 
@@ -174,7 +222,17 @@ flowchart LR
         SetM[setter при enableMethodAutowiring]
     end
 
+    subgraph resolve [Разрешение значения]
+        ASIR[AttributeServiceIdReader]
+        PTR[ParameterTypeResolver]
+        GET["container.get()"]
+    end
+
     RC --> Params --> MR1 --> New
+    MR1 --> ASIR
+    MR1 --> PTR
+    ASIR --> GET
+    PTR --> GET
     New --> PI
     PI --> AttrP
     PI --> TypedP
@@ -182,6 +240,8 @@ flowchart LR
     TypedP --> MI
     MI --> AttrM
     MI --> SetM
+    AttrM --> ASIR
+    SetM --> ASIR
 ```
 
 При autowiring зависимости конструктора снова вызывают `$container->get()` — поэтому возможны цепочки и циклы (отслеживаются в `resolving`).
@@ -194,12 +254,15 @@ flowchart LR
 
 ```mermaid
 flowchart TD
-    Start([параметр или свойство]) --> Attr{Inject / Autowire?}
+    Start([параметр или свойство]) --> Custom{custom attribute из registerAttribute?}
+    Custom -->|да, id задан| GetCustom["container.get(id из attribute)"]
+    Custom -->|нет| Attr{Inject / Autowire?}
     Attr -->|да, id задан| GetAttr["container.get(id из attribute)"]
     Attr -->|нет| Name{enableParameterNameAutowiring и has name?}
     Name -->|да| GetName["container.get(имя параметра)"]
     Name -->|нет| Type[ParameterTypeResolver]
-    GetAttr --> End([значение])
+    GetCustom --> End([значение])
+    GetAttr --> End
     GetName --> End
     Type --> End
 ```
@@ -274,6 +337,19 @@ flowchart TD
 
 `has()` возвращает `true` для id, зарегистрированного как alias, даже если target ещё не создан.
 
+### `bind()` vs `alias()`
+
+```mermaid
+flowchart TD
+    Bind[bind abstract, concrete] --> IsClass{concrete — instantiable класс?}
+    IsClass -->|да| AW[autowire concrete]
+    AW --> Alias1[alias abstract → concrete]
+    IsClass -->|нет, существующий id| Alias2[alias abstract → id]
+    IsClass -->|иначе| Err[ContainerException]
+
+    AliasOnly[alias alias, targetId] --> Store[aliases только переименование]
+```
+
 ---
 
 ## Lazy-сервис
@@ -309,8 +385,10 @@ flowchart LR
     D1 --> D2[декоратор 2]
     D2 --> Dn[декоратор N]
     Dn --> Out[результат get/make]
-    Out --> Cache{singleton get?}
+    Out --> Hooks[afterResolving если новый]
+    Hooks --> Cache{singleton get?}
     Cache -->|да| Resolved[записать в resolved]
+    DecorateReg[decorate id] -.->|сброс| Resolved
 ```
 
 `decorate(id)` сбрасывает `resolved[id]`. Порядок: первый зарегистрированный декоратор ближе к inner.
@@ -322,14 +400,20 @@ flowchart LR
 ```mermaid
 flowchart TD
     Tag[tag id, tagName] --> List[добавить id в tags tagName]
-    Get[getTagged tagName] --> Loop[для каждого id в порядке tag]
+    List --> API{какой API}
+    API -->|getTagged| Loop[для каждого id в порядке tag]
+    API -->|getTaggedIds| Ids[только список id]
+    API -->|getTaggedIterator| Iter[foreach → get]
+    API -->|getTaggedLocator| Loc[has/get по id в теге]
     Loop --> ResolveAlias[resolve alias]
     ResolveAlias --> Check{hasDefinition или canAutowire?}
     Check -->|нет| Skip[пропустить]
     Check -->|да| Get["get(id)"]
     Get --> Map[результат id => instance]
     Skip --> Loop
-    Map --> Return[array]
+    Ids --> Loop
+    Iter --> Get
+    Loc --> Get
 ```
 
 Ключ в результате — **исходный** id из `tag()`, значение — после полного `get()` (с alias и декораторами).
@@ -368,13 +452,17 @@ flowchart TD
 
 ```mermaid
 erDiagram
-    CONTAINER ||--o{ DEFINITIONS : "set()"
+    CONTAINER ||--o{ DEFINITIONS : "set() addDefinitions"
     CONTAINER ||--o{ RESOLVED : "get() singleton"
     CONTAINER ||--o{ TAGS : "tag()"
     CONTAINER ||--o{ DECORATORS : "decorate()"
     CONTAINER ||--o{ AUTOWIRED : "autowire()"
     CONTAINER ||--o{ RESOLVING : "autowire в процессе"
-    CONTAINER ||--|| ALIAS_RESOLVER : "alias()"
+    CONTAINER ||--o{ AFTER_RESOLVING : "afterResolving()"
+    CONTAINER ||--o{ CUSTOM_ATTRIBUTES : "registerAttribute()"
+    CONTAINER ||--|| ALIAS_RESOLVER : "alias() bind()"
+    CONTAINER ||--|| FLAGS : "autowiring flags"
+    CONTAINER ||--|| FROZEN : "freeze()"
 
     DEFINITIONS {
         string id PK
@@ -396,6 +484,22 @@ erDiagram
         string fqcn PK
         bool flag
     }
+    AFTER_RESOLVING {
+        string id PK
+        list callbacks "порядок регистрации"
+    }
+    CUSTOM_ATTRIBUTES {
+        string attributeClass PK
+    }
+    FLAGS {
+        bool autowiringEnabled
+        bool parameterName
+        bool property
+        bool method
+    }
+    FROZEN {
+        bool isFrozen
+    }
 ```
 
 ---
@@ -411,7 +515,11 @@ flowchart TB
         S4[alias a, b]
         S5[bind abstract, concrete]
         S6[addDefinitions array]
-        S7[enableAutowiring]
+        S7[enableAutowiring flags]
+        S8[registerAttribute class]
+        S9[ContainerConfigurator.configure]
+        S10[tag / decorate / afterResolving]
+        S11[freeze]
     end
 
     subgraph obtain [Получение]
@@ -421,6 +529,8 @@ flowchart TB
         G4[getTagged tag]
         G5[getTaggedIds / Iterator / Locator]
         G6[call callable]
+        G7[has / hasDefinition]
+        G8[dump / getDefinitionIds]
     end
 
     S1 --> definitions[(definitions)]
@@ -430,7 +540,18 @@ flowchart TB
     S5 --> aliases
     S5 --> autowired
     S6 --> definitions
-    S7 --> flag[autowiringEnabled]
+    S7 --> flag[autowiring flags]
+    S8 --> attrReg[(custom attributes)]
+    S9 --> CA[ConfigurationApplicator]
+    CA --> definitions
+    CA --> autowired
+    CA --> aliases
+    CA --> flag
+    CA --> attrReg
+    S10 --> tags[(tags)]
+    S10 --> deco[(decorators)]
+    S10 --> hooks[(afterResolving)]
+    S11 --> frozen[frozen=true]
 
     G1 --> resolve[ServiceInstanceResolver singleton=true]
     G2 --> resolve2[ServiceInstanceResolver singleton=false]
@@ -438,6 +559,7 @@ flowchart TB
     G4 --> G1
     G5 --> G1
     G6 --> invoker[CallableInvoker]
+    G8 --> introspect[ContainerIntrospector]
 
     definitions --> resolve
     definitions --> resolve2
@@ -447,7 +569,13 @@ flowchart TB
     flag --> resolve2
     aliases --> resolve
     aliases --> resolve2
+    attrReg --> invoker
+    attrReg --> resolve
+    deco --> resolve
+    deco --> resolve2
+    hooks --> resolve
     invoker --> autowired
+    frozen -.->|блокирует| register
 ```
 
 ---
@@ -541,8 +669,102 @@ flowchart LR
 
 ---
 
+## Конфигурация: загрузка, слияние, применение (v1.5)
+
+`ContainerConfigurator` не заменяет контейнер — он **наполняет** уже созданный `Container` через `ConfigurationApplicator`.
+
+```mermaid
+flowchart TD
+    Sources[list sources string или ConfigurationSource]
+    Sources --> Load[loadMany]
+    Load --> Loop[для каждого источника]
+    Loop --> Ext{расширение}
+    Ext -->|.php| Php[PhpConfigurationLoader require]
+    Ext -->|.json| Json[JsonConfigurationLoader]
+    Ext -->|.yaml .yml| Yaml[YamlConfigurationLoader ext-yaml]
+    Ext -->|.xml| Xml[XmlConfigurationLoader SimpleXML]
+    Php --> Layer[ConfigurationLayer + file priority]
+    Json --> Layer
+    Yaml --> Layer
+    Xml --> Layer
+    Layer --> Merge[ConfigurationMerger.merge]
+    Merge --> Config[объединённый array]
+    Config --> Apply[ConfigurationApplicator.apply]
+    Apply --> RA[register_attributes]
+    RA --> AWF[autowiring flags]
+    AWF --> SC[scan]
+    SC --> SV[services set bind lazy]
+    SV --> AWL[autowire list]
+    AWL --> BD[bind]
+    BD --> AL[aliases]
+    AL --> TG[tags]
+    TG --> C[Container готов к get]
+```
+
+Приоритет при конфликте: **priority параметра** → **priority файла** → **порядок в списке** (последний побеждает).
+
+---
+
+## Заморозка контейнера (`freeze`)
+
+После `freeze()` любая мутация wiring (`set`, `autowire`, `tag`, `bind`, `configure` через applicator и т.д.) выбрасывает `ContainerException`. `get()` / `make()` / `call()` / `has()` продолжают работать.
+
+```mermaid
+stateDiagram-v2
+    [*] --> Mutable: new Container
+    Mutable --> Mutable: set / bind / scan / configure
+    Mutable --> Frozen: freeze()
+    Frozen --> Frozen: get / make / call / has
+    Frozen --> Error: set / tag / autowire / configure
+    Error --> Frozen: ContainerException
+    note right of Frozen
+        isFrozen() === true
+        dump() для отладки
+    end note
+```
+
+`dump()` и `getDefinitionIds()` доступны в обоих состояниях.
+
+---
+
+## `registerAttribute()` и пользовательские attributes
+
+```mermaid
+flowchart LR
+    Dev[ServiceIdAttribute class] --> Reg[registerAttribute или register_attributes в конфиге]
+    Reg --> Registry[AttributeServiceIdRegistry]
+    Registry --> Reader[AttributeServiceIdReader]
+    Reader --> MR[MemberResolver]
+    MR --> Get["container.get(custom id)"]
+```
+
+Встроенные `Inject` / `Autowire` регистрируются в registry по умолчанию; пользовательские — только после `registerAttribute()`.
+
+---
+
+## Глобальный реестр `ContainerRegistry`
+
+```mermaid
+sequenceDiagram
+    participant Bootstrap
+    participant C as Container
+    participant CR as ContainerRegistry
+    participant App as Код приложения
+    participant Test as Тест tearDown
+
+    Bootstrap->>C: wiring + опционально freeze
+    Bootstrap->>CR: set(container)
+    App->>CR: get()
+    CR-->>App: тот же ContainerInterface
+    Test->>CR: reset()
+    Note over CR: изоляция между тестами
+```
+
+---
+
 ## См. также
 
+- [Конфигурация из файлов](Configuration)
 - [Быстрый старт](Quick-start)
 - [call(), bind(), afterResolving](Call-bind-callbacks)
 - [Autowiring](Autowiring)

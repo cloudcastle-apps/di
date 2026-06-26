@@ -56,6 +56,20 @@ final class CallableInvokerTest extends TestCase
         self::assertSame(Clock::class, $result);
     }
 
+    public function testInvokeCallsInstanceArrayCallable(): void
+    {
+        $target = new class () {
+            public function handle(string $label): string
+            {
+                return $label;
+            }
+        };
+
+        $result = (new CallableInvoker(new Container()))->invoke([$target, 'handle'], ['label' => 'ok']);
+
+        self::assertSame('ok', $result);
+    }
+
     public function testInvokeCallsArrayCallable(): void
     {
         $result = (new CallableInvoker(new Container()))->invoke(

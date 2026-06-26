@@ -2,6 +2,23 @@
 
 Руководство по переходу между версиями **cloudcastle/di**.
 
+## 1.4.0 → 1.5.0
+
+### Новые возможности (обратно совместимо)
+
+- **`ContainerConfigurator`** — конфигурация из PHP / JSON / YAML / XML (опционально)
+- **`registerAttribute()`** — пользовательские attributes (`ServiceIdAttribute`)
+
+Существующий bootstrap на чистом PHP API **не требует изменений**.
+
+### Рекомендации
+
+1. `composer update cloudcastle/di`
+2. YAML: установите `ext-yaml` в окружении, если нужны `.yaml`/`.yml`
+3. Вызов `configure()` — **до** `freeze()` в production
+
+Подробнее — [Configuration](Configuration).
+
 ## 1.3.1 → 1.4.0
 
 ### Новые возможности (обратно совместимо)

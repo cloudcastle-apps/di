@@ -83,6 +83,7 @@ Property и method injection
 ------
 
 * :doc:`autowiring`
+* :doc:`configuration`
 * :doc:`class-scanning`
 * :doc:`factories`
 * :doc:`tags-decorators`

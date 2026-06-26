@@ -6,7 +6,7 @@
 - `Security-tests <https://github.com/cloudcastle-apps/di/wiki/Security-tests>`_
 - `Performance-and-load <https://github.com/cloudcastle-apps/di/wiki/Performance-and-load>`_
 
-Безопасность (16 тестов)
+Безопасность (17 тестов)
 -----------------------
 
 ``composer test:security`` — отсутствие «фантомных» регистраций, повтор фабрики и hook

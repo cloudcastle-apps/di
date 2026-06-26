@@ -36,9 +36,11 @@ final readonly class CallableInvoker
     /**
      * @param ContainerInterface $container Контейнер для autowiring параметров callable
      */
-    public function __construct(ContainerInterface $container)
-    {
-        $this->memberResolver = new MemberResolver($container);
+    public function __construct(
+        ContainerInterface $container,
+        ?AttributeServiceIdReader $attributeReader = null,
+    ) {
+        $this->memberResolver = new MemberResolver($container, $attributeReader);
     }
 
     /**

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<container priority="not-a-number">
+    <services>
+        <service id="app.label">value</service>
+    </services>
+</container>

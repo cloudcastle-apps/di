@@ -90,6 +90,14 @@ sequenceDiagram
 | существующий **id** (`set`, `autowire`, alias) | только `alias($abstract, $concrete)` |
 | иначе | `ContainerException` |
 
+```mermaid
+flowchart TD
+    B[bind abstract, concrete] --> Class{concrete — класс?}
+    Class -->|instantiable| AW[autowire + alias]
+    Class -->|id| AL[только alias]
+    Class -->|иначе| ERR[ContainerException]
+```
+
 ```php
 $container->enableAutowiring();
 $container->bind(LoggerInterface::class, FileLogger::class);

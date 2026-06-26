@@ -112,4 +112,6 @@ Attributes
 
 Циклические зависимости при autowiring → ``ContainerException``.
 
+Пользовательские attributes (v1.5): ``registerAttribute()`` + ``ServiceIdAttribute``. См. ``configuration.rst``.
+
 Подробные примеры — Wiki «Autowiring».

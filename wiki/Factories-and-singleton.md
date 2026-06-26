@@ -1,5 +1,18 @@
 # Фабрики и singleton
 
+```mermaid
+flowchart TD
+  Set["set(id, callable)"] --> Def[(definitions)]
+  Get1["get(id) первый раз"] --> Call[вызов фабрики с container]
+  Call --> Inst[экземпляр]
+  Inst --> Cache[(resolved singleton)]
+  Get2["get(id) повторно"] --> Cache
+  Make["make(id)"] --> Call
+  Make -.->|не пишет| Cache
+  Decorate["decorate(id)"] --> Clear[сброс resolved id]
+  Clear --> Def
+```
+
 ## Готовый экземпляр
 
 ```php

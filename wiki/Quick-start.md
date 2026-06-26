@@ -154,6 +154,23 @@ $service = ContainerRegistry::get()->get(App\Service\UserService::class);
 
 Подробнее — [Глобальный реестр](Global-registry).
 
+## Конфигурация из файлов (v1.5)
+
+Вместо ручного `set()` / `scan()` можно описать wiring в PHP, JSON, YAML или XML и применить через `ContainerConfigurator`:
+
+```php
+use CloudCastle\DI\Configuration\ContainerConfigurator;
+use CloudCastle\DI\Configuration\ConfigurationSource;
+
+$configurator = new ContainerConfigurator();
+$configurator->configure($container, [
+    new ConfigurationSource(__DIR__ . '/config/services.php'),
+    new ConfigurationSource(__DIR__ . '/config/override.json', priority: 10),
+]);
+```
+
+Подробнее — [Конфигурация из файлов](Configuration).
+
 ## Идентификаторы сервисов
 
 Идентификаторы — произвольные строки:
@@ -205,6 +222,7 @@ function createContainer(): Container
 
 ## Дальше
 
+- [Конфигурация из файлов](Configuration)
 - [call(), bind(), afterResolving](Call-bind-callbacks)
 - [Autowiring](Autowiring)
 - [Сканирование классов](Class-scanning)

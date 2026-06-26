@@ -3,6 +3,23 @@
 Формат основан на [Keep a Changelog](https://keepachangelog.com/ru/1.1.0/),
 версионирование — [SemVer](https://semver.org/lang/ru/).
 
+## [1.5.0] — 2026-06-26
+
+### Добавлено
+
+- **`ContainerConfigurator`** — опциональная конфигурация из PHP, JSON, YAML, XML; несколько источников с приоритетами
+- Классы `Configuration\*`: загрузчики, merger, applicator, `ConfigurationSource`
+- **`registerAttribute()`** — регистрация пользовательских PHP attributes (`ServiceIdAttribute`)
+- **`AttributeServiceIdRegistry`**, контракт **`ServiceIdAttribute`**
+- `composer.json` → `suggest.ext-yaml` для YAML-конфигов
+- Wiki: [Configuration](wiki/Configuration.md); обновлены API, Bootstrap, Autowiring, Testing, README
+
+### Изменено
+
+- **Тесты:** 375 PHPUnit (unit 326, integration 5, security 17, load 15, performance 12); покрытие строк ~96%
+- Infection: MSI ≥95% по ядру; `src/Configuration/` временно вне mutation scope (см. `infection.json.dist`)
+- Документация и wiki приведены к v1.5.0
+
 ## [1.4.0] — 2026-06-26
 
 ### Добавлено
@@ -140,6 +157,7 @@
 - CI для GitHub Actions и GitLab CI
 - Инструменты качества: PHPStan max, Psalm level 1, PHPCS, PHPMD, Deptrac, Rector
 
+[1.5.0]: https://github.com/cloudcastle-apps/di/compare/v1.4.0...v1.5.0
 [1.4.0]: https://github.com/cloudcastle-apps/di/compare/v1.3.1...v1.4.0
 [1.3.1]: https://github.com/cloudcastle-apps/di/compare/v1.3.0...v1.3.1
 [1.3.0]: https://github.com/cloudcastle-apps/di/compare/v1.2.0...v1.3.0

@@ -74,6 +74,9 @@ final class Container implements ContainerInterface
     /** Запрет изменения определений после {@see freeze()} */
     private bool $frozen = false;
 
+    /** Реестр PHP attributes для autowiring (встроенные и пользовательские) */
+    private readonly AttributeServiceIdRegistry $attributeRegistry;
+
     /**
      * Создаёт пустой контейнер с внутренними резолверами alias, экземпляров и after-resolving.
      */
@@ -82,6 +85,7 @@ final class Container implements ContainerInterface
         $this->aliasResolver = new ServiceAliasResolver();
         $this->instanceResolver = new ServiceInstanceResolver($this);
         $this->resolveHooks = new AfterResolvingDispatcher();
+        $this->attributeRegistry = new AttributeServiceIdRegistry();
     }
 
     /**
@@ -498,6 +502,16 @@ final class Container implements ContainerInterface
      * {@inheritDoc}
      */
     #[Override]
+    public function registerAttribute(string $attributeClass): void
+    {
+        $this->assertMutable();
+        $this->attributeRegistry->register($attributeClass);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    #[Override]
     public function autowire(string $className): void
     {
         $this->assertMutable();
@@ -614,7 +628,10 @@ final class Container implements ContainerInterface
      */
     private function autowirer(): Autowirer
     {
-        return $this->autowirer ??= new Autowirer($this);
+        return $this->autowirer ??= new Autowirer(
+            $this,
+            new AttributeServiceIdReader($this->attributeRegistry),
+        );
     }
 
     /**
@@ -624,7 +641,10 @@ final class Container implements ContainerInterface
      */
     private function callableInvoker(): CallableInvoker
     {
-        return $this->callableInvoker ??= new CallableInvoker($this);
+        return $this->callableInvoker ??= new CallableInvoker(
+            $this,
+            new AttributeServiceIdReader($this->attributeRegistry),
+        );
     }
 
     /**

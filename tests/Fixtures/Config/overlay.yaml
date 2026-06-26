@@ -1,0 +1,9 @@
+services:
+  app.label: from-yaml
+  app.region: eu
+
+aliases:
+  region: app.region
+
+autowiring:
+  enabled: true

@@ -2,6 +2,15 @@
 
 `CloudCastle\DI\ContainerRegistry` — статический singleton-реестр **одного** контейнера приложения.
 
+```mermaid
+flowchart LR
+    Bootstrap[bootstrap wiring] --> Set[ContainerRegistry::set]
+    Set --> Global[(глобальная ссылка)]
+    Global --> App[любой код процесса get]
+    Test[tearDown теста] --> Reset[ContainerRegistry::reset]
+    Reset --> Global
+```
+
 ## API
 
 | Метод | Описание |

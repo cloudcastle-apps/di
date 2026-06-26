@@ -79,15 +79,15 @@ Autowiring в тестах
 
    composer test:unit
    composer test:integration
-   composer test:security      # 16 тестов безопасности
+   composer test:security      # 17 тестов безопасности
    composer test:load          # 15 нагрузочных
    composer test:performance   # 12 performance
-   composer test:coverage      # ≥95% строк
-   composer test:mutation      # MSI ≥95%
+   composer test:coverage      # ≥95% строк (~96% фактически)
+   composer test:mutation      # Infection, цель MSI ≥95%
    composer benchmark-report   # фактические бенчмарки
    composer ci
 
-Подробно — `Нагрузка и безопасность <load-performance.rst>`_ и Wiki
+**Всего:** 375 PHPUnit-тестов (unit 326, integration 5, security 17, load 15, performance 12).
 (Security-tests, Performance-and-load).
 
 См. также файл ``CONTRIBUTING.md`` в корне репозитория.

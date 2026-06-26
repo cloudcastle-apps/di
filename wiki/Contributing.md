@@ -25,11 +25,10 @@ src/
   PropertyInjector.php    — injection в свойства
   MethodInjector.php      — inject-методы, setter
   ParameterTypeResolver.php — union, intersection, named types
-  AttributeServiceIdReader.php — чтение Inject/Autowire
-  ClassScanner.php        — scan каталогов
-  ContainerRegistry.php   — глобальный реестр
+  AttributeServiceIdRegistry.php — реестр inject-attributes
+  Configuration/            — ContainerConfigurator, загрузчики, merger
   Attribute/              — Inject, Autowire
-  Contract/               — ContainerInterface
+  Contract/               — ContainerInterface, ServiceIdAttribute, ConfigurationLoaderInterface
   Exception/              — NotFoundException, ContainerException
 tests/Unit/               — unit-тесты
 tests/Integration/        — интеграционные
@@ -55,12 +54,12 @@ wiki/                     — исходники GitHub Wiki (публикует
 |---------|------------|
 | `composer check` | быстрая проверка |
 | `composer ci` | полный пайплайн (как в GitHub Actions) |
-| `composer test:unit` | unit-тесты (208) |
+| `composer test:unit` | unit-тесты (326) |
 | `composer test:load` | нагрузочные (15) |
 | `composer test:performance` | производительность (12) |
 | `composer benchmark-report` | фактические времена бенчмарков |
 | `composer test:coverage` | покрытие (≥95% строк) |
-| `composer test:mutation` | Infection (MSI ≥95%) |
+| `composer test:mutation` | Infection (цель MSI ≥95%) |
 | `composer docs` | API-документация в `docs/` |
 
 ## Pull Request

@@ -23,6 +23,7 @@ composer install
 
 ```
 src/           — исходный код библиотеки
+src/Configuration/ — загрузка и слияние конфигурации (PHP/JSON/YAML/XML)
 tests/Unit/    — unit-тесты
 tests/Integration/ — интеграционные сценарии
 tests/Security/    — тесты безопасности
@@ -67,7 +68,7 @@ composer ci
 | `composer phpmd` | PHP Mess Detector |
 | `composer deptrac` | Архитектурные слои |
 | `composer rector` / `composer rector-fix` | Rector (dry-run / apply) |
-| `composer test:unit` | Unit-тесты |
+| `composer test:unit` | Unit-тесты (326) |
 | `composer test:integration` | Интеграционные тесты |
 | `composer test:security` | Тесты безопасности |
 | `composer test:load` | Нагрузочные тесты (15) |

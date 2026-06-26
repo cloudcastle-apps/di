@@ -74,7 +74,7 @@
 
 **Итог шага 3:** при паритете API CloudCastle выигрывает **лёгкостью и прозрачностью**; PHP-DI — если нужны **compiler** и **contextual injection** уже сегодня.
 
-**Миграция PHP-DI → CloudCastle:** `set`/`get`/`autowire` переносятся напрямую; definitions YAML и `DI\env()` — в PHP bootstrap; contextual rules — пересмотреть вручную или дождаться v2.
+**Миграция PHP-DI → CloudCastle:** `set`/`get`/`autowire` переносятся напрямую; definitions YAML — в `ContainerConfigurator` или PHP bootstrap; `DI\env()` — в PHP; contextual rules — пересмотреть вручную или дождаться v2.
 
 ---
 
@@ -85,7 +85,7 @@
 | Шаг | Критерий | CloudCastle DI | Symfony DI | Вывод |
 |-----|----------|----------------|------------|-------|
 | 4.1 | **Зависимости** | `psr/container` | symfony/config, yaml, … | **+ CloudCastle** вне Symfony |
-| 4.2 | **Конфигурация** | PHP bootstrap | YAML/XML/PHP + compiler | Symfony гибче в monolith |
+| 4.2 | **Конфигурация** | PHP bootstrap или PHP/JSON/YAML/XML (`ContainerConfigurator`) | YAML/XML/PHP + compiler | Symfony гибче в monolith (compiler, autoconfigure) |
 | 4.3 | **Autowiring** | reflection + attributes | + autoconfigure, `_instanceof` | **+ Symfony** в больших apps |
 | 4.4 | **Теги и декораторы** | `tag()`, `decorate()` | config + compiler passes | Паритет по возможностям |
 | 4.5 | **Lazy loading** | `LazyService` обёртка | ghost proxies | **+ Symfony** для тяжёлых объектов |
@@ -96,7 +96,7 @@
 
 **Итог шага 4:** в Symfony-приложении — **Symfony DI**. CloudCastle DI — когда Symfony DI **избыточен**, но Pimple **мал**.
 
-**Миграция Symfony → CloudCastle:** перенесите только нужные `services.yaml` правила в `set()` / `bind()` / `scan()`; autoconfigure замените явными `tag()` / `autowire()`.
+**Миграция Symfony → CloudCastle:** перенесите `services.yaml` в `ContainerConfigurator` (YAML/XML/JSON) или в `set()` / `bind()` / `scan()`; autoconfigure замените явными `tag()` / `autowire()`.
 
 ---
 
@@ -125,9 +125,9 @@
 | # | Преимущество | Проявляется при сравнении с |
 |---|--------------|----------------------------|
 | +1 | Одна runtime-зависимость `psr/container` | PHP-DI, Symfony |
-| +2 | Явный PHP bootstrap без YAML/compiler | Symfony, PHP-DI (compiled) |
+| +2 | Явный PHP bootstrap или декларативные файлы без compiler | Symfony, PHP-DI (compiled) |
 | +3 | Полный PSR-11 + расширенный API | Pimple |
-| +4 | Autowiring, attributes, property/method inject | Pimple |
+| +4 | Autowiring, attributes, property/method inject, `registerAttribute()` | Pimple |
 | +5 | `scan()`, теги, декораторы, `call()`, `bind()`, hooks | Pimple |
 | +6 | Прототипы, alias, lazy | Pimple (частично) |
 | +7 | Компактный код — проще аудит | PHP-DI, Symfony |
@@ -141,7 +141,7 @@
 |---|------------|----------------------|
 | −1 | Нет compiled container | PHP-DI, Symfony; план v2 (#24) |
 | −2 | Нет contextual binding | PHP-DI, Symfony; план v2 (#25) |
-| −3 | Нет YAML/XML / autoconfigure | Symfony |
+| −3 | Нет autoconfigure / compiler как в Symfony | Symfony; YAML/XML через `ContainerConfigurator` (v1.5) |
 | −4 | Нет lazy ghost proxy | Symfony; план (#34) |
 | −5 | Нет scopes (request) | Symfony, Laravel; v2 (#33) |
 | −6 | Только PHP ^8.3 | PHP-DI, Pimple на старых версиях |
@@ -173,6 +173,7 @@ flowchart TD
     tiny -->|Нет| enterprise{Compiled / contextual сейчас?}
     enterprise -->|Да| heavy[PHP-DI или Symfony DI]
     enterprise -->|Нет| cc[CloudCastle DI]
+    cc --> ccfeat[PHP bootstrap или ContainerConfigurator PHP JSON YAML XML]
 ```
 
 ### Миграция (кратко)

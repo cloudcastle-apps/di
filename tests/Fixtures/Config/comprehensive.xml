@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<container>
+    <bind>
+        <binding abstract="xml.bind" concrete="CloudCastle\DI\Tests\Fixtures\Autowire\FileLogger"/>
+    </bind>
+    <autowire>
+        <class>CloudCastle\DI\Tests\Fixtures\Autowire\FileLogger</class>
+    </autowire>
+    <tags>
+        <tag name="handlers">
+            <id>xml.handler</id>
+        </tag>
+    </tags>
+    <register_attributes>
+        <attribute class="CloudCastle\DI\Tests\Fixtures\Autowire\CustomServiceIdAttribute"/>
+    </register_attributes>
+    <autowiring enabled="true" parameter_name="true" property="true" method="true"/>
+    <services>
+        <service id="xml.handler" class="CloudCastle\DI\Tests\Fixtures\Autowire\FileLogger" lazy="true"/>
+        <service id="xml.scalar">configured</service>
+    </services>
+    <aliases>
+        <alias name="handler" target="xml.handler"/>
+    </aliases>
+</container>

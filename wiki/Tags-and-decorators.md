@@ -2,6 +2,27 @@
 
 Расширения контракта для группового доступа к сервисам и обёрток без изменения фабрик.
 
+```mermaid
+flowchart TB
+    subgraph tags [Теги]
+        T[tag id, name]
+        T --> Store[(tags name → ids)]
+        Store --> IDS[getTaggedIds]
+        Store --> EAGER[getTagged → get каждого id]
+        IDS --> ITER[getTaggedIterator]
+        IDS --> LOC[getTaggedLocator]
+        ITER --> EAGER
+        LOC --> EAGER
+    end
+
+    subgraph deco [Декораторы]
+        D[decorate id, factory]
+        D --> Chain[цепочка callables]
+        Chain --> Resolve[get/make → inner → decorator₁ → … → decoratorₙ]
+        D --> Clear[сброс resolved id]
+    end
+```
+
 ## Tagged services
 
 ### `tag(string $id, string $tag): void`

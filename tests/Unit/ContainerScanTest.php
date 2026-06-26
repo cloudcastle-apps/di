@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace CloudCastle\DI\Tests\Unit;
 
+use CloudCastle\DI\ClassScanner;
 use CloudCastle\DI\Container;
 use CloudCastle\DI\Exception\ContainerException;
 use CloudCastle\DI\Tests\Fixtures\Autowire\AbstractWorker;
@@ -18,6 +19,7 @@ use PHPUnit\Framework\TestCase;
  * Интеграция {@see Container::scan()} с autowiring.
  */
 #[CoversClass(Container::class)]
+#[CoversClass(ClassScanner::class)]
 final class ContainerScanTest extends TestCase
 {
     private string $fixturesDirectory;

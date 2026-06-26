@@ -7,9 +7,34 @@ Autowiring создаёт экземпляры классов через reflect
 ## Порядок внедрения
 
 ```mermaid
-flowchart LR
-    C[конструктор] --> P[свойства]
-    P --> M[методы]
+flowchart TB
+    subgraph order [Autowirer.instantiate]
+        C[1. конструктор]
+        P[2. свойства]
+        M[3. методы]
+        C --> P --> M
+    end
+
+    subgraph ctor [Конструктор]
+        CP[параметры reflection]
+        MR1[MemberResolver]
+    end
+
+    subgraph prop [Свойства]
+        AP[Inject / Autowire / custom attribute]
+        TP[typed property при enablePropertyAutowiring]
+    end
+
+    subgraph meth [Методы]
+        AM[attributes на inject-методе]
+        SM[setter при enableMethodAutowiring]
+    end
+
+    C --> CP --> MR1
+    P --> AP
+    P --> TP
+    M --> AM
+    M --> SM
 ```
 
 Класс `CloudCastle\DI\Autowirer` выполняет шаги **строго в таком порядке**:
@@ -18,7 +43,26 @@ flowchart LR
 2. **Свойства** — `#[Inject]` / `#[Autowire]` всегда; typed properties при `enablePropertyAutowiring()`
 3. **Методы** — attributes на методе/параметрах всегда; setter и прочие inject-методы при `enableMethodAutowiring()`
 
-Разрешение значений делегируется `MemberResolver` (attributes → имя параметра → reflection-тип).
+Разрешение значений делегируется `MemberResolver` (custom attributes → `Inject`/`Autowire` → имя параметра → reflection-тип).
+
+### Приоритеты разрешения
+
+```mermaid
+flowchart TD
+    Start([зависимость]) --> Cache{singleton-кэш?}
+    Cache -->|get из resolved| Done([значение])
+    Cache -->|нет| Set{явный set?}
+    Set -->|да| Done
+    Set -->|нет| Custom{custom attribute?}
+    Custom -->|id| Done
+    Custom -->|нет| Builtin{Inject / Autowire id?}
+    Builtin -->|да| Done
+    Builtin -->|нет| Name{имя параметра?}
+    Name -->|да| Done
+    Name -->|нет| Type[тип union intersection nullable]
+    Type --> Done
+    Type -->|ничего| NF[NotFoundException]
+```
 
 ## Включение autowiring конструктора
 
@@ -264,6 +308,25 @@ $container->autowire(ReportService::class);
 
 Attributes с явным id **имеют приоритет** над autowiring по имени.
 
+### Пользовательские attributes (v1.5)
+
+Реализуйте `CloudCastle\DI\Contract\ServiceIdAttribute` и вызовите `registerAttribute()`:
+
+```php
+$container->registerAttribute(MyInject::class);
+```
+
+Или через конфигурацию — секция `register_attributes`. Подробнее — [Configuration](Configuration).
+
+```mermaid
+flowchart LR
+    A[#[MyInject id]] --> R[registerAttribute]
+    R --> Reg[AttributeServiceIdRegistry]
+    Reg --> Read[AttributeServiceIdReader]
+    Read --> MR[MemberResolver]
+    MR --> G["get(id)"]
+```
+
 ## Полный пример: конструктор + property + method
 
 ```php
@@ -390,14 +453,16 @@ Autowired-сервис кэшируется: повторный `get(FQCN)` — 
 CloudCastle DI **не** поддерживает:
 
 - compiled container;
-- конфигурационные YAML/XML;
 - autoconfigure Symfony / event subscribers;
 - private inject-методы без attributes (только public/protected).
+
+Конфигурация YAML/XML — через **`ContainerConfigurator`** (v1.5), не через отдельный Symfony-style config component.
 
 Для property/method injection **без конструктора** используйте `autowire()` + соответствующие флаги или attributes.
 
 ## См. также
 
+- [Конфигурация из файлов](Configuration)
 - [Сканирование классов](Class-scanning)
 - [Справочник API](API-reference)
 - [Анти-паттерны](Anti-patterns)

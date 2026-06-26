@@ -10,6 +10,24 @@
 | `alias(string $alias, string $targetId)` | альтернативный id → целевой сервис |
 | `lazy(string $serviceId)` | отложенное создание через `LazyService` |
 
+```mermaid
+flowchart LR
+    subgraph singleton [get — singleton]
+        G1[get] --> R[(resolved)]
+        G2[get повторно] --> R
+    end
+
+    subgraph prototype [make — прототип]
+        M1[make] --> New1[новый экземпляр]
+        M2[make] --> New2[новый экземпляр]
+    end
+
+    subgraph lazyPath [lazy]
+        L[LazyService] -->|getValue первый раз| G1
+        L -->|getValue повторно| Inner[кэш внутри LazyService]
+    end
+```
+
 ## `make()` — прототип вместо singleton
 
 `get()` кэширует результат фабрики или autowiring. `make()` создаёт сервис заново при каждом вызове:

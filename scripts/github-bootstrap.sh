@@ -27,6 +27,7 @@ create_label "area:container" "006B75" "Container, tags, decorators"
 create_label "area:scanner" "BFDADC" "ClassScanner, scan()"
 create_label "area:registry" "E99695" "ContainerRegistry"
 create_label "area:docs" "0075CA" "README, Wiki, doc/guide"
+create_label "area:configuration" "6F42C1" "ContainerConfigurator, loaders, merger"
 
 echo "== Milestones =="
 create_milestone() {
@@ -42,7 +43,8 @@ create_milestone() {
     gh api "repos/$REPO/milestones" "${args[@]}"
 }
 
-create_milestone "v1.1.0" "Autowiring, scan, registry, tags, decorators, документация" "2026-07-15T12:00:00Z"
+create_milestone "v1.4.0" "freeze(), introspection, ergonomics" "2026-09-30T12:00:00Z"
+create_milestone "v1.5.0" "ContainerConfigurator, registerAttribute, declarative config" "2026-10-15T12:00:00Z"
 create_milestone "Backlog" "Идеи и улучшения без фиксированного релиза"
 create_milestone "v2.0" "Breaking changes (major)"
 

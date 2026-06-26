@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<container>
+    <autowire>
+        <class name="CloudCastle\DI\Tests\Fixtures\Autowire\Clock"/>
+    </autowire>
+</container>

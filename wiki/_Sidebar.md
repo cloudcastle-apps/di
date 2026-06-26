@@ -7,6 +7,7 @@
 - [Сравнение с PHP-DI, Symfony, Pimple](Comparison) — пошагово
 - [Примеры bootstrap](Bootstrap)
 - [Autowiring](Autowiring)
+- [Конфигурация из файлов](Configuration)
 - [Сканирование классов](Class-scanning)
 - [Глобальный реестр](Global-registry)
 - [Теги и декораторы](Tags-and-decorators)

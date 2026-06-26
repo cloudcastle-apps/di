@@ -19,9 +19,9 @@
   <a href="https://github.com/cloudcastle-apps/di/releases">Releases</a>
 </p>
 
-**English:** Lightweight [PSR-11](https://www.php-fig.org/psr/psr-11/) dependency injection container for PHP 8.3+. Explicit `set()` / `get()` wiring, optional constructor/property/method autowiring, directory scan, **prototypes (`make`)**, **aliases**, **lazy services**, **callable invocation (`call`)**, **interface binding (`bind`)**, **after-resolving hooks**, tagged services (ids / iterator / locator), decorators, global registry — one runtime dependency (`psr/container`).
+**English:** Lightweight [PSR-11](https://www.php-fig.org/psr/psr-11/) dependency injection container for PHP 8.3+. Explicit `set()` / `get()` wiring, optional constructor/property/method autowiring, **declarative configuration** (PHP/JSON/YAML/XML), directory scan, **prototypes (`make`)**, **aliases**, **lazy services**, **callable invocation (`call`)**, **interface binding (`bind`)**, **after-resolving hooks**, **custom inject attributes**, tagged services (ids / iterator / locator), decorators, global registry — one runtime dependency (`psr/container`).
 
-**Русский:** Лёгкий контейнер внедрения зависимостей для PHP 8.3+ с поддержкой PSR-11. Явная регистрация сервисов, singleton-фабрики, autowiring конструктора, **свойств** и **методов**, сканирование каталогов, **прототипы**, **alias**, **lazy**, **вызов callable с autowire**, **bind**, **afterResolving**, теги, декораторы и глобальный реестр.
+**Русский:** Лёгкий контейнер внедрения зависимостей для PHP 8.3+ с поддержкой PSR-11. Явная регистрация сервисов, singleton-фабрики, autowiring конструктора, **свойств** и **методов**, **конфигурация из файлов**, сканирование каталогов, **прототипы**, **alias**, **lazy**, **вызов callable с autowire**, **bind**, **afterResolving**, **пользовательские attributes**, теги, декораторы и глобальный реестр.
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/cloudcastle/di.svg)](https://packagist.org/packages/cloudcastle/di)
 [![Total Downloads](https://img.shields.io/packagist/dt/cloudcastle/di.svg)](https://packagist.org/packages/cloudcastle/di)
@@ -33,7 +33,7 @@
 
 ## Сравнение с аналогами
 
-**Плюсы:** одна зависимость (`psr/container`), PSR-11 + autowiring, явный PHP bootstrap, теги и декораторы — без YAML и фреймворка.
+**Плюсы:** одна зависимость (`psr/container`), PSR-11 + autowiring, явный PHP bootstrap или декларативная конфигурация (PHP/JSON/YAML/XML), теги и декораторы — без полноценного DI-фреймворка.
 
 **Минусы:** нет compiled container и contextual binding (v2), только PHP 8.3+, меньше community чем у PHP-DI/Symfony.
 
@@ -50,6 +50,15 @@ flowchart TB
         MAKE["make() — прототип"]
         CALL["call() — autowire callable"]
         LAZY["lazy() → getValue()"]
+        HAS["has() / hasDefinition()"]
+        DUMP["dump() / getDefinitionIds()"]
+    end
+
+    subgraph bootstrap [Bootstrap]
+        REG_API["set / bind / autowire / scan"]
+        CONFIG["ContainerConfigurator v1.5"]
+        ATTR["registerAttribute()"]
+        FREEZE["freeze()"]
     end
 
     subgraph container [Container]
@@ -60,19 +69,36 @@ flowchart TB
         DEF[(definitions)]
         CACHE[(resolved)]
         DECO[decorators]
+        TAGS_STORE[(tags)]
+        ATTR_REG[(custom attributes)]
     end
 
     subgraph create [Создание]
         FACTORY[фабрика set]
-        AUTO[Autowirer]
+        AUTO[Autowirer + MemberResolver]
         SCAN[ClassScanner + scan]
     end
 
     subgraph tags [Теги]
         TAG_IDS[getTaggedIds]
+        TAG_EAGER[getTagged]
         TAG_ITER[getTaggedIterator]
         TAG_LOC[getTaggedLocator]
     end
+
+    subgraph global [Глобально]
+        CR[ContainerRegistry]
+    end
+
+    REG_API --> DEF
+    REG_API --> AUTO
+    CONFIG --> DEF
+    CONFIG --> AUTO
+    CONFIG --> ATTR_REG
+    ATTR --> ATTR_REG
+    SCAN --> AUTO
+    FREEZE -.->|блокирует| REG_API
+    FREEZE -.->|блокирует| CONFIG
 
     GET --> ALIAS
     MAKE --> ALIAS
@@ -85,16 +111,21 @@ flowchart TB
     RESOLVE --> AUTO
     RESOLVE --> DECO
     RESOLVE --> HOOKS
-    SCAN --> DEF
     LAZY -.->|отложенный| GET
     AUTO -->|рекурсивный get| GET
+    ATTR_REG --> AUTO
     TAG_IDS --> TAG_ITER
     TAG_IDS --> TAG_LOC
+    TAG_EAGER --> GET
     TAG_ITER --> GET
     TAG_LOC --> GET
+    REG_API --> TAGS_STORE
+    TAGS_STORE --> TAG_IDS
+    DUMP --> DEF
+    REG_API -.->|ContainerRegistry::set| CR
 ```
 
-Полный набор схем (bootstrap, autowiring, типы параметров, циклы, теги) — в [Wiki: Архитектура](https://github.com/cloudcastle-apps/di/wiki/Architecture).
+Полный набор схем (bootstrap, autowiring, configuration, freeze, типы параметров, циклы, теги) — в [Wiki: Архитектура](https://github.com/cloudcastle-apps/di/wiki/Architecture).
 
 ## Возможности
 
@@ -115,6 +146,7 @@ flowchart TB
 - **`enablePropertyAutowiring()`** / **`enableMethodAutowiring()`** — typed properties и inject-методы/setter после конструктора
 - **`scan(string $directory, ?string $namespace = null)`** — обход каталога и autowiring найденных instantiable-классов (несколько `class` в одном файле; `enum` парсятся, но не регистрируются)
 - PHP attributes **`Inject`** / **`Autowire`** на конструкторе, **свойствах** и **методах** (attributes работают без флагов property/method)
+- **`registerAttribute()`** — пользовательские attributes (`ServiceIdAttribute`)
 - Разрешение по типам: union, **intersection**, nullable, `ContainerInterface` / PSR-11
 - Обнаружение циклических зависимостей при autowiring
 - Явный `set()` всегда имеет **приоритет** над autowiring
@@ -132,16 +164,28 @@ flowchart TB
 - **`decorate()`** — цепочка декораторов при `get()` / `make()`
 - **`hasDefinition()`** — проверка регистрации без создания экземпляра
 
+### Конфигурация из файлов (v1.5)
+
+- **`ContainerConfigurator`** — опциональный сервис: PHP (по умолчанию), JSON, YAML, XML
+- Несколько источников, слияние с приоритетами (последний побеждает, если не задан `priority`)
+- Секции: `services`, `bind`, `aliases`, `autowire`, `tags`, `scan`, `register_attributes`, `autowiring`
+- См. [Wiki: Configuration](https://github.com/cloudcastle-apps/di/wiki/Configuration)
+
+### Заморозка и интроспекция (v1.4)
+
+- **`freeze()`** / **`isFrozen()`** — блокировка изменений после bootstrap
+- **`getDefinitionIds()`**, **`dump()`** — отладка wiring
+
 ### Глобальный реестр
 
 - **`ContainerRegistry::set()` / `get()` / `has()` / `reset()`** — singleton-контейнер приложения (инициализация в точке входа, `reset()` для тестов)
 
 ### Качество
 
-- Строгая типизация, PHPStan max, Psalm level 1, покрытие строк ≥95%, Infection MSI ≥95%
+- Строгая типизация, PHPStan max, Psalm level 1, покрытие строк ≥95% (фактически ~96%)
 - CI: PHP 8.3, 8.4, 8.5
-- **287 PHPUnit-тестов:** unit (238), integration (5), security (17), load (15), performance (12)
-- Регрессия производительности: пороги в `tests/Load/` и `tests/Performance/`; отчёт `composer benchmark-report`
+- **375 PHPUnit-тестов:** unit (326), integration (5), security (17), load (15), performance (12)
+- Infection MSI: цель ≥95% (см. [Testing](https://github.com/cloudcastle-apps/di/wiki/Testing))
 
 Подробнее — [Wiki: тестирование](https://github.com/cloudcastle-apps/di/wiki/Testing) · [нагрузка и производительность](https://github.com/cloudcastle-apps/di/wiki/Performance-and-load).
 
@@ -149,11 +193,12 @@ flowchart TB
 
 - PHP ^8.3
 - `psr/container` ^2.0
+- Опционально: `ext-yaml` — для YAML-конфигурации (`ContainerConfigurator`)
 
 ## Установка
 
 ```bash
-composer require cloudcastle/di:^1.3
+composer require cloudcastle/di:^1.5
 ```
 
 ## Быстрый старт
@@ -277,6 +322,20 @@ ContainerRegistry::set($container);
 $mailer = ContainerRegistry::get()->get(App\Mailer::class);
 ```
 
+### Конфигурация из файлов (v1.5)
+
+```php
+use CloudCastle\DI\Configuration\ContainerConfigurator;
+use CloudCastle\DI\Container;
+
+$container = new Container();
+(new ContainerConfigurator())->configure($container, [
+    __DIR__ . '/config/services.php',
+    __DIR__ . '/config/prod.json',
+]);
+$container->freeze();
+```
+
 ## API (кратко)
 
 | Метод | Описание |
@@ -300,8 +359,10 @@ $mailer = ContainerRegistry::get()->get(App\Mailer::class);
 | `enableMethodAutowiring()` / `disableMethodAutowiring()` | Autowiring inject-методов и setter |
 | `autowire(string $className): void` | Явная регистрация класса |
 | `scan(string $directory, ?string $namespace): void` | Autowiring классов из каталога |
+| `registerAttribute(string $attributeClass): void` | Пользовательский `ServiceIdAttribute` |
+| `freeze()` / `isFrozen()` / `getDefinitionIds()` / `dump()` | Заморозка и интроспекция (v1.4) |
 
-Подробнее — [Wiki](https://github.com/cloudcastle-apps/di/wiki/Home) ( [Autowiring](https://github.com/cloudcastle-apps/di/wiki/Autowiring) · [API](https://github.com/cloudcastle-apps/di/wiki/API-reference) · [call(), bind(), afterResolving](https://github.com/cloudcastle-apps/di/wiki/Call-bind-callbacks) · [Прототипы, alias и lazy](https://github.com/cloudcastle-apps/di/wiki/Prototypes-alias-lazy) · [Bootstrap](https://github.com/cloudcastle-apps/di/wiki/Bootstrap) ) и `doc/guide/` после `composer docs`.
+Подробнее — [Wiki](https://github.com/cloudcastle-apps/di/wiki/Home) ( [Configuration](https://github.com/cloudcastle-apps/di/wiki/Configuration) · [Autowiring](https://github.com/cloudcastle-apps/di/wiki/Autowiring) · [API](https://github.com/cloudcastle-apps/di/wiki/API-reference) · [call(), bind(), afterResolving](https://github.com/cloudcastle-apps/di/wiki/Call-bind-callbacks) · [Прототипы, alias и lazy](https://github.com/cloudcastle-apps/di/wiki/Prototypes-alias-lazy) · [Bootstrap](https://github.com/cloudcastle-apps/di/wiki/Bootstrap) ) и `doc/guide/` после `composer docs`.
 
 ## Сообщество
 
@@ -325,11 +386,11 @@ composer ci
 composer benchmark-report   # фактические времена бенчмарков (markdown)
 ```
 
-Пайплайн: линтеры, PHPStan (max), Psalm (L1), PHPMD, Deptrac, Rector, **287 PHPUnit-тестов** (unit/integration/security/load/performance), покрытие строк ≥95%, Infection MSI ≥95%.
+Пайплайн: линтеры, PHPStan (max), Psalm (L1), PHPMD, Deptrac, Rector, **375 PHPUnit-тестов**, покрытие строк ≥95%, Infection MSI ≥95% (ядро)
 
 | Набор | Тестов | Документация |
 |-------|--------|--------------|
-| unit | 238 | [Wiki: Testing](https://github.com/cloudcastle-apps/di/wiki/Testing) |
+| unit | 326 | [Wiki: Testing](https://github.com/cloudcastle-apps/di/wiki/Testing) |
 | integration | 5 | — |
 | security | 17 | [Wiki: Security-tests](https://github.com/cloudcastle-apps/di/wiki/Security-tests) |
 | load | 15 | [Wiki: Performance-and-load](https://github.com/cloudcastle-apps/di/wiki/Performance-and-load) |

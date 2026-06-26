@@ -1,0 +1,9 @@
+{
+    "services": {
+        "app.label": "from-json",
+        "app.timeout": 30
+    },
+    "aliases": {
+        "timeout": "app.timeout"
+    }
+}

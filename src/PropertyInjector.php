@@ -21,9 +21,11 @@ final readonly class PropertyInjector
 
     public function __construct(
         private ContainerInterface $container,
+        ?AttributeServiceIdReader $attributeReader = null,
     ) {
-        $this->attributeReader = new AttributeServiceIdReader();
-        $this->memberResolver = new MemberResolver($container);
+        $reader = $attributeReader ?? new AttributeServiceIdReader();
+        $this->attributeReader = $reader;
+        $this->memberResolver = new MemberResolver($container, $reader);
     }
 
     /**

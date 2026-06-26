@@ -19,6 +19,14 @@ $service = $container->get(App\Service\MyService::class);
 
 Подробнее — [Autowiring](Autowiring).
 
+## Можно ли конфигурировать контейнер из YAML/JSON?
+
+**Да** (v1.5.0) — через **`ContainerConfigurator`**: PHP (по умолчанию), JSON, YAML (`ext-yaml`), XML. Несколько файлов с приоритетами. Конфигурация **необязательна**. См. [Configuration](Configuration).
+
+## Можно ли использовать свои PHP attributes для inject?
+
+**Да** — реализуйте `ServiceIdAttribute` и вызовите `registerAttribute()`. См. [Autowiring](Autowiring).
+
 ## Можно использовать id = FQCN класса?
 
 **Да.** При autowiring id — полное имя класса. Можно также использовать произвольные строки (`'logger'`, `'mailer'`) через `set()`.
