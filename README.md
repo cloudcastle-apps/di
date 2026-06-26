@@ -13,7 +13,7 @@
 
 <p align="center">
   <a href="https://github.com/cloudcastle-apps/di/wiki/Quick-start">Quick start</a> ·
-  <a href="https://github.com/cloudcastle-apps/di/wiki/Comparison">Сравнение с PHP-DI / Symfony</a> ·
+  <a href="https://github.com/cloudcastle-apps/di/wiki/Comparison">Сравнение (пошагово)</a> ·
   <a href="https://github.com/cloudcastle-apps/di/wiki">Wiki</a> ·
   <a href="https://packagist.org/packages/cloudcastle/di">Packagist</a> ·
   <a href="https://github.com/cloudcastle-apps/di/releases">Releases</a>
@@ -31,41 +31,15 @@
 [![Coverage](https://img.shields.io/badge/coverage-95%25+-brightgreen)](https://github.com/cloudcastle-apps/di/blob/main/CONTRIBUTING.md)
 [![GitHub Discussions](https://img.shields.io/github/discussions/cloudcastle-apps/di)](https://github.com/cloudcastle-apps/di/discussions)
 
-## Когда выбрать CloudCastle DI
+## Сравнение с аналогами
 
-Подробное сравнение с **преимуществами и недостатками** — [Wiki: Сравнение с PHP-DI, Symfony, Pimple](https://github.com/cloudcastle-apps/di/wiki/Comparison).
+**Плюсы:** одна зависимость (`psr/container`), PSR-11 + autowiring, явный PHP bootstrap, теги и декораторы — без YAML и фреймворка.
 
-### Кратко: плюсы
+**Минусы:** нет compiled container и contextual binding (v2), только PHP 8.3+, меньше community чем у PHP-DI/Symfony.
 
-- **Минимум зависимостей** — только `psr/container`; без Symfony Config / YAML.
-- **PSR-11** + autowiring (constructor, property, method), attributes, `scan()`, теги, декораторы, `call()` / `bind()` / `afterResolving()`.
-- **Явный bootstrap** в PHP — удобно для библиотек, CLI, API, тестов.
-- **Компактный код** — проще аудит, чем у «больших» DI.
+**Пошаговое сравнение** (PHP-DI, Symfony DI, Pimple, Laravel) с таблицами по каждому критерию — [Wiki: Comparison](https://github.com/cloudcastle-apps/di/wiki/Comparison). Кратко в `doc/guide/comparison.rst` после `composer docs`.
 
-### Кратко: минусы (честно)
-
-- Нет **compiled container** и **contextual binding** (план v2) — для них сейчас лучше PHP-DI / Symfony DI.
-- Только **PHP 8.3+**; `scan()` — regex, не полный AST.
-- Меньше экосистемы, чем у Symfony / Laravel.
-
-### Таблица возможностей
-
-| | CloudCastle DI | PHP-DI | Symfony DI | Pimple |
-|---|:---:|:---:|:---:|:---:|
-| PSR-11 | ✓ | ✓ | ✓ | частично |
-| Autowiring (reflection) | ✓ | ✓ | ✓ | — |
-| PHP attributes / by-name / intersection / property / method | ✓ | ✓ | ✓ | — |
-| Явный `set()` API | ✓ | ✓ | ✓ | ✓ |
-| Сканирование каталогов | ✓ | ✓ | ✓ | — |
-| Tagged services / decorators | ✓ | ✓ | ✓ | — |
-| Прототипы (`make`) / alias / lazy | ✓ | ✓ | ✓ | — |
-| `call()` с autowiring / `bind()` / after-resolving | ✓ | ✓ | ✓ | — |
-| Tagged iterator / locator (без eager `getTagged`) | ✓ | ✓ | ✓ | — |
-| Compiled container / contextual binding | — | ✓ | ✓ | — |
-| Минимум зависимостей | ✓ (`psr/container`) | больше | фреймворк | ✓ |
-| Подходит для micro-library / bootstrap | ✓ | ✓ | избыточен | ✓ |
-
-Подходит, когда нужен **компактный контейнер** для composition root, тестов или небольшого приложения — с явным wiring и опциональной автоматикой без YAML и compiled container. Если уже используете **Symfony** или **Laravel** — берите их встроенный DI.
+Подходит для **composition root** в библиотеках, CLI, API и тестах. Если уже **Symfony** или **Laravel** — используйте встроенный DI. Нужен **compiler** или **contextual binding** сейчас — **PHP-DI** или **Symfony DI**. До ~10 сервисов без autowiring — **Pimple**.
 
 ## Как это устроено
 

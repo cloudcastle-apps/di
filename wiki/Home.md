@@ -18,6 +18,15 @@ composer require cloudcastle/di:^1.3
 
 Packagist: https://packagist.org/packages/cloudcastle/di
 
+## Сравнение с аналогами (кратко)
+
+| | CloudCastle DI |
+|---|----------------|
+| **Плюсы** | `psr/container`, PSR-11, autowiring, теги, bootstrap в PHP |
+| **Минусы** | нет compiler/contextual (v2), PHP 8.3+ |
+
+**Пошагово** vs PHP-DI, Symfony, Pimple, Laravel — **[Comparison](Comparison)**.
+
 ## Возможности
 
 ### Регистрация и получение сервисов
@@ -127,7 +136,7 @@ $service = ContainerRegistry::get()->get(App\Services\OrderService::class);
 |----------|----------|
 | [Архитектура](Architecture) | схемы контейнера, autowiring, call, afterResolving, теги |
 | [Быстрый старт](Quick-start) | установка, PSR-11, composition root |
-| [Сравнение с PHP-DI, Symfony, Pimple](Comparison) | плюсы, минусы, матрица выбора, миграция |
+| [Сравнение с PHP-DI, Symfony, Pimple](Comparison) | пошаговые таблицы, плюсы/минусы, миграция |
 | [Примеры bootstrap](Bootstrap) | plain PHP, CLI, unit/integration тесты |
 | [Autowiring](Autowiring) | reflection, типы параметров, циклы, приоритеты |
 | [Сканирование классов](Class-scanning) | `scan()`, фильтр namespace, ограничения |

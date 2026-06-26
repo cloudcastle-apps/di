@@ -16,3 +16,4 @@ CloudCastle DI
    factories
    testing
    anti-patterns
+   comparison
