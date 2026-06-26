@@ -1,0 +1,31 @@
+name: Social preview
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/social-preview.png'
+      - 'assets/social-preview.png'
+
+permissions:
+  contents: read
+  administration: write
+
+jobs:
+  upload:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install Playwright
+        run: npm install playwright && npx playwright install chromium
+
+      - name: Upload social preview
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node tools/upload-social-preview.mjs cloudcastle-apps/di .github/social-preview.png
