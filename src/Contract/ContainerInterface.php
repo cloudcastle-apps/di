@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace CloudCastle\DI\Contract;
 
+use CloudCastle\DI\LazyService;
 use Psr\Container\ContainerInterface as PsrContainerInterface;
 
 /**
@@ -177,4 +178,38 @@ interface ContainerInterface extends PsrContainerInterface
      * @throws \CloudCastle\DI\Exception\ContainerException Если каталог не существует
      */
     public function scan(string $directory, ?string $namespace = null): void;
+
+    /**
+     * Создаёт новый экземпляр сервиса без сохранения в singleton-кэш.
+     *
+     * Повторные вызовы {@see make()} с тем же id возвращают разные экземпляры.
+     * Декораторы применяются так же, как при {@see get()}.
+     *
+     * @param string $id Идентификатор сервиса или FQCN при autowiring
+     *
+     * @throws \CloudCastle\DI\Exception\NotFoundException Если сервис недоступен
+     * @throws \CloudCastle\DI\Exception\ContainerException При ошибке autowiring или циклической зависимости
+     *
+     * @return mixed Новый экземпляр сервиса
+     */
+    public function make(string $id): mixed;
+
+    /**
+     * Регистрирует alias: обращения к `$alias` разрешаются через `$targetId`.
+     *
+     * @param string $alias Альтернативный идентификатор
+     * @param string $targetId Целевой id сервиса
+     *
+     * @throws \CloudCastle\DI\Exception\ContainerException При циклической цепочке alias
+     */
+    public function alias(string $alias, string $targetId): void;
+
+    /**
+     * Возвращает обёртку с отложенным {@see get()} для `$serviceId`.
+     *
+     * Удобно регистрировать через {@see set()}: `$container->set('heavy', $container->lazy(Heavy::class))`.
+     *
+     * @param string $serviceId Id сервиса для отложенного разрешения
+     */
+    public function lazy(string $serviceId): LazyService;
 }

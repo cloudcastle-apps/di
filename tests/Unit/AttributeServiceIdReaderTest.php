@@ -37,6 +37,23 @@ final class AttributeServiceIdReaderTest extends TestCase
         self::assertNull($reader->read($property->getAttributes()));
     }
 
+    public function testReadSkipsThrowingUnrelatedAttributeBeforeAutowire(): void
+    {
+        $reader = new AttributeServiceIdReader();
+        $property = new ReflectionProperty(AttributeReaderFixtures::class, 'beforeAutowire');
+
+        self::assertSame('mailer', $reader->read($property->getAttributes()));
+    }
+
+    public function testReadDoesNotInstantiateThrowingUnrelatedAttribute(): void
+    {
+        $reader = new AttributeServiceIdReader();
+        $property = new ReflectionProperty(AttributeReaderFixtures::class, 'throwingOnly');
+
+        self::assertNull($reader->read($property->getAttributes()));
+        self::assertFalse($reader->hasAny($property->getAttributes()));
+    }
+
     public function testReadReturnsInjectIdFromPropertyAttribute(): void
     {
         $reader = new AttributeServiceIdReader();

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace CloudCastle\DI\Tests\Unit;
 
 use CloudCastle\DI\Container;
+use CloudCastle\DI\Contract\ContainerInterface;
 use CloudCastle\DI\Exception\ContainerException;
 use CloudCastle\DI\ParameterTypeResolver;
 use CloudCastle\DI\Tests\Fixtures\Autowire\BuiltinPropertyHolder;
@@ -58,7 +59,10 @@ final class ParameterTypeResolverPropertyTest extends TestCase
 
     public function testResolvePropertyThrowsForBuiltinPropertyType(): void
     {
-        $resolver = new ParameterTypeResolver(new Container());
+        $container = $this->createMock(ContainerInterface::class);
+        $container->expects(self::never())->method('hasDefinition');
+
+        $resolver = new ParameterTypeResolver($container);
         $property = new ReflectionProperty(BuiltinPropertyHolder::class, 'count');
 
         $this->expectException(ContainerException::class);

@@ -20,4 +20,11 @@ final class AttributeReaderFixtures
 
     #[UnrelatedAttribute]
     public string $unrelated = '';
+
+    #[ThrowingOnNewInstanceAttribute]
+    #[Autowire(service: 'mailer')]
+    public string $beforeAutowire = '';
+
+    #[ThrowingOnNewInstanceAttribute]
+    public string $throwingOnly = '';
 }

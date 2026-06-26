@@ -7,6 +7,7 @@ namespace CloudCastle\DI\Tests\Unit;
 use ArrayIterator;
 use CloudCastle\DI\ClassDependencyResolver;
 use CloudCastle\DI\Container;
+use CloudCastle\DI\Contract\ContainerInterface;
 use CloudCastle\DI\IntersectionTypeResolver;
 use Countable;
 use Iterator;
@@ -148,5 +149,83 @@ final class IntersectionTypeResolverTest extends TestCase
         $intersectionType->method('getTypes')->willReturn([$iteratorType, $countableType]);
 
         self::assertNull($resolver->resolve($property, $intersectionType));
+    }
+
+    public function testResolveThrowsWhenParameterIntersectionCannotBeResolved(): void
+    {
+        $container = new Container();
+        $classResolver = new ClassDependencyResolver($container);
+        $resolver = new IntersectionTypeResolver($classResolver);
+
+        $parameter = $this->createMock(ReflectionParameter::class);
+        $parameter->method('allowsNull')->willReturn(false);
+        $parameter->method('getName')->willReturn('storage');
+
+        $iteratorType = $this->createMock(ReflectionNamedType::class);
+        $iteratorType->method('isBuiltin')->willReturn(false);
+        $iteratorType->method('getName')->willReturn(Iterator::class);
+
+        $countableType = $this->createMock(ReflectionNamedType::class);
+        $countableType->method('isBuiltin')->willReturn(false);
+        $countableType->method('getName')->willReturn(Countable::class);
+
+        $intersectionType = $this->createMock(ReflectionIntersectionType::class);
+        $intersectionType->method('getTypes')->willReturn([$iteratorType, $countableType]);
+
+        $this->expectException(\CloudCastle\DI\Exception\ContainerException::class);
+        $this->expectExceptionMessage('Не удалось разрешить intersection-тип для параметра $storage.');
+
+        $resolver->resolve($parameter, $intersectionType);
+    }
+
+    public function testResolveReturnsNullForUntypedPropertyIntersection(): void
+    {
+        $container = new Container();
+        $classResolver = new ClassDependencyResolver($container);
+        $resolver = new IntersectionTypeResolver($classResolver);
+
+        $property = $this->createMock(ReflectionProperty::class);
+        $property->method('getType')->willReturn(null);
+        $property->method('getName')->willReturn('storage');
+
+        $iteratorType = $this->createMock(ReflectionNamedType::class);
+        $iteratorType->method('isBuiltin')->willReturn(false);
+        $iteratorType->method('getName')->willReturn(Iterator::class);
+
+        $countableType = $this->createMock(ReflectionNamedType::class);
+        $countableType->method('isBuiltin')->willReturn(false);
+        $countableType->method('getName')->willReturn(Countable::class);
+
+        $intersectionType = $this->createMock(ReflectionIntersectionType::class);
+        $intersectionType->method('getTypes')->willReturn([$iteratorType, $countableType]);
+
+        self::assertNull($resolver->resolve($property, $intersectionType));
+    }
+
+    public function testResolveRejectsCandidateMissingContainerInterfaceInIntersection(): void
+    {
+        $storage = new ArrayIterator(['value']);
+        $container = new Container();
+        $container->set(Iterator::class, $storage);
+
+        $classResolver = new ClassDependencyResolver($container);
+        $resolver = new IntersectionTypeResolver($classResolver);
+
+        $parameter = $this->createMock(ReflectionParameter::class);
+        $parameter->method('allowsNull')->willReturn(true);
+        $parameter->method('getName')->willReturn('dependency');
+
+        $iteratorType = $this->createMock(ReflectionNamedType::class);
+        $iteratorType->method('isBuiltin')->willReturn(false);
+        $iteratorType->method('getName')->willReturn(Iterator::class);
+
+        $containerType = $this->createMock(ReflectionNamedType::class);
+        $containerType->method('isBuiltin')->willReturn(false);
+        $containerType->method('getName')->willReturn(ContainerInterface::class);
+
+        $intersectionType = $this->createMock(ReflectionIntersectionType::class);
+        $intersectionType->method('getTypes')->willReturn([$iteratorType, $containerType]);
+
+        self::assertNull($resolver->resolve($parameter, $intersectionType));
     }
 }

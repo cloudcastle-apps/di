@@ -68,7 +68,10 @@
     "autoload-dev": {
         "psr-4": {
             "CloudCastle\\DI\\Tests\\": "tests/"
-        }
+        },
+        "classmap": [
+            "tests/Fixtures/Autowire/Scan/MultiScanPair.php"
+        ]
     },
     "config": {
         "allow-plugins": {

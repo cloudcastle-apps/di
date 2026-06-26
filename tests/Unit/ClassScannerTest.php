@@ -8,6 +8,8 @@ use CloudCastle\DI\ClassScanner;
 use CloudCastle\DI\Exception\ContainerException;
 use CloudCastle\DI\Tests\Fixtures\Autowire\AbstractWorker;
 use CloudCastle\DI\Tests\Fixtures\Autowire\Clock;
+use CloudCastle\DI\Tests\Fixtures\Autowire\Scan\MultiScanAlpha;
+use CloudCastle\DI\Tests\Fixtures\Autowire\Scan\MultiScanBeta;
 use CloudCastle\DI\Tests\Fixtures\Autowire\Scan\ScannedService;
 use CloudCastle\DI\Tests\Fixtures\Autowire\Scan\SpacedNamespaceService;
 use CloudCastle\DI\Tests\Fixtures\Autowire\ScanOverflowService;
@@ -90,6 +92,7 @@ final class ClassScannerTest extends TestCase
             );
 
             self::assertContains(ScannedService::class, $classNames);
+            self::assertCount(4, $classNames);
         } finally {
             unlink($emptyFile);
         }
@@ -123,7 +126,12 @@ final class ClassScannerTest extends TestCase
         );
 
         self::assertEqualsCanonicalizing(
-            [ScannedService::class, SpacedNamespaceService::class],
+            [
+                ScannedService::class,
+                SpacedNamespaceService::class,
+                MultiScanAlpha::class,
+                MultiScanBeta::class,
+            ],
             $classNames,
         );
 
@@ -145,6 +153,26 @@ final class ClassScannerTest extends TestCase
         try {
             $scanner = new ClassScanner();
             $classNames = $scanner->scan($directory);
+
+            self::assertContains(ScannedService::class, $classNames);
+            self::assertContains(SpacedNamespaceService::class, $classNames);
+        } finally {
+            unlink($marker);
+        }
+    }
+
+    public function testScanContinuesAfterNonPhpFileListedBeforePhpFile(): void
+    {
+        $directory = $this->fixturesDirectory . '/Scan';
+        $marker = $directory . '/000-skip.txt';
+        file_put_contents($marker, 'not php');
+
+        try {
+            $scanner = new ClassScanner();
+            $classNames = $scanner->scan(
+                $directory,
+                'CloudCastle\\DI\\Tests\\Fixtures\\Autowire\\Scan\\',
+            );
 
             self::assertContains(ScannedService::class, $classNames);
             self::assertContains(SpacedNamespaceService::class, $classNames);

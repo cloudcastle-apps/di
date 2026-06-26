@@ -14,8 +14,8 @@ use SplFileInfo;
 /**
  * Находит instantiable-классы в каталоге для регистрации через autowiring.
  *
- * Обходит дерево каталогов рекурсивно, парсит объявления `namespace` и `class` из текста файла
- * без его выполнения, затем проверяет класс через autoload (`class_exists`) и reflection.
+ * Обходит дерево каталогов рекурсивно, парсит объявления `namespace`, `class` и `enum` из текста файла
+ * без его выполнения, затем проверяет тип через autoload (`class_exists`) и reflection.
  *
  * Используется {@see Container::scan()}. Не заменяет Composer autoload — PSR-4 должен быть настроен.
  */
@@ -24,8 +24,7 @@ final class ClassScanner
     /**
      * Возвращает FQCN всех instantiable-классов в каталоге.
      *
-     * Файлы без класса, abstract-классы, интерфейсы и trait пропускаются.
-     * Enum и несколько классов в одном файле не поддерживаются парсером.
+     * Файлы без типов, abstract-классы, интерфейсы, enum и trait пропускаются.
      *
      * @param string $directory Абсолютный или относительный путь к корню обхода
      * @param string|null $namespace Необязательный фильтр: только классы с FQCN, начинающимся с префикса
@@ -47,9 +46,7 @@ final class ClassScanner
         $classNames = [];
 
         foreach ($this->iteratePhpFiles($directory) as $file) {
-            $className = $this->resolveInstantiableClass($file->getPathname(), $namespacePrefix);
-
-            if ($className !== null) {
+            foreach ($this->resolveInstantiableClasses($file->getPathname(), $namespacePrefix) as $className) {
                 $classNames[] = $className;
             }
         }
@@ -83,58 +80,56 @@ final class ClassScanner
     }
 
     /**
-     * Извлекает FQCN из файла и проверяет, что класс instantiable и проходит фильтр namespace.
+     * Извлекает instantiable FQCN из файла.
      *
      * @param string $path Абсолютный путь к `.php`-файлу
      * @param string|null $namespacePrefix Префикс FQCN или `null` без фильтра
      *
-     * @return string|null FQCN класса или `null`, если класс не подходит
+     * @return list<string>
      */
-    private function resolveInstantiableClass(string $path, ?string $namespacePrefix): ?string
+    private function resolveInstantiableClasses(string $path, ?string $namespacePrefix): array
     {
-        $className = $this->extractClassName($path);
+        /** @var list<string> $classNames */
+        $classNames = [];
 
-        if ($className === null) {
-            return null;
+        foreach ($this->extractDeclaredTypeNames($path) as $className) {
+            if ($namespacePrefix !== null && !str_starts_with($className, $namespacePrefix)) {
+                continue;
+            }
+
+            if (!class_exists($className)) {
+                continue;
+            }
+
+            $reflection = new ReflectionClass($className);
+
+            if (!$reflection->isInstantiable()) {
+                continue;
+            }
+
+            $classNames[] = $className;
         }
 
-        if ($namespacePrefix !== null && !str_starts_with($className, $namespacePrefix)) {
-            return null;
-        }
-
-        if (!class_exists($className)) {
-            return null;
-        }
-
-        $reflection = new ReflectionClass($className);
-
-        if (!$reflection->isInstantiable()) {
-            return null;
-        }
-
-        return $className;
+        return $classNames;
     }
 
     /**
-     * Извлекает полное имя класса из PHP-файла без выполнения кода файла.
-     *
-     * Читает файл как текст; поддерживает модификаторы `abstract`, `final`, `readonly` перед `class`.
-     * Не обрабатывает `enum`, trait и несколько классов в одном файле.
+     * Извлекает FQCN объявленных `class` и `enum` из PHP-файла без выполнения кода.
      *
      * @param string $path Путь к файлу
      *
-     * @return string|null FQCN или `null`, если файл пуст, нечитаем или не содержит `class`
+     * @return list<string>
      */
-    private function extractClassName(string $path): ?string
+    private function extractDeclaredTypeNames(string $path): array
     {
         if (!is_readable($path)) {
-            return null;
+            return [];
         }
 
         $contents = file_get_contents($path);
 
         if ($contents === false || $contents === '') {
-            return null;
+            return [];
         }
 
         $namespace = '';
@@ -143,10 +138,23 @@ final class ClassScanner
             $namespace = trim($matches[1]) . '\\';
         }
 
-        if (preg_match('/(?:^|[;\s])(?:abstract\s+|final\s+|readonly\s+)*class\s+(\w+)/', $contents, $matches) !== 1) {
-            return null;
+        if (
+            preg_match_all(
+                '/(?:^|[;\s])(?:abstract\s+|final\s+|readonly\s+)*(?:class|enum)\s+(\w+)/',
+                $contents,
+                $matches,
+            ) === false
+        ) {
+            return [];
         }
 
-        return $namespace . $matches[1];
+        /** @var list<string> $typeNames */
+        $typeNames = [];
+
+        foreach ($matches[1] as $shortName) {
+            $typeNames[] = $namespace . $shortName;
+        }
+
+        return $typeNames;
     }
 }

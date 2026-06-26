@@ -10,9 +10,11 @@ use CloudCastle\DI\Exception\ContainerException;
 use CloudCastle\DI\Tests\Fixtures\Autowire\CircularA;
 use CloudCastle\DI\Tests\Fixtures\Autowire\CircularB;
 use CloudCastle\DI\Tests\Fixtures\Autowire\Clock;
+use CloudCastle\DI\Tests\Fixtures\Autowire\IntClockService;
 use CloudCastle\DI\Tests\Fixtures\Autowire\LoggerUser;
 use CloudCastle\DI\Tests\Fixtures\Autowire\SimpleService;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 
@@ -36,6 +38,7 @@ final class ContainerAutowireMutationTest extends TestCase
         self::assertSame($clock, $service->clock);
     }
 
+    #[Group('circular-slow')]
     public function testCircularDependencyAllowsRetryAfterFailure(): void
     {
         $container = new Container();
@@ -54,6 +57,7 @@ final class ContainerAutowireMutationTest extends TestCase
         $container->get(CircularB::class);
     }
 
+    #[Group('circular-slow')]
     public function testCircularDependencyDoesNotBlockUnrelatedResolution(): void
     {
         $container = new Container();
@@ -88,5 +92,43 @@ final class ContainerAutowireMutationTest extends TestCase
         $container->get(LoggerUser::class);
 
         self::assertSame($first, $property->getValue($container));
+    }
+
+    public function testResolveAutowiredThrowsWhenServiceAlreadyResolving(): void
+    {
+        $container = new Container();
+        $container->enableAutowiring();
+
+        $reflection = new ReflectionClass(Container::class);
+        $resolving = $reflection->getProperty('resolving');
+        $resolving->setValue($container, [SimpleService::class => true]);
+
+        $this->expectException(ContainerException::class);
+        $this->expectExceptionMessage('циклическая зависимость');
+
+        $container->make(SimpleService::class);
+    }
+
+    public function testInstantiateResolvesIntClockUnionSkippingBuiltinFirst(): void
+    {
+        $container = new Container();
+        $container->enableAutowiring();
+
+        $service = $container->get(IntClockService::class);
+
+        self::assertInstanceOf(IntClockService::class, $service);
+        self::assertInstanceOf(Clock::class, $service->value);
+    }
+
+    public function testResolvingStackIsClearedAfterSuccessfulAutowired(): void
+    {
+        $container = new Container();
+        $container->enableAutowiring();
+        $container->get(SimpleService::class);
+
+        $reflection = new ReflectionClass(Container::class);
+        $resolving = $reflection->getProperty('resolving');
+
+        self::assertSame([], $resolving->getValue($container));
     }
 }

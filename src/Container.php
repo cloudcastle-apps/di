@@ -56,6 +56,16 @@ final class Container implements ContainerInterface
     /** Ленивый экземпляр {@see Autowirer}, общий для всех autowire-операций контейнера */
     private ?Autowirer $autowirer = null;
 
+    private readonly ServiceAliasResolver $aliasResolver;
+
+    private readonly ServiceInstanceResolver $instanceResolver;
+
+    public function __construct()
+    {
+        $this->aliasResolver = new ServiceAliasResolver();
+        $this->instanceResolver = new ServiceInstanceResolver($this);
+    }
+
     /**
      * Возвращает сервис по идентификатору.
      *
@@ -72,19 +82,34 @@ final class Container implements ContainerInterface
     #[Override]
     public function get(string $id): mixed
     {
-        if (isset($this->resolved[$id])) {
-            return $this->resolved[$id];
-        }
+        return $this->resolveService($this->aliasResolver->resolve($id), singleton: true);
+    }
 
-        if (isset($this->definitions[$id])) {
-            return $this->resolveDefinition($id);
-        }
+    /**
+     * {@inheritDoc}
+     */
+    #[Override]
+    public function make(string $id): mixed
+    {
+        return $this->resolveService($this->aliasResolver->resolve($id), singleton: false);
+    }
 
-        if ($this->canAutowire($id)) {
-            return $this->resolveAutowired($id);
-        }
+    /**
+     * {@inheritDoc}
+     */
+    #[Override]
+    public function alias(string $alias, string $targetId): void
+    {
+        $this->aliasResolver->alias($alias, $targetId);
+    }
 
-        throw new NotFoundException(\sprintf('Сервис "%s" не зарегистрирован.', $id));
+    /**
+     * {@inheritDoc}
+     */
+    #[Override]
+    public function lazy(string $serviceId): LazyService
+    {
+        return new LazyService($this, $serviceId);
     }
 
     /**
@@ -100,6 +125,12 @@ final class Container implements ContainerInterface
     #[Override]
     public function has(string $id): bool
     {
+        if ($this->aliasResolver->isAlias($id)) {
+            return true;
+        }
+
+        $id = $this->aliasResolver->resolve($id);
+
         return isset($this->definitions[$id])
             || isset($this->resolved[$id])
             || $this->canAutowire($id);
@@ -121,7 +152,9 @@ final class Container implements ContainerInterface
     #[Override]
     public function hasDefinition(string $id): bool
     {
-        return isset($this->definitions[$id]) || isset($this->autowired[$id]);
+        return isset($this->definitions[$id])
+            || isset($this->autowired[$id])
+            || $this->aliasResolver->isAlias($id);
     }
 
     /**
@@ -150,7 +183,9 @@ final class Container implements ContainerInterface
         $services = [];
 
         foreach ($this->tags[$tag] ?? [] as $id) {
-            if (!$this->hasDefinition($id) && !$this->canAutowire($id)) {
+            $resolvedId = $this->aliasResolver->resolve($id);
+
+            if (!$this->hasDefinition($resolvedId) && !$this->canAutowire($resolvedId)) {
                 continue;
             }
 
@@ -305,76 +340,21 @@ final class Container implements ContainerInterface
     }
 
     /**
-     * Разрешает явно зарегистрированное определение: вызывает фабрику или возвращает значение.
-     *
-     * @param string $id Идентификатор сервиса
-     *
-     * @return mixed Экземпляр после {@see finalizeInstance()}
-     *
-     * @psalm-suppress MixedAssignment
+     * @throws NotFoundException
+     * @throws ContainerException
      */
-    private function resolveDefinition(string $id): mixed
+    private function resolveService(string $id, bool $singleton): mixed
     {
-        $concrete = $this->definitions[$id];
-
-        /** @var mixed $instance */
-        $instance = \is_callable($concrete) ? $concrete($this) : $concrete;
-
-        return $this->finalizeInstance($id, $instance);
-    }
-
-    /**
-     * Создаёт сервис через {@see Autowirer} с отслеживанием циклических зависимостей.
-     *
-     * @param string $id FQCN создаваемого класса
-     *
-     * @throws ContainerException При обнаружении цикла в цепочке autowiring
-     *
-     * @return mixed Экземпляр после {@see finalizeInstance()}
-     */
-    private function resolveAutowired(string $id): mixed
-    {
-        if (($this->resolving[$id] ?? false) === true) {
-            throw new ContainerException(\sprintf(
-                'Обнаружена циклическая зависимость при autowiring сервиса "%s".',
-                $id,
-            ));
-        }
-
-        $this->resolving[$id] = true;
-
-        try {
-            $instance = $this->autowirer()->instantiate($id);
-
-            return $this->finalizeInstance($id, $instance);
-        } finally {
-            unset($this->resolving[$id]);
-        }
-    }
-
-    /**
-     * Применяет декораторы к экземпляру и сохраняет его в singleton-кэш.
-     *
-     * Значение `null` не кэшируется — следующий {@see get()} создаст сервис заново.
-     *
-     * @param string $id Идентификатор сервиса
-     * @param mixed $instance Inner-экземпляр до декораторов
-     *
-     * @return mixed Экземпляр после всех декораторов
-     *
-     * @psalm-suppress MixedAssignment
-     */
-    private function finalizeInstance(string $id, mixed $instance): mixed
-    {
-        foreach ($this->decorators[$id] ?? [] as $decorator) {
-            $instance = $decorator($instance, $this);
-        }
-
-        if ($instance !== null) {
-            $this->resolved[$id] = $instance;
-        }
-
-        return $instance;
+        return $this->instanceResolver->resolve(
+            $id,
+            $singleton,
+            $this->definitions,
+            $this->resolved,
+            $this->resolving,
+            $this->decorators,
+            $this->canAutowire(...),
+            $this->autowirer()->instantiate(...),
+        );
     }
 
     /**

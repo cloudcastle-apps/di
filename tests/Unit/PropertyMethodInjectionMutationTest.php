@@ -14,7 +14,9 @@ use CloudCastle\DI\PropertyInjector;
 use CloudCastle\DI\Tests\Fixtures\Autowire\AttributeReaderFixtures;
 use CloudCastle\DI\Tests\Fixtures\Autowire\Clock;
 use CloudCastle\DI\Tests\Fixtures\Autowire\ConstructCountService;
+use CloudCastle\DI\Tests\Fixtures\Autowire\ConstructorIntersectionService;
 use CloudCastle\DI\Tests\Fixtures\Autowire\NoopMethodService;
+use CloudCastle\DI\Tests\Fixtures\Autowire\PromotedAndPlainPropertyService;
 use CloudCastle\DI\Tests\Fixtures\Autowire\PropertyIntersectionService;
 use CloudCastle\DI\Tests\Fixtures\Autowire\SetterInjectService;
 use CloudCastle\DI\Tests\Fixtures\Autowire\StaticThrowMethodService;
@@ -120,5 +122,32 @@ final class PropertyMethodInjectionMutationTest extends TestCase
 
         self::assertNull($reader->read($property->getAttributes()));
         self::assertTrue($reader->hasAny($property->getAttributes()));
+    }
+
+    public function testPropertyAutowiringInjectsPlainPropertyAfterPromoted(): void
+    {
+        $clock = new Clock();
+        $container = new Container();
+        $container->set(Clock::class, $clock);
+        $container->enablePropertyAutowiring();
+        $container->autowire(PromotedAndPlainPropertyService::class);
+
+        $service = $container->get(PromotedAndPlainPropertyService::class);
+
+        self::assertInstanceOf(PromotedAndPlainPropertyService::class, $service);
+        self::assertSame($clock, $service->getPromoted());
+        self::assertSame($clock, $service->getPlain());
+    }
+
+    public function testConstructorIntersectionWithoutDefinitionThrows(): void
+    {
+        $container = new Container();
+        $container->enableAutowiring();
+        $container->autowire(ConstructorIntersectionService::class);
+
+        $this->expectException(ContainerException::class);
+        $this->expectExceptionMessage('Не удалось разрешить intersection-тип для параметра $storage.');
+
+        $container->get(ConstructorIntersectionService::class);
     }
 }
