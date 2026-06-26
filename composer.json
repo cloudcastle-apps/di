@@ -31,7 +31,8 @@
     "homepage": "https://packagist.org/packages/cloudcastle/di",
     "support": {
         "issues": "https://github.com/cloudcastle-apps/di/issues",
-        "source": "https://github.com/cloudcastle-apps/di"
+        "source": "https://github.com/cloudcastle-apps/di",
+        "docs": "https://github.com/cloudcastle-apps/di/wiki"
     },
     "require": {
         "php": "^8.3",

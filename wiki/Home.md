@@ -4,9 +4,11 @@
 
 # CloudCastle DI
 
+**Lightweight PSR-11 dependency injection container for PHP 8.3+** — autowiring, directory scan, tagged services, decorators, `call()` / `bind()`, prototypes, lazy.
+
 Лёгкий контейнер внедрения зависимостей для **PHP 8.3+** с поддержкой [PSR-11](https://www.php-fig.org/psr/psr-11/). Одна runtime-зависимость — `psr/container`.
 
-**Текущая версия:** 1.3.x — см. [Releases](https://github.com/cloudcastle-apps/di/releases).
+**Текущая версия:** 1.3.x — см. [Releases](https://github.com/cloudcastle-apps/di/releases) · [Packagist](https://packagist.org/packages/cloudcastle/di)
 
 ## Установка
 

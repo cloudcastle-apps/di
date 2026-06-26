@@ -104,15 +104,18 @@ composer ci
 
 ## Брендинг и логотип
 
+Иконка рядом с именем репозитория на GitHub — **аватар организации** [`cloudcastle-apps`](https://github.com/cloudcastle-apps), не отдельный файл репозитория. Загрузка: [Organization settings → Profile](https://github.com/organizations/cloudcastle-apps/settings/profile) → **Upload new picture** → `assets/org-avatar-260.png` (или `logo.png`).
+
 Файлы в каталоге `assets/`:
 
 | Файл | Назначение |
 |------|------------|
 | `logo.svg` | Основной векторный логотип (README, Wiki) |
 | `logo.png` | Растровая копия 512×512 |
+| `org-avatar-260.png` | Аватар организации GitHub (260×260) |
 | `social-preview.png` | Баннер 1280×640 для GitHub Social preview |
 
-**Social preview** (карточка репозитория при шаринге ссылки): [Settings → Social preview](https://github.com/cloudcastle-apps/di/settings#social-preview) → Edit → Upload an image → выбрать `.github/social-preview.png` или `assets/social-preview.png` (1280×640, &lt; 1 MB). Публичного API нет.
+**Social preview** (карточка при шаринге ссылки): [Settings → Social preview](https://github.com/cloudcastle-apps/di/settings#social-preview) → Edit → Upload an image → `.github/social-preview.png` (1280×640, &lt; 1 MB).
 
 ## CI
 
