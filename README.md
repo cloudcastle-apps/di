@@ -140,7 +140,7 @@ flowchart TB
 
 - Строгая типизация, PHPStan max, Psalm level 1, покрытие строк ≥95%, Infection MSI ≥95%
 - CI: PHP 8.3, 8.4, 8.5
-- **244 PHPUnit-теста:** unit (208), integration (5), security (4), load (15), performance (12)
+- **256 PHPUnit-тестов:** unit (208), integration (5), security (16), load (15), performance (12)
 - Регрессия производительности: пороги в `tests/Load/` и `tests/Performance/`; отчёт `composer benchmark-report`
 
 Подробнее — [Wiki: тестирование](https://github.com/cloudcastle-apps/di/wiki/Testing) · [нагрузка и производительность](https://github.com/cloudcastle-apps/di/wiki/Performance-and-load).
@@ -325,17 +325,17 @@ composer ci
 composer benchmark-report   # фактические времена бенчмарков (markdown)
 ```
 
-Пайплайн: линтеры, PHPStan (max), Psalm (L1), PHPMD, Deptrac, Rector, **244 PHPUnit-теста** (unit/integration/security/load/performance), покрытие строк ≥95%, Infection MSI ≥95%.
+Пайплайн: линтеры, PHPStan (max), Psalm (L1), PHPMD, Deptrac, Rector, **256 PHPUnit-тестов** (unit/integration/security/load/performance), покрытие строк ≥95%, Infection MSI ≥95%.
 
 | Набор | Тестов | Документация |
 |-------|--------|--------------|
 | unit | 208 | [Wiki: Testing](https://github.com/cloudcastle-apps/di/wiki/Testing) |
 | integration | 5 | — |
-| security | 4 | [Wiki: Security-tests](https://github.com/cloudcastle-apps/di/wiki/Security-tests) |
+| security | 16 | [Wiki: Security-tests](https://github.com/cloudcastle-apps/di/wiki/Security-tests) |
 | load | 15 | [Wiki: Performance-and-load](https://github.com/cloudcastle-apps/di/wiki/Performance-and-load) |
 | performance | 12 | — |
 
-**Подробно:** security — кэш при ошибках, непрозрачные id; load — 1000–3000 ops; performance — hot path до 10 000 итераций. Кратко в `doc/guide/load-performance.rst`.
+**Подробно:** security — кэш при ошибках, autowiring, непрозрачные id; load — 1000–3000 ops; performance — hot path до 10 000 итераций. Кратко в `doc/guide/load-performance.rst`.
 
 ## Лицензия
 

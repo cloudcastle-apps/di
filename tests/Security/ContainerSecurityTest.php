@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace CloudCastle\DI\Tests\Security;
 
 use CloudCastle\DI\Container;
+use CloudCastle\DI\ContainerRegistry;
+use CloudCastle\DI\Exception\ContainerException;
 use CloudCastle\DI\Exception\NotFoundException;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
@@ -75,6 +77,39 @@ final class ContainerSecurityTest extends TestCase
                 $notFoundException->getMessage(),
             );
             self::assertStringNotContainsString('vendor', $notFoundException->getMessage());
+        }
+    }
+
+    public function testContainerRegistryExceptionDoesNotExposeInternalPaths(): void
+    {
+        ContainerRegistry::reset();
+
+        try {
+            ContainerRegistry::get();
+            self::fail('Ожидалось исключение ContainerException.');
+        } catch (ContainerException $containerException) {
+            self::assertSame(
+                'Глобальный контейнер не инициализирован. Вызовите ContainerRegistry::set().',
+                $containerException->getMessage(),
+            );
+            self::assertStringNotContainsString('vendor', $containerException->getMessage());
+        }
+    }
+
+    public function testMissingAliasTargetDoesNotRegisterResolvedState(): void
+    {
+        $container = new Container();
+        $container->alias('missing.target', 'nowhere');
+
+        try {
+            $container->get('missing.target');
+            self::fail('Ожидалось исключение NotFoundException.');
+        } catch (NotFoundException $notFoundException) {
+            self::assertSame(
+                'Сервис "nowhere" не зарегистрирован.',
+                $notFoundException->getMessage(),
+            );
+            self::assertFalse($container->has('nowhere'));
         }
     }
 }

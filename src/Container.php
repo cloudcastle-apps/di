@@ -9,6 +9,7 @@ use CloudCastle\DI\Exception\ContainerException;
 use CloudCastle\DI\Exception\NotFoundException;
 use Override;
 use ReflectionClass;
+use Throwable;
 
 /**
  * Реализация DI-контейнера с singleton-фабриками, autowiring, тегами и декораторами.
@@ -462,7 +463,15 @@ final class Container implements ContainerInterface
         );
 
         if (!$wasCached) {
-            $this->resolveHooks->dispatch($id, $instance, $this);
+            try {
+                $this->resolveHooks->dispatch($id, $instance, $this);
+            } catch (Throwable $exception) {
+                if ($singleton) {
+                    unset($this->resolved[$id]);
+                }
+
+                throw $exception;
+            }
         }
 
         return $instance;

@@ -79,7 +79,7 @@ Autowiring в тестах
 
    composer test:unit
    composer test:integration
-   composer test:security      # 4 теста безопасности
+   composer test:security      # 16 тестов безопасности
    composer test:load          # 15 нагрузочных
    composer test:performance   # 12 performance
    composer test:coverage      # ≥95% строк

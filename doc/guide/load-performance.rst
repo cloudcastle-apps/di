@@ -6,11 +6,12 @@
 - `Security-tests <https://github.com/cloudcastle-apps/di/wiki/Security-tests>`_
 - `Performance-and-load <https://github.com/cloudcastle-apps/di/wiki/Performance-and-load>`_
 
-Безопасность (4 теста)
-----------------------
+Безопасность (16 тестов)
+-----------------------
 
-``composer test:security`` — отсутствие «фантомных» регистраций, повтор фабрики после
-исключения, непрозрачные id, безопасные сообщения ``NotFoundException``.
+``composer test:security`` — отсутствие «фантомных» регистраций, повтор фабрики и hook
+``afterResolving`` после исключения, непрозрачные id (в т.ч. null-byte), безопасные
+сообщения ``NotFoundException``, autowiring (disabled / abstract / interface), циклы alias.
 
 Нагрузочные (15 тестов)
 -----------------------
