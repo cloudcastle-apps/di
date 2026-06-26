@@ -13,6 +13,7 @@
 
 <p align="center">
   <a href="https://github.com/cloudcastle-apps/di/wiki/Quick-start">Quick start</a> ·
+  <a href="https://github.com/cloudcastle-apps/di/wiki/Comparison">Сравнение с PHP-DI / Symfony</a> ·
   <a href="https://github.com/cloudcastle-apps/di/wiki">Wiki</a> ·
   <a href="https://packagist.org/packages/cloudcastle/di">Packagist</a> ·
   <a href="https://github.com/cloudcastle-apps/di/releases">Releases</a>
@@ -32,6 +33,23 @@
 
 ## Когда выбрать CloudCastle DI
 
+Подробное сравнение с **преимуществами и недостатками** — [Wiki: Сравнение с PHP-DI, Symfony, Pimple](https://github.com/cloudcastle-apps/di/wiki/Comparison).
+
+### Кратко: плюсы
+
+- **Минимум зависимостей** — только `psr/container`; без Symfony Config / YAML.
+- **PSR-11** + autowiring (constructor, property, method), attributes, `scan()`, теги, декораторы, `call()` / `bind()` / `afterResolving()`.
+- **Явный bootstrap** в PHP — удобно для библиотек, CLI, API, тестов.
+- **Компактный код** — проще аудит, чем у «больших» DI.
+
+### Кратко: минусы (честно)
+
+- Нет **compiled container** и **contextual binding** (план v2) — для них сейчас лучше PHP-DI / Symfony DI.
+- Только **PHP 8.3+**; `scan()` — regex, не полный AST.
+- Меньше экосистемы, чем у Symfony / Laravel.
+
+### Таблица возможностей
+
 | | CloudCastle DI | PHP-DI | Symfony DI | Pimple |
 |---|:---:|:---:|:---:|:---:|
 | PSR-11 | ✓ | ✓ | ✓ | частично |
@@ -43,10 +61,11 @@
 | Прототипы (`make`) / alias / lazy | ✓ | ✓ | ✓ | — |
 | `call()` с autowiring / `bind()` / after-resolving | ✓ | ✓ | ✓ | — |
 | Tagged iterator / locator (без eager `getTagged`) | ✓ | ✓ | ✓ | — |
+| Compiled container / contextual binding | — | ✓ | ✓ | — |
 | Минимум зависимостей | ✓ (`psr/container`) | больше | фреймворк | ✓ |
 | Подходит для micro-library / bootstrap | ✓ | ✓ | избыточен | ✓ |
 
-Подходит, когда нужен **компактный контейнер** для composition root, тестов или небольшого приложения — с явным wiring и опциональной автоматикой без YAML и compiled container.
+Подходит, когда нужен **компактный контейнер** для composition root, тестов или небольшого приложения — с явным wiring и опциональной автоматикой без YAML и compiled container. Если уже используете **Symfony** или **Laravel** — берите их встроенный DI.
 
 ## Как это устроено
 
@@ -317,7 +336,7 @@ $mailer = ContainerRegistry::get()->get(App\Mailer::class);
 
 ## Документация
 
-- [Wiki — главная](https://github.com/cloudcastle-apps/di/wiki/Home) · [архитектура](https://github.com/cloudcastle-apps/di/wiki/Architecture) · [быстрый старт](https://github.com/cloudcastle-apps/di/wiki/Quick-start) · [autowiring](https://github.com/cloudcastle-apps/di/wiki/Autowiring) · [call(), bind(), afterResolving](https://github.com/cloudcastle-apps/di/wiki/Call-bind-callbacks) · [прототипы, alias и lazy](https://github.com/cloudcastle-apps/di/wiki/Prototypes-alias-lazy) · [теги и декораторы](https://github.com/cloudcastle-apps/di/wiki/Tags-and-decorators) · [примеры bootstrap](https://github.com/cloudcastle-apps/di/wiki/Bootstrap) · [API](https://github.com/cloudcastle-apps/di/wiki/API-reference)
+- [Wiki — главная](https://github.com/cloudcastle-apps/di/wiki/Home) · [**сравнение с PHP-DI / Symfony / Pimple**](https://github.com/cloudcastle-apps/di/wiki/Comparison) · [архитектура](https://github.com/cloudcastle-apps/di/wiki/Architecture) · [быстрый старт](https://github.com/cloudcastle-apps/di/wiki/Quick-start) · [autowiring](https://github.com/cloudcastle-apps/di/wiki/Autowiring) · [call(), bind(), afterResolving](https://github.com/cloudcastle-apps/di/wiki/Call-bind-callbacks) · [прототипы, alias и lazy](https://github.com/cloudcastle-apps/di/wiki/Prototypes-alias-lazy) · [теги и декораторы](https://github.com/cloudcastle-apps/di/wiki/Tags-and-decorators) · [примеры bootstrap](https://github.com/cloudcastle-apps/di/wiki/Bootstrap) · [API](https://github.com/cloudcastle-apps/di/wiki/API-reference)
 - Исходники Wiki в каталоге [`wiki/`](wiki/Home) (внутренние ссылки **без** суффикса `.md`)
 - [Поддержка](SUPPORT.md) — куда обратиться за помощью
 - [Руководство для разработчиков](CONTRIBUTING.md) — окружение, тесты, CI

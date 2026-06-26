@@ -4,6 +4,7 @@
 
 - [Архитектура](Architecture)
 - [Быстрый старт](Quick-start)
+- [Сравнение с PHP-DI, Symfony, Pimple](Comparison)
 - [Примеры bootstrap](Bootstrap)
 - [Autowiring](Autowiring)
 - [Сканирование классов](Class-scanning)

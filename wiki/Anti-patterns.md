@@ -97,9 +97,11 @@ $container->set('b', static fn ($c) => new B($c->get('a'))); // бесконеч
 
 ## Сравнение с «большими» контейнерами
 
+Подробно — [Сравнение с PHP-DI, Symfony, Pimple](Comparison) (плюсы, минусы, таблицы, миграция).
+
 | CloudCastle DI | PHP-DI / Symfony |
 |----------------|------------------|
-| reflection autowiring (constructor, property, method), attributes, by-name, intersection | + autoconfigure, YAML |
+| reflection autowiring (constructor, property, method), attributes, by-name, intersection | + autoconfigure, YAML, compiled container |
 | явный `set()` + опциональный scan | YAML/PHP config, compiler |
 | компактный код, `psr/container` | полноценный DI фреймворк |
 | `ContainerRegistry` опционален | часто интегрирован в kernel |

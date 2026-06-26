@@ -20,7 +20,11 @@
         "psr11",
         "autowiring",
         "service-locator",
-        "service-container"
+        "service-container",
+        "php-di",
+        "symfony",
+        "pimple",
+        "ioc-container"
     ],
     "authors": [
         {

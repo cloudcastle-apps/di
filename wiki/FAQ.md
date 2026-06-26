@@ -2,7 +2,9 @@
 
 ## Чем CloudCastle DI отличается от PHP-DI / Symfony / Pimple?
 
-CloudCastle DI — **компактный** PSR-11 контейнер с явным `set()`, singleton-фабриками, прототипами (`make()`), alias, lazy-сервисами, **`call()` с autowiring**, **`bind()`**, **`afterResolving()`**, reflection autowiring (конструктор, **свойства**, **методы**; типы, union, intersection, PHP attributes, autowiring по имени), scan каталогов, tagged services (ids / iterator / locator) и декораторами. Одна runtime-зависимость (`psr/container`). Без YAML и compiled container.
+**Полное сравнение с преимуществами и недостатками** — [Сравнение с PHP-DI, Symfony, Pimple](Comparison).
+
+Кратко: компактный PSR-11 контейнер с одной runtime-зависимостью (`psr/container`), явным `set()`, autowiring (конструктор, свойства, методы), `scan()`, тегами, декораторами, `call()` / `bind()` / `afterResolving()`, прототипами, alias и lazy — **без** YAML и compiled container. Нет contextual binding и compiled mode (план v2); для них сейчас лучше PHP-DI или Symfony DI.
 
 ## Есть autowiring?
 
