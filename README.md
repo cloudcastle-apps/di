@@ -8,7 +8,7 @@
 
 <p align="center">
   <strong>Lightweight PSR-11 dependency injection container for PHP 8.3+</strong><br>
-  Лёгкий DI-контейнер внедрения зависимостей с autowiring, scan, тегами и декораторами.
+  Лёгкий DI-контейнер: autowiring, конфигурация PHP/JSON/YAML/XML, scan, теги, декораторы.
 </p>
 
 <p align="center">
@@ -25,6 +25,7 @@
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/cloudcastle/di.svg)](https://packagist.org/packages/cloudcastle/di)
 [![Total Downloads](https://img.shields.io/packagist/dt/cloudcastle/di.svg)](https://packagist.org/packages/cloudcastle/di)
+[![GitHub stars](https://img.shields.io/github/stars/cloudcastle-apps/di?style=social)](https://github.com/cloudcastle-apps/di/stargazers)
 [![PHP Version](https://img.shields.io/packagist/php-v/cloudcastle/di.svg)](https://packagist.org/packages/cloudcastle/di)
 [![License](https://img.shields.io/packagist/l/cloudcastle/di.svg)](https://packagist.org/packages/cloudcastle/di)
 [![Quality](https://github.com/cloudcastle-apps/di/actions/workflows/quality.yml/badge.svg)](https://github.com/cloudcastle-apps/di/actions/workflows/quality.yml)
