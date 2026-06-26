@@ -127,7 +127,7 @@ function createApplicationContainer(): Container
 
 Кратко — в таблице выше. **Подробно:**
 
-- [Тесты безопасности](Security-tests) — 4 сценария, шаги, риски
+- [Тесты безопасности](Security-tests) — 16 сценариев, шаги, риски
 - [Нагрузка и производительность](Performance-and-load) — 15 load + 12 performance, пороги CI, `benchmark-report`
 
 ## Покрытие и мутации

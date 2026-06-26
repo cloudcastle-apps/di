@@ -3,6 +3,21 @@
 Формат основан на [Keep a Changelog](https://keepachangelog.com/ru/1.1.0/),
 версионирование — [SemVer](https://semver.org/lang/ru/).
 
+## [1.3.1] — 2026-06-26
+
+### Исправлено
+
+- **`afterResolving()`:** при исключении в callback singleton снимается из кэша (не остаётся частично инициализированный сервис)
+
+### Добавлено
+
+- **Security-тесты:** 4 → 16 (`ContainerSecurityResolveTest`, расширен `ContainerSecurityTest`)
+- Wiki: подробное описание security/load/performance; футер `_Footer.md`; пошаговое [Comparison](wiki/Comparison.md)
+
+### Изменено
+
+- README, doc/guide — актуальные счётчики тестов (256)
+
 ## [1.3.0] — 2026-06-25
 
 ### Добавлено
@@ -114,6 +129,8 @@
 - CI для GitHub Actions и GitLab CI
 - Инструменты качества: PHPStan max, Psalm level 1, PHPCS, PHPMD, Deptrac, Rector
 
+[1.3.1]: https://github.com/cloudcastle-apps/di/compare/v1.3.0...v1.3.1
+[1.3.0]: https://github.com/cloudcastle-apps/di/compare/v1.2.0...v1.3.0
 [1.2.0]: https://github.com/cloudcastle-apps/di/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/cloudcastle-apps/di/compare/v1.0.3...v1.1.0
 [1.0.3]: https://github.com/cloudcastle-apps/di/releases/tag/v1.0.3
