@@ -327,15 +327,15 @@ composer benchmark-report   # фактические времена бенчма
 
 Пайплайн: линтеры, PHPStan (max), Psalm (L1), PHPMD, Deptrac, Rector, **244 PHPUnit-теста** (unit/integration/security/load/performance), покрытие строк ≥95%, Infection MSI ≥95%.
 
-| Набор | Тестов |
-|-------|--------|
-| unit | 208 |
-| integration | 5 |
-| security | 4 |
-| load | 15 |
-| performance | 12 |
+| Набор | Тестов | Документация |
+|-------|--------|--------------|
+| unit | 208 | [Wiki: Testing](https://github.com/cloudcastle-apps/di/wiki/Testing) |
+| integration | 5 | — |
+| security | 4 | [Wiki: Security-tests](https://github.com/cloudcastle-apps/di/wiki/Security-tests) |
+| load | 15 | [Wiki: Performance-and-load](https://github.com/cloudcastle-apps/di/wiki/Performance-and-load) |
+| performance | 12 | — |
 
-Сценарии нагрузки и пороги латентности — [Wiki: Performance-and-load](https://github.com/cloudcastle-apps/di/wiki/Performance-and-load).
+**Подробно:** security — кэш при ошибках, непрозрачные id; load — 1000–3000 ops; performance — hot path до 10 000 итераций. Кратко в `doc/guide/load-performance.rst`.
 
 ## Лицензия
 

@@ -147,7 +147,8 @@ $service = ContainerRegistry::get()->get(App\Services\OrderService::class);
 | [Справочник API](API-reference) | все методы и исключения |
 | [Фабрики и singleton](Factories-and-singleton) | callable, кэш, `null`, циклы в фабриках |
 | [Тестирование](Testing) | unit/integration, моки, `ContainerRegistry::reset()` |
-| [Нагрузка и производительность](Performance-and-load) | load/performance тесты, пороги, бенчмарки |
+| [Тесты безопасности](Security-tests) | 4 сценария: кэш, id, NotFound |
+| [Нагрузка и производительность](Performance-and-load) | 15 load + 12 performance, пороги, бенчмарки |
 | [Анти-паттерны](Anti-patterns) | service locator, autowiring, глобальный контейнер |
 | [Обновление версий](Upgrading) | миграция между релизами |
 | [Участие в разработке](Contributing) | `composer ci`, PR |

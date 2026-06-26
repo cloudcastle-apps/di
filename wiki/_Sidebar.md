@@ -15,6 +15,7 @@
 - [Справочник API](API-reference)
 - [Фабрики и singleton](Factories-and-singleton)
 - [Тестирование](Testing)
+- [Тесты безопасности](Security-tests)
 - [Нагрузка и производительность](Performance-and-load)
 - [Анти-паттерны](Anti-patterns)
 

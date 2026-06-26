@@ -79,8 +79,15 @@ Autowiring в тестах
 
    composer test:unit
    composer test:integration
-   composer test:coverage   # ≥95% строк
-   composer test:mutation   # MSI ≥95%
+   composer test:security      # 4 теста безопасности
+   composer test:load          # 15 нагрузочных
+   composer test:performance   # 12 performance
+   composer test:coverage      # ≥95% строк
+   composer test:mutation      # MSI ≥95%
+   composer benchmark-report   # фактические бенчмарки
    composer ci
+
+Подробно — `Нагрузка и безопасность <load-performance.rst>`_ и Wiki
+(Security-tests, Performance-and-load).
 
 См. также файл ``CONTRIBUTING.md`` в корне репозитория.

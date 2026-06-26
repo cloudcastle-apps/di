@@ -6,17 +6,25 @@
 |---------|---------|--------|----------|
 | `composer test:unit` | `tests/Unit/` | 208 | Поведение API, autowiring, v1.2/v1.3 |
 | `composer test:integration` | `tests/Integration/` | 5 | Графы зависимостей, PSR-11 |
-| `composer test:security` | `tests/Security/` | 4 | Безопасность контейнера |
-| `composer test:load` | `tests/Load/` | 15 | Массовые регистрации и resolve |
-| `composer test:performance` | `tests/Performance/` | 12 | Латентность операций |
+| `composer test:security` | `tests/Security/` | 4 | Безопасность resolve и сообщений об ошибках |
+| `composer test:load` | `tests/Load/` | 15 | Массовые регистрации и resolve (1000–3000 ops) |
+| `composer test:performance` | `tests/Performance/` | 12 | Латентность hot path (до 10 000 итераций) |
 | `composer test:coverage` | — | — | Покрытие строк ≥95% |
 | `composer test:mutation` | — | — | Infection MSI ≥95% |
 
 **Всего:** 244 PHPUnit-теста (без coverage/mutation).
 
-Подробные сценарии нагрузки, пороги времени и референсные бенчмарки — **[Нагрузка и производительность](Performance-and-load)**.
+### Подробная документация по наборам
+
+| Набор | Wiki |
+|-------|------|
+| Security (4) | **[Тесты безопасности](Security-tests)** — пошагово каждый тест |
+| Load (15) + Performance (12) | **[Нагрузка и производительность](Performance-and-load)** — методология, все 27 сценариев, пороги, бенчмарки |
 
 ```bash
+composer test:security
+composer test:load
+composer test:performance
 composer ci                  # полный пайплайн
 composer benchmark-report    # фактические времена бенчмарков (markdown)
 ```
@@ -115,11 +123,12 @@ function createApplicationContainer(): Container
 }
 ```
 
-## Нагрузка и производительность
+## Нагрузка, производительность и безопасность
 
-Load-тесты проверяют корректность при 1000–2000 сервисах и верхние границы времени. Performance-тесты — латентность `get`, `has`, `set`, `make`, `call`, `bind`, tagged API, autowiring.
+Кратко — в таблице выше. **Подробно:**
 
-См. **[Нагрузка и производительность](Performance-and-load)** — таблицы сценариев, пороги CI, референсный прогон.
+- [Тесты безопасности](Security-tests) — 4 сценария, шаги, риски
+- [Нагрузка и производительность](Performance-and-load) — 15 load + 12 performance, пороги CI, `benchmark-report`
 
 ## Покрытие и мутации
 

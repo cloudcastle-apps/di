@@ -1,79 +1,226 @@
-# Нагрузка и производительность
+# Нагрузочные и performance-тесты
 
-Регрессионные **нагрузочные** (`tests/Load/`) и **performance** (`tests/Performance/`) тесты проверяют, что контейнер остаётся быстрым при масштабировании регистраций и разрешений.
+Регрессионные тесты **масштаба** (load) и **латентности** (performance) гарантируют, что контейнер остаётся быстрым и корректным при росте числа сервисов.
 
-Пороги зашиты в PHPUnit (`assertLessThan`) — CI падает при деградации. Фактические времена на референсной машине — в таблице ниже (обновляется командой `composer benchmark-report`).
+| Каталог | Тестов | Команда | Фокус |
+|---------|--------|---------|-------|
+| `tests/Load/` | 15 | `composer test:load` | 1000–3000 операций, корректность + пороги времени |
+| `tests/Performance/` | 12 | `composer test:performance` | 1000–10000 итераций одной операции |
 
-## Наборы тестов (сводка)
+Входят в `composer ci` и GitHub Actions (PHP 8.3–8.5).
 
-| Набор | Каталог | Тестов | Назначение |
-|-------|---------|--------|------------|
-| unit | `tests/Unit/` | 208 | Поведение API, autowiring, v1.2/v1.3 |
-| integration | `tests/Integration/` | 5 | Графы зависимостей, изоляция контейнеров |
-| security | `tests/Security/` | 4 | Безопасность регистрации и resolve |
-| **load** | `tests/Load/` | **15** | Массовые регистрации и разрешения |
-| **performance** | `tests/Performance/` | **12** | Латентность отдельных операций |
-| coverage + mutation | — | — | ≥95% строк, Infection MSI ≥95% |
+Краткая выжимка — [README → Качество](https://github.com/cloudcastle-apps/di#качество), `doc/guide/load-performance.rst`.
 
-**Всего PHPUnit (без coverage/mutation):** 244 теста.
+---
 
-Команды:
+## Методология
 
-```bash
-composer test:load
-composer test:performance
-composer benchmark-report   # markdown-таблица фактических времён
-composer ci                 # полный пайплайн включая load/performance
-```
+### Load-тесты
 
-## Нагрузочные сценарии (`tests/Load/`)
+- **Цель:** корректность при «толстом» графе (много `set`, `get`, alias, тегов) и верхняя граница времени на bulk-сценарии.
+- **Масштаб:** обычно 1500–2000 сервисов, до 4000 последовательных `get`.
+- **Пороги:** `assertLessThan(N секунд)` с запасом для shared CI runners.
+- **Не измеряют:** throughput под параллельными запросами (PHP-FPM — один процесс на запрос).
 
-| Класс / тест | Масштаб | Порог / критерий |
-|--------------|---------|------------------|
-| **ContainerLoadTest** | | |
-| `testRegistersAndResolvesManyServices` | 2000 `set` + `get` | корректность |
-| `testResolvesManySingletonFactoriesOnce` | 2000 фабрик × 2 `get` | 2000 вызовов фабрики |
-| `testCompletesBulkResolutionWithinTimeBudget` | 4000 `get` | **< 2 с** |
-| `testResolvesManyServicesThroughAliasChains` | 2000 × цепочка alias (3 звена) | корректность |
-| `testDecoratedSingletonFactoriesResolveOnceUnderLoad` | 500 decorate + 2× `get` | 500 фабрик и декораторов |
-| **ContainerV13LoadTest** | | |
-| `testAddDefinitionsRegistersAndResolvesManyServices` | 1500 `addDefinitions` | корректность |
-| `testBindManyAliasesToRegisteredIds` | 1500 `bind` + `get` | корректность |
-| `testMakeManyPrototypesFromFactories` | 1500 × 2 `make` | разные экземпляры |
-| `testCallManyTimesWithExplicitParameters` | 3000 `call` | **< 3 с** |
-| `testAfterResolvingInvokesCallbackForEachFirstGet` | 1500 hook + 2× `get` | 1500 callback |
-| `testManyAliasesToAutowiredClass` | 1500 alias → FQCN | singleton autowire |
-| **ContainerTaggedLoadTest** | | |
-| `testGetTaggedIdsReturnsManyIdsWithoutResolution` | 1000 id | без `get()` |
-| `testGetTaggedIteratorResolvesManyHandlers` | 1000 итераций | корректность |
-| `testGetTaggedLocatorHasAndGetMany` | 1000 `has` + `get` | корректность |
-| `testTaggedBulkOperationsWithinTimeBudget` | 1000 id + iterator | **< 2.5 с** |
+### Performance-тесты
 
-## Performance-сценарии (`tests/Performance/`)
+- **Цель:** латентность **одной** операции в цикле (hot path).
+- **Метод:** `microtime(true)` до/после цикла; внутри цикла — assertions на корректность.
+- **Пороги:** константы в классе (`GET_TIME_BUDGET_SECONDS` и т.д.).
+- **Отличие от load:** меньше уникальных id, больше повторений одного hot path.
 
-| Класс / тест | Итераций | Порог времени |
-|--------------|----------|---------------|
-| **ContainerPerformanceTest** | | |
-| `testGetCachedServiceCompletesWithinBudget` | 10 000 `get` | **< 0.5 с** |
-| `testHasExistingServiceCompletesWithinBudget` | 10 000 `has` | **< 0.5 с** |
-| `testHasDefinitionCompletesWithinBudget` | 10 000 `hasDefinition` | **< 0.5 с** |
-| `testSetServiceCompletesWithinBudget` | 5 000 `set` | **< 0.5 с** |
-| **ContainerV13PerformanceTest** | | |
-| `testCallWithExplicitParametersCompletesWithinBudget` | 10 000 `call` | **< 0.75 с** |
-| `testMakeUncachedServiceCompletesWithinBudget` | 5 000 `make` | **< 1.0 с** |
-| `testBindAndGetCompletesWithinBudget` | 1 000 `bind`+`get` | **< 0.75 с** |
-| `testGetTaggedIdsCompletesWithinBudget` | 10 000 × 200 id | **< 0.35 с** |
-| `testAfterResolvingOnFirstGetCompletesWithinBudget` | 1 000 первых `get` | **< 1.0 с** |
-| **ContainerAutowirePerformanceTest** | | |
-| `testCachedAutowireGetCompletesWithinBudget` | 10 000 `get` FQCN | **< 0.75 с** |
-| `testColdAutowireGetCompletesWithinBudget` | 500 новых контейнеров | **< 1.5 с** |
-| `testCallWithAutowireDependencyCompletesWithinBudget` | 2 000 `call`+autowire | **< 1.25 с** |
+### Референсные бенчмарки
 
-Пороги рассчитаны с запасом для CI (GitHub Actions, GitLab) на PHP 8.3–8.5.
+`composer benchmark-report` — фактические миллисекунды на **вашей** машине (`tools/benchmark-report.php`). Не падает при регрессии; для CI используются только PHPUnit-пороги.
+
+---
+
+## Load: `ContainerLoadTest` (базовый API)
+
+Файл: `tests/Load/ContainerLoadTest.php`. `SERVICE_COUNT = 2000`.
+
+### 1. `testRegistersAndResolvesManyServices`
+
+| | |
+|---|---|
+| **Действие** | 2000× `set('service.N', stdClass)` → 2000× `get` |
+| **Проверка** | каждый `get` возвращает `stdClass` |
+| **Порог времени** | нет (только корректность) |
+| **Смысл** | линейная регистрация и разрешение готовых экземпляров |
+
+### 2. `testResolvesManySingletonFactoriesOnce`
+
+| | |
+|---|---|
+| **Действие** | 2000 фабрик; на каждый id — 2× `get` |
+| **Проверка** | фабрика вызвана ровно **2000** раз (не 4000) |
+| **Смысл** | singleton-кэш при массовом графе |
+
+### 3. `testCompletesBulkResolutionWithinTimeBudget`
+
+| | |
+|---|---|
+| **Действие** | 2000 фабрик `bulk.N` → **4000** `get` (циклический id) |
+| **Порог** | **< 2.0 с** |
+| **Смысл** | bulk resolve не деградирует квадратично |
+
+### 4. `testResolvesManyServicesThroughAliasChains`
+
+| | |
+|---|---|
+| **Действие** | цепочка alias: `root` → `alias.a` → `alias.b` → `alias.c` (2000 наборов) |
+| **Проверка** | `get('alias.c.N')` === `get('root.N')` |
+| **Смысл** | разрешение alias под нагрузкой |
+
+### 5. `testDecoratedSingletonFactoriesResolveOnceUnderLoad`
+
+| | |
+|---|---|
+| **Действие** | 500 сервисов с `decorate()`; 2× `get` каждого |
+| **Проверка** | 500 вызовов фабрики и 500 вызовов декоратора |
+| **Смысл** | декоратор не срабатывает на каждый `get` из кэша |
+
+---
+
+## Load: `ContainerV13LoadTest` (API v1.3)
+
+Файл: `tests/Load/ContainerV13LoadTest.php`. `SERVICE_COUNT = 1500`.
+
+### 6. `testAddDefinitionsRegistersAndResolvesManyServices`
+
+| | |
+|---|---|
+| **Действие** | массив 1500 `stdClass` → `addDefinitions()` → 1500× `get` |
+| **Смысл** | массовая регистрация v1.3 |
+
+### 7. `testBindManyAliasesToRegisteredIds`
+
+| | |
+|---|---|
+| **Действие** | 1500× `set` + `bind('abstract.N', 'service.N')` → `get` по abstract |
+| **Смысл** | `bind()` на существующий id под нагрузкой |
+
+### 8. `testMakeManyPrototypesFromFactories`
+
+| | |
+|---|---|
+| **Действие** | 1500 сервисов; на каждый 2× `make` |
+| **Проверка** | два разных экземпляра (`assertNotSame`) |
+| **Смысл** | прототипы не попадают в singleton-кэш |
+
+### 9. `testCallManyTimesWithExplicitParameters`
+
+| | |
+|---|---|
+| **Действие** | **3000**× `call(fn (int $n) => $n, ['number' => $i])` |
+| **Порог** | **< 3.0 с** |
+| **Смысл** | `CallableInvoker` без autowire на объёме |
+
+### 10. `testAfterResolvingInvokesCallbackForEachFirstGet`
+
+| | |
+|---|---|
+| **Действие** | 1500 hook + 2× `get` на id |
+| **Проверка** | callback вызван **1500** раз (не при втором `get` из кэша) |
+| **Смысл** | семантика afterResolving под нагрузкой |
+
+### 11. `testManyAliasesToAutowiredClass`
+
+| | |
+|---|---|
+| **Действие** | autowire `SimpleService`; 1500 alias → FQCN |
+| **Проверка** | каждый `get('alias.N')` — `SimpleService` |
+| **Смысл** | alias + autowire + singleton |
+
+---
+
+## Load: `ContainerTaggedLoadTest` (теги)
+
+Файл: `tests/Load/ContainerTaggedLoadTest.php`. `TAGGED_COUNT = 1000`.
+
+### 12. `testGetTaggedIdsReturnsManyIdsWithoutResolution`
+
+| | |
+|---|---|
+| **Действие** | 1000 handler в теге `handlers` |
+| **Проверка** | `getTaggedIds` возвращает 1000 id **без** eager `get()` |
+| **Смысл** | лёгкий доступ к списку id |
+
+### 13. `testGetTaggedIteratorResolvesManyHandlers`
+
+| | |
+|---|---|
+| **Действие** | `foreach (getTaggedIterator('handlers'))` |
+| **Проверка** | 1000 разрешённых экземпляров |
+| **Смысл** | ленивое/последовательное разрешение по тегу |
+
+### 14. `testGetTaggedLocatorHasAndGetMany`
+
+| | |
+|---|---|
+| **Действие** | `getTaggedLocator` → 1000× `has` + `get` |
+| **Смысл** | locator API под нагрузкой |
+
+### 15. `testTaggedBulkOperationsWithinTimeBudget`
+
+| | |
+|---|---|
+| **Действие** | 1000 фабрик в теге `pipeline` → `getTaggedIds` + iterator с суммой |
+| **Порог** | **< 2.5 с** |
+| **Смысл** | комбинированный tagged bulk |
+
+---
+
+## Performance: `ContainerPerformanceTest` (базовый API)
+
+Файл: `tests/Performance/ContainerPerformanceTest.php`.
+
+| # | Тест | Итераций | Порог | Операция |
+|---|------|----------|-------|----------|
+| 1 | `testGetCachedServiceCompletesWithinBudget` | 10 000 | 0.5 с | `get('cached')` — hit кэша |
+| 2 | `testHasExistingServiceCompletesWithinBudget` | 10 000 | 0.5 с | `has('cached')` |
+| 3 | `testHasDefinitionCompletesWithinBudget` | 10 000 | 0.5 с | `hasDefinition('cached')` |
+| 4 | `testSetServiceCompletesWithinBudget` | 5 000 | 0.5 с | `set('dynamic.i', ...)` |
+
+**Интерпретация:** hot path `get`/`has` из кэша — микросекунды на вызов на референсном CPU; порог 0.5 с даёт ~50 µs/итерацию запаса.
+
+---
+
+## Performance: `ContainerV13PerformanceTest`
+
+Файл: `tests/Performance/ContainerV13PerformanceTest.php`.
+
+| # | Тест | Итераций | Порог | Операция |
+|---|------|----------|-------|----------|
+| 5 | `testCallWithExplicitParametersCompletesWithinBudget` | 10 000 | 0.75 с | `call` + явные параметры |
+| 6 | `testMakeUncachedServiceCompletesWithinBudget` | 5 000 | 1.0 с | `make('proto')` каждый раз новый |
+| 7 | `testBindAndGetCompletesWithinBudget` | 1 000 | 0.75 с | `bind` + `get` + autowiring on |
+| 8 | `testGetTaggedIdsCompletesWithinBudget` | 10 000 | 0.35 с | 200 id в теге, повтор `getTaggedIds` |
+| 9 | `testAfterResolvingOnFirstGetCompletesWithinBudget` | 1 000 | 1.0 с | первый `get` с hook |
+
+---
+
+## Performance: `ContainerAutowirePerformanceTest`
+
+Файл: `tests/Performance/ContainerAutowirePerformanceTest.php`.
+
+| # | Тест | Итераций | Порог | Операция |
+|---|------|----------|-------|----------|
+| 10 | `testCachedAutowireGetCompletesWithinBudget` | 10 000 | 0.75 с | повторный `get(SimpleService::class)` после warm-up |
+| 11 | `testColdAutowireGetCompletesWithinBudget` | 500 | 1.5 с | **новый** Container + autowire + `get` каждый раз |
+| 12 | `testCallWithAutowireDependencyCompletesWithinBudget` | 2 000 | 1.25 с | `call` с autowire `SimpleService` |
+
+**Cold vs warm:** тест 11 — худший случай (reflection + новый граф); тест 10 — типичный hot path после bootstrap.
+
+---
 
 ## Референсный прогон бенчмарков
 
-Среда: **PHP 8.3.31**, UTC **2026-06-26**. Обновление: `composer benchmark-report`.
+Среда: **PHP 8.3.31**, UTC **2026-06-26**. Обновление:
+
+```bash
+composer benchmark-report
+```
 
 | Сценарий | Итераций | Порог (мс) | Факт (мс) | Статус |
 |----------|----------|------------|-----------|--------|
@@ -88,14 +235,27 @@ composer ci                 # полный пайплайн включая load/
 | bulk get() 4000 разрешений | 4000 | 2000 | 57.86 | OK |
 | холодный autowire get() | 500 | 1500 | 85.22 | OK |
 
-Фактические значения зависят от CPU и нагрузки; в CI проверяются только пороги PHPUnit.
+Фактические значения зависят от CPU; в CI проверяются только PHPUnit-пороги.
+
+---
+
+## Как добавить или ужесточить порог
+
+1. Изменить константу `*_TIME_BUDGET_SECONDS` в тестовом классе.
+2. Локально: `composer test:load` / `composer test:performance`.
+3. Сверить запас: `composer benchmark-report` на слабом железе или в Docker.
+4. Порог должен быть **выше** p95 на CI минимум в 2–3 раза, иначе flaky tests.
+
+---
 
 ## CI
 
-Load и performance входят в `composer ci` и workflow `.github/workflows/quality.yml` (PHP 8.3, 8.4, 8.5).
+- `composer ci` — полный пайплайн.
+- `.github/workflows/quality.yml` — матрица PHP 8.3, 8.4, 8.5.
+- Load/performance не требуют PCOV/Xdebug.
 
 ## См. также
 
-- [Тестирование](Testing) — unit/integration, покрытие, мутации
-- [Участие в разработке](Contributing) — команды разработчика
-- [Архитектура](Architecture) — схемы resolve и autowiring
+- [Тесты безопасности](Security-tests)
+- [Тестирование](Testing) — unit/integration, coverage, mutation
+- [Архитектура](Architecture) — потоки resolve и autowiring
