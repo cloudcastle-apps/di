@@ -1,8 +1,8 @@
 # CloudCastle DI
 
-**English:** Lightweight [PSR-11](https://www.php-fig.org/psr/psr-11/) dependency injection container for PHP 8.3+. Explicit `set()` / `get()` wiring, optional autowiring and directory scan, tagged services, decorators, global registry — one runtime dependency (`psr/container`).
+**English:** Lightweight [PSR-11](https://www.php-fig.org/psr/psr-11/) dependency injection container for PHP 8.3+. Explicit `set()` / `get()` wiring, optional constructor/property/method autowiring, directory scan, tagged services, decorators, global registry — one runtime dependency (`psr/container`).
 
-**Русский:** Лёгкий контейнер внедрения зависимостей для PHP 8.3+ с поддержкой PSR-11. Явная регистрация сервисов, singleton-фабрики, autowiring по типам конструктора, сканирование каталогов и глобальный реестр.
+**Русский:** Лёгкий контейнер внедрения зависимостей для PHP 8.3+ с поддержкой PSR-11. Явная регистрация сервисов, singleton-фабрики, autowiring конструктора, **свойств** и **методов**, сканирование каталогов, теги, декораторы и глобальный реестр.
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/cloudcastle/di.svg)](https://packagist.org/packages/cloudcastle/di)
 [![Total Downloads](https://img.shields.io/packagist/dt/cloudcastle/di.svg)](https://packagist.org/packages/cloudcastle/di)
@@ -38,13 +38,17 @@
 
 ### Autowiring и сканирование
 
+Порядок внедрения при autowiring: **конструктор → свойства → методы**.
+
 - **`enableAutowiring()`** — создание классов по FQCN при `get()` без явного `set()`
 - **`autowire(string $className)`** — точечная регистрация класса (id = полное имя класса)
-- **`enableParameterNameAutowiring()`** — параметр `$logger` → сервис с id `'logger'`
-- **`enablePropertyAutowiring()`** / **`enableMethodAutowiring()`** — typed properties и inject-методы после конструктора
+- **`enableParameterNameAutowiring()`** — параметр `$logger` → сервис с id `'logger'` (по умолчанию выключен)
+- **`enablePropertyAutowiring()`** / **`enableMethodAutowiring()`** — typed properties и inject-методы/setter после конструктора
 - **`scan(string $directory, ?string $namespace = null)`** — обход каталога и autowiring найденных instantiable-классов
-- Разрешение: PHP attributes (`Inject`, `Autowire`) на конструкторе, **свойствах** и **методах**; union, **intersection**, nullable, `ContainerInterface`
+- PHP attributes **`Inject`** / **`Autowire`** на конструкторе, **свойствах** и **методах** (attributes работают без флагов property/method)
+- Разрешение по типам: union, **intersection**, nullable, `ContainerInterface` / PSR-11
 - Обнаружение циклических зависимостей при autowiring
+- Явный `set()` всегда имеет **приоритет** над autowiring
 
 ### Расширения контракта
 
@@ -59,6 +63,7 @@
 ### Качество
 
 - Строгая типизация, PHPStan max, Psalm level 1, покрытие строк ≥95%, Infection MSI ≥95%
+- CI: PHP 8.3, 8.4, 8.5
 
 ## Требования
 
@@ -68,7 +73,7 @@
 ## Установка
 
 ```bash
-composer require cloudcastle/di
+composer require cloudcastle/di:^1.1
 ```
 
 ## Быстрый старт
@@ -92,7 +97,7 @@ $logger = $container->get('logger');
 $repository = $container->get('repository');
 ```
 
-### Autowiring
+### Autowiring конструктора
 
 ```php
 use CloudCastle\DI\Attribute\Inject;
@@ -106,6 +111,22 @@ $container->enableParameterNameAutowiring(); // опционально: $logger 
 // Классы создаются по типам конструктора; id = FQCN
 // #[Inject('app.clock')] на параметрах — явный id
 $userService = $container->get(App\Service\UserService::class);
+```
+
+### Property и method injection
+
+```php
+use CloudCastle\DI\Attribute\Inject;
+use CloudCastle\DI\Container;
+
+$container = new Container();
+$container->set(LoggerInterface::class, $logger);
+$container->enableAutowiring();
+$container->enablePropertyAutowiring(); // typed properties без attribute
+$container->enableMethodAutowiring();   // setter без attribute
+
+// #[Inject] на свойстве или inject-методе — без enableProperty/MethodAutowiring
+$service = $container->get(App\Service\ReportService::class);
 ```
 
 ### Сканирование каталога
@@ -146,7 +167,7 @@ $mailer = ContainerRegistry::get()->get(App\Mailer::class);
 | `autowire(string $className): void` | Явная регистрация класса |
 | `scan(string $directory, ?string $namespace): void` | Autowiring классов из каталога |
 
-Подробнее — [Wiki](https://github.com/cloudcastle-apps/di/wiki/Home) ( [Autowiring](https://github.com/cloudcastle-apps/di/wiki/Autowiring) · [API](https://github.com/cloudcastle-apps/di/wiki/API-reference) ) и `doc/guide/` после `composer docs`.
+Подробнее — [Wiki](https://github.com/cloudcastle-apps/di/wiki/Home) ( [Autowiring](https://github.com/cloudcastle-apps/di/wiki/Autowiring) · [API](https://github.com/cloudcastle-apps/di/wiki/API-reference) · [Bootstrap](https://github.com/cloudcastle-apps/di/wiki/Bootstrap) ) и `doc/guide/` после `composer docs`.
 
 ## Сообщество
 
@@ -155,7 +176,7 @@ $mailer = ContainerRegistry::get()->get(App\Mailer::class);
 
 ## Документация
 
-- [Wiki — главная](https://github.com/cloudcastle-apps/di/wiki/Home) · [быстрый старт](https://github.com/cloudcastle-apps/di/wiki/Quick-start) · [autowiring](https://github.com/cloudcastle-apps/di/wiki/Autowiring) · [API](https://github.com/cloudcastle-apps/di/wiki/API-reference)
+- [Wiki — главная](https://github.com/cloudcastle-apps/di/wiki/Home) · [быстрый старт](https://github.com/cloudcastle-apps/di/wiki/Quick-start) · [autowiring](https://github.com/cloudcastle-apps/di/wiki/Autowiring) · [примеры bootstrap](https://github.com/cloudcastle-apps/di/wiki/Bootstrap) · [API](https://github.com/cloudcastle-apps/di/wiki/API-reference)
 - Исходники Wiki в каталоге [`wiki/`](wiki/Home) (внутренние ссылки **без** суффикса `.md`)
 - [Поддержка](SUPPORT.md) — куда обратиться за помощью
 - [Руководство для разработчиков](CONTRIBUTING.md) — окружение, тесты, CI
