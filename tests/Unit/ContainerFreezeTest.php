@@ -83,6 +83,18 @@ final class ContainerFreezeTest extends TestCase
         yield 'enableParameterNameAutowiring' => [static function (Container $container): void {
             $container->enableParameterNameAutowiring();
         }];
+        yield 'disableParameterNameAutowiring' => [static function (Container $container): void {
+            $container->disableParameterNameAutowiring();
+        }];
+        yield 'enablePropertyAutowiring' => [static function (Container $container): void {
+            $container->enablePropertyAutowiring();
+        }];
+        yield 'enableMethodAutowiring' => [static function (Container $container): void {
+            $container->enableMethodAutowiring();
+        }];
+        yield 'registerAttribute' => [static function (Container $container): void {
+            $container->registerAttribute(\CloudCastle\DI\Attribute\Inject::class);
+        }];
         yield 'afterResolving' => [static function (Container $container): void {
             $container->afterResolving('x', static function (): void {
             });
