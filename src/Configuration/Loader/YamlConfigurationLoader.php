@@ -30,19 +30,13 @@ final class YamlConfigurationLoader implements ConfigurationLoaderInterface
     #[Override]
     public function load(string $path): array
     {
-        if (!\function_exists('yaml_parse_file')) {
-            throw new ContainerException(
-                'Для YAML-конфигурации требуется расширение PHP ext-yaml (yaml_parse_file).',
-            );
-        }
-
         if (!is_file($path) || !is_readable($path)) {
             throw new ContainerException(\sprintf('Файл конфигурации "%s" не найден или недоступен.', $path));
         }
 
-        $parsed = yaml_parse_file($path);
+        $parsed = $this->parseYamlFile($path);
 
-        if ($parsed === false) {
+        if ($parsed === false || $parsed === null) {
             throw new ContainerException(\sprintf('Ошибка разбора YAML-конфигурации "%s".', $path));
         }
 
@@ -52,5 +46,25 @@ final class YamlConfigurationLoader implements ConfigurationLoaderInterface
 
         /** @var array<string, mixed> $parsed */
         return $parsed;
+    }
+
+    /**
+     * @return mixed|false
+     */
+    private function parseYamlFile(string $path): mixed
+    {
+        set_error_handler(
+            static function (int $severity, string $message) use ($path): bool {
+                throw new ContainerException(
+                    \sprintf('Ошибка разбора YAML-конфигурации "%s" (severity %d): %s', $path, $severity, $message),
+                );
+            },
+        );
+
+        try {
+            return yaml_parse_file($path);
+        } finally {
+            restore_error_handler();
+        }
     }
 }

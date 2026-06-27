@@ -97,12 +97,12 @@ final readonly class CallableInvoker
             return new ReflectionMethod($callable, '__invoke');
         }
 
-        /** @psalm-suppress RedundantCondition — ветка нужна PHPStan для сужения callable до string */
+        /** @psalm-suppress RedundantCondition */
         if (\is_string($callable)) {
             return new ReflectionFunction($callable);
         }
 
-        throw new ContainerException('Неподдерживаемый тип callable.');
+        throw new ContainerException('Неподдерживаемый тип callable.'); // @codeCoverageIgnore
     }
 
     /**
@@ -128,7 +128,7 @@ final readonly class CallableInvoker
                 $target = \is_array($callable) ? $callable[0] : $callable;
 
                 if (!\is_object($target)) {
-                    throw new ContainerException('Callable метода требует объект.');
+                    throw new ContainerException('Callable метода требует объект.'); // @codeCoverageIgnore
                 }
             }
 

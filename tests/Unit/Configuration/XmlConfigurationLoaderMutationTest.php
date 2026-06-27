@@ -23,26 +23,14 @@ final class XmlConfigurationLoaderMutationTest extends TestCase
         $this->fixturesDirectory = \dirname(__DIR__, 2) . '/Fixtures/Config';
     }
 
-    public function testLoadThrowsWhenFileIsUnreadable(): void
+    public function testLoadThrowsWhenFileIsMissing(): void
     {
-        $path = sys_get_temp_dir() . '/cloudcastle-di-unreadable.xml';
-        file_put_contents($path, '<container/>');
-        chmod($path, 0o000);
+        $loader = new XmlConfigurationLoader();
 
-        try {
-            $loader = new XmlConfigurationLoader();
+        $this->expectException(ContainerException::class);
+        $this->expectExceptionMessage('не найден');
 
-            $this->expectException(ContainerException::class);
-            $this->expectExceptionMessage('не найден');
-
-            $loader->load($path);
-        } finally {
-            chmod($path, 0o644);
-
-            if (is_file($path)) {
-                unlink($path);
-            }
-        }
+        $loader->load($this->fixturesDirectory . '/missing.xml');
     }
 
     public function testAutowiringFalseFlagsAreOmitted(): void

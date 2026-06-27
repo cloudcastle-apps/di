@@ -27,4 +27,7 @@ final class AttributeReaderFixtures
 
     #[ThrowingOnNewInstanceAttribute]
     public string $throwingOnly = '';
+
+    #[KnownNonServiceIdAttribute]
+    public string $knownWithoutContract = '';
 }

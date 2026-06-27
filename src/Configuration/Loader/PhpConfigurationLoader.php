@@ -55,12 +55,8 @@ final class PhpConfigurationLoader implements ConfigurationLoaderInterface
      */
     private function assertReadableFile(string $path): void
     {
-        if (!is_file($path)) {
-            throw new ContainerException(\sprintf('Файл конфигурации "%s" не найден.', $path));
-        }
-
-        if (!is_readable($path)) {
-            throw new ContainerException(\sprintf('Файл конфигурации "%s" недоступен для чтения.', $path));
+        if (!is_file($path) || !is_readable($path)) {
+            throw new ContainerException(\sprintf('Файл конфигурации "%s" не найден или недоступен.', $path));
         }
     }
 }

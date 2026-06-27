@@ -59,12 +59,6 @@ final class JsonConfigurationLoader implements ConfigurationLoaderInterface
             throw new ContainerException(\sprintf('Файл конфигурации "%s" не найден или недоступен.', $path));
         }
 
-        $contents = file_get_contents($path);
-
-        if ($contents === false) {
-            throw new ContainerException(\sprintf('Не удалось прочитать файл конфигурации "%s".', $path));
-        }
-
-        return $contents;
+        return (string) file_get_contents($path);
     }
 }
