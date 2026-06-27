@@ -166,8 +166,6 @@
             "@test:coverage",
             "@test:mutation"
         ],
-        "sync-issue-views": "python3 tools/sync-github-issue-views.py",
-        "sync-issue-views:recreate": "python3 tools/sync-github-issue-views.py --recreate",
         "composer-normalize": "composer normalize",
         "composer-normalize-check": "composer normalize --dry-run",
         "coverage-check": "@php tools/coverage-check.php var/coverage/clover.xml",
@@ -187,6 +185,8 @@
         "psalm": "psalm --no-cache --no-progress",
         "rector": "rector process --dry-run",
         "rector-fix": "rector process",
+        "sync-issue-views": "python3 tools/sync-github-issue-views.py",
+        "sync-issue-views:recreate": "python3 tools/sync-github-issue-views.py --recreate",
         "test": [
             "@test:unit",
             "@test:integration",
