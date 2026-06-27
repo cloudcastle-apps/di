@@ -2,6 +2,19 @@
 
 Руководство по переходу между версиями **cloudcastle/di**.
 
+## 1.6.0 → 1.7.0
+
+### Новые возможности (обратно совместимо)
+
+- Конфигурация из **каталога** и **списка файлов** (`ConfigurationDirectorySource`, `ConfigurationFilesSource`)
+- Wiki: [Справочник параметров конфигурации](Configuration-reference)
+
+Код без каталогов в `configure()` **не меняется**.
+
+```bash
+composer update cloudcastle/di
+```
+
 ## 1.5.0 → 1.6.0
 
 ### Изменения (обратно совместимо)

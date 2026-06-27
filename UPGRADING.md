@@ -2,6 +2,26 @@
 
 Руководство по переходу между версиями **cloudcastle/di**.
 
+## 1.6.0 → 1.7.0
+
+### Новые возможности (обратно совместимо)
+
+- **`ConfigurationDirectorySource`**, **`ConfigurationFilesSource`**, **`ConfigurationSourceResolver`** — конфигурация из каталога (flat/recursive) и явного списка файлов
+- **`ConfigurationDirectoryScan`** — enum `Flat` / `Recursive`
+- **`tools/coverage-check.php`** — per-file coverage ≥95% в CI (помимо общего порога)
+- Wiki: [Справочник параметров конфигурации](https://github.com/cloudcastle-apps/di/wiki/Configuration-reference)
+
+### Изменения
+
+- **`ContainerConfigurator`:** `$sources` — `list<string|ConfigurationSource|ConfigurationDirectorySource|ConfigurationFilesSource>`
+- CI: расширение `ext-yaml` в setup-php
+
+Код без каталогов/списков в `configure()` **не требует изменений**.
+
+```bash
+composer update cloudcastle/di
+```
+
 ## 1.5.0 → 1.6.0
 
 ### Изменения (обратно совместимо)
@@ -173,7 +193,7 @@ Major **v2.0** — breaking changes и enterprise-parity (compiled container, co
 
 ### Чек-лист перед переходом на 2.0
 
-1. Зафиксировать версию **1.6.x** в production; прочитать release notes 2.0 RC.
+1. Зафиксировать версию **1.7.x** в production; прочитать release notes 2.0 RC.
 2. `composer update cloudcastle/di` на staging; прогнать полный test-suite и smoke-тесты composition root.
 3. Проверить: `freeze()` в bootstrap, отсутствие `set()` после freeze, `ContainerRegistry::reset()` в PHPUnit.
 4. Заменить удалённые API по таблице в release notes (будет дополнена в RC).

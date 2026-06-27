@@ -71,7 +71,7 @@
 | 3.11 | **Contextual binding** | нет (v2 backlog) | `when` / `needs` / attributes | **+ PHP-DI** сейчас |
 | 3.12 | **Зрелость / статьи / community** | молодой проект | годы в prod | **+ PHP-DI** |
 | 3.13 | **PHP версия** | ^8.3 | 8.1+ | **+ PHP-DI** на 8.1–8.2 |
-| 3.14 | **Quality / CI** | 470 tests, MSI ≥95%, benchmark-check | свой набор | Паритет по autowiring; **+ CloudCastle** прозрачность open-source CI |
+| 3.14 | **Quality / CI** | 506 tests, per-file coverage, MSI ≥95%, benchmark-check | свой набор | Паритет по autowiring; **+ CloudCastle** прозрачность open-source CI |
 
 **Итог шага 3:** при паритете API CloudCastle выигрывает **лёгкостью и прозрачностью**; PHP-DI — если нужны **compiler** и **contextual injection** уже сегодня.
 
@@ -135,7 +135,7 @@
 | +8 | Подходит для библиотек, CLI, тестов | Symfony, Laravel |
 | +9 | Циклы при autowiring детектируются | — |
 | +10 | MIT, открытый CI (Quality, CodeQL), Wiki с архитектурой | — |
-| +11 | **470** PHPUnit-тестов, MSI ≥95% по всему `src/`, **benchmark-check** в CI | Pimple (нет такого набора) |
+| +11 | **506** PHPUnit-тестов, per-file coverage, MSI ≥95% по всему `src/`, **benchmark-check** в CI | Pimple (нет такого набора) |
 
 ### Недостатки
 
@@ -213,4 +213,4 @@ flowchart TD
 - [FAQ](FAQ) — краткие ответы
 - [Анти-паттерны](Anti-patterns)
 - [Архитектура](Architecture)
-- [Roadmap v1.6](https://github.com/cloudcastle-apps/di/issues/47) · [v2.0](https://github.com/cloudcastle-apps/di/issues/17)
+- [Roadmap v1.7](https://github.com/cloudcastle-apps/di/issues/52) · [v2.0](https://github.com/cloudcastle-apps/di/issues/17)

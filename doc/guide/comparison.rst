@@ -11,7 +11,7 @@
 - PSR-11, autowiring (constructor, property, method), attributes, ``scan()``, теги, декораторы.
 - Декларативная конфигурация PHP/JSON/YAML/XML (``ContainerConfigurator``, v1.5+).
 - Явный bootstrap в PHP — без обязательного compiled container.
-- **470** PHPUnit-тестов, Infection MSI ≥95% по ``src/``, ``benchmark-check`` в CI (v1.6+).
+- **506** PHPUnit-тестов, per-file coverage, Infection MSI ≥95% по ``src/``, ``benchmark-check`` в CI (v1.7+).
 - Подходит для библиотек, CLI, API bootstrap и тестов.
 
 Недостатки

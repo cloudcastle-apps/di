@@ -94,7 +94,7 @@ Packagist: https://packagist.org/packages/cloudcastle/di
 
 ### Качество
 
-PHPStan max, Psalm L1, покрытие строк ≥95% (фактически ~98%), Infection MSI ≥95% (весь `src/`), **470** PHPUnit-тестов, **benchmark-check** в CI.
+PHPStan max, Psalm L1, покрытие строк ≥95% (фактически ~98%), per-file ≥95%, Infection MSI ≥95% (весь `src/`), **506** PHPUnit-тестов, **benchmark-check** в CI.
 
 ## Архитектура (кратко)
 
