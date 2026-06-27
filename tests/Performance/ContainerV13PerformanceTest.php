@@ -7,6 +7,7 @@ namespace CloudCastle\DI\Tests\Performance;
 use CloudCastle\DI\Container;
 use CloudCastle\DI\Tests\Fixtures\Autowire\SimpleService;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
@@ -14,6 +15,7 @@ use stdClass;
  * Производительность API v1.3: call, bind, make, afterResolving, tagged API.
  */
 #[CoversClass(Container::class)]
+#[Group('performance')]
 final class ContainerV13PerformanceTest extends TestCase
 {
     private const CALL_ITERATIONS = 10000;

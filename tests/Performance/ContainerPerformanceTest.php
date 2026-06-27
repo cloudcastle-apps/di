@@ -6,6 +6,7 @@ namespace CloudCastle\DI\Tests\Performance;
 
 use CloudCastle\DI\Container;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
@@ -13,6 +14,7 @@ use stdClass;
  * Тесты производительности отдельных операций контейнера.
  */
 #[CoversClass(Container::class)]
+#[Group('performance')]
 final class ContainerPerformanceTest extends TestCase
 {
     private const GET_ITERATIONS = 10000;

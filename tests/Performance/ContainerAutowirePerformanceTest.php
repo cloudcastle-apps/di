@@ -9,12 +9,14 @@ use CloudCastle\DI\Tests\Fixtures\Autowire\Clock;
 use CloudCastle\DI\Tests\Fixtures\Autowire\RequiredClockService;
 use CloudCastle\DI\Tests\Fixtures\Autowire\SimpleService;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 
 /**
  * Производительность autowiring и call() с разрешением зависимостей.
  */
 #[CoversClass(Container::class)]
+#[Group('performance')]
 final class ContainerAutowirePerformanceTest extends TestCase
 {
     private const CACHED_GET_ITERATIONS = 10000;
