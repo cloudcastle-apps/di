@@ -4,7 +4,7 @@
 
 - [🏗️ Архитектура](Architecture)
 - [⚡ Быстрый старт](Quick-start)
-- [📊 **Сравнение**](Comparison) — 6 аналогов, таблица + победители
+- [📊 **Сравнение**](Comparison) — 5 аналогов, таблица + победители
 - [🧪 Bootstrap](Bootstrap)
 - [🤖 Autowiring](Autowiring)
 - [📄 Конфигурация](Configuration)

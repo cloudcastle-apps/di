@@ -40,14 +40,14 @@
 
 ## 📊 Сравнение с аналогами
 
-| | CloudCastle DI | PHP-DI | Symfony DI | Pimple | Laravel | League | Nette DI |
-|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| **Runtime deps** | 1 | неск. | symfony/* | 0 | illuminate/* | 2–3 | nette/* |
-| **Autowiring** | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ | ✅ |
-| **Compiled / contextual** | v2 | ✅ | ✅ | ❌ | ✅ | ⚠️ / ✅ | ✅ |
-| **Конфиг YAML/JSON** | ✅ | ✅ | ✅ | ❌ | ✅ | ⚠️ | ✅ NEON |
+| | CloudCastle DI | PHP-DI | Symfony DI | Pimple | Laravel | Nette DI |
+|---|:---:|:---:|:---:|:---:|:---:|:---:|
+| **Runtime deps** | 1 | неск. | symfony/* | 0 | illuminate/* | nette/* |
+| **Autowiring** | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ |
+| **Compiled / contextual** | v2 контракты | ✅ | ✅ | ❌ | ✅ | ✅ |
+| **Конфиг YAML/JSON** | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ NEON |
 
-**Полная таблица** (6 аналогов, колонка 🏆 победитель): **[Wiki: Comparison](https://github.com/cloudcastle-apps/di/wiki/Comparison)**
+**Полная таблица** (5 аналогов, колонка 🏆 победитель): **[Wiki: Comparison](https://github.com/cloudcastle-apps/di/wiki/Comparison)**
 
 | ✅ Подходит | ❌ Лучше другой |
 |-------------|-----------------|
@@ -206,9 +206,9 @@ composer ci
 
 | | |
 |---|---|
-| **Тесты** | 506 PHPUnit (unit 457, integration 5, security 17, load 15, performance 12) |
+| **Тесты** | 512 PHPUnit (unit 463, integration 5, security 17, load 15, performance 12) |
 | **Статика** | PHPStan max, Psalm L1, Rector |
-| **Coverage** | ≥95% per-file, Infection MSI ≥95% |
+| **Coverage** | ≥95% per-file, Infection MSI ≥94% |
 | **CI** | PHP 8.1–8.5, benchmark-check, CodeQL |
 
 [Wiki: Testing](https://github.com/cloudcastle-apps/di/wiki/Testing) · [Performance-and-load](https://github.com/cloudcastle-apps/di/wiki/Performance-and-load)

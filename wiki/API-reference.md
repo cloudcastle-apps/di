@@ -438,8 +438,48 @@ interface ContainerInterface extends \Psr\Container\ContainerInterface
     public function getTaggedIds(string $tag): array;
     public function getTaggedIterator(string $tag): \CloudCastle\DI\TaggedServiceIterator;
     public function getTaggedLocator(string $tag): \CloudCastle\DI\TaggedServiceLocator;
+
+    public function registerAttribute(string $attributeClass): void;
+    public function freeze(): void;
+    public function isFrozen(): bool;
+    /** @return list<string> */
+    public function getDefinitionIds(): array;
+    /** @return array<string, mixed> */
+    public function dump(): array;
 }
 ```
+
+---
+
+## v2: Compiled container (контракты)
+
+> ⚠️ **Статус:** контракты и value object уже в кодовой базе; **runtime-компилятор** — задача [#24](https://github.com/cloudcastle-apps/di/issues/24). Пока используйте обычный `Container` + `freeze()`.
+
+### `CloudCastle\DI\Contract\ContainerCompilerInterface`
+
+Генерирует PHP-файл compiled-контейнера по определениям замороженного runtime-контейнера.
+
+| Метод | Описание |
+|-------|----------|
+| `compile(ContainerInterface $container, string $outputPath, ?string $className = null): ContainerCompileResult` | Пишет `.php` с классом wiring; рекомендуется вызывать после `freeze()` |
+
+**Первый этап v2** покрывает: `set`, `autowire`, `alias`, tags. Contextual binding — [#25](https://github.com/cloudcastle-apps/di/issues/25).
+
+### `CloudCastle\DI\Contract\CompiledContainerInterface`
+
+Расширяет `ContainerInterface`. Маркер контейнера без reflection на hot path `get()`.
+
+| Метод | Описание |
+|-------|----------|
+| `getCompiledClassName(): string` | FQCN сгенерированного класса |
+
+### `CloudCastle\DI\Compiler\ContainerCompileResult`
+
+Value object результата компиляции (immutable): путь к файлу, FQCN класса, метаданные.
+
+### `CloudCastle\DI\Exception\ContainerCompileException`
+
+Исключение при ошибке компиляции (некорректное состояние контейнера, незаписываемый путь и т.п.).
 
 ---
 

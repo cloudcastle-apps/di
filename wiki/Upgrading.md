@@ -47,7 +47,7 @@ composer update cloudcastle/di
 ### Изменения (обратно совместимо)
 
 - **CI:** `composer benchmark-check` и шаг регрессии бенчмарков в GitHub Actions
-- **Infection:** MSI ≥95% по всему `src/`, включая `Configuration/`
+- **Infection:** MSI ≥94% по всему `src/`, включая `Configuration/` (PHP 8.3+ для mutation)
 - **XmlConfigurationLoader:** в `autowiring` только явные `true`-флаги
 
 Код приложения **не меняется**, если не опираетесь на ключи `autowiring.* === false` после парсинга XML.
@@ -173,6 +173,24 @@ composer update cloudcastle/di
 Изменений в публичном API нет. Keywords/description на Packagist.
 
 ## 1.x → 2.0 (будущее)
+
+### Уже в кодовой базе (контракты)
+
+Следующие типы **не меняют** поведение v1.x runtime-контейнера — это подготовка к [#24](https://github.com/cloudcastle-apps/di/issues/24):
+
+| Тип | Назначение |
+|-----|------------|
+| `ContainerCompilerInterface` | API компиляции замороженного контейнера в PHP-класс |
+| `CompiledContainerInterface` | Маркер compiled-контейнера (`getCompiledClassName()`) |
+| `ContainerCompileResult` | Value object результата компиляции |
+| `ContainerCompileException` | Ошибки компиляции |
+
+**Реализация compiler** появится в v2.0. До этого используйте `Container` + `freeze()` как сейчас.
+
+### Планируется в v2.0
+
+- Runtime **compiled container** без reflection на hot path ([#24](https://github.com/cloudcastle-apps/di/issues/24))
+- **Contextual binding** ([#25](https://github.com/cloudcastle-apps/di/issues/25))
 
 Major-версия будет описана здесь и в [CHANGELOG](https://github.com/cloudcastle-apps/di/blob/main/CHANGELOG.md).
 
