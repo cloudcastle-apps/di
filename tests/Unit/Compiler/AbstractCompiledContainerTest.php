@@ -106,7 +106,6 @@ final class AbstractCompiledContainerTest extends TestCase
         $container = new StubCompiledContainer();
 
         self::assertSame(['value' => 'compiled-value'], $container->getTagged('group'));
-        self::assertCount(1, $container->getTagged('group'));
         self::assertArrayHasKey('value', $container->getTagged('group'));
         self::assertSame([], $container->getTagged('empty'));
     }
