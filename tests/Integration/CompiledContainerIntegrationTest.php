@@ -1,0 +1,84 @@
+<?php
+
+declare(strict_types=1);
+
+namespace CloudCastle\DI\Tests\Integration;
+
+use CloudCastle\DI\Compiler\ContainerCompiler;
+use CloudCastle\DI\Container;
+use CloudCastle\DI\Tests\Fixtures\Autowire\Clock;
+use CloudCastle\DI\Tests\Fixtures\Autowire\FileLogger;
+use CloudCastle\DI\Tests\Fixtures\Autowire\LoggerInterface;
+use CloudCastle\DI\Tests\Fixtures\Autowire\LoggerUser;
+use CloudCastle\DI\Tests\Fixtures\Autowire\SimpleService;
+use CloudCastle\DI\Tests\Support\CompiledContainerLoader;
+use PHPUnit\Framework\Attributes\CoversNothing;
+use PHPUnit\Framework\TestCase;
+
+/**
+ * Проверяет parity runtime-контейнера и compiled-контейнера (#24).
+ */
+#[CoversNothing]
+final class CompiledContainerIntegrationTest extends TestCase
+{
+    private string $outputPath;
+
+    protected function setUp(): void
+    {
+        $this->outputPath = sys_get_temp_dir() . '/cloudcastle_di_integration_' . uniqid('', true) . '.php';
+    }
+
+    protected function tearDown(): void
+    {
+        if (is_file($this->outputPath)) {
+            unlink($this->outputPath);
+        }
+    }
+
+    public function testCompiledContainerMatchesRuntimeContainer(): void
+    {
+        $runtime = $this->createRuntimeContainer();
+        $className = 'CloudCastle\\DI\\Tests\\Fixtures\\Compiled\\IntegrationContainer';
+
+        (new ContainerCompiler())->compile($runtime, $this->outputPath, $className);
+
+        $compiled = CompiledContainerLoader::load($this->outputPath, $className);
+
+        self::assertSame($className, $compiled->getCompiledClassName());
+        self::assertTrue($compiled->isFrozen());
+        self::assertTrue($compiled->has(Clock::class));
+        self::assertTrue($compiled->has(LoggerInterface::class));
+        self::assertTrue($compiled->has(LoggerUser::class));
+
+        $runtimeUser = $runtime->get(LoggerUser::class);
+        $compiledUser = $compiled->get(LoggerUser::class);
+
+        self::assertInstanceOf(LoggerUser::class, $compiledUser);
+        self::assertInstanceOf(LoggerUser::class, $runtimeUser);
+        self::assertEquals($runtimeUser->clock, $compiledUser->clock);
+
+        self::assertSame(
+            $runtime->getTaggedIds('loggers'),
+            $compiled->getTaggedIds('loggers'),
+        );
+
+        self::assertInstanceOf(
+            FileLogger::class,
+            $compiled->getTagged('loggers')[FileLogger::class],
+        );
+    }
+
+    private function createRuntimeContainer(): Container
+    {
+        $container = new Container();
+        $container->set(Clock::class, new Clock());
+        $container->autowire(SimpleService::class);
+        $container->autowire(FileLogger::class);
+        $container->autowire(LoggerUser::class);
+        $container->alias(LoggerInterface::class, FileLogger::class);
+        $container->tag(FileLogger::class, 'loggers');
+        $container->freeze();
+
+        return $container;
+    }
+}
