@@ -8,7 +8,6 @@ use CloudCastle\DI\Configuration\Loader\JsonConfigurationLoader;
 use CloudCastle\DI\Configuration\Loader\PhpConfigurationLoader;
 use CloudCastle\DI\Configuration\Loader\XmlConfigurationLoader;
 use CloudCastle\DI\Configuration\Loader\YamlConfigurationLoader;
-use CloudCastle\DI\Exception\ContainerException;
 use CloudCastle\DI\Tests\Fixtures\Autowire\Clock;
 use Override;
 use PHPUnit\Framework\Attributes\CoversClass;
