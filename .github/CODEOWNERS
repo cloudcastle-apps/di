@@ -1,8 +1,24 @@
 # Владельцы кода — автоназначение ревьюеров на Pull Request.
 # https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
 
+# По умолчанию
 * @Zorin-Alexey
 
+# Исходный код и тесты
 /src/ @Zorin-Alexey
 /tests/ @Zorin-Alexey
+
+# CI, шаблоны, автоматизация
 /.github/ @Zorin-Alexey
+/.gitlab-ci.yml @Zorin-Alexey
+
+# Документация и метаданные сообщества
+/wiki/ @Zorin-Alexey
+/doc/ @Zorin-Alexey
+/CITATION.cff @Zorin-Alexey
+/GOVERNANCE.md @Zorin-Alexey
+/profile/ @Zorin-Alexey
+
+# Скрипты и инструменты
+/scripts/ @Zorin-Alexey
+/tools/ @Zorin-Alexey

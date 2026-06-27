@@ -1,0 +1,58 @@
+# Нормализация перевода строк и автоопределение текстовых файлов
+* text=auto eol=lf
+
+# PHP
+*.php text diff=php linguist-language=PHP
+*.phpt text eol=lf
+
+# Скрипты и конфиги
+*.sh text eol=lf
+*.bash text eol=lf
+*.json text eol=lf
+*.yaml text eol=lf
+*.yml text eol=lf
+*.xml text eol=lf
+*.neon text eol=lf
+*.dist text eol=lf
+*.cff text eol=lf
+*.rst text eol=lf linguist-documentation
+
+# Документация
+*.md text eol=lf linguist-documentation
+
+# Изображения и бинарники
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.ico binary
+*.phar binary -diff
+*.zip binary -diff
+*.svg text
+
+# Исключения из git archive (Packagist / dist)
+/.github export-ignore
+/.gitlab-ci.yml export-ignore
+/tests export-ignore
+/tools export-ignore
+/var export-ignore
+/scripts export-ignore
+/wiki export-ignore
+/doc export-ignore
+/profile export-ignore
+/phpunit.xml.dist export-ignore
+/phpunit.coverage.xml.dist export-ignore
+/phpstan.neon export-ignore
+/psalm.xml export-ignore
+/rector.php export-ignore
+/deptrac.yaml export-ignore
+/phpmd.xml export-ignore
+/.php-cs-fixer.dist.php export-ignore
+/infection.json5 export-ignore
+/composer.lock export-ignore
+
+# Статистика языков GitHub (сгенерированное и кэш)
+/docs/ linguist-generated
+/var/ linguist-vendored
+/vendor/ linguist-vendored

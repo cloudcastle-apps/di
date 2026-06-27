@@ -125,6 +125,7 @@ composer ci
 - GitLab CI: `.gitlab-ci.yml`
 - Dependabot: `.github/dependabot.yml` (Composer dev, GitHub Actions)
 - CODEOWNERS: `.github/CODEOWNERS`
+- Шаблон PR: `.github/PULL_REQUEST_TEMPLATE.md`
 
 Оба пайплайна запускают PHP 8.3 и 8.4 с тем же набором проверок, что и `composer ci`.
 

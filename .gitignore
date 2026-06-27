@@ -1,6 +1,8 @@
 /vendor/
 /var/
-/docs/
+/docs/*
+!/docs/CNAME
+!/docs/.nojekyll
 /.phpdoc/
 /.phpunit.cache/
 /.php-cs-fixer.cache
