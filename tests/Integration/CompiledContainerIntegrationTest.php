@@ -4,6 +4,14 @@ declare(strict_types=1);
 
 namespace CloudCastle\DI\Tests\Integration;
 
+use CloudCastle\DI\Compiler\AbstractCompiledContainer;
+use CloudCastle\DI\Compiler\CompileConstructorPlanner;
+use CloudCastle\DI\Compiler\CompileParameterReferenceResolver;
+use CloudCastle\DI\Compiler\CompileServiceBinding;
+use CloudCastle\DI\Compiler\CompileServiceKind;
+use CloudCastle\DI\Compiler\CompiledContainerPhpGenerator;
+use CloudCastle\DI\Compiler\ContainerCompileSnapshot;
+use CloudCastle\DI\Compiler\ContainerCompileSnapshotBuilder;
 use CloudCastle\DI\Compiler\ContainerCompiler;
 use CloudCastle\DI\Container;
 use CloudCastle\DI\Tests\Fixtures\Autowire\Clock;
@@ -12,13 +20,21 @@ use CloudCastle\DI\Tests\Fixtures\Autowire\LoggerInterface;
 use CloudCastle\DI\Tests\Fixtures\Autowire\LoggerUser;
 use CloudCastle\DI\Tests\Fixtures\Autowire\SimpleService;
 use CloudCastle\DI\Tests\Support\CompiledContainerLoader;
-use PHPUnit\Framework\Attributes\CoversNothing;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
 /**
  * Проверяет parity runtime-контейнера и compiled-контейнера (#24).
  */
-#[CoversNothing]
+#[CoversClass(ContainerCompiler::class)]
+#[CoversClass(AbstractCompiledContainer::class)]
+#[CoversClass(ContainerCompileSnapshotBuilder::class)]
+#[CoversClass(CompiledContainerPhpGenerator::class)]
+#[CoversClass(CompileConstructorPlanner::class)]
+#[CoversClass(CompileParameterReferenceResolver::class)]
+#[CoversClass(ContainerCompileSnapshot::class)]
+#[CoversClass(CompileServiceBinding::class)]
+#[CoversClass(CompileServiceKind::class)]
 final class CompiledContainerIntegrationTest extends TestCase
 {
     private string $outputPath;

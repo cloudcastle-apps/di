@@ -4,6 +4,14 @@ declare(strict_types=1);
 
 namespace CloudCastle\DI\Tests\Unit\Compiler;
 
+use CloudCastle\DI\Compiler\AbstractCompiledContainer;
+use CloudCastle\DI\Compiler\CompileConstructorPlanner;
+use CloudCastle\DI\Compiler\CompileParameterReferenceResolver;
+use CloudCastle\DI\Compiler\CompileServiceBinding;
+use CloudCastle\DI\Compiler\CompileServiceKind;
+use CloudCastle\DI\Compiler\CompiledContainerPhpGenerator;
+use CloudCastle\DI\Compiler\ContainerCompileSnapshot;
+use CloudCastle\DI\Compiler\ContainerCompileSnapshotBuilder;
 use CloudCastle\DI\Compiler\ContainerCompiler;
 use CloudCastle\DI\Container;
 use CloudCastle\DI\Exception\ContainerCompileException;
@@ -14,6 +22,13 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
 #[CoversClass(ContainerCompiler::class)]
+#[CoversClass(ContainerCompileSnapshotBuilder::class)]
+#[CoversClass(CompiledContainerPhpGenerator::class)]
+#[CoversClass(CompileConstructorPlanner::class)]
+#[CoversClass(CompileParameterReferenceResolver::class)]
+#[CoversClass(ContainerCompileSnapshot::class)]
+#[CoversClass(CompileServiceBinding::class)]
+#[CoversClass(CompileServiceKind::class)]
 final class ContainerCompilerTest extends TestCase
 {
     private string $outputPath;
@@ -49,6 +64,32 @@ final class ContainerCompilerTest extends TestCase
 
         $this->expectException(ContainerCompileException::class);
         $this->expectExceptionMessage('фабрики');
+
+        (new ContainerCompiler())->compile($container, $this->outputPath);
+    }
+
+    public function testCompileRejectsGlobalAutowiring(): void
+    {
+        $container = new Container();
+        $container->enableAutowiring();
+        $container->freeze();
+
+        $this->expectException(ContainerCompileException::class);
+        $this->expectExceptionMessage('глобальный autowiring');
+
+        (new ContainerCompiler())->compile($container, $this->outputPath);
+    }
+
+    public function testCompileRejectsAfterResolving(): void
+    {
+        $container = new Container();
+        $container->set(Clock::class, new Clock());
+        $container->afterResolving(Clock::class, static function (): void {
+        });
+        $container->freeze();
+
+        $this->expectException(ContainerCompileException::class);
+        $this->expectExceptionMessage('afterResolving');
 
         (new ContainerCompiler())->compile($container, $this->outputPath);
     }
