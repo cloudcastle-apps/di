@@ -97,9 +97,7 @@ final class ConfigurationLoaderCoverageTest extends TestCase
             return;
         }
 
-        $config = (new YamlConfigurationLoader())->load($this->fixturesDirectory . '/overlay.yaml');
-
-        self::assertIsArray($config);
+        $this->assertConfigArray((new YamlConfigurationLoader())->load($this->fixturesDirectory . '/overlay.yaml'));
     }
 
     public function testXmlLoaderReadsAliasAndBindPriority(): void
