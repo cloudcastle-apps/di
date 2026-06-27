@@ -32,6 +32,14 @@ final class ConfigurationLoaderRegistryTest extends TestCase
         self::assertSame(42, $source->priority);
     }
 
+    public function testLoaderRegistrySupportsKnownExtensions(): void
+    {
+        $registry = new ConfigurationLoaderRegistry();
+
+        self::assertTrue($registry->supports($this->fixturesDirectory . '/base.php'));
+        self::assertFalse($registry->supports($this->fixturesDirectory . '/unknown.ini'));
+    }
+
     public function testLoaderRegistryThrowsForUnsupportedFormat(): void
     {
         $registry = new ConfigurationLoaderRegistry();
