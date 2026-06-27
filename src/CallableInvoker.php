@@ -97,6 +97,7 @@ final readonly class CallableInvoker
             return new ReflectionMethod($callable, '__invoke');
         }
 
+        /** @psalm-suppress RedundantCondition */
         if (\is_string($callable)) {
             return new ReflectionFunction($callable);
         }

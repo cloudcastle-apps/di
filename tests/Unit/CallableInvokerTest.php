@@ -108,7 +108,6 @@ final class CallableInvokerTest extends TestCase
     {
         $invoker = new CallableInvoker(new Container());
         $method = new ReflectionMethod(CallableInvoker::class, 'invokeWithArguments');
-        $method->setAccessible(true);
         $reflection = $this->createMock(ReflectionFunctionAbstract::class);
 
         $this->expectException(ContainerException::class);
