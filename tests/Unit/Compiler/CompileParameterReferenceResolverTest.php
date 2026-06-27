@@ -72,6 +72,7 @@ final class CompileParameterReferenceResolverTest extends TestCase
     {
         $this->container->set(FileLogger::class, new FileLogger());
         $this->container->alias(LoggerInterface::class, FileLogger::class);
+
         $parameter = $this->constructorParameter(NamedLoggerConsumer::class, 'logger');
 
         self::assertSame(
