@@ -24,9 +24,15 @@ final readonly class ContainerConfigurator
     }
 
     /**
-     * Загружает и применяет конфигурацию из списка файлов.
+     * Загружает и применяет конфигурацию из списка источников.
      *
-     * @param list<string|ConfigurationSource> $sources Пути или {@see ConfigurationSource} с приоритетом слоя
+     * Элемент `$sources` может быть:
+     * - путь к файлу или каталогу (строка);
+     * - {@see ConfigurationSource} — один файл с приоритетом;
+     * - {@see ConfigurationFilesSource} — явный список файлов;
+     * - {@see ConfigurationDirectorySource} — все поддерживаемые файлы каталога.
+     *
+     * @param list<string|ConfigurationSource|ConfigurationDirectorySource|ConfigurationFilesSource> $sources
      */
     public function configure(ContainerInterface $container, array $sources): void
     {
@@ -36,19 +42,15 @@ final readonly class ContainerConfigurator
     /**
      * Загружает и объединяет несколько источников без применения к контейнеру.
      *
-     * @param list<string|ConfigurationSource> $sources
+     * @param list<string|ConfigurationSource|ConfigurationDirectorySource|ConfigurationFilesSource> $sources
      *
      * @return array<string, mixed>
      */
     public function loadMany(array $sources): array
     {
-        $layers = [];
+        $resolver = new ConfigurationSourceResolver($this->loaderRegistry);
 
-        foreach ($sources as $order => $source) {
-            $layers[] = $this->loadLayer($source, $order);
-        }
-
-        return $this->merger->merge($layers);
+        return $this->merger->merge($resolver->resolve($sources));
     }
 
     /**
@@ -71,16 +73,4 @@ final readonly class ContainerConfigurator
         $this->applicator->apply($container, $config);
     }
 
-    private function loadLayer(string|ConfigurationSource $source, int $order): ConfigurationLayer
-    {
-        if (\is_string($source)) {
-            return new ConfigurationLayer($this->loaderRegistry->load($source), $order, null);
-        }
-
-        return new ConfigurationLayer(
-            $this->loaderRegistry->load($source->path),
-            $order,
-            $source->priority,
-        );
-    }
 }

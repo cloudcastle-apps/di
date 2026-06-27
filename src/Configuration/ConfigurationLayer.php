@@ -12,7 +12,8 @@ final readonly class ConfigurationLayer
     /**
      * @param array<string, mixed> $config Распарсенная конфигурация
      * @param int $order Порядковый индекс источника (0 — первый)
-     * @param int|null $filePriority Явный приоритет файла из {@see ConfigurationSource}
+     * @param int|null $filePriority Явный приоритет файла из {@see ConfigurationSource},
+     *                               {@see ConfigurationDirectorySource} или {@see ConfigurationFilesSource}
      */
     public function __construct(
         public array $config,
