@@ -104,7 +104,7 @@ $container->set('b', static fn ($c) => new B($c->get('a'))); // бесконеч
 
 ## Сравнение с «большими» контейнерами
 
-Подробно — [Сравнение с 6 аналогами](Comparison) (PHP-DI, Symfony, Pimple, Laravel, League, Nette).
+Подробно — [Сравнение с 5 аналогами](Comparison) (PHP-DI, Symfony, Pimple, Laravel, Nette).
 
 | CloudCastle DI | PHP-DI / Symfony |
 |----------------|------------------|

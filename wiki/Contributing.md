@@ -35,7 +35,8 @@ src/
   AttributeServiceIdRegistry.php — реестр inject-attributes
   Configuration/            — ContainerConfigurator, загрузчики, merger
   Attribute/              — Inject, Autowire
-  Contract/               — ContainerInterface, ServiceIdAttribute, ConfigurationLoaderInterface
+  Contract/               — ContainerInterface, compiler contracts, ServiceIdAttribute
+  Compiler/               — ContainerCompileResult (v2 contracts)
   Exception/              — NotFoundException, ContainerException
 tests/Unit/               — unit-тесты
 tests/Integration/        — интеграционные
@@ -61,13 +62,13 @@ wiki/                     — исходники GitHub Wiki (публикует
 |---------|------------|
 | `composer check` | быстрая проверка |
 | `composer ci` | полный пайплайн (как в GitHub Actions) |
-| `composer test:unit` | unit-тесты (457) |
+| `composer test:unit` | unit-тесты (463) |
 | `composer test:load` | нагрузочные (15) |
 | `composer test:performance` | производительность (12) |
 | `composer benchmark-report` | фактические времена бенчмарков |
 | `composer benchmark-check` | регрессия бенчмарков (CI) |
 | `composer test:coverage` | покрытие (≥95% строк, ~98% фактически) |
-| `composer test:mutation` | Infection (MSI ≥95% по `src/`) |
+| `composer test:mutation` | Infection (MSI ≥94% по `src/`, PHP 8.3+) |
 | `composer docs` | API-документация в `docs/` |
 
 ## Pull Request

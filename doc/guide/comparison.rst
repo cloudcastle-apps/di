@@ -1,8 +1,8 @@
 Сравнение с аналогами
 =====================
 
-Краткая выжимка. **Полная таблица** — функция → CloudCastle → **6 аналогов**
-(PHP-DI, Symfony DI, Pimple, Laravel, League Container, Nette DI) → 🏆 победитель —
+Краткая выжимка. **Полная таблица** — функция → CloudCastle → **5 аналогов**
+(PHP-DI, Symfony DI, Pimple, Laravel, Nette DI) → 🏆 победитель —
 `Wiki: Comparison <https://github.com/cloudcastle-apps/di/wiki/Comparison>`_.
 
 Аналоги
@@ -12,7 +12,6 @@
 #. `Symfony DependencyInjection <https://symfony.com/doc/current/service_container.html>`_
 #. `Pimple <https://pimple.symfony.com/>`_
 #. `Laravel Container <https://laravel.com/docs/container>`_
-#. `League Container <https://container.thephpleague.com/>`_
 #. `Nette DI <https://doc.nette.org/en/configuring>`_
 
 Легенда
@@ -43,7 +42,6 @@
 
 - уже **Symfony** / **Laravel** / **Nette** → встроенный DI;
 - **3–5** сервисов без autowire → **Pimple**;
-- definitions-first, лёгкий PSR-11 → **League Container**;
 - **compiled container** или **contextual binding** прямо сейчас → **PHP-DI**, **Symfony DI** или **Nette DI**.
 
 Сводка (фрагмент)
@@ -51,7 +49,7 @@
 
 .. list-table::
    :header-rows: 1
-   :widths: 22 9 9 9 9 9 9 9 15
+   :widths: 22 9 9 9 9 9 9 15
 
    * - Функция
      - CloudCastle
@@ -59,7 +57,6 @@
      - Symfony
      - Pimple
      - Laravel
-     - League
      - Nette
      - Победитель
    * - PSR-11
@@ -67,7 +64,6 @@
      - ✅
      - ✅
      - 🔌
-     - ✅
      - ✅
      - 🔌
      - Паритет
@@ -78,15 +74,13 @@
      - ❌
      - ✅
      - ✅
-     - ✅
      - Паритет
    * - Compiled / contextual
-     - ❌ v2
+     - ⚠️ v2
      - ✅
      - ✅
      - ❌
      - ✅
-     - ⚠️/✅
      - ✅
      - PHP-DI, Symfony, Nette
    * - Benchmark-check CI
@@ -96,10 +90,9 @@
      - —
      - —
      - —
-     - —
      - CloudCastle DI
 
-Полная таблица (~45 строк, 6 аналогов) — на Wiki.
+Полная таблица (~45 строк, 5 аналогов) — на Wiki.
 
 См. также
 ---------

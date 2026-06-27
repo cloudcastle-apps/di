@@ -100,7 +100,7 @@ Property и method injection
 Дальше
 ------
 
-* :doc:`comparison` — таблица vs 6 аналогов (PHP-DI, Symfony, Pimple, Laravel, League, Nette)
+* :doc:`comparison` — таблица vs 5 аналогов (PHP-DI, Symfony, Pimple, Laravel, Nette)
 * :doc:`autowiring`
 * :doc:`configuration`
 * :doc:`class-scanning`

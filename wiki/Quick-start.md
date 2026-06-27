@@ -54,8 +54,8 @@ $logger = $container->get('logger');
 |-------|------------|
 | `set($id, $instance\|callable)` | Регистрация сервиса или фабрики |
 | `get($id)` | Получение (singleton-кэш для фабрик) |
-| `has($id)` | PSR-11: доступен ли сервис |
-| `hasDefinition($id)` | Есть регистрация **без** создания экземпляра |
+| `has($id)` | PSR-11: сервис **можно получить** — `set()`, alias, кэш **или** autowiring (глобальный / `autowire()`) |
+| `hasDefinition($id)` | Есть **явная** регистрация — `set()`, `autowire()` или alias; **без** учёта только глобального autowiring по FQCN |
 
 ---
 
@@ -236,7 +236,7 @@ ContainerRegistry::reset();
 
 | Тема | Ссылка |
 |------|--------|
-| Сравнение с 6 аналогами | [Comparison](Comparison) |
+| Сравнение с 5 аналогами | [Comparison](Comparison) |
 | Архитектура и схемы | [Architecture](Architecture) |
 | Полный API | [API-reference](API-reference) |
 | Примеры bootstrap | [Bootstrap](Bootstrap) |

@@ -94,14 +94,22 @@ $service = $container->get(App\Service\OrderService::class);
 
 ## 📊 Сравнение с аналогами
 
-Единая таблица: **функция → CloudCastle → PHP-DI → Symfony → Pimple → Laravel → League → Nette → победитель** (6 аналогов).
+Единая таблица: **функция → CloudCastle → PHP-DI → Symfony → Pimple → Laravel → Nette → победитель** (5 аналогов).
 
 | | |
 |---|---|
 | 📋 | **[Сравнение — полная таблица](Comparison)** |
 | ⚡ | Одна зависимость `psr/container` |
 | 🎯 | Autowiring + конфиг без compiler |
-| 🚧 | Нет contextual / compiled (v2) |
+| 🚧 | Compiled container — контракты v2 (#24); contextual — v2 (#25) |
+
+### 🔮 Roadmap v2 (контракты)
+
+- `ContainerCompilerInterface` — компиляция замороженного контейнера в PHP-класс
+- `CompiledContainerInterface` — маркер compiled-контейнера без reflection на hot path
+- Реализация compiler — [#24](https://github.com/cloudcastle-apps/di/issues/24); contextual binding — [#25](https://github.com/cloudcastle-apps/di/issues/25)
+
+Подробнее — [API-reference](API-reference#v2-compiled-container-контракты), [Upgrading](Upgrading).
 
 ---
 
@@ -143,7 +151,7 @@ flowchart TB
 |----------|----------|
 | [🏗️ Архитектура](Architecture) | Схемы, потоки resolve, autowiring |
 | [⚡ Быстрый старт](Quick-start) | Установка, PSR-11, composition root |
-| [📊 Сравнение](Comparison) | Таблица vs 6 аналогов (PHP-DI, Symfony, Pimple, Laravel, League, Nette) |
+| [📊 Сравнение](Comparison) | Таблица vs 5 аналогов (PHP-DI, Symfony, Pimple, Laravel, Nette) |
 | [🤖 Autowiring](Autowiring) | Типы, attributes, циклы, приоритеты |
 | [📄 Конфигурация](Configuration) | ContainerConfigurator, форматы, priority |
 | [📖 Справочник конфигурации](Configuration-reference) | Все ключи и примеры |
