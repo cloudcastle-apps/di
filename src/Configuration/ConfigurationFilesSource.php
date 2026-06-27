@@ -14,8 +14,8 @@ final class ConfigurationFilesSource
      * @param int|null $priority Приоритет слоя для каждого файла; `null` — порядок в списке источников
      */
     public function __construct(
-        public array $paths,
-        public ?int $priority = null,
+        public readonly array $paths,
+        public readonly ?int $priority = null,
     ) {
     }
 }

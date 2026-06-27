@@ -16,9 +16,9 @@ final class ConfigurationLayer
      *                               {@see ConfigurationDirectorySource} или {@see ConfigurationFilesSource}
      */
     public function __construct(
-        public array $config,
-        public int $order,
-        public ?int $filePriority,
+        public readonly array $config,
+        public readonly int $order,
+        public readonly ?int $filePriority,
     ) {
     }
 }

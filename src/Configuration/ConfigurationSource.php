@@ -19,8 +19,8 @@ final class ConfigurationSource
      * @param int|null $priority Приоритет слоя; `null` — порядок в списке источников
      */
     public function __construct(
-        public string $path,
-        public ?int $priority = null,
+        public readonly string $path,
+        public readonly ?int $priority = null,
     ) {
     }
 }

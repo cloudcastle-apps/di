@@ -23,7 +23,7 @@ final class Autowire implements ServiceIdAttribute
      * @psalm-suppress PossiblyUnusedMethod
      */
     public function __construct(
-        public ?string $service = null,
+        public readonly ?string $service = null,
     ) {
     }
 

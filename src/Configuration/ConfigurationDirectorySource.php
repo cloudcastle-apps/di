@@ -17,9 +17,9 @@ final class ConfigurationDirectorySource
      * @param ConfigurationDirectoryScan $scan Режим обхода каталога
      */
     public function __construct(
-        public string $directory,
-        public ?int $priority = null,
-        public ConfigurationDirectoryScan $scan = ConfigurationDirectoryScan::Flat,
+        public readonly string $directory,
+        public readonly ?int $priority = null,
+        public readonly ConfigurationDirectoryScan $scan = ConfigurationDirectoryScan::Flat,
     ) {
     }
 }

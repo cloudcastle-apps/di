@@ -17,7 +17,7 @@ variables:
     - docker-php-ext-enable pcov yaml
     - docker-php-ext-install -j"$(nproc)" zip
     - curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-    - composer install --prefer-dist --no-progress --no-ansi
+    - composer install --prefer-dist --no-progress --no-ansi --ignore-platform-reqs
   cache:
     key:
       files:

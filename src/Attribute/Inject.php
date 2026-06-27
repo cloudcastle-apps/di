@@ -23,7 +23,7 @@ final class Inject implements ServiceIdAttribute
      * @psalm-suppress PossiblyUnusedMethod
      */
     public function __construct(
-        public ?string $id = null,
+        public readonly ?string $id = null,
     ) {
     }
 
