@@ -2,6 +2,20 @@
 
 Руководство по переходу между версиями **cloudcastle/di**.
 
+## 1.5.0 → 1.6.0
+
+### Изменения (обратно совместимо)
+
+- **CI:** `composer benchmark-check` и шаг регрессии бенчмарков в GitHub Actions
+- **Infection:** MSI ≥95% по всему `src/`, включая `Configuration/`
+- **XmlConfigurationLoader:** в `autowiring` только явные `true`-флаги
+
+Код приложения **не меняется**, если не опираетесь на ключи `autowiring.* === false` после парсинга XML.
+
+```bash
+composer update cloudcastle/di
+```
+
 ## 1.4.0 → 1.5.0
 
 ### Новые возможности (обратно совместимо)

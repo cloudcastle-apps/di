@@ -71,6 +71,7 @@
 | 3.11 | **Contextual binding** | нет (v2 backlog) | `when` / `needs` / attributes | **+ PHP-DI** сейчас |
 | 3.12 | **Зрелость / статьи / community** | молодой проект | годы в prod | **+ PHP-DI** |
 | 3.13 | **PHP версия** | ^8.3 | 8.1+ | **+ PHP-DI** на 8.1–8.2 |
+| 3.14 | **Quality / CI** | 470 tests, MSI ≥95%, benchmark-check | свой набор | Паритет по autowiring; **+ CloudCastle** прозрачность open-source CI |
 
 **Итог шага 3:** при паритете API CloudCastle выигрывает **лёгкостью и прозрачностью**; PHP-DI — если нужны **compiler** и **contextual injection** уже сегодня.
 
@@ -133,7 +134,8 @@
 | +7 | Компактный код — проще аудит | PHP-DI, Symfony |
 | +8 | Подходит для библиотек, CLI, тестов | Symfony, Laravel |
 | +9 | Циклы при autowiring детектируются | — |
-| +10 | MIT, открытый CI, Wiki с архитектурой | — |
+| +10 | MIT, открытый CI (Quality, CodeQL), Wiki с архитектурой | — |
+| +11 | **470** PHPUnit-тестов, MSI ≥95% по всему `src/`, **benchmark-check** в CI | Pimple (нет такого набора) |
 
 ### Недостатки
 
@@ -200,6 +202,8 @@ flowchart TD
 | Теги / декораторы | ✓ | ✓ | ✓ | — |
 | `call()` / `bind()` / hooks | ✓ | ✓ | ✓ | — |
 | Compiled / contextual | — | ✓ | ✓ | — |
+| Declarative config (PHP/JSON/YAML/XML) | ✓ (v1.5+) | ✓ | ✓ | — |
+| Benchmark regression в CI | ✓ (v1.6+) | — | — | — |
 | Минимум deps | ✓✓ | ✓ | — | ✓✓✓ |
 
 ---
@@ -209,4 +213,4 @@ flowchart TD
 - [FAQ](FAQ) — краткие ответы
 - [Анти-паттерны](Anti-patterns)
 - [Архитектура](Architecture)
-- [Roadmap v2](https://github.com/cloudcastle-apps/di/issues/26)
+- [Roadmap v1.6](https://github.com/cloudcastle-apps/di/issues/47) · [v2.0](https://github.com/cloudcastle-apps/di/issues/17)

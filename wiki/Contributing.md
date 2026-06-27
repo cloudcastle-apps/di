@@ -54,12 +54,13 @@ wiki/                     — исходники GitHub Wiki (публикует
 |---------|------------|
 | `composer check` | быстрая проверка |
 | `composer ci` | полный пайплайн (как в GitHub Actions) |
-| `composer test:unit` | unit-тесты (326) |
+| `composer test:unit` | unit-тесты (421) |
 | `composer test:load` | нагрузочные (15) |
 | `composer test:performance` | производительность (12) |
 | `composer benchmark-report` | фактические времена бенчмарков |
-| `composer test:coverage` | покрытие (≥95% строк) |
-| `composer test:mutation` | Infection (цель MSI ≥95%) |
+| `composer benchmark-check` | регрессия бенчмарков (CI) |
+| `composer test:coverage` | покрытие (≥95% строк, ~98% фактически) |
+| `composer test:mutation` | Infection (MSI ≥95% по `src/`) |
 | `composer docs` | API-документация в `docs/` |
 
 ## Pull Request

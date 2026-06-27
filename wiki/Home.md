@@ -8,12 +8,12 @@
 
 Лёгкий контейнер внедрения зависимостей для **PHP 8.3+** с поддержкой [PSR-11](https://www.php-fig.org/psr/psr-11/). Одна runtime-зависимость — `psr/container`. Альтернатива PHP-DI / Symfony DI для micro-apps и composition root.
 
-**Текущая версия:** 1.5.x — см. [Releases](https://github.com/cloudcastle-apps/di/releases) · [Packagist](https://packagist.org/packages/cloudcastle/di)
+**Текущая версия:** 1.6.x — см. [Releases](https://github.com/cloudcastle-apps/di/releases) · [Packagist](https://packagist.org/packages/cloudcastle/di)
 
 ## Установка
 
 ```bash
-composer require cloudcastle/di:^1.5
+composer require cloudcastle/di:^1.6
 ```
 
 Packagist: https://packagist.org/packages/cloudcastle/di
@@ -22,7 +22,7 @@ Packagist: https://packagist.org/packages/cloudcastle/di
 
 | | CloudCastle DI |
 |---|----------------|
-| **Плюсы** | `psr/container`, PSR-11, autowiring, теги, bootstrap в PHP |
+| **Плюсы** | `psr/container`, PSR-11, autowiring, конфиг из файлов, теги, CI с benchmark-check |
 | **Минусы** | нет compiler/contextual (v2), PHP 8.3+ |
 
 **Пошагово** vs PHP-DI, Symfony, Pimple, Laravel — **[Comparison](Comparison)**.
@@ -94,7 +94,7 @@ Packagist: https://packagist.org/packages/cloudcastle/di
 
 ### Качество
 
-PHPStan max, Psalm L1, покрытие строк ≥95% (фактически ~96%), Infection MSI (цель ≥95%).
+PHPStan max, Psalm L1, покрытие строк ≥95% (фактически ~98%), Infection MSI ≥95% (весь `src/`), **470** PHPUnit-тестов, **benchmark-check** в CI.
 
 ## Архитектура (кратко)
 

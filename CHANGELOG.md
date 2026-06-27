@@ -3,6 +3,26 @@
 Формат основан на [Keep a Changelog](https://keepachangelog.com/ru/1.1.0/),
 версионирование — [SemVer](https://semver.org/lang/ru/).
 
+## [1.6.0] — 2026-06-27
+
+### Добавлено
+
+- **`composer benchmark-check`** — проверка регрессии производительности (`tools/benchmark-lib.php`, порог ×1.5 для CI)
+- Шаг **Benchmark regression check** в GitHub Actions после `test:performance`
+- Расширенные unit-тесты для `src/Configuration/` (merger, loaders, applicator, XML/JSON edge cases)
+- Черновик миграции **v2.0** в `UPGRADING.md` (breaking changes, чек-лист, ссылки на #24/#25/#33)
+
+### Изменено
+
+- **Infection:** `src/Configuration/` снова в mutation scope; MSI ≥95% по всему `src/`
+- **Тесты:** 470 PHPUnit (unit 421, integration 5, security 17, load 15, performance 12); покрытие строк ~98%
+- **XmlConfigurationLoader:** в секцию `autowiring` попадают только явные `true`-флаги (атрибуты `false`/`0` не экспортируются)
+- Wiki, README, `doc/guide/` — актуализированы под v1.6.0 (тесты, бенчмарки, сравнение с аналогами)
+
+### Исправлено
+
+- YAML-тест в CI не пропускается при наличии `ext-yaml`
+
 ## [1.5.0] — 2026-06-26
 
 ### Добавлено
@@ -17,7 +37,7 @@
 ### Изменено
 
 - **Тесты:** 375 PHPUnit (unit 326, integration 5, security 17, load 15, performance 12); покрытие строк ~96%
-- Infection: MSI ≥95% по ядру; `src/Configuration/` временно вне mutation scope (см. `infection.json.dist`)
+- Infection: MSI ≥95% по ядру; `src/Configuration/` временно вне mutation scope (исправлено в 1.6.0)
 - Документация и wiki приведены к v1.5.0
 
 ## [1.4.0] — 2026-06-26
@@ -157,6 +177,7 @@
 - CI для GitHub Actions и GitLab CI
 - Инструменты качества: PHPStan max, Psalm level 1, PHPCS, PHPMD, Deptrac, Rector
 
+[1.6.0]: https://github.com/cloudcastle-apps/di/compare/v1.5.0...v1.6.0
 [1.5.0]: https://github.com/cloudcastle-apps/di/compare/v1.4.0...v1.5.0
 [1.4.0]: https://github.com/cloudcastle-apps/di/compare/v1.3.1...v1.4.0
 [1.3.1]: https://github.com/cloudcastle-apps/di/compare/v1.3.0...v1.3.1

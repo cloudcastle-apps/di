@@ -68,14 +68,15 @@ composer ci
 | `composer phpmd` | PHP Mess Detector |
 | `composer deptrac` | Архитектурные слои |
 | `composer rector` / `composer rector-fix` | Rector (dry-run / apply) |
-| `composer test:unit` | Unit-тесты (326) |
-| `composer test:integration` | Интеграционные тесты |
-| `composer test:security` | Тесты безопасности |
+| `composer test:unit` | Unit-тесты (421) |
+| `composer test:integration` | Интеграционные тесты (5) |
+| `composer test:security` | Тесты безопасности (17) |
 | `composer test:load` | Нагрузочные тесты (15) |
 | `composer test:performance` | Производительность (12) |
 | `composer benchmark-report` | Markdown-отчёт фактических времён |
-| `composer test:coverage` | Покрытие (ожидается ≥95% строк) |
-| `composer test:mutation` | Infection (MSI ≥95%) |
+| `composer benchmark-check` | Проверка регрессии бенчмарков (×1.5, CI) |
+| `composer test:coverage` | Покрытие (ожидается ≥95% строк, ~98% фактически) |
+| `composer test:mutation` | Infection (MSI ≥95% по `src/`) |
 | `composer docs` | Генерация API-документации в `docs/` |
 
 ## Стиль кода

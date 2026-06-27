@@ -7,7 +7,7 @@
 - `Performance-and-load <https://github.com/cloudcastle-apps/di/wiki/Performance-and-load>`_
 
 Безопасность (17 тестов)
------------------------
+------------------------
 
 ``composer test:security`` — отсутствие «фантомных» регистраций, повтор фабрики и hook
 ``afterResolving`` после исключения, непрозрачные id (в т.ч. null-byte), безопасные
@@ -25,13 +25,14 @@
 ``composer test:performance`` — 1000–10000 итераций ``get``, ``has``, ``set``, ``make``,
 ``call``, ``bind``, autowire (warm/cold). Пороги 0.35–1.5 с.
 
-Бенчмарки
----------
+Бенчмарки и регрессия (v1.6+)
+-----------------------------
 
 .. code-block:: bash
 
    composer benchmark-report   # фактические времена (markdown)
-   composer ci                 # все наборы + coverage + mutation
+   composer benchmark-check    # регрессия ×1.5 — как в CI
+   composer ci                 # все наборы + benchmark-check + coverage + mutation
 
 См. также
 ---------

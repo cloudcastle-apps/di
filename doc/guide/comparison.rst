@@ -9,20 +9,22 @@
 
 - Одна runtime-зависимость — ``psr/container``.
 - PSR-11, autowiring (constructor, property, method), attributes, ``scan()``, теги, декораторы.
-- Явный bootstrap в PHP — без YAML и compiled container.
+- Декларативная конфигурация PHP/JSON/YAML/XML (``ContainerConfigurator``, v1.5+).
+- Явный bootstrap в PHP — без обязательного compiled container.
+- **470** PHPUnit-тестов, Infection MSI ≥95% по ``src/``, ``benchmark-check`` в CI (v1.6+).
 - Подходит для библиотек, CLI, API bootstrap и тестов.
 
 Недостатки
 ----------
 
-- Нет **compiled container** и **contextual binding** (план v2) — сейчас лучше PHP-DI / Symfony DI.
+- Нет **compiled container** и **contextual binding** (план v2, issues #24/#25) — сейчас лучше PHP-DI / Symfony DI.
 - Только **PHP ^8.3**; ``scan()`` — regex, не полный AST.
 - Меньше экосистемы, чем у Symfony / Laravel / PHP-DI.
 
 Когда выбрать
 -------------
 
-**CloudCastle DI** — если нужен компактный composition root без фреймворка.
+**CloudCastle DI** — если нужен компактный composition root без фреймворка, с autowiring и опциональной конфигурацией из файлов.
 
 **Другой контейнер** — если уже Symfony/Laravel, нужен compiler/contextual binding сейчас,
 или достаточно Pimple на 3–5 сервисов.
@@ -32,3 +34,4 @@
 
 - `Анти-паттерны <anti-patterns.rst>`_
 - `Архитектура <architecture.rst>`_
+- `Нагрузка и производительность <load-performance.rst>`_

@@ -57,7 +57,7 @@ flowchart TB
 
     subgraph bootstrap [Bootstrap]
         REG_API["set / bind / autowire / scan"]
-        CONFIG["ContainerConfigurator v1.5"]
+        CONFIG["ContainerConfigurator v1.5+"]
         ATTR["registerAttribute()"]
         FREEZE["freeze()"]
     end
@@ -183,10 +183,10 @@ flowchart TB
 
 ### Качество
 
-- Строгая типизация, PHPStan max, Psalm level 1, покрытие строк ≥95% (фактически ~96%)
-- CI: PHP 8.3, 8.4, 8.5
-- **375 PHPUnit-тестов:** unit (326), integration (5), security (17), load (15), performance (12)
-- Infection MSI: цель ≥95% (см. [Testing](https://github.com/cloudcastle-apps/di/wiki/Testing))
+- Строгая типизация, PHPStan max, Psalm level 1, покрытие строк ≥95% (фактически ~98%)
+- CI: PHP 8.3, 8.4, 8.5; CodeQL; **benchmark regression check**
+- **470 PHPUnit-тестов:** unit (421), integration (5), security (17), load (15), performance (12)
+- Infection MSI ≥95% по всему `src/` (включая `Configuration/`)
 
 Подробнее — [Wiki: тестирование](https://github.com/cloudcastle-apps/di/wiki/Testing) · [нагрузка и производительность](https://github.com/cloudcastle-apps/di/wiki/Performance-and-load).
 
@@ -199,7 +199,7 @@ flowchart TB
 ## Установка
 
 ```bash
-composer require cloudcastle/di:^1.5
+composer require cloudcastle/di:^1.6
 ```
 
 ## Быстрый старт
@@ -384,14 +384,15 @@ $container->freeze();
 ```bash
 composer install
 composer ci
-composer benchmark-report   # фактические времена бенчмарков (markdown)
+composer benchmark-report    # фактические времена бенчмарков (markdown)
+composer benchmark-check       # проверка регрессии (×1.5, как в CI)
 ```
 
-Пайплайн: линтеры, PHPStan (max), Psalm (L1), PHPMD, Deptrac, Rector, **375 PHPUnit-тестов**, покрытие строк ≥95%, Infection MSI ≥95% (ядро)
+Пайплайн: линтеры, PHPStan (max), Psalm (L1), PHPMD, Deptrac, Rector, **470 PHPUnit-тестов**, покрытие строк ≥95%, Infection MSI ≥95%, **benchmark-check**
 
 | Набор | Тестов | Документация |
 |-------|--------|--------------|
-| unit | 326 | [Wiki: Testing](https://github.com/cloudcastle-apps/di/wiki/Testing) |
+| unit | 421 | [Wiki: Testing](https://github.com/cloudcastle-apps/di/wiki/Testing) |
 | integration | 5 | — |
 | security | 17 | [Wiki: Security-tests](https://github.com/cloudcastle-apps/di/wiki/Security-tests) |
 | load | 15 | [Wiki: Performance-and-load](https://github.com/cloudcastle-apps/di/wiki/Performance-and-load) |
