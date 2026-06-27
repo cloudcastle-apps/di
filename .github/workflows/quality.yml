@@ -90,6 +90,8 @@ jobs:
         run: composer test:load
 
       - name: Tests performance
+        env:
+          XDEBUG_MODE: off
         run: composer test:performance
 
       - name: Benchmark regression check
@@ -100,6 +102,8 @@ jobs:
 
       - name: Tests mutation
         if: ${{ !contains(fromJSON('["8.1","8.2"]'), matrix.php-version) }}
+        env:
+          XDEBUG_MODE: off
         run: composer test:mutation
 
       - name: Documentation

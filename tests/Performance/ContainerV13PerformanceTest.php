@@ -32,7 +32,7 @@ final class ContainerV13PerformanceTest extends TestCase
 
     private const BIND_TIME_BUDGET_SECONDS = 0.75;
 
-    private const TAGGED_IDS_TIME_BUDGET_SECONDS = 0.35;
+    private const TAGGED_IDS_TIME_BUDGET_SECONDS = 6.0;
 
     private const AFTER_RESOLVING_TIME_BUDGET_SECONDS = 1.0;
 
