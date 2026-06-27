@@ -100,6 +100,8 @@ final class CompiledContainerIntegrationTest extends TestCase
             $source,
         );
         self::assertStringContainsString('new \\' . SimpleService::class . '()', $source);
+        self::assertStringContainsString("'loggers' => ", $source);
+        self::assertStringContainsString('definitionIds:', $source);
     }
 
     public function testCompiledContainerThrowsNotFoundForMissingService(): void
