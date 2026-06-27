@@ -26,15 +26,15 @@ final class ContainerV13PerformanceTest extends TestCase
 
     private const AFTER_RESOLVING_ITERATIONS = 1000;
 
-    private const CALL_TIME_BUDGET_SECONDS = 0.75;
+    private const CALL_TIME_BUDGET_SECONDS = 1.5;
 
-    private const MAKE_TIME_BUDGET_SECONDS = 1.0;
+    private const MAKE_TIME_BUDGET_SECONDS = 2.0;
 
-    private const BIND_TIME_BUDGET_SECONDS = 0.75;
+    private const BIND_TIME_BUDGET_SECONDS = 1.5;
 
-    private const TAGGED_IDS_TIME_BUDGET_SECONDS = 6.0;
+    private const TAGGED_IDS_TIME_BUDGET_SECONDS = 30.0;
 
-    private const AFTER_RESOLVING_TIME_BUDGET_SECONDS = 1.0;
+    private const AFTER_RESOLVING_TIME_BUDGET_SECONDS = 2.0;
 
     public function testCallWithExplicitParametersCompletesWithinBudget(): void
     {

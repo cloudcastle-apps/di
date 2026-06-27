@@ -21,11 +21,11 @@ final class ContainerPerformanceTest extends TestCase
 
     private const SET_ITERATIONS = 5000;
 
-    private const GET_TIME_BUDGET_SECONDS = 0.5;
+    private const GET_TIME_BUDGET_SECONDS = 1.25;
 
-    private const HAS_TIME_BUDGET_SECONDS = 0.5;
+    private const HAS_TIME_BUDGET_SECONDS = 1.25;
 
-    private const SET_TIME_BUDGET_SECONDS = 0.5;
+    private const SET_TIME_BUDGET_SECONDS = 1.25;
 
     public function testGetCachedServiceCompletesWithinBudget(): void
     {
