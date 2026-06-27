@@ -55,9 +55,9 @@ final class YamlConfigurationLoader implements ConfigurationLoaderInterface
     }
 
     /**
-     * @return array<mixed>|false
+     * @return mixed|false
      */
-    private function parseYamlFile(string $path): array|false
+    private function parseYamlFile(string $path): mixed
     {
         set_error_handler(
             static function (int $severity, string $message) use ($path): bool {
