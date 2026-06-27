@@ -187,6 +187,9 @@ final class CompileParameterReferenceResolverTest extends TestCase
         $this->resolver->resolveExpression($this->container, $parameter);
     }
 
+    /**
+     * @param class-string $className
+     */
     private function constructorParameter(string $className, string $parameterName): ReflectionParameter
     {
         $constructor = (new ReflectionClass($className))->getConstructor();

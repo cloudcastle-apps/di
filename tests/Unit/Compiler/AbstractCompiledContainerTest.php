@@ -7,9 +7,6 @@ namespace CloudCastle\DI\Tests\Unit\Compiler;
 use CloudCastle\DI\Compiler\AbstractCompiledContainer;
 use CloudCastle\DI\Exception\ContainerException;
 use CloudCastle\DI\Exception\NotFoundException;
-use CloudCastle\DI\LazyService;
-use CloudCastle\DI\TaggedServiceIterator;
-use CloudCastle\DI\TaggedServiceLocator;
 use CloudCastle\DI\Tests\Fixtures\Compiled\StubCompiledContainer;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -95,9 +92,12 @@ final class AbstractCompiledContainerTest extends TestCase
         $container = new StubCompiledContainer();
 
         self::assertSame(['value', 'missing'], $container->getTaggedIds('group'));
-        self::assertInstanceOf(TaggedServiceIterator::class, $container->getTaggedIterator('group'));
-        self::assertInstanceOf(TaggedServiceLocator::class, $container->getTaggedLocator('group'));
-        self::assertInstanceOf(LazyService::class, $container->lazy('value'));
+        self::assertSame(
+            ['compiled-value'],
+            array_values(iterator_to_array($container->getTaggedIterator('group'))),
+        );
+        self::assertTrue($container->getTaggedLocator('group')->has('value'));
+        self::assertSame('compiled-value', $container->lazy('value')->getValue());
     }
 
     public function testCallInvokesCallable(): void
