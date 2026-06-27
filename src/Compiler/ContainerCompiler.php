@@ -61,24 +61,24 @@ final class ContainerCompiler implements ContainerCompilerInterface
     {
         $directory = \dirname($outputPath);
 
-        if (
-            $directory !== ''
-            && $directory !== '.'
-            && !is_dir($directory)
-            && !mkdir($directory, 0o775, true)
-            && !is_dir($directory)
-        ) {
-            throw new ContainerCompileException(\sprintf(
-                'Не удалось создать каталог "%s" для compiled-контейнера.',
-                $directory,
-            ));
+        if ($directory !== '' && $directory !== '.' && !is_dir($directory)) {
+            if (is_file($directory)) {
+                throw new ContainerCompileException(\sprintf(
+                    'Не удалось создать каталог "%s" для compiled-контейнера.',
+                    $directory,
+                ));
+            }
+
+            mkdir($directory, 0o775, true);
         }
 
-        if (file_put_contents($outputPath, $source) === false) {
+        if (is_dir($outputPath)) {
             throw new ContainerCompileException(\sprintf(
                 'Не удалось записать compiled-контейнер в "%s".',
                 $outputPath,
             ));
         }
+
+        file_put_contents($outputPath, $source);
     }
 }
