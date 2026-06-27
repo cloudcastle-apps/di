@@ -147,7 +147,7 @@ final class AutowirerExtendedTest extends TestCase
         self::assertSame($container, $consumer->container);
     }
 
-    public function testInstantiateUsesDefaultForNullableUnionWithIntersection(): void
+    public function testInstantiateUsesDefaultForNullableOptionalDependency(): void
     {
         $container = new Container();
         $container->autowire(NullableIntersectionService::class);
