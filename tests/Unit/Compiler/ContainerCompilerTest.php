@@ -120,7 +120,7 @@ final class ContainerCompilerTest extends TestCase
         $container = $this->createMock(ContainerInterface::class);
 
         $this->expectException(ContainerCompileException::class);
-        $this->expectExceptionMessage('CloudCastle\\DI\\Container');
+        $this->expectExceptionMessage(\CloudCastle\DI\Container::class);
 
         (new ContainerCompiler())->compile($container, $this->outputPath);
     }
