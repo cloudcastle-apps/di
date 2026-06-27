@@ -12,8 +12,11 @@ use Iterator;
  */
 final class NullableIntersectionService
 {
+    public (Iterator&Countable)|null $storage;
+
     public function __construct(
-        public (Iterator&Countable)|null $storage = null,
+        (Iterator&Countable)|null $storage = null,
     ) {
+        $this->storage = $storage;
     }
 }

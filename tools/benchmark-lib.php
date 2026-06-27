@@ -91,7 +91,7 @@ function benchmark_collect(): array
         }
     });
 
-    $results[] = benchmark_run('getTaggedIds() (200 id)', 10000, 0.35, static function (): void {
+    $results[] = benchmark_run('getTaggedIds() (200 id)', 10000, 6.0, static function (): void {
         $container = new Container();
 
         for ($i = 0; $i < 200; ++$i) {

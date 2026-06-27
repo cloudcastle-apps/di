@@ -112,7 +112,7 @@ final class ContainerEdgeCaseTest extends TestCase
     {
         $container = new Container();
         $calls = 0;
-        $container->set('nullable', static function () use (&$calls): null {
+        $container->set('nullable', static function () use (&$calls) {
             ++$calls;
 
             return null;

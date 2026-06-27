@@ -96,7 +96,7 @@ final class ServiceInstanceResolverTest extends TestCase
         $container = $this->createMock(ContainerInterface::class);
         $resolver = new ServiceInstanceResolver($container);
         $definitions = [
-            'nullable' => static function (ContainerInterface $container): null {
+            'nullable' => static function (ContainerInterface $container) {
                 $container->has('nullable');
 
                 return null;

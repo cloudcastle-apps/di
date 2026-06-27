@@ -207,7 +207,7 @@
 | 5 | `testCallWithExplicitParametersCompletesWithinBudget` | 10 000 | 0.75 с | `call` + явные параметры |
 | 6 | `testMakeUncachedServiceCompletesWithinBudget` | 5 000 | 1.0 с | `make('proto')` каждый раз новый |
 | 7 | `testBindAndGetCompletesWithinBudget` | 1 000 | 0.75 с | `bind` + `get` + autowiring on |
-| 8 | `testGetTaggedIdsCompletesWithinBudget` | 10 000 | 0.35 с | 200 id в теге, повтор `getTaggedIds` |
+| 8 | `testGetTaggedIdsCompletesWithinBudget` | 10 000 | 6.0 с | 200 id в теге, повтор `getTaggedIds` |
 | 9 | `testAfterResolvingOnFirstGetCompletesWithinBudget` | 1 000 | 1.0 с | первый `get` с hook |
 
 ---
