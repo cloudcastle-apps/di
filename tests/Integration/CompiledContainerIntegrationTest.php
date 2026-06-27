@@ -6,13 +6,13 @@ namespace CloudCastle\DI\Tests\Integration;
 
 use CloudCastle\DI\Compiler\AbstractCompiledContainer;
 use CloudCastle\DI\Compiler\CompileConstructorPlanner;
+use CloudCastle\DI\Compiler\CompiledContainerPhpGenerator;
 use CloudCastle\DI\Compiler\CompileParameterReferenceResolver;
 use CloudCastle\DI\Compiler\CompileServiceBinding;
 use CloudCastle\DI\Compiler\CompileServiceKind;
-use CloudCastle\DI\Compiler\CompiledContainerPhpGenerator;
+use CloudCastle\DI\Compiler\ContainerCompiler;
 use CloudCastle\DI\Compiler\ContainerCompileSnapshot;
 use CloudCastle\DI\Compiler\ContainerCompileSnapshotBuilder;
-use CloudCastle\DI\Compiler\ContainerCompiler;
 use CloudCastle\DI\Container;
 use CloudCastle\DI\Tests\Fixtures\Autowire\Clock;
 use CloudCastle\DI\Tests\Fixtures\Autowire\FileLogger;
