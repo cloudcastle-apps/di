@@ -206,7 +206,7 @@ final class ContainerCompilerTest extends TestCase
             $this->expectException(ContainerCompileException::class);
             $this->expectExceptionMessage('создать каталог');
 
-            (new ContainerCompiler())->compile($container, $outputPath);
+            @ (new ContainerCompiler())->compile($container, $outputPath);
         } finally {
             if (is_file($parentFile)) {
                 unlink($parentFile);
@@ -227,7 +227,7 @@ final class ContainerCompilerTest extends TestCase
             $this->expectException(ContainerCompileException::class);
             $this->expectExceptionMessage('записать compiled-контейнер');
 
-            (new ContainerCompiler())->compile($container, $directory);
+            @ (new ContainerCompiler())->compile($container, $directory);
         } finally {
             if (is_dir($directory)) {
                 rmdir($directory);
