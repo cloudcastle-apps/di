@@ -196,4 +196,4 @@ flowchart LR
 - [FAQ](FAQ)
 - [Архитектура](Architecture)
 - [Анти-паттерны](Anti-patterns)
-- [Roadmap v2](https://github.com/cloudcastle-apps/di/issues/17)
+- [Roadmap v2](https://github.com/cloudcastle-apps/di/issues/17) · [#24 compiled container](https://github.com/cloudcastle-apps/di/issues/24)
