@@ -135,38 +135,59 @@ final class AbstractCompiledContainerTest extends TestCase
     }
 
     /**
-     * @return iterable<string, array{callable(StubCompiledContainer): void}>
+     * @return iterable<string, array{string}>
      */
     public static function immutableMutatorsProvider(): iterable
     {
-        yield 'set' => [static fn (StubCompiledContainer $container): mixed => $container->set('x', 'y')];
-        yield 'tag' => [static fn (StubCompiledContainer $container): mixed => $container->tag('x', 'y')];
-        yield 'decorate' => [static fn (StubCompiledContainer $container): mixed => $container->decorate('x', static fn (): null => null)];
-        yield 'enableAutowiring' => [static fn (StubCompiledContainer $container): mixed => $container->enableAutowiring()];
-        yield 'disableAutowiring' => [static fn (StubCompiledContainer $container): mixed => $container->disableAutowiring()];
-        yield 'enableParameterNameAutowiring' => [static fn (StubCompiledContainer $container): mixed => $container->enableParameterNameAutowiring()];
-        yield 'disableParameterNameAutowiring' => [static fn (StubCompiledContainer $container): mixed => $container->disableParameterNameAutowiring()];
-        yield 'enablePropertyAutowiring' => [static fn (StubCompiledContainer $container): mixed => $container->enablePropertyAutowiring()];
-        yield 'disablePropertyAutowiring' => [static fn (StubCompiledContainer $container): mixed => $container->disablePropertyAutowiring()];
-        yield 'enableMethodAutowiring' => [static fn (StubCompiledContainer $container): mixed => $container->enableMethodAutowiring()];
-        yield 'disableMethodAutowiring' => [static fn (StubCompiledContainer $container): mixed => $container->disableMethodAutowiring()];
-        yield 'registerAttribute' => [static fn (StubCompiledContainer $container): mixed => $container->registerAttribute('Attr')];
-        yield 'autowire' => [static fn (StubCompiledContainer $container): mixed => $container->autowire('Class')];
-        yield 'scan' => [static fn (StubCompiledContainer $container): mixed => $container->scan('/tmp')];
-        yield 'alias' => [static fn (StubCompiledContainer $container): mixed => $container->alias('a', 'b')];
-        yield 'addDefinitions' => [static fn (StubCompiledContainer $container): mixed => $container->addDefinitions([])];
-        yield 'bind' => [static fn (StubCompiledContainer $container): mixed => $container->bind('a', 'b')];
-        yield 'afterResolving' => [static fn (StubCompiledContainer $container): mixed => $container->afterResolving('x', static function (): void {
-        })];
+        yield 'set' => ['set'];
+        yield 'tag' => ['tag'];
+        yield 'decorate' => ['decorate'];
+        yield 'enableAutowiring' => ['enableAutowiring'];
+        yield 'disableAutowiring' => ['disableAutowiring'];
+        yield 'enableParameterNameAutowiring' => ['enableParameterNameAutowiring'];
+        yield 'disableParameterNameAutowiring' => ['disableParameterNameAutowiring'];
+        yield 'enablePropertyAutowiring' => ['enablePropertyAutowiring'];
+        yield 'disablePropertyAutowiring' => ['disablePropertyAutowiring'];
+        yield 'enableMethodAutowiring' => ['enableMethodAutowiring'];
+        yield 'disableMethodAutowiring' => ['disableMethodAutowiring'];
+        yield 'registerAttribute' => ['registerAttribute'];
+        yield 'autowire' => ['autowire'];
+        yield 'scan' => ['scan'];
+        yield 'alias' => ['alias'];
+        yield 'addDefinitions' => ['addDefinitions'];
+        yield 'bind' => ['bind'];
+        yield 'afterResolving' => ['afterResolving'];
     }
 
     #[DataProvider('immutableMutatorsProvider')]
-    public function testImmutableMutatorsThrow(callable $mutator): void
+    public function testImmutableMutatorsThrow(string $mutator): void
     {
         $container = new StubCompiledContainer();
 
         $this->expectException(ContainerException::class);
 
-        $mutator($container);
+        match ($mutator) {
+            'set' => $container->set('x', 'y'),
+            'tag' => $container->tag('x', 'y'),
+            'decorate' => $container->decorate('x', static function (): void {
+            }),
+            'enableAutowiring' => $container->enableAutowiring(),
+            'disableAutowiring' => $container->disableAutowiring(),
+            'enableParameterNameAutowiring' => $container->enableParameterNameAutowiring(),
+            'disableParameterNameAutowiring' => $container->disableParameterNameAutowiring(),
+            'enablePropertyAutowiring' => $container->enablePropertyAutowiring(),
+            'disablePropertyAutowiring' => $container->disablePropertyAutowiring(),
+            'enableMethodAutowiring' => $container->enableMethodAutowiring(),
+            'disableMethodAutowiring' => $container->disableMethodAutowiring(),
+            'registerAttribute' => $container->registerAttribute('Attr'),
+            'autowire' => $container->autowire('Class'),
+            'scan' => $container->scan('/tmp'),
+            'alias' => $container->alias('a', 'b'),
+            'addDefinitions' => $container->addDefinitions([]),
+            'bind' => $container->bind('a', 'b'),
+            'afterResolving' => $container->afterResolving('x', static function (): void {
+            }),
+            default => self::fail(\sprintf('Неизвестный mutator "%s".', $mutator)),
+        };
     }
 }
