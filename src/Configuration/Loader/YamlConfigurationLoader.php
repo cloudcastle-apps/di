@@ -40,7 +40,7 @@ final class YamlConfigurationLoader implements ConfigurationLoaderInterface
             );
         }
 
-        $parsed = yaml_parse_file($path);
+        $parsed = $this->parseYamlFile($path);
 
         if ($parsed === false) {
             throw new ContainerException(\sprintf('Ошибка разбора YAML-конфигурации "%s".', $path));
@@ -52,5 +52,25 @@ final class YamlConfigurationLoader implements ConfigurationLoaderInterface
 
         /** @var array<string, mixed> $parsed */
         return $parsed;
+    }
+
+    /**
+     * @return array<mixed>|false
+     */
+    private function parseYamlFile(string $path): array|false
+    {
+        set_error_handler(
+            static function (int $severity, string $message) use ($path): bool {
+                throw new ContainerException(
+                    \sprintf('Ошибка разбора YAML-конфигурации "%s" (severity %d): %s', $path, $severity, $message),
+                );
+            },
+        );
+
+        try {
+            return yaml_parse_file($path);
+        } finally {
+            restore_error_handler();
+        }
     }
 }
