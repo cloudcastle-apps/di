@@ -51,17 +51,7 @@ final class ExceptionTest extends TestCase
 
     public function testContainerCompileExceptionIsAcceptedAsPsrInterface(): void
     {
-        $exception = new ContainerCompileException('ошибка компиляции');
-
-        self::assertInstanceOf(ContainerExceptionInterface::class, $exception);
-        self::assertSame('ошибка компиляции', $exception->getMessage());
-    }
-
-    public function testContainerCompileExceptionStoresMessage(): void
-    {
-        $exception = new ContainerCompileException('ошибка компиляции');
-
-        self::assertSame('ошибка компиляции', $exception->getMessage());
+        $this->assertCompileException(new ContainerCompileException('ошибка компиляции'));
     }
 
     private function assertContainerException(ContainerExceptionInterface $exception): void
@@ -72,5 +62,10 @@ final class ExceptionTest extends TestCase
     private function assertNotFoundException(NotFoundExceptionInterface $exception): void
     {
         self::assertSame('сервис не найден', $exception->getMessage());
+    }
+
+    private function assertCompileException(ContainerExceptionInterface $exception): void
+    {
+        self::assertSame('ошибка компиляции', $exception->getMessage());
     }
 }
