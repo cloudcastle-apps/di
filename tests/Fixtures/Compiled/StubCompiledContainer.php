@@ -12,21 +12,32 @@ use CloudCastle\DI\Exception\NotFoundException;
  */
 final class StubCompiledContainer extends AbstractCompiledContainer
 {
+    /** @var array<string, int> */
+    private array $createCounts = [];
+
     public function __construct()
     {
         parent::__construct(
             compiledClassName: self::class,
-            aliases: ['alias.id' => 'value'],
-            tags: ['group' => ['value']],
-            definitionIds: ['value'],
+            aliases: ['alias.id' => 'value', 'alias.only' => 'missing'],
+            tags: ['group' => ['value', 'missing'], 'empty' => []],
+            definitionIds: ['value', 'null-value'],
         );
     }
 
     protected function create(string $id): mixed
     {
+        $this->createCounts[$id] = ($this->createCounts[$id] ?? 0) + 1;
+
         return match ($id) {
             'value' => 'compiled-value',
+            'null-value' => null,
             default => throw new NotFoundException(\sprintf('Сервис "%s" не зарегистрирован.', $id)),
         };
+    }
+
+    public function createCount(string $id): int
+    {
+        return $this->createCounts[$id] ?? 0;
     }
 }

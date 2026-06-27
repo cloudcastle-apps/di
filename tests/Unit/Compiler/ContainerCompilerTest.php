@@ -13,6 +13,7 @@ use CloudCastle\DI\Compiler\ContainerCompiler;
 use CloudCastle\DI\Compiler\ContainerCompileSnapshot;
 use CloudCastle\DI\Compiler\ContainerCompileSnapshotBuilder;
 use CloudCastle\DI\Container;
+use CloudCastle\DI\Contract\ContainerInterface;
 use CloudCastle\DI\Exception\ContainerCompileException;
 use CloudCastle\DI\Tests\Fixtures\Autowire\Clock;
 use CloudCastle\DI\Tests\Fixtures\Autowire\LoggerUser;
@@ -112,5 +113,125 @@ final class ContainerCompilerTest extends TestCase
 
         self::assertInstanceOf(LoggerUser::class, $user);
         self::assertSame($compiled->get(Clock::class), $user->clock);
+    }
+
+    public function testCompileRejectsForeignContainerImplementation(): void
+    {
+        $container = $this->createMock(ContainerInterface::class);
+
+        $this->expectException(ContainerCompileException::class);
+        $this->expectExceptionMessage('CloudCastle\\DI\\Container');
+
+        (new ContainerCompiler())->compile($container, $this->outputPath);
+    }
+
+    public function testCompileDerivesClassNameFromPath(): void
+    {
+        $container = new Container();
+        $container->set(Clock::class, new Clock());
+        $container->freeze();
+
+        $result = (new ContainerCompiler())->compile($container, $this->outputPath);
+
+        self::assertSame(
+            'CloudCastle\\DI\\Compiled\\' . basename($this->outputPath, '.php'),
+            $result->className,
+        );
+    }
+
+    public function testCompileRejectsPathWithoutPhpExtension(): void
+    {
+        $container = new Container();
+        $container->freeze();
+
+        $this->expectException(ContainerCompileException::class);
+        $this->expectExceptionMessage('.php');
+
+        (new ContainerCompiler())->compile($container, '/tmp/compiled-container');
+    }
+
+    public function testCompileRejectsEmptyFileName(): void
+    {
+        $container = new Container();
+        $container->freeze();
+
+        $this->expectException(ContainerCompileException::class);
+        $this->expectExceptionMessage('имя файла');
+
+        (new ContainerCompiler())->compile($container, '/tmp/.php');
+    }
+
+    public function testCompileCreatesOutputDirectory(): void
+    {
+        $container = new Container();
+        $container->set(Clock::class, new Clock());
+        $container->freeze();
+
+        $directory = sys_get_temp_dir() . '/cloudcastle_di_nested_' . uniqid('', true);
+        $outputPath = $directory . '/nested/CompiledContainer.php';
+        $className = 'CloudCastle\\DI\\Tests\\Fixtures\\Compiled\\NestedGeneratedContainer';
+
+        try {
+            (new ContainerCompiler())->compile($container, $outputPath, $className);
+
+            self::assertDirectoryExists($directory . '/nested');
+            self::assertFileExists($outputPath);
+        } finally {
+            if (is_file($outputPath)) {
+                unlink($outputPath);
+            }
+
+            if (is_dir($directory . '/nested')) {
+                rmdir($directory . '/nested');
+            }
+
+            if (is_dir($directory)) {
+                rmdir($directory);
+            }
+        }
+    }
+
+    public function testCompileFailsWhenOutputDirectoryCannotBeCreated(): void
+    {
+        $container = new Container();
+        $container->set(Clock::class, new Clock());
+        $container->freeze();
+
+        $parentFile = tempnam(sys_get_temp_dir(), 'cloudcastle_di_file_');
+        self::assertNotFalse($parentFile);
+
+        $outputPath = $parentFile . '/CompiledContainer.php';
+
+        try {
+            $this->expectException(ContainerCompileException::class);
+            $this->expectExceptionMessage('создать каталог');
+
+            (new ContainerCompiler())->compile($container, $outputPath);
+        } finally {
+            if (is_file($parentFile)) {
+                unlink($parentFile);
+            }
+        }
+    }
+
+    public function testCompileFailsWhenOutputPathIsDirectory(): void
+    {
+        $container = new Container();
+        $container->set(Clock::class, new Clock());
+        $container->freeze();
+
+        $directory = sys_get_temp_dir() . '/cloudcastle_di_output_dir_' . uniqid('', true) . '.php';
+        mkdir($directory);
+
+        try {
+            $this->expectException(ContainerCompileException::class);
+            $this->expectExceptionMessage('записать compiled-контейнер');
+
+            (new ContainerCompiler())->compile($container, $directory);
+        } finally {
+            if (is_dir($directory)) {
+                rmdir($directory);
+            }
+        }
     }
 }
