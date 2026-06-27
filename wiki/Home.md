@@ -8,7 +8,7 @@
 
 Лёгкий контейнер внедрения зависимостей для **PHP 8.3+** с поддержкой [PSR-11](https://www.php-fig.org/psr/psr-11/). Одна runtime-зависимость — `psr/container`. Альтернатива PHP-DI / Symfony DI для micro-apps и composition root.
 
-**Текущая версия:** 1.6.x — см. [Releases](https://github.com/cloudcastle-apps/di/releases) · [Packagist](https://packagist.org/packages/cloudcastle/di)
+**Текущая версия:** 1.7.x — см. [Releases](https://github.com/cloudcastle-apps/di/releases) · [Packagist](https://packagist.org/packages/cloudcastle/di)
 
 ## Установка
 

@@ -3,6 +3,26 @@
 Формат основан на [Keep a Changelog](https://keepachangelog.com/ru/1.1.0/),
 версионирование — [SemVer](https://semver.org/lang/ru/).
 
+## [1.7.0] — 2026-06-27
+
+### Добавлено
+
+- **`ConfigurationDirectorySource`**, **`ConfigurationFilesSource`**, **`ConfigurationSourceResolver`** — конфигурация из каталога (flat/recursive) и явного списка файлов
+- **`ConfigurationDirectoryScan`** — enum `Flat` / `Recursive` для сканирования каталогов
+- **`tools/coverage-check.php`** — проверка покрытия ≥95% **по каждому файлу** в CI
+- **`.github/issue-views.yml`**, **`tools/sync-github-issue-views.py`** — синхронизация GitHub Issue Views
+- Wiki: [**Справочник параметров конфигурации**](wiki/Configuration-reference.md)
+
+### Изменено
+
+- **`ContainerConfigurator`:** `$sources` — `list<string|ConfigurationSource|ConfigurationDirectorySource|ConfigurationFilesSource>`
+- CI: расширение `ext-yaml` в setup-php; per-file coverage gate
+- Расширены unit/mutation-тесты для loaders, `CallableInvoker`, `ConfigurationSourceResolver`
+
+### Исправлено
+
+- **`YamlConfigurationLoader`:** обработка `null`/`false` от `yaml_parse_file`; предупреждения парсера → `ContainerException`
+
 ## [1.6.0] — 2026-06-27
 
 ### Добавлено
@@ -177,6 +197,7 @@
 - CI для GitHub Actions и GitLab CI
 - Инструменты качества: PHPStan max, Psalm level 1, PHPCS, PHPMD, Deptrac, Rector
 
+[1.7.0]: https://github.com/cloudcastle-apps/di/compare/v1.6.0...v1.7.0
 [1.6.0]: https://github.com/cloudcastle-apps/di/compare/v1.5.0...v1.6.0
 [1.5.0]: https://github.com/cloudcastle-apps/di/compare/v1.4.0...v1.5.0
 [1.4.0]: https://github.com/cloudcastle-apps/di/compare/v1.3.1...v1.4.0
