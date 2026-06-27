@@ -19,8 +19,6 @@ interface CompiledContainerInterface extends ContainerInterface
 {
     /**
      * FQCN сгенерированного класса compiled-контейнера.
-     *
-     * @psalm-suppress PossiblyUnusedMethod
      */
     public function getCompiledClassName(): string;
 }

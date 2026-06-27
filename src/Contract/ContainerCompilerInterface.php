@@ -12,8 +12,6 @@ use CloudCastle\DI\Compiler\ContainerCompileResult;
  * Целевой сценарий v2.0 (#24): deploy/build генерирует класс без reflection при каждом `get()`.
  * Минимальный набор определений на первом этапе: `set`, `autowire`, `alias`, tags.
  *
- * @psalm-suppress PossiblyUnusedMethod Реализация появится в ContainerCompiler (#24)
- *
  * @see CompiledContainerInterface
  */
 interface ContainerCompilerInterface
@@ -28,8 +26,6 @@ interface ContainerCompilerInterface
      * @param string|null $className FQCN класса; при `null` выводится из имени файла
      *
      * @return ContainerCompileResult Метаданные сгенерированного класса и пути к файлу
-     *
-     * @psalm-suppress PossiblyUnusedMethod
      */
     public function compile(
         ContainerInterface $container,

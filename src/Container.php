@@ -238,6 +238,26 @@ final class Container implements ContainerInterface
     }
 
     /**
+     * Экспорт определений для компиляции (#24).
+     *
+     * @return array<string, mixed>
+     *
+     * @internal
+     */
+    public function exportDefinitions(): array
+    {
+        return $this->definitions;
+    }
+
+    /**
+     * @internal
+     */
+    public function hasAfterResolvingCallbacks(): bool
+    {
+        return $this->resolveHooks->hasCallbacks();
+    }
+
+    /**
      * @return array{
      *     enabled: bool,
      *     parameterName: bool,

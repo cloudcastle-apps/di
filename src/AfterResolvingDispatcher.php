@@ -52,4 +52,12 @@ final class AfterResolvingDispatcher
             $callback($id, $instance, $container);
         }
     }
+
+    /**
+     * @return bool `true`, если зарегистрирован хотя бы один callback
+     */
+    public function hasCallbacks(): bool
+    {
+        return $this->callbacks !== [];
+    }
 }

@@ -13,6 +13,22 @@ use stdClass;
 #[CoversClass(AfterResolvingDispatcher::class)]
 final class AfterResolvingDispatcherTest extends TestCase
 {
+    public function testHasCallbacksWhenEmpty(): void
+    {
+        $dispatcher = new AfterResolvingDispatcher();
+
+        self::assertFalse($dispatcher->hasCallbacks());
+    }
+
+    public function testHasCallbacksAfterRegister(): void
+    {
+        $dispatcher = new AfterResolvingDispatcher();
+        $dispatcher->register('id', static function (): void {
+        });
+
+        self::assertTrue($dispatcher->hasCallbacks());
+    }
+
     public function testDispatchInvokesRegisteredCallbacks(): void
     {
         $dispatcher = new AfterResolvingDispatcher();
