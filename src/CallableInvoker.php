@@ -126,7 +126,6 @@ final readonly class CallableInvoker
 
             if (!$reflection->isStatic()) {
                 $target = \is_array($callable) ? $callable[0] : $callable;
-                /** @var object $target */
             }
 
             return $reflection->invokeArgs($target, $arguments);
