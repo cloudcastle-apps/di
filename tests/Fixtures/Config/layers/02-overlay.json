@@ -1,0 +1,6 @@
+{
+    "services": {
+        "app.label": "from-layer-json",
+        "app.timeout": 15
+    }
+}

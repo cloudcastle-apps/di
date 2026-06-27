@@ -43,6 +43,20 @@ final readonly class ConfigurationLoaderRegistry
     }
 
     /**
+     * Проверяет, поддерживается ли файл одним из зарегистрированных загрузчиков.
+     */
+    public function supports(string $path): bool
+    {
+        foreach ($this->loaders as $loader) {
+            if ($loader->supports($path)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      *
      * @throws ContainerException Если формат не поддерживается
      *

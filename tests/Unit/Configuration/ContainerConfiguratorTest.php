@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace CloudCastle\DI\Tests\Unit\Configuration;
 
+use CloudCastle\DI\Configuration\ConfigurationDirectoryScan;
+use CloudCastle\DI\Configuration\ConfigurationDirectorySource;
+use CloudCastle\DI\Configuration\ConfigurationFilesSource;
 use CloudCastle\DI\Configuration\ConfigurationMerger;
 use CloudCastle\DI\Configuration\ConfigurationSource;
 use CloudCastle\DI\Configuration\ContainerConfigurator;
@@ -116,5 +119,65 @@ final class ContainerConfiguratorTest extends TestCase
         $services = $config['services'];
         self::assertSame('from-json', $services['app.label']);
         self::assertSame(30, $services['app.timeout']);
+    }
+
+    public function testConfigureFromDirectoryPathString(): void
+    {
+        $container = new Container();
+        (new ContainerConfigurator())->configure($container, [$this->fixturesDirectory . '/layers']);
+
+        self::assertSame('from-layer-json', $container->get('app.label'));
+        self::assertSame(15, $container->get('app.timeout'));
+    }
+
+    public function testConfigureFromConfigurationDirectorySource(): void
+    {
+        $container = new Container();
+        (new ContainerConfigurator())->configure($container, [
+            new ConfigurationDirectorySource($this->fixturesDirectory . '/layers'),
+        ]);
+
+        self::assertSame('from-layer-json', $container->get('app.label'));
+    }
+
+    public function testConfigureFromConfigurationFilesSource(): void
+    {
+        $container = new Container();
+        (new ContainerConfigurator())->configure($container, [
+            new ConfigurationFilesSource([
+                $this->fixturesDirectory . '/base.php',
+                $this->fixturesDirectory . '/override.json',
+            ]),
+        ]);
+
+        self::assertSame('from-json', $container->get('app.label'));
+        self::assertSame(30, $container->get('app.timeout'));
+    }
+
+    public function testConfigureFromMultipleDirectories(): void
+    {
+        $container = new Container();
+        (new ContainerConfigurator())->configure($container, [
+            new ConfigurationDirectorySource($this->fixturesDirectory . '/layers'),
+            new ConfigurationDirectorySource(
+                $this->fixturesDirectory . '/nested',
+                scan: ConfigurationDirectoryScan::Recursive,
+            ),
+        ]);
+
+        self::assertSame('nested-root', $container->get('app.mode'));
+        self::assertSame(15, $container->get('app.timeout'));
+        self::assertSame('from-nested-json', $container->get('app.label'));
+    }
+
+    public function testDirectorySourcePriorityOverridesLaterFileWithoutPriority(): void
+    {
+        $container = new Container();
+        (new ContainerConfigurator())->configure($container, [
+            $this->fixturesDirectory . '/override.json',
+            new ConfigurationDirectorySource($this->fixturesDirectory . '/layers', priority: 100),
+        ]);
+
+        self::assertSame('from-layer-json', $container->get('app.label'));
     }
 }

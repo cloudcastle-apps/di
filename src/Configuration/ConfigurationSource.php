@@ -5,7 +5,10 @@ declare(strict_types=1);
 namespace CloudCastle\DI\Configuration;
 
 /**
- * Источник конфигурации: путь к файлу и необязательный приоритет слоя.
+ * Источник конфигурации: путь к одному файлу и необязательный приоритет слоя.
+ *
+ * Для каталога или списка файлов см. {@see ConfigurationDirectorySource} и {@see ConfigurationFilesSource}.
+ * Строковый путь к каталогу в {@see ContainerConfigurator::configure()} также поддерживается.
  *
  * Приоритет слоя применяется ко всем параметрам файла без собственного {@see ConfigurationMerger}.
  */
