@@ -11,6 +11,7 @@ use CloudCastle\DI\Tests\Fixtures\Compiled\StubCompiledContainer;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
+use ReflectionProperty;
 
 #[CoversClass(AbstractCompiledContainer::class)]
 final class AbstractCompiledContainerTest extends TestCase
@@ -153,7 +154,7 @@ final class AbstractCompiledContainerTest extends TestCase
     public function testCallReusesCallableInvoker(): void
     {
         $container = new StubCompiledContainer();
-        $property = new \ReflectionProperty(AbstractCompiledContainer::class, 'callableInvoker');
+        $property = new ReflectionProperty(AbstractCompiledContainer::class, 'callableInvoker');
         $property->setAccessible(true);
 
         $container->call(static fn (): string => 'first');
