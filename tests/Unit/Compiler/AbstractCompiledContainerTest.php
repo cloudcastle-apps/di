@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace CloudCastle\DI\Tests\Unit\Compiler;
 
+use CloudCastle\DI\CallableInvoker;
 use CloudCastle\DI\Compiler\AbstractCompiledContainer;
 use CloudCastle\DI\Exception\ContainerException;
 use CloudCastle\DI\Exception\NotFoundException;
@@ -155,13 +156,14 @@ final class AbstractCompiledContainerTest extends TestCase
     {
         $container = new StubCompiledContainer();
         $property = new ReflectionProperty(AbstractCompiledContainer::class, 'callableInvoker');
-        $property->setAccessible(true);
 
         $container->call(static fn (): string => 'first');
         $firstInvoker = $property->getValue($container);
+        self::assertInstanceOf(CallableInvoker::class, $firstInvoker);
 
         $container->call(static fn (): string => 'second');
         $secondInvoker = $property->getValue($container);
+        self::assertInstanceOf(CallableInvoker::class, $secondInvoker);
 
         self::assertSame($firstInvoker, $secondInvoker);
     }
