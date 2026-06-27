@@ -119,7 +119,7 @@ $service = $container->get(App\Service\OrderService::class);
 flowchart TB
     subgraph api [Публичный API]
         get[get / make]
-        call[call]
+        invokeCall["call()"]
         reg[set / bind / scan]
         cfg[ContainerConfigurator]
         tag[tags / decorators]
@@ -134,7 +134,7 @@ flowchart TB
     reg --> resolve
     cfg --> reg
     get --> resolve
-    call --> auto
+    invokeCall --> auto
     resolve --> auto
     resolve --> hooks
 ```
