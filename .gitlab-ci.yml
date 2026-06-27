@@ -66,6 +66,11 @@ quality:
     - echo "=== Tests: coverage ==="
     - composer test:coverage
     - echo "=== Tests: mutation ==="
-    - composer test:mutation
+    - |
+      if [ "$PHP_VERSION" = "8.3" ] || [ "$PHP_VERSION" = "8.4" ] || [ "$PHP_VERSION" = "8.5" ]; then
+        composer test:mutation
+      else
+        echo "Skipping mutation on PHP ${PHP_VERSION} (Infection 0.33 requires PHP 8.3+)"
+      fi
     - echo "=== Documentation ==="
     - composer docs:check
