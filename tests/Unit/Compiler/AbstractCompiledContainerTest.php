@@ -153,9 +153,16 @@ final class AbstractCompiledContainerTest extends TestCase
     public function testCallReusesCallableInvoker(): void
     {
         $container = new StubCompiledContainer();
+        $property = new \ReflectionProperty(AbstractCompiledContainer::class, 'callableInvoker');
+        $property->setAccessible(true);
 
-        self::assertSame('first', $container->call(static fn (): string => 'first'));
-        self::assertSame('second', $container->call(static fn (): string => 'second'));
+        $container->call(static fn (): string => 'first');
+        $firstInvoker = $property->getValue($container);
+
+        $container->call(static fn (): string => 'second');
+        $secondInvoker = $property->getValue($container);
+
+        self::assertSame($firstInvoker, $secondInvoker);
     }
 
     public function testAutowiringFlagsAreDisabled(): void

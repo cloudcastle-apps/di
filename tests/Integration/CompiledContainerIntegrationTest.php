@@ -14,6 +14,7 @@ use CloudCastle\DI\Compiler\ContainerCompiler;
 use CloudCastle\DI\Compiler\ContainerCompileSnapshot;
 use CloudCastle\DI\Compiler\ContainerCompileSnapshotBuilder;
 use CloudCastle\DI\Container;
+use CloudCastle\DI\Exception\NotFoundException;
 use CloudCastle\DI\Tests\Fixtures\Autowire\Clock;
 use CloudCastle\DI\Tests\Fixtures\Autowire\FileLogger;
 use CloudCastle\DI\Tests\Fixtures\Autowire\LoggerInterface;
@@ -82,6 +83,37 @@ final class CompiledContainerIntegrationTest extends TestCase
             FileLogger::class,
             $compiled->getTagged('loggers')[FileLogger::class],
         );
+    }
+
+    public function testGeneratedSourceContainsExpectedWiring(): void
+    {
+        $runtime = $this->createRuntimeContainer();
+        $className = 'CloudCastle\\DI\\Tests\\Fixtures\\Compiled\\IntegrationContainer';
+
+        (new ContainerCompiler())->compile($runtime, $this->outputPath, $className);
+
+        $source = file_get_contents($this->outputPath);
+        self::assertIsString($source);
+        self::assertStringContainsString('compiledClassName: ' . var_export($className, true), $source);
+        self::assertStringContainsString(
+            '$this->get(' . var_export(Clock::class, true) . ')',
+            $source,
+        );
+        self::assertStringContainsString('new \\' . SimpleService::class . '()', $source);
+    }
+
+    public function testCompiledContainerThrowsNotFoundForMissingService(): void
+    {
+        $runtime = $this->createRuntimeContainer();
+        $className = 'CloudCastle\\DI\\Tests\\Fixtures\\Compiled\\IntegrationNotFoundContainer';
+
+        (new ContainerCompiler())->compile($runtime, $this->outputPath, $className);
+
+        $compiled = CompiledContainerLoader::load($this->outputPath, $className);
+
+        $this->expectException(NotFoundException::class);
+
+        $compiled->get('missing.service');
     }
 
     private function createRuntimeContainer(): Container
