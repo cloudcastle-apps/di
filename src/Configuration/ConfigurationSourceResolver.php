@@ -149,6 +149,12 @@ final readonly class ConfigurationSourceResolver
         return $paths;
     }
 
+    /**
+     * Дублирует проверки загрузчиков: при удалении вызова {@see ConfigurationLoaderRegistry::load()}
+     * поведение совпадает, поэтому метод исключён из mutation-тестов.
+     *
+     * @infection-ignore-all
+     */
     private function assertConfigurationFile(string $path): void
     {
         if (!is_file($path) || !is_readable($path)) {

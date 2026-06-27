@@ -172,6 +172,19 @@ final class ConfigurationSourceResolverMutationTest extends TestCase
         }
     }
 
+    public function testResolveAssignsIncrementingLayerOrder(): void
+    {
+        $layers = (new ConfigurationSourceResolver(new ConfigurationLoaderRegistry()))->resolve([
+            new ConfigurationFilesSource([
+                $this->fixturesDirectory . '/layers/01-base.php',
+                $this->fixturesDirectory . '/layers/02-overlay.json',
+            ]),
+        ]);
+
+        self::assertSame(0, $layers[0]->order);
+        self::assertSame(1, $layers[1]->order);
+    }
+
     public function testResolveFilesSourceValidatesEachPath(): void
     {
         $this->expectException(ContainerException::class);
