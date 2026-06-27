@@ -11,6 +11,7 @@ use CloudCastle\DI\Tests\Fixtures\Autowire\Clock;
 use CloudCastle\DI\Tests\Fixtures\Autowire\SimpleService;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
+use ReflectionFunction;
 use ReflectionFunctionAbstract;
 use ReflectionMethod;
 
@@ -95,6 +96,16 @@ final class CallableInvokerTest extends TestCase
         $result = (new CallableInvoker(new Container()))->invoke($invokable, ['label' => 'ok']);
 
         self::assertSame('ok', $result);
+    }
+
+    public function testReflectCallableBuildsReflectionForClosure(): void
+    {
+        $closure = static fn (): int => 1;
+        $invoker = new CallableInvoker(new Container());
+        $method = new ReflectionMethod(CallableInvoker::class, 'reflectCallable');
+        $reflection = $method->invoke($invoker, $closure);
+
+        self::assertInstanceOf(ReflectionFunction::class, $reflection);
     }
 
     public function testReflectCallableBuildsReflectionForInvokableObject(): void
