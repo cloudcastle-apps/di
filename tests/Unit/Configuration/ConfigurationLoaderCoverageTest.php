@@ -86,16 +86,20 @@ final class ConfigurationLoaderCoverageTest extends TestCase
 
     public function testYamlLoaderThrowsForMissingExtensionWhenUnavailable(): void
     {
-        if (\function_exists('yaml_parse_file')) {
-            self::markTestSkipped('ext-yaml доступен в окружении');
+        if (!\function_exists('yaml_parse_file')) {
+            $loader = new YamlConfigurationLoader();
+
+            $this->expectException(ContainerException::class);
+            $this->expectExceptionMessage('ext-yaml');
+
+            $loader->load($this->fixturesDirectory . '/overlay.yaml');
+
+            return;
         }
 
-        $loader = new YamlConfigurationLoader();
+        $config = (new YamlConfigurationLoader())->load($this->fixturesDirectory . '/overlay.yaml');
 
-        $this->expectException(ContainerException::class);
-        $this->expectExceptionMessage('ext-yaml');
-
-        $loader->load($this->fixturesDirectory . '/overlay.yaml');
+        self::assertIsArray($config);
     }
 
     public function testXmlLoaderReadsAliasAndBindPriority(): void
