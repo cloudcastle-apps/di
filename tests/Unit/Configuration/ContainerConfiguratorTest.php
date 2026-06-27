@@ -159,7 +159,10 @@ final class ContainerConfiguratorTest extends TestCase
         $container = new Container();
         (new ContainerConfigurator())->configure($container, [
             new ConfigurationDirectorySource($this->fixturesDirectory . '/layers'),
-            new ConfigurationDirectorySource($this->fixturesDirectory . '/nested', scan: ConfigurationDirectoryScan::Recursive),
+            new ConfigurationDirectorySource(
+                $this->fixturesDirectory . '/nested',
+                scan: ConfigurationDirectoryScan::Recursive,
+            ),
         ]);
 
         self::assertSame('nested-root', $container->get('app.mode'));

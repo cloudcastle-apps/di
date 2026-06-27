@@ -46,7 +46,10 @@ final class ConfigurationSourceResolverTest extends TestCase
     public function testResolveExpandsConfigurationDirectorySourceRecursively(): void
     {
         $layers = (new ConfigurationSourceResolver(new ConfigurationLoaderRegistry()))->resolve([
-            new ConfigurationDirectorySource($this->fixturesDirectory . '/nested', scan: ConfigurationDirectoryScan::Recursive),
+            new ConfigurationDirectorySource(
+                $this->fixturesDirectory . '/nested',
+                scan: ConfigurationDirectoryScan::Recursive,
+            ),
         ]);
 
         self::assertCount(2, $layers);
