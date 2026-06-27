@@ -176,7 +176,7 @@
         "deptrac": "deptrac analyse --fail-on-uncovered --report-uncovered",
         "docs": "bash bin/generate-docs.sh",
         "docs:check": "bash bin/generate-docs.sh",
-        "infection": "infection --quiet --threads=max --show-mutations --min-msi=95 --min-covered-msi=95",
+        "infection": "infection --threads=4 --min-msi=95 --min-covered-msi=95 --logger-github",
         "lint": "parallel-lint --colors src tests",
         "phpcbf": "phpcbf",
         "phpcs": "phpcs",
