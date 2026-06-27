@@ -8,6 +8,7 @@
 - [Примеры bootstrap](Bootstrap)
 - [Autowiring](Autowiring)
 - [Конфигурация из файлов](Configuration)
+- [**Справочник параметров конфигурации**](Configuration-reference)
 - [Сканирование классов](Class-scanning)
 - [Глобальный реестр](Global-registry)
 - [Теги и декораторы](Tags-and-decorators)
