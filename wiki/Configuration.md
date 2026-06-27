@@ -4,6 +4,8 @@
 
 **Формат по умолчанию** — PHP (`return [...]`).
 
+> **Полный справочник:** все ключи, priority, источники (файл / каталог / список), примеры во всех форматах — **[Справочник параметров конфигурации](Configuration-reference)**.
+
 ## Обзор потока
 
 ```mermaid
@@ -73,7 +75,7 @@ $container->freeze();
 | `load(string $path): array` | Один файл |
 | `apply(ContainerInterface $container, array $config): void` | Применить уже объединённый массив |
 
-`$sources` — `list<string|ConfigurationSource>`.
+`$sources` — `list<string|ConfigurationSource|ConfigurationDirectorySource|ConfigurationFilesSource>`.
 
 ## Форматы файлов
 
@@ -177,6 +179,7 @@ new ContainerConfigurator(
 
 ## См. также
 
+- [**Справочник параметров конфигурации**](Configuration-reference) — все ключи и примеры по форматам
 - [Примеры bootstrap](Bootstrap) — PHP-конфиги и prod `freeze()`
 - [Autowiring](Autowiring) — `register_attributes` и пользовательские attributes
 - [Справочник API](API-reference) — `ContainerConfigurator`, `registerAttribute()`
