@@ -17,6 +17,7 @@
 
 - **`ContainerConfigurator`:** `$sources` — `list<string|ConfigurationSource|ConfigurationDirectorySource|ConfigurationFilesSource>`
 - CI: расширение `ext-yaml` в setup-php; per-file coverage gate
+- **Тесты:** 506 PHPUnit (unit 457, integration 5, security 17, load 15, performance 12)
 - Расширены unit/mutation-тесты для loaders, `CallableInvoker`, `ConfigurationSourceResolver`
 
 ### Исправлено

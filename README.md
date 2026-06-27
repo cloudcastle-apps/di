@@ -185,7 +185,7 @@ flowchart TB
 
 - Строгая типизация, PHPStan max, Psalm level 1, покрытие строк ≥95% (фактически ~98%)
 - CI: PHP 8.3, 8.4, 8.5; CodeQL; **benchmark regression check**
-- **470 PHPUnit-тестов:** unit (421), integration (5), security (17), load (15), performance (12)
+- **506 PHPUnit-тестов:** unit (457), integration (5), security (17), load (15), performance (12)
 - Infection MSI ≥95% по всему `src/` (включая `Configuration/`)
 
 Подробнее — [Wiki: тестирование](https://github.com/cloudcastle-apps/di/wiki/Testing) · [нагрузка и производительность](https://github.com/cloudcastle-apps/di/wiki/Performance-and-load).
@@ -199,7 +199,7 @@ flowchart TB
 ## Установка
 
 ```bash
-composer require cloudcastle/di:^1.6
+composer require cloudcastle/di:^1.7
 ```
 
 ## Быстрый старт
@@ -388,11 +388,11 @@ composer benchmark-report    # фактические времена бенчм�
 composer benchmark-check       # проверка регрессии (×1.5, как в CI)
 ```
 
-Пайплайн: линтеры, PHPStan (max), Psalm (L1), PHPMD, Deptrac, Rector, **470 PHPUnit-тестов**, покрытие строк ≥95%, Infection MSI ≥95%, **benchmark-check**
+Пайплайн: линтеры, PHPStan (max), Psalm (L1), PHPMD, Deptrac, Rector, **506 PHPUnit-тестов**, per-file coverage ≥95%, Infection MSI ≥95%, **benchmark-check**
 
 | Набор | Тестов | Документация |
 |-------|--------|--------------|
-| unit | 421 | [Wiki: Testing](https://github.com/cloudcastle-apps/di/wiki/Testing) |
+| unit | 457 | [Wiki: Testing](https://github.com/cloudcastle-apps/di/wiki/Testing) |
 | integration | 5 | — |
 | security | 17 | [Wiki: Security-tests](https://github.com/cloudcastle-apps/di/wiki/Security-tests) |
 | load | 15 | [Wiki: Performance-and-load](https://github.com/cloudcastle-apps/di/wiki/Performance-and-load) |

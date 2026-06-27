@@ -68,7 +68,7 @@ composer ci
 | `composer phpmd` | PHP Mess Detector |
 | `composer deptrac` | Архитектурные слои |
 | `composer rector` / `composer rector-fix` | Rector (dry-run / apply) |
-| `composer test:unit` | Unit-тесты (421) |
+| `composer test:unit` | Unit-тесты (457) |
 | `composer test:integration` | Интеграционные тесты (5) |
 | `composer test:security` | Тесты безопасности (17) |
 | `composer test:load` | Нагрузочные тесты (15) |

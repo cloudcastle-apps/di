@@ -88,7 +88,7 @@ Autowiring в тестах
    composer benchmark-check    # регрессия (CI)
    composer ci
 
-**Всего:** 470 PHPUnit-тестов (unit 421, integration 5, security 17, load 15, performance 12).
+**Всего:** 506 PHPUnit-тестов (unit 457, integration 5, security 17, load 15, performance 12).
 (Security-tests, Performance-and-load).
 
 См. также файл ``CONTRIBUTING.md`` в корне репозитория.
