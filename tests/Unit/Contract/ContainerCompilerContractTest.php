@@ -8,10 +8,12 @@ use CloudCastle\DI\Compiler\ContainerCompileResult;
 use CloudCastle\DI\Contract\CompiledContainerInterface;
 use CloudCastle\DI\Contract\ContainerCompilerInterface;
 use CloudCastle\DI\Contract\ContainerInterface;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use ReflectionMethod;
 
+#[CoversNothing]
 final class ContainerCompilerContractTest extends TestCase
 {
     public function testCompiledContainerExtendsContainerInterface(): void
