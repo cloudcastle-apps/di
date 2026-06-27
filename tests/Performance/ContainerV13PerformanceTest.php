@@ -7,7 +7,6 @@ namespace CloudCastle\DI\Tests\Performance;
 use CloudCastle\DI\Container;
 use CloudCastle\DI\Tests\Fixtures\Autowire\SimpleService;
 use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
@@ -15,7 +14,6 @@ use stdClass;
  * Производительность API v1.3: call, bind, make, afterResolving, tagged API.
  */
 #[CoversClass(Container::class)]
-#[Group('performance')]
 final class ContainerV13PerformanceTest extends TestCase
 {
     private const CALL_ITERATIONS = 10000;
@@ -34,7 +32,7 @@ final class ContainerV13PerformanceTest extends TestCase
 
     private const BIND_TIME_BUDGET_SECONDS = 0.75;
 
-    private const TAGGED_IDS_TIME_BUDGET_SECONDS = 6.0;
+    private const TAGGED_IDS_TIME_BUDGET_SECONDS = 0.35;
 
     private const AFTER_RESOLVING_TIME_BUDGET_SECONDS = 1.0;
 
