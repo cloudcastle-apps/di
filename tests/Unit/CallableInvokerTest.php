@@ -6,10 +6,13 @@ namespace CloudCastle\DI\Tests\Unit;
 
 use CloudCastle\DI\CallableInvoker;
 use CloudCastle\DI\Container;
+use CloudCastle\DI\Exception\ContainerException;
 use CloudCastle\DI\Tests\Fixtures\Autowire\Clock;
 use CloudCastle\DI\Tests\Fixtures\Autowire\SimpleService;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
+use ReflectionFunctionAbstract;
+use ReflectionMethod;
 
 #[CoversClass(CallableInvoker::class)]
 final class CallableInvokerTest extends TestCase
@@ -99,6 +102,19 @@ final class CallableInvokerTest extends TestCase
         $result = (new CallableInvoker(new Container()))->invoke('strlen', ['string' => 'abc']);
 
         self::assertSame(3, $result);
+    }
+
+    public function testInvokeWithArgumentsThrowsForUnsupportedReflectionType(): void
+    {
+        $invoker = new CallableInvoker(new Container());
+        $method = new ReflectionMethod(CallableInvoker::class, 'invokeWithArguments');
+        $method->setAccessible(true);
+        $reflection = $this->createMock(ReflectionFunctionAbstract::class);
+
+        $this->expectException(ContainerException::class);
+        $this->expectExceptionMessage('Неподдерживаемый тип reflection callable');
+
+        $method->invoke($invoker, 'strlen', $reflection, []);
     }
 
     public static function namedHandler(string $label): string

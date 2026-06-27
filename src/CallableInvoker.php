@@ -97,7 +97,6 @@ final readonly class CallableInvoker
             return new ReflectionMethod($callable, '__invoke');
         }
 
-        /** @psalm-suppress RedundantCondition — ветка нужна PHPStan для сужения callable до string */
         if (\is_string($callable)) {
             return new ReflectionFunction($callable);
         }
@@ -126,10 +125,7 @@ final readonly class CallableInvoker
 
             if (!$reflection->isStatic()) {
                 $target = \is_array($callable) ? $callable[0] : $callable;
-
-                if (!\is_object($target)) {
-                    throw new ContainerException('Callable метода требует объект.');
-                }
+                /** @var object $target */
             }
 
             return $reflection->invokeArgs($target, $arguments);

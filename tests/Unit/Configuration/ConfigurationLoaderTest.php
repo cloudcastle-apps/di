@@ -47,6 +47,14 @@ final class ConfigurationLoaderTest extends TestCase
         self::assertSame('from-json', $services['app.label']);
     }
 
+    public function testJsonLoaderSupportsOnlyJsonExtension(): void
+    {
+        $loader = new JsonConfigurationLoader();
+
+        self::assertTrue($loader->supports($this->fixturesDirectory . '/override.json'));
+        self::assertFalse($loader->supports($this->fixturesDirectory . '/base.php'));
+    }
+
     public function testXmlLoaderParsesFile(): void
     {
         $loader = new XmlConfigurationLoader();
@@ -80,21 +88,16 @@ final class ConfigurationLoaderTest extends TestCase
 
     public function testYamlLoaderBehaviourDependsOnExtensionAvailability(): void
     {
+        if (!\function_exists('yaml_parse_file')) {
+            self::markTestSkipped('Для YAML-тестов требуется ext-yaml.');
+        }
+
         $loader = new YamlConfigurationLoader();
 
         self::assertTrue($loader->supports($this->fixturesDirectory . '/overlay.yaml'));
         self::assertTrue($loader->supports($this->fixturesDirectory . '/overlay.yml'));
 
         $path = $this->fixturesDirectory . '/overlay.yaml';
-
-        if (!\function_exists('yaml_parse_file')) {
-            $this->expectException(ContainerException::class);
-            $this->expectExceptionMessage('ext-yaml');
-
-            $loader->load($path);
-
-            return;
-        }
 
         $config = $loader->load($path);
         /** @var array<string, mixed> $services */

@@ -7,10 +7,13 @@ namespace CloudCastle\DI\Tests\Unit;
 use CloudCastle\DI\Attribute\Autowire;
 use CloudCastle\DI\Attribute\Inject;
 use CloudCastle\DI\AttributeServiceIdReader;
+use CloudCastle\DI\AttributeServiceIdRegistry;
 use CloudCastle\DI\Tests\Fixtures\Autowire\AttributeReaderFixtures;
+use CloudCastle\DI\Tests\Fixtures\Autowire\KnownNonServiceIdAttribute;
 use CloudCastle\DI\Tests\Fixtures\Autowire\PropertyInjectAttributeService;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
+use ReflectionClass;
 use ReflectionProperty;
 
 /**
@@ -70,5 +73,18 @@ final class AttributeServiceIdReaderTest extends TestCase
 
         self::assertTrue($reader->hasAny($attributes));
         self::assertNull($reader->read($attributes));
+    }
+
+    public function testReadReturnsNullWhenKnownAttributeDoesNotImplementContract(): void
+    {
+        $registry = new AttributeServiceIdRegistry();
+        $customClasses = (new ReflectionClass(AttributeServiceIdRegistry::class))->getProperty('customClasses');
+        $customClasses->setValue($registry, [KnownNonServiceIdAttribute::class]);
+
+        $reader = new AttributeServiceIdReader($registry);
+        $property = new ReflectionProperty(AttributeReaderFixtures::class, 'knownWithoutContract');
+
+        self::assertTrue($reader->hasAny($property->getAttributes()));
+        self::assertNull($reader->read($property->getAttributes()));
     }
 }

@@ -13,8 +13,8 @@ variables:
   before_script:
     - apt-get update -qq
     - apt-get install -y --no-install-recommends git unzip zip libzip-dev $PHPIZE_DEPS
-    - pecl install pcov
-    - docker-php-ext-enable pcov
+    - pecl install pcov yaml
+    - docker-php-ext-enable pcov yaml
     - docker-php-ext-install -j"$(nproc)" zip
     - curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
     - composer install --prefer-dist --no-progress --no-ansi

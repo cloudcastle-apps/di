@@ -66,6 +66,16 @@ final class AttributeServiceIdRegistryTest extends TestCase
         $registry->register(PlainServiceIdAttributeStub::class);
     }
 
+    public function testRegisterRejectsMissingClass(): void
+    {
+        $registry = new AttributeServiceIdRegistry();
+
+        $this->expectException(ContainerException::class);
+        $this->expectExceptionMessage('не найден');
+
+        $registry->register('CloudCastle\\DI\\Tests\\Fixtures\\Autowire\\MissingAttributeClass');
+    }
+
     public function testReaderReadsRegisteredCustomAttribute(): void
     {
         $registry = new AttributeServiceIdRegistry();
