@@ -128,7 +128,10 @@ final readonly class CallableInvoker
                 $instance = \is_array($callable) ? $callable[0] : $callable;
 
                 if (!\is_object($instance)) {
-                    throw new ContainerException('Некорректный callable для нестатического метода.'); // @codeCoverageIgnore
+                    // @codeCoverageIgnore
+                    throw new ContainerException(
+                        'Некорректный callable для нестатического метода.',
+                    );
                 }
 
                 $target = $instance;
