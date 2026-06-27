@@ -61,6 +61,15 @@ final class AbstractCompiledContainerTest extends TestCase
         $container->get('missing');
     }
 
+    public function testGetThrowsWhenAliasTargetMissing(): void
+    {
+        $container = new StubCompiledContainer();
+
+        $this->expectException(NotFoundException::class);
+
+        $container->get('alias.only');
+    }
+
     public function testMakeThrowsWhenServiceMissing(): void
     {
         $container = new StubCompiledContainer();
@@ -68,6 +77,15 @@ final class AbstractCompiledContainerTest extends TestCase
         $this->expectException(NotFoundException::class);
 
         $container->make('missing');
+    }
+
+    public function testMakeThrowsWhenAliasTargetMissing(): void
+    {
+        $container = new StubCompiledContainer();
+
+        $this->expectException(NotFoundException::class);
+
+        $container->make('alias.only');
     }
 
     public function testHasDefinition(): void
@@ -91,7 +109,7 @@ final class AbstractCompiledContainerTest extends TestCase
     {
         $container = new StubCompiledContainer();
 
-        self::assertSame(['value', 'missing'], $container->getTaggedIds('group'));
+        self::assertSame(['missing', 'value'], $container->getTaggedIds('group'));
         self::assertSame(
             ['compiled-value'],
             array_values(iterator_to_array($container->getTaggedIterator('group'))),
@@ -110,6 +128,7 @@ final class AbstractCompiledContainerTest extends TestCase
     public function testIntrospectionMethods(): void
     {
         $container = new StubCompiledContainer();
+        $container->get('value');
 
         self::assertSame(StubCompiledContainer::class, $container->getCompiledClassName());
         self::assertTrue($container->isFrozen());
@@ -120,8 +139,23 @@ final class AbstractCompiledContainerTest extends TestCase
 
         self::assertTrue($dump['frozen']);
         self::assertSame(['null-value', 'value'], $dump['definitions']);
+        self::assertSame([], $dump['autowired']);
         self::assertSame(['alias.id' => 'value', 'alias.only' => 'missing'], $dump['aliases']);
+        self::assertSame(['group' => ['missing', 'value'], 'empty' => []], $dump['tags']);
+        self::assertSame([], $dump['decorators']);
+        self::assertSame(['value'], $dump['resolved']);
         self::assertFalse($dump['autowiring']['enabled']);
+        self::assertFalse($dump['autowiring']['parameterName']);
+        self::assertFalse($dump['autowiring']['property']);
+        self::assertFalse($dump['autowiring']['method']);
+    }
+
+    public function testCallReusesCallableInvoker(): void
+    {
+        $container = new StubCompiledContainer();
+
+        self::assertSame('first', $container->call(static fn (): string => 'first'));
+        self::assertSame('second', $container->call(static fn (): string => 'second'));
     }
 
     public function testAutowiringFlagsAreDisabled(): void

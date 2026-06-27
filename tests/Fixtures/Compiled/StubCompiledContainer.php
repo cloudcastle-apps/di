@@ -20,7 +20,7 @@ final class StubCompiledContainer extends AbstractCompiledContainer
         parent::__construct(
             compiledClassName: self::class,
             aliases: ['alias.id' => 'value', 'alias.only' => 'missing'],
-            tags: ['group' => ['value', 'missing'], 'empty' => []],
+            tags: ['group' => ['missing', 'value'], 'empty' => []],
             definitionIds: ['value', 'null-value'],
         );
     }

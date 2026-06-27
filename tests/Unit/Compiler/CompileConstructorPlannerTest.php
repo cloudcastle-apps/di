@@ -9,6 +9,7 @@ use CloudCastle\DI\Compiler\CompileServiceKind;
 use CloudCastle\DI\Container;
 use CloudCastle\DI\Exception\ContainerCompileException;
 use CloudCastle\DI\Tests\Fixtures\Autowire\AbstractWorker;
+use CloudCastle\DI\Tests\Fixtures\Autowire\ChildSetterService;
 use CloudCastle\DI\Tests\Fixtures\Autowire\Clock;
 use CloudCastle\DI\Tests\Fixtures\Autowire\LoggerUser;
 use CloudCastle\DI\Tests\Fixtures\Autowire\MethodInjectService;
@@ -81,6 +82,16 @@ final class CompileConstructorPlannerTest extends TestCase
         $this->expectExceptionMessage('method injection');
 
         $this->planner->plan($this->container, MethodInjectService::class);
+    }
+
+    public function testPlanIgnoresInheritedMethodsWithoutAttributes(): void
+    {
+        $this->container->set(Clock::class, new Clock());
+
+        $binding = $this->planner->plan($this->container, ChildSetterService::class);
+
+        self::assertSame(ChildSetterService::class, $binding->id);
+        self::assertSame([], $binding->argumentExpressions);
     }
 
     public function testPlanRejectsMethodParameterInjection(): void

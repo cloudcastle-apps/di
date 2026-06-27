@@ -16,6 +16,7 @@ use CloudCastle\DI\Tests\Fixtures\Autowire\FileLogger;
 use CloudCastle\DI\Tests\Fixtures\Autowire\InjectAttributeService;
 use CloudCastle\DI\Tests\Fixtures\Autowire\IntClockOnlyService;
 use CloudCastle\DI\Tests\Fixtures\Autowire\LegacyUntypedService;
+use CloudCastle\DI\Tests\Fixtures\Autowire\LoggerInterface;
 use CloudCastle\DI\Tests\Fixtures\Autowire\LoggerOrClockService;
 use CloudCastle\DI\Tests\Fixtures\Autowire\LoggerUser;
 use CloudCastle\DI\Tests\Fixtures\Autowire\NamedLoggerConsumer;
@@ -63,6 +64,18 @@ final class CompileParameterReferenceResolverTest extends TestCase
 
         self::assertSame(
             '$this->get(\'logger\')',
+            $this->resolver->resolveExpression($this->container, $parameter),
+        );
+    }
+
+    public function testResolvesByTypeWhenParameterNameAutowiringDisabled(): void
+    {
+        $this->container->set(FileLogger::class, new FileLogger());
+        $this->container->alias(LoggerInterface::class, FileLogger::class);
+        $parameter = $this->constructorParameter(NamedLoggerConsumer::class, 'logger');
+
+        self::assertSame(
+            '$this->get(' . var_export(LoggerInterface::class, true) . ')',
             $this->resolver->resolveExpression($this->container, $parameter),
         );
     }
