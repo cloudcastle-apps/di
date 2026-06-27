@@ -11,12 +11,16 @@ namespace CloudCastle\DI\Contract;
  * Публичный API совпадает с {@see ContainerInterface}; поведение `get()`/`make()`/`call()`
  * должно быть эквивалентно runtime-контейнеру на момент компиляции.
  *
+ * @psalm-suppress PossiblyUnusedMethod Реализация появится в ContainerCompiler (#24)
+ *
  * @see ContainerCompilerInterface
  */
 interface CompiledContainerInterface extends ContainerInterface
 {
     /**
      * FQCN сгенерированного класса compiled-контейнера.
+     *
+     * @psalm-suppress PossiblyUnusedMethod
      */
     public function getCompiledClassName(): string;
 }

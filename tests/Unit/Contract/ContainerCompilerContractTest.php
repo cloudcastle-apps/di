@@ -20,10 +20,11 @@ final class ContainerCompilerContractTest extends TestCase
     public function testCompiledContainerExtendsContainerInterface(): void
     {
         self::assertTrue((new ReflectionClass(CompiledContainerInterface::class))->isInterface());
-        self::assertContains(
-            ContainerInterface::class,
-            class_implements(CompiledContainerInterface::class),
-        );
+
+        $implements = class_implements(CompiledContainerInterface::class);
+
+        self::assertIsArray($implements);
+        self::assertContains(ContainerInterface::class, $implements);
     }
 
     public function testCompiledContainerDeclaresCompiledClassNameAccessor(): void
