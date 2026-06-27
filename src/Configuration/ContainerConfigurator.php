@@ -72,5 +72,4 @@ final readonly class ContainerConfigurator
     {
         $this->applicator->apply($container, $config);
     }
-
 }
