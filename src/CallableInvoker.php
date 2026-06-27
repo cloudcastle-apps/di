@@ -125,16 +125,11 @@ final readonly class CallableInvoker
             $target = null;
 
             if (!$reflection->isStatic()) {
-                $instance = \is_array($callable) ? $callable[0] : $callable;
+                $target = \is_array($callable) ? $callable[0] : $callable;
 
-                if (!\is_object($instance)) {
-                    // @codeCoverageIgnore
-                    throw new ContainerException(
-                        'Некорректный callable для нестатического метода.',
-                    );
+                if (!\is_object($target)) {
+                    throw new ContainerException('Callable метода требует объект.'); // @codeCoverageIgnore
                 }
-
-                $target = $instance;
             }
 
             return $reflection->invokeArgs($target, $arguments);
