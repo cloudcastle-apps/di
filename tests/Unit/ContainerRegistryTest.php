@@ -8,7 +8,6 @@ use CloudCastle\DI\Container;
 use CloudCastle\DI\ContainerRegistry;
 use CloudCastle\DI\Exception\ContainerException;
 use CloudCastle\DI\Tests\Fixtures\Autowire\SimpleService;
-use Override;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
@@ -18,7 +17,6 @@ use PHPUnit\Framework\TestCase;
 #[CoversClass(ContainerRegistry::class)]
 final class ContainerRegistryTest extends TestCase
 {
-    #[Override]
     protected function tearDown(): void
     {
         ContainerRegistry::reset();

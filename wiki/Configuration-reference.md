@@ -1,4 +1,10 @@
-# Справочник параметров конфигурации
+<p align="center">
+  <img src="https://raw.githubusercontent.com/cloudcastle-apps/di/main/assets/logo.svg" alt="CloudCastle DI" width="64">
+</p>
+
+# 📖 Справочник параметров конфигурации
+
+> [← Главная](Home) · [Конфигурация](Configuration) · [Quick start](Quick-start)
 
 Полное описание **декларативной конфигурации** CloudCastle DI: все ключи массива конфигурации, способы загрузки и слияния файлов, примеры для каждого формата.
 

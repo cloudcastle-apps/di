@@ -11,10 +11,10 @@ use CloudCastle\DI\Exception\NotFoundException;
 /**
  * Создаёт экземпляры сервисов с опциональным singleton-кэшированием.
  */
-final readonly class ServiceInstanceResolver
+final class ServiceInstanceResolver
 {
     public function __construct(
-        private ContainerInterface $container,
+        private readonly ContainerInterface $container,
     ) {
     }
 

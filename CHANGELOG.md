@@ -3,6 +3,20 @@
 Формат основан на [Keep a Changelog](https://keepachangelog.com/ru/1.1.0/),
 версионирование — [SemVer](https://semver.org/lang/ru/).
 
+## [1.8.0] — 2026-06-25
+
+### Изменено
+
+- **Минимальная версия PHP:** `^8.3` → **`^8.1`**; CI matrix PHP 8.1–8.5 (GitHub Actions + GitLab CI)
+- Код: совместимость с PHP 8.1 (без `readonly class`, `#[Override]`, typed class constants)
+- Dev: PHPUnit ^10.5, PHPStan ^1.12, Rector `UP_TO_PHP_81`, Psalm 8.1
+
+### Документация
+
+- Wiki и README: полное оформление, баннер `assets/docs-hero.svg`
+- [Comparison](wiki/Comparison.md): единая таблица vs **6 аналогов** (PHP-DI, Symfony, Pimple, Laravel, League, Nette) с колонкой победителей
+- `UPGRADING.md`: секция 1.7.0 → 1.8.0
+
 ## [1.7.0] — 2026-06-27
 
 ### Добавлено
@@ -198,6 +212,7 @@
 - CI для GitHub Actions и GitLab CI
 - Инструменты качества: PHPStan max, Psalm level 1, PHPCS, PHPMD, Deptrac, Rector
 
+[1.8.0]: https://github.com/cloudcastle-apps/di/compare/v1.7.0...v1.8.0
 [1.7.0]: https://github.com/cloudcastle-apps/di/compare/v1.6.0...v1.7.0
 [1.6.0]: https://github.com/cloudcastle-apps/di/compare/v1.5.0...v1.6.0
 [1.5.0]: https://github.com/cloudcastle-apps/di/compare/v1.4.0...v1.5.0

@@ -7,7 +7,7 @@ namespace CloudCastle\DI\Tests\Fixtures\Autowire;
 /**
  * Union int|Clock без значения по умолчанию.
  */
-final readonly class IntClockOnlyService
+final class IntClockOnlyService
 {
     public function __construct(
         public int|Clock $dependency,

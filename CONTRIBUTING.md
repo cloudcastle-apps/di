@@ -6,7 +6,7 @@
 
 ## Требования
 
-- PHP 8.3 или новее
+- PHP 8.1 или новее
 - Composer 2.x
 - Расширения: `json`, `mbstring`, `tokenizer`, `xml`
 - Для покрытия и мутационных тестов: PCOV или Xdebug (`XDEBUG_MODE=coverage`)
@@ -127,7 +127,7 @@ composer ci
 - CODEOWNERS: `.github/CODEOWNERS`
 - Шаблон PR: `.github/PULL_REQUEST_TEMPLATE.md`
 
-Оба пайплайна запускают PHP 8.3 и 8.4 с тем же набором проверок, что и `composer ci`.
+Оба пайплайна запускают PHP 8.1–8.5 с тем же набором проверок, что и `composer ci`.
 
 ## Сообщить о проблеме
 

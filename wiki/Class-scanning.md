@@ -1,4 +1,11 @@
-# Сканирование классов
+<p align="center">
+  <img src="https://raw.githubusercontent.com/cloudcastle-apps/di/main/assets/logo.svg" alt="CloudCastle DI" width="64">
+</p>
+
+# 📂 Сканирование классов
+
+> [← Главная](Home) · [Сравнение](Comparison) · [Quick start](Quick-start)
+
 
 Метод `Container::scan()` находит PHP-классы в каталоге и регистрирует их для autowiring через `autowire()`.
 

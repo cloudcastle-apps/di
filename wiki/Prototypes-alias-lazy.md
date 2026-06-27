@@ -1,4 +1,11 @@
-# Прототипы, alias и lazy
+<p align="center">
+  <img src="https://raw.githubusercontent.com/cloudcastle-apps/di/main/assets/logo.svg" alt="CloudCastle DI" width="64">
+</p>
+
+# 🔄 Прототипы, alias и lazy
+
+> [← Главная](Home) · [Сравнение](Comparison) · [Quick start](Quick-start)
+
 
 Версия **1.2.0** добавляет три дополнения к базовому `get()` / `set()`:
 

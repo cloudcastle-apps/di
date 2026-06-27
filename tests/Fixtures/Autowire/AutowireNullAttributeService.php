@@ -9,7 +9,7 @@ use CloudCastle\DI\Attribute\Autowire;
 /**
  * Сервис с {@see Autowire} без явного id — fallback на autowiring по типу.
  */
-final readonly class AutowireNullAttributeService
+final class AutowireNullAttributeService
 {
     public function __construct(
         #[Autowire]

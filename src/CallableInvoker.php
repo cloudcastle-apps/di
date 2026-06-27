@@ -26,12 +26,12 @@ use ReflectionMethod;
  *
  * @see Container::call() Публичная точка входа в контейнере
  */
-final readonly class CallableInvoker
+final class CallableInvoker
 {
     /**
      * Разрешает зависимости параметров callable из контейнера.
      */
-    private MemberResolver $memberResolver;
+    private readonly MemberResolver $memberResolver;
 
     /**
      * @param ContainerInterface $container Контейнер для autowiring параметров callable

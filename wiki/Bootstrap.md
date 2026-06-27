@@ -1,4 +1,11 @@
-# Composition root: примеры bootstrap
+<p align="center">
+  <img src="https://raw.githubusercontent.com/cloudcastle-apps/di/main/assets/logo.svg" alt="CloudCastle DI" width="64">
+</p>
+
+# 🧪 Composition root: примеры bootstrap
+
+> [← Главная](Home) · [Сравнение](Comparison) · [Quick start](Quick-start)
+
 
 Ниже — пошаговые примеры сборки графа зависимостей (composition root) для разных сценариев использования CloudCastle DI.
 

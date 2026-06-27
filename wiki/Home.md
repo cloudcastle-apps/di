@@ -1,195 +1,185 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/cloudcastle-apps/di/main/assets/logo.svg" alt="CloudCastle DI" width="128" height="128">
+  <img src="https://raw.githubusercontent.com/cloudcastle-apps/di/main/assets/docs-hero.svg" alt="CloudCastle DI" width="100%">
+</p>
+
+<p align="center">
+  <a href="https://packagist.org/packages/cloudcastle/di"><img src="https://img.shields.io/packagist/v/cloudcastle/di.svg" alt="Version"></a>
+  <a href="https://packagist.org/packages/cloudcastle/di"><img src="https://img.shields.io/packagist/php-v/cloudcastle/di.svg" alt="PHP"></a>
+  <a href="https://github.com/cloudcastle-apps/di/actions/workflows/quality.yml"><img src="https://github.com/cloudcastle-apps/di/actions/workflows/quality.yml/badge.svg" alt="CI"></a>
+  <a href="https://packagist.org/packages/cloudcastle/di"><img src="https://img.shields.io/packagist/l/cloudcastle/di.svg" alt="License"></a>
 </p>
 
 # CloudCastle DI
 
-**Lightweight PSR-11 dependency injection container for PHP 8.3+** — autowiring, **declarative configuration** (PHP/JSON/YAML/XML), directory scan, custom inject attributes, tagged services, decorators, `call()` / `bind()`, prototypes, lazy, `freeze()`.
+**Lightweight PSR-11 dependency injection container for PHP 8.1+**
 
-Лёгкий контейнер внедрения зависимостей для **PHP 8.3+** с поддержкой [PSR-11](https://www.php-fig.org/psr/psr-11/). Одна runtime-зависимость — `psr/container`. Альтернатива PHP-DI / Symfony DI для micro-apps и composition root.
+Лёгкий контейнер внедрения зависимостей с **autowiring**, **декларативной конфигурацией** (PHP / JSON / YAML / XML), **сканированием каталогов**, **тегами**, **декораторами** и расширенным API — при **одной** runtime-зависимости [`psr/container`](https://packagist.org/packages/psr/container).
 
-**Текущая версия:** 1.7.x — см. [Releases](https://github.com/cloudcastle-apps/di/releases) · [Packagist](https://packagist.org/packages/cloudcastle/di)
+> 💡 **Для кого:** библиотеки, CLI, API, composition root, тесты — когда Symfony/Laravel избыточны, а Pimple уже мал.
 
-## Установка
+**Текущая версия:** [1.8.0](https://github.com/cloudcastle-apps/di/releases/tag/v1.8.0) · [Packagist](https://packagist.org/packages/cloudcastle/di)
+
+---
+
+## 🚀 Быстрый старт
 
 ```bash
-composer require cloudcastle/di:^1.6
+composer require cloudcastle/di:^1.8
 ```
-
-Packagist: https://packagist.org/packages/cloudcastle/di
-
-## Сравнение с аналогами (кратко)
-
-| | CloudCastle DI |
-|---|----------------|
-| **Плюсы** | `psr/container`, PSR-11, autowiring, конфиг из файлов, теги, CI с benchmark-check |
-| **Минусы** | нет compiler/contextual (v2), PHP 8.3+ |
-
-**Пошагово** vs PHP-DI, Symfony, Pimple, Laravel — **[Comparison](Comparison)**.
-
-## Возможности
-
-### Регистрация и получение сервисов
-
-- готовые экземпляры и фабрики через `set()`;
-- singleton-кэш: фабрика вызывается один раз до следующего `set()`;
-- PSR-11: `get()`, `has()`;
-- расширенный контракт: `hasDefinition()`, `addDefinitions()`.
-
-### Autowiring
-
-- **`enableAutowiring()`** — любой instantiable-класс доступен по FQCN через `get()`;
-- **`autowire(FQCN)`** — точечная регистрация без глобального режима;
-- **`enableParameterNameAutowiring()`** — id сервиса = имя параметра (`$logger` → `'logger'`);
-- **`enablePropertyAutowiring()`** / **`enableMethodAutowiring()`** — typed properties и inject-методы после конструктора;
-- PHP attributes **`Inject`** / **`Autowire`** на конструкторе, **свойствах** и **методах**;
-- **`registerAttribute()`** — пользовательские attributes с контрактом `ServiceIdAttribute`;
-- разрешение зависимостей: типы, union, **intersection**, nullable, `ContainerInterface` / PSR-11;
-- обнаружение **циклических зависимостей** при autowiring;
-- явный `set()` всегда имеет **приоритет** над autowiring.
-
-### Сканирование каталогов
-
-- **`scan($directory, $namespace?)`** — рекурсивный обход `.php`-файлов;
-- парсинг `namespace`, нескольких `class` и `enum` без выполнения файла;
-- фильтр по префиксу namespace;
-- только instantiable-классы (`enum` пропускаются); существующие `set()` не перезаписываются.
-
-### Прототипы, alias и lazy (v1.2)
-
-- **`make($id)`** — новый экземпляр без singleton-кэша;
-- **`alias($alias, $targetId)`** — альтернативный id (цепочки, детекция циклов);
-- **`lazy($serviceId)`** — `LazyService` с отложенным `get()`.
-
-### call(), bind(), afterResolving (v1.3)
-
-- **`call($callable, $parameters?)`** — autowiring параметров callable (`CallableInvoker`);
-- **`bind($abstract, $concrete)`** — интерфейс → класс (`autowire` + `alias`) или id;
-- **`afterResolving($id, $callback)`** — пост-обработка после нового resolve (`AfterResolvingDispatcher`).
-
-### Tagged services и декораторы
-
-- **`tag()` / `getTagged()`** — группы сервисов (порядок = порядок `tag()`);
-- **`getTaggedIds()`** — только id, без создания экземпляров;
-- **`getTaggedIterator()`** — итерация значений (`TaggedServiceIterator`);
-- **`getTaggedLocator()`** — `has` / `get` по id в теге (`TaggedServiceLocator`);
-- **`decorate()`** — цепочка обёрток при `get()` / `make()` (первый декоратор ближе к inner).
-
-### Конфигурация из файлов (v1.5)
-
-- **`ContainerConfigurator`** — необязательный сервис: PHP (по умолчанию), JSON, YAML, XML;
-- несколько источников на один контейнер, слияние с **приоритетами**;
-- секции: `services`, `bind`, `aliases`, `autowire`, `tags`, `scan`, `register_attributes`, `autowiring`.
-
-### Заморозка и интроспекция (v1.4)
-
-- **`freeze()`** / **`isFrozen()`** — блокировка изменений после bootstrap;
-- **`getDefinitionIds()`**, **`dump()`** — отладка wiring.
-
-### Глобальный реестр
-
-- **`ContainerRegistry`** — singleton-контейнер приложения;
-- инициализация в bootstrap через `ContainerRegistry::set()`;
-- `reset()` для изоляции тестов.
-
-### Качество
-
-PHPStan max, Psalm L1, покрытие строк ≥95% (фактически ~98%), per-file ≥95%, Infection MSI ≥95% (весь `src/`), **506** PHPUnit-тестов, **benchmark-check** в CI.
-
-## Архитектура (кратко)
-
-```mermaid
-flowchart TB
-    subgraph api [Публичный API]
-        get[get / make]
-        apiCall[call]
-        reg[set / bind / autowire / scan]
-        cfg[ContainerConfigurator]
-        attr[registerAttribute]
-        frz[freeze / dump]
-        tag[getTagged / Iterator / Locator]
-    end
-
-    subgraph core [Ядро]
-        aliasR[ServiceAliasResolver]
-        instR[ServiceInstanceResolver]
-        hooks[AfterResolvingDispatcher]
-        invoker[CallableInvoker]
-        aw[Autowirer + MemberResolver]
-        attrR[AttributeServiceIdRegistry]
-    end
-
-    subgraph external [Вне контейнера]
-        cr[ContainerRegistry]
-    end
-
-    reg --> instR
-    cfg --> reg
-    attr --> attrR
-    attrR --> aw
-    get --> aliasR --> instR
-    instR -->|новый resolve| hooks
-    apiCall --> invoker --> aw
-    instR -->|autowire| aw
-    aw -->|get зависимостей| get
-    tag --> get
-    frz -.->|блокирует мутации| reg
-    reg -.->|ContainerRegistry::set| cr
-```
-
-Подробные схемы всех потоков — на странице **[Архитектура](Architecture)**.
-
-## Минимальный пример
 
 ```php
 <?php
 
 use CloudCastle\DI\Container;
-use CloudCastle\DI\ContainerRegistry;
 
 $container = new Container();
 $container->enableAutowiring();
-$container->scan(__DIR__ . '/App/Services', 'App\\Services\\');
 $container->bind(LoggerInterface::class, FileLogger::class);
 
-ContainerRegistry::set($container);
-
-$service = ContainerRegistry::get()->get(App\Services\OrderService::class);
+$service = $container->get(App\Service\OrderService::class);
 ```
 
-## Документация
+👉 Подробнее — **[Быстрый старт](Quick-start)**
+
+---
+
+## 🧩 Возможности
+
+<table>
+<tr>
+<td width="50%" valign="top">
+
+### 🔌 Базовый DI
+- `set()` / `get()` / `has()` — PSR-11
+- Фабрики и singleton-кэш
+- `hasDefinition()`, `addDefinitions()`
+- `make()` — прототипы без кэша
+
+### 🤖 Autowiring
+- Constructor, **property**, **method**
+- Attributes `Inject` / `Autowire`
+- `registerAttribute()` — свои attributes
+- Union, intersection, nullable
+- Детекция циклов
+
+### 📂 Сканирование
+- `scan($dir, $namespace?)`
+- Несколько классов в файле
+- Фильтр по namespace
+
+</td>
+<td width="50%" valign="top">
+
+### 📄 Конфигурация (v1.5+)
+- `ContainerConfigurator`
+- PHP, JSON, YAML, XML
+- Слои с **priority**
+- Каталог / список файлов (v1.7)
+
+### 🏷️ Теги и декораторы
+- `tag()`, `getTagged()`, `getTaggedIds()`
+- `getTaggedIterator()`, `getTaggedLocator()`
+- `decorate()` — цепочки обёрток
+
+### ⚡ Расширения
+- `call()`, `bind()`, `afterResolving()`
+- `alias()`, `lazy()`, `freeze()`, `dump()`
+- `ContainerRegistry` — глобальный реестр
+
+</td>
+</tr>
+</table>
+
+---
+
+## 📊 Сравнение с аналогами
+
+Единая таблица: **функция → CloudCastle → PHP-DI → Symfony → Pimple → Laravel → League → Nette → победитель** (6 аналогов).
+
+| | |
+|---|---|
+| 📋 | **[Сравнение — полная таблица](Comparison)** |
+| ⚡ | Одна зависимость `psr/container` |
+| 🎯 | Autowiring + конфиг без compiler |
+| 🚧 | Нет contextual / compiled (v2) |
+
+---
+
+## 🏗️ Архитектура
+
+```mermaid
+flowchart TB
+    subgraph api [Публичный API]
+        get[get / make]
+        call[call]
+        reg[set / bind / scan]
+        cfg[ContainerConfigurator]
+        tag[tags / decorators]
+    end
+
+    subgraph core [Ядро]
+        resolve[ServiceInstanceResolver]
+        auto[Autowirer]
+        hooks[AfterResolving]
+    end
+
+    reg --> resolve
+    cfg --> reg
+    get --> resolve
+    call --> auto
+    resolve --> auto
+    resolve --> hooks
+```
+
+Подробные схемы — **[Архитектура](Architecture)**
+
+---
+
+## 📚 Документация
+
+### 🎓 Руководство
 
 | Страница | Описание |
 |----------|----------|
-| [Архитектура](Architecture) | схемы контейнера, autowiring, call, afterResolving, теги |
-| [Быстрый старт](Quick-start) | установка, PSR-11, composition root |
-| [Сравнение с PHP-DI, Symfony, Pimple](Comparison) | пошаговые таблицы, плюсы/минусы, миграция |
-| [Примеры bootstrap](Bootstrap) | plain PHP, CLI, unit/integration тесты |
-| [Autowiring](Autowiring) | reflection, типы параметров, циклы, приоритеты, registerAttribute |
-| [Конфигурация из файлов](Configuration) | ContainerConfigurator, PHP/JSON/YAML/XML, приоритеты |
-| [Сканирование классов](Class-scanning) | `scan()`, фильтр namespace, ограничения |
-| [Глобальный реестр](Global-registry) | `ContainerRegistry`, bootstrap, тесты |
-| [Теги и декораторы](Tags-and-decorators) | `tag()`, `getTagged()`, iterator, locator |
-| [call(), bind(), afterResolving](Call-bind-callbacks) | v1.3: call, bind, addDefinitions, hooks |
-| [Прототипы, alias и lazy](Prototypes-alias-lazy) | `make()`, `alias()`, `lazy()` |
-| [Справочник API](API-reference) | все методы и исключения |
-| [Фабрики и singleton](Factories-and-singleton) | callable, кэш, `null`, циклы в фабриках |
-| [Тестирование](Testing) | unit/integration, моки, `ContainerRegistry::reset()` |
-| [Тесты безопасности](Security-tests) | 17 тестов: кэш, autowire, id, NotFound |
-| [Нагрузка и производительность](Performance-and-load) | 15 load + 12 performance, пороги, бенчмарки |
-| [Анти-паттерны](Anti-patterns) | service locator, autowiring, глобальный контейнер |
-| [Обновление версий](Upgrading) | миграция между релизами |
-| [Участие в разработке](Contributing) | `composer ci`, PR |
-| [FAQ](FAQ) | частые вопросы |
+| [🏗️ Архитектура](Architecture) | Схемы, потоки resolve, autowiring |
+| [⚡ Быстрый старт](Quick-start) | Установка, PSR-11, composition root |
+| [📊 Сравнение](Comparison) | Таблица vs 6 аналогов (PHP-DI, Symfony, Pimple, Laravel, League, Nette) |
+| [🤖 Autowiring](Autowiring) | Типы, attributes, циклы, приоритеты |
+| [📄 Конфигурация](Configuration) | ContainerConfigurator, форматы, priority |
+| [📖 Справочник конфигурации](Configuration-reference) | Все ключи и примеры |
+| [📂 Сканирование](Class-scanning) | `scan()`, namespace, ограничения |
+| [🏷️ Теги и декораторы](Tags-and-decorators) | tag, iterator, locator, decorate |
+| [🔗 call(), bind(), hooks](Call-bind-callbacks) | CallableInvoker, afterResolving |
+| [🔄 Прототипы, alias, lazy](Prototypes-alias-lazy) | make, alias, LazyService |
+| [🌍 Глобальный реестр](Global-registry) | ContainerRegistry |
+| [📋 API](API-reference) | Все методы и исключения |
+| [🏭 Фабрики и singleton](Factories-and-singleton) | Callable, кэш, циклы |
+| [🧪 Bootstrap](Bootstrap) | Plain PHP, CLI, тесты |
 
-## Ссылки
+### 🔬 Качество
 
-- [Репозиторий](https://github.com/cloudcastle-apps/di)
-- [Discussions](https://github.com/cloudcastle-apps/di/discussions)
-- [Issues](https://github.com/cloudcastle-apps/di/issues)
-- [Releases](https://github.com/cloudcastle-apps/di/releases)
+| Страница | Описание |
+|----------|----------|
+| [🧪 Тестирование](Testing) | Unit, integration, `composer ci` |
+| [🛡️ Security-тесты](Security-tests) | 17 тестов безопасности |
+| [📈 Нагрузка и perf](Performance-and-load) | Load, benchmark-check |
+| [⚠️ Анти-паттерны](Anti-patterns) | Service locator, глобальный контейнер |
+
+### 📦 Проект
+
+| Страница | Описание |
+|----------|----------|
+| [⬆️ Обновление версий](Upgrading) | Миграция между релизами |
+| [🤝 Contributing](Contributing) | PR, CI, локальная разработка |
+| [❓ FAQ](FAQ) | Частые вопросы |
+
+---
+
+## 🔗 Ссылки
+
+- [GitHub](https://github.com/cloudcastle-apps/di) · [Discussions](https://github.com/cloudcastle-apps/di/discussions) · [Issues](https://github.com/cloudcastle-apps/di/issues)
 - [README в репозитории](https://github.com/cloudcastle-apps/di/blob/main/README.md)
 
-## Лицензия
+## 📜 Лицензия
 
-MIT — см. [LICENSE](https://github.com/cloudcastle-apps/di/blob/main/LICENSE).
+MIT — [LICENSE](https://github.com/cloudcastle-apps/di/blob/main/LICENSE)

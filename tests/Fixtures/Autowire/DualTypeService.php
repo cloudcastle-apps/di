@@ -7,7 +7,7 @@ namespace CloudCastle\DI\Tests\Fixtures\Autowire;
 /**
  * Сервис с union-типом string|Clock.
  */
-final readonly class DualTypeService
+final class DualTypeService
 {
     public function __construct(
         public Clock|string $value,

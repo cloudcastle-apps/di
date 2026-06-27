@@ -11,10 +11,10 @@ use ReflectionClass;
 /**
  * Проверяет и получает class-зависимости из контейнера.
  */
-final readonly class ClassDependencyResolver
+final class ClassDependencyResolver
 {
     public function __construct(
-        private ContainerInterface $container,
+        private readonly ContainerInterface $container,
     ) {
     }
 

@@ -6,7 +6,6 @@ namespace CloudCastle\DI\Tests\Unit\Configuration;
 
 use CloudCastle\DI\Configuration\Loader\YamlConfigurationLoader;
 use CloudCastle\DI\Exception\ContainerException;
-use Override;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\RequiresPhpExtension;
 use PHPUnit\Framework\TestCase;
@@ -19,7 +18,6 @@ final class ConfigurationLoaderYamlTest extends TestCase
 
     private string $fixturesDirectory;
 
-    #[Override]
     protected function setUp(): void
     {
         $this->fixturesDirectory = \dirname(__DIR__, 2) . '/Fixtures/Config';

@@ -19,7 +19,7 @@ use ReflectionClass;
 final class AttributeServiceIdRegistry
 {
     /** @var array<string, true> */
-    private const array BUILTIN_ATTRIBUTE_CLASSES = [
+    private const BUILTIN_ATTRIBUTE_CLASSES = [
         Inject::class => true,
         Autowire::class => true,
     ];

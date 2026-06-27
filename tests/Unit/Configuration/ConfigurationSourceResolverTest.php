@@ -11,7 +11,6 @@ use CloudCastle\DI\Configuration\ConfigurationLoaderRegistry;
 use CloudCastle\DI\Configuration\ConfigurationSource;
 use CloudCastle\DI\Configuration\ConfigurationSourceResolver;
 use CloudCastle\DI\Exception\ContainerException;
-use Override;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
@@ -22,7 +21,6 @@ final class ConfigurationSourceResolverTest extends TestCase
 {
     private string $fixturesDirectory;
 
-    #[Override]
     protected function setUp(): void
     {
         $this->fixturesDirectory = \dirname(__DIR__, 2) . '/Fixtures/Config';

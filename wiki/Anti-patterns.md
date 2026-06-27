@@ -1,4 +1,11 @@
-# Анти-паттерны
+<p align="center">
+  <img src="https://raw.githubusercontent.com/cloudcastle-apps/di/main/assets/logo.svg" alt="CloudCastle DI" width="64">
+</p>
+
+# ⚠️ Анти-паттерны
+
+> [← Главная](Home) · [Сравнение](Comparison) · [Quick start](Quick-start)
+
 
 Чего избегать при использовании CloudCastle DI.
 
@@ -97,7 +104,7 @@ $container->set('b', static fn ($c) => new B($c->get('a'))); // бесконеч
 
 ## Сравнение с «большими» контейнерами
 
-Подробно — [Сравнение с PHP-DI, Symfony, Pimple](Comparison) (плюсы, минусы, таблицы, миграция).
+Подробно — [Сравнение с 6 аналогами](Comparison) (PHP-DI, Symfony, Pimple, Laravel, League, Nette).
 
 | CloudCastle DI | PHP-DI / Symfony |
 |----------------|------------------|

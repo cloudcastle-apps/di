@@ -1,4 +1,11 @@
-# Теги и декораторы
+<p align="center">
+  <img src="https://raw.githubusercontent.com/cloudcastle-apps/di/main/assets/logo.svg" alt="CloudCastle DI" width="64">
+</p>
+
+# 🏷️ Теги и декораторы
+
+> [← Главная](Home) · [Сравнение](Comparison) · [Quick start](Quick-start)
+
 
 Расширения контракта для группового доступа к сервисам и обёрток без изменения фабрик.
 

@@ -1,7 +1,19 @@
 CloudCastle DI
 ==============
 
-Руководство пользователя библиотеки **cloudcastle/di** — лёгкий PSR-11 контейнер для PHP 8.3+ с autowiring, **конфигурацией из файлов** (PHP/JSON/YAML/XML), сканированием каталогов, прототипами (`make`), alias, lazy, tagged services, декораторами и глобальным реестром.
+.. image:: https://raw.githubusercontent.com/cloudcastle-apps/di/main/assets/docs-hero.svg
+   :alt: CloudCastle DI
+   :align: center
+   :width: 100%
+
+Руководство пользователя **cloudcastle/di** — лёгкий PSR-11 контейнер для **PHP 8.1+**.
+
+**Возможности:** autowiring (constructor, property, method), конфигурация PHP/JSON/YAML/XML,
+``scan()``, прототипы ``make()``, alias, lazy, ``call()`` / ``bind()``, after-resolving hooks,
+tagged services, декораторы, ``freeze()``, ``ContainerRegistry``.
+
+**Документация онлайн:** `Wiki <https://github.com/cloudcastle-apps/di/wiki/Home>`_ ·
+`Сравнение с аналогами <https://github.com/cloudcastle-apps/di/wiki/Comparison>`_.
 
 .. toctree::
    :maxdepth: 2

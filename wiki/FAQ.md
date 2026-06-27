@@ -1,10 +1,16 @@
-# FAQ
+<p align="center">
+  <img src="https://raw.githubusercontent.com/cloudcastle-apps/di/main/assets/logo.svg" alt="CloudCastle DI" width="64">
+</p>
 
-## Чем CloudCastle DI отличается от PHP-DI / Symfony / Pimple?
+# ❓ FAQ
 
-**Пошаговое сравнение** с таблицами по каждому критерию — [Comparison](Comparison).
+> [← Главная](Home) · [📊 Сравнение — полная таблица](Comparison) · [Quick start](Quick-start)
 
-Кратко: компактный PSR-11 контейнер (`psr/container`), autowiring, `scan()`, теги — **без** YAML и compiled container. Нет contextual binding (v2); для него сейчас PHP-DI или Symfony DI.
+## Чем CloudCastle DI отличается от PHP-DI / Symfony / Pimple / Laravel / League / Nette?
+
+**Сравнение с 6 аналогами** и колонкой победителей — **[Comparison](Comparison)**.
+
+Кратко: компактный PSR-11 контейнер (`psr/container`), autowiring, `scan()`, теги — **без** compiled container. Нет contextual binding (v2); для него сейчас PHP-DI, Symfony DI или Nette DI.
 
 ## Есть autowiring?
 

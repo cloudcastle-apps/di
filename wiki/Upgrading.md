@@ -1,6 +1,33 @@
-# Обновление версий
+<p align="center">
+  <img src="https://raw.githubusercontent.com/cloudcastle-apps/di/main/assets/logo.svg" alt="CloudCastle DI" width="64">
+</p>
+
+# ⬆️ Обновление версий
+
+> [← Главная](Home) · [Сравнение](Comparison) · [Quick start](Quick-start)
+
 
 Руководство по переходу между версиями **cloudcastle/di**.
+
+## 1.7.0 → 1.8.0
+
+### Изменения (breaking)
+
+- **Минимальная версия PHP:** `^8.3` → **`^8.1`**
+- CI matrix: PHP **8.1–8.5**
+- Код пакета: без `readonly class`, `#[Override]`, typed class constants
+
+### Для пользователей на PHP 8.1+
+
+Обновление без изменений в вашем коде.
+
+### Для PHP &lt; 8.1
+
+Оставайтесь на **1.7.x** или обновите PHP.
+
+```bash
+composer require cloudcastle/di:^1.8
+```
 
 ## 1.6.0 → 1.7.0
 

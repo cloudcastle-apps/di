@@ -12,10 +12,10 @@ use ReflectionAttribute;
  *
  * Встроенные и зарегистрированные attributes перечислены в {@see AttributeServiceIdRegistry}.
  */
-final readonly class AttributeServiceIdReader
+final class AttributeServiceIdReader
 {
     public function __construct(
-        private AttributeServiceIdRegistry $registry = new AttributeServiceIdRegistry(),
+        private readonly AttributeServiceIdRegistry $registry = new AttributeServiceIdRegistry(),
     ) {
     }
 

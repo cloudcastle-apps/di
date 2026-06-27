@@ -1,33 +1,105 @@
 Сравнение с аналогами
 =====================
 
-Краткая выжимка. **Пошаговое** сравнение с плюсами и минусами по каждому критерию —
+Краткая выжимка. **Полная таблица** — функция → CloudCastle → **6 аналогов**
+(PHP-DI, Symfony DI, Pimple, Laravel, League Container, Nette DI) → 🏆 победитель —
 `Wiki: Comparison <https://github.com/cloudcastle-apps/di/wiki/Comparison>`_.
 
-Преимущества
-------------
+Аналоги
+-------
 
-- Одна runtime-зависимость — ``psr/container``.
-- PSR-11, autowiring (constructor, property, method), attributes, ``scan()``, теги, декораторы.
-- Декларативная конфигурация PHP/JSON/YAML/XML (``ContainerConfigurator``, v1.5+).
-- Явный bootstrap в PHP — без обязательного compiled container.
-- **506** PHPUnit-тестов, per-file coverage, Infection MSI ≥95% по ``src/``, ``benchmark-check`` в CI (v1.7+).
-- Подходит для библиотек, CLI, API bootstrap и тестов.
+#. `PHP-DI <https://php-di.org/>`_
+#. `Symfony DependencyInjection <https://symfony.com/doc/current/service_container.html>`_
+#. `Pimple <https://pimple.symfony.com/>`_
+#. `Laravel Container <https://laravel.com/docs/container>`_
+#. `League Container <https://container.thephpleague.com/>`_
+#. `Nette DI <https://doc.nette.org/en/configuring>`_
 
-Недостатки
-----------
+Легенда
+-------
 
-- Нет **compiled container** и **contextual binding** (план v2, issues #24/#25) — сейчас лучше PHP-DI / Symfony DI.
-- Только **PHP ^8.3**; ``scan()`` — regex, не полный AST.
-- Меньше экосистемы, чем у Symfony / Laravel / PHP-DI.
+.. list-table::
+   :header-rows: 1
+   :widths: 10 90
 
-Когда выбрать
--------------
+   * - Символ
+     - Значение
+   * - ✅
+     - Полная поддержка
+   * - ⚠️
+     - Частично / с ограничениями
+   * - ❌
+     - Нет
+   * - 🔌
+     - Через адаптер
 
-**CloudCastle DI** — если нужен компактный composition root без фреймворка, с autowiring и опциональной конфигурацией из файлов.
+Когда выбрать CloudCastle DI
+----------------------------
 
-**Другой контейнер** — если уже Symfony/Laravel, нужен compiler/contextual binding сейчас,
-или достаточно Pimple на 3–5 сервисов.
+**CloudCastle DI** — composition root в библиотеке, CLI, API или тестах: autowiring, конфиг из файлов,
+теги и декораторы при **одной** runtime-зависимости ``psr/container``.
+
+**Другой контейнер:**
+
+- уже **Symfony** / **Laravel** / **Nette** → встроенный DI;
+- **3–5** сервисов без autowire → **Pimple**;
+- definitions-first, лёгкий PSR-11 → **League Container**;
+- **compiled container** или **contextual binding** прямо сейчас → **PHP-DI**, **Symfony DI** или **Nette DI**.
+
+Сводка (фрагмент)
+-----------------
+
+.. list-table::
+   :header-rows: 1
+   :widths: 22 9 9 9 9 9 9 9 15
+
+   * - Функция
+     - CloudCastle
+     - PHP-DI
+     - Symfony
+     - Pimple
+     - Laravel
+     - League
+     - Nette
+     - Победитель
+   * - PSR-11
+     - ✅
+     - ✅
+     - ✅
+     - 🔌
+     - ✅
+     - ✅
+     - 🔌
+     - Паритет
+   * - Autowiring
+     - ✅
+     - ✅
+     - ✅
+     - ❌
+     - ✅
+     - ✅
+     - ✅
+     - Паритет
+   * - Compiled / contextual
+     - ❌ v2
+     - ✅
+     - ✅
+     - ❌
+     - ✅
+     - ⚠️/✅
+     - ✅
+     - PHP-DI, Symfony, Nette
+   * - Benchmark-check CI
+     - ✅
+     - —
+     - —
+     - —
+     - —
+     - —
+     - —
+     - CloudCastle DI
+
+Полная таблица (~45 строк, 6 аналогов) — на Wiki.
 
 См. также
 ---------

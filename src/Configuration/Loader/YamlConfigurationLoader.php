@@ -6,7 +6,6 @@ namespace CloudCastle\DI\Configuration\Loader;
 
 use CloudCastle\DI\Contract\ConfigurationLoaderInterface;
 use CloudCastle\DI\Exception\ContainerException;
-use Override;
 
 /**
  * Загрузчик YAML-конфигурации через расширение {@see yaml_parse_file()}.
@@ -16,7 +15,6 @@ final class YamlConfigurationLoader implements ConfigurationLoaderInterface
     /**
      * {@inheritDoc}
      */
-    #[Override]
     public function supports(string $path): bool
     {
         $lower = strtolower($path);
@@ -27,7 +25,6 @@ final class YamlConfigurationLoader implements ConfigurationLoaderInterface
     /**
      * {@inheritDoc}
      */
-    #[Override]
     public function load(string $path): array
     {
         if (!is_file($path) || !is_readable($path)) {

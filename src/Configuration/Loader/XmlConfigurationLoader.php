@@ -7,7 +7,6 @@ namespace CloudCastle\DI\Configuration\Loader;
 use Closure;
 use CloudCastle\DI\Contract\ConfigurationLoaderInterface;
 use CloudCastle\DI\Exception\ContainerException;
-use Override;
 use SimpleXMLElement;
 
 /**
@@ -21,7 +20,6 @@ final class XmlConfigurationLoader implements ConfigurationLoaderInterface
     /**
      * {@inheritDoc}
      */
-    #[Override]
     public function supports(string $path): bool
     {
         return str_ends_with(strtolower($path), '.xml');
@@ -30,7 +28,6 @@ final class XmlConfigurationLoader implements ConfigurationLoaderInterface
     /**
      * {@inheritDoc}
      */
-    #[Override]
     public function load(string $path): array
     {
         if (!is_file($path) || !is_readable($path)) {

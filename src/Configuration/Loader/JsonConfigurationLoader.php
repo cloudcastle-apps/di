@@ -7,7 +7,6 @@ namespace CloudCastle\DI\Configuration\Loader;
 use CloudCastle\DI\Contract\ConfigurationLoaderInterface;
 use CloudCastle\DI\Exception\ContainerException;
 use JsonException;
-use Override;
 
 /**
  * Загрузчик JSON-конфигурации.
@@ -17,7 +16,6 @@ final class JsonConfigurationLoader implements ConfigurationLoaderInterface
     /**
      * {@inheritDoc}
      */
-    #[Override]
     public function supports(string $path): bool
     {
         return str_ends_with(strtolower($path), '.json');
@@ -26,7 +24,6 @@ final class JsonConfigurationLoader implements ConfigurationLoaderInterface
     /**
      * {@inheritDoc}
      */
-    #[Override]
     public function load(string $path): array
     {
         $contents = $this->readFile($path);

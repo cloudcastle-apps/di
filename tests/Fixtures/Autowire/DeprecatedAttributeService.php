@@ -9,7 +9,7 @@ use Attribute;
 /**
  * Сервис с посторонним attribute на параметре.
  */
-final readonly class DeprecatedAttributeService
+final class DeprecatedAttributeService
 {
     public function __construct(
         #[Deprecated]

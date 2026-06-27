@@ -12,14 +12,14 @@ use ReflectionMethod;
 /**
  * Вызывает методы экземпляра с autowiring параметров (setter и прочие inject-методы).
  */
-final readonly class MethodInjector
+final class MethodInjector
 {
-    private AttributeServiceIdReader $attributeReader;
+    private readonly AttributeServiceIdReader $attributeReader;
 
-    private MemberResolver $memberResolver;
+    private readonly MemberResolver $memberResolver;
 
     public function __construct(
-        private ContainerInterface $container,
+        private readonly ContainerInterface $container,
         ?AttributeServiceIdReader $attributeReader = null,
     ) {
         $reader = $attributeReader ?? new AttributeServiceIdReader();

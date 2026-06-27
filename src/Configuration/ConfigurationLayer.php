@@ -7,7 +7,7 @@ namespace CloudCastle\DI\Configuration;
 /**
  * Один загруженный слой конфигурации перед слиянием.
  */
-final readonly class ConfigurationLayer
+final class ConfigurationLayer
 {
     /**
      * @param array<string, mixed> $config Распарсенная конфигурация

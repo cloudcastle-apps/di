@@ -7,7 +7,7 @@ namespace CloudCastle\DI\Configuration;
 /**
  * Источник конфигурации: явный список файлов с общим приоритетом слоя.
  */
-final readonly class ConfigurationFilesSource
+final class ConfigurationFilesSource
 {
     /**
      * @param list<string> $paths Пути к файлам конфигурации в порядке слияния

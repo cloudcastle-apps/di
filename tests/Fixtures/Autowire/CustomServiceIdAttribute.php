@@ -11,7 +11,7 @@ use CloudCastle\DI\Contract\ServiceIdAttribute;
  * Пользовательский attribute для тестов {@see \CloudCastle\DI\Container::registerAttribute()}.
  */
 #[Attribute(Attribute::TARGET_PARAMETER | Attribute::TARGET_PROPERTY | Attribute::TARGET_METHOD)]
-final readonly class CustomServiceIdAttribute implements ServiceIdAttribute
+final class CustomServiceIdAttribute implements ServiceIdAttribute
 {
     /**
      * @param string|null $service Id сервиса в контейнере

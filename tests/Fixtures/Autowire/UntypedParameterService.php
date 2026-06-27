@@ -7,7 +7,7 @@ namespace CloudCastle\DI\Tests\Fixtures\Autowire;
 /**
  * Сервис с нетипизированным обязательным параметром.
  */
-final readonly class UntypedParameterService
+final class UntypedParameterService
 {
     public function __construct(
         public mixed $value,

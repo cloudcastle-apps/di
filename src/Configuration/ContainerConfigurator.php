@@ -14,12 +14,12 @@ use CloudCastle\DI\Contract\ContainerInterface;
  *
  * При конфликте параметров побеждает последний источник, если у параметра нет явного `priority`.
  */
-final readonly class ContainerConfigurator
+final class ContainerConfigurator
 {
     public function __construct(
-        private ConfigurationLoaderRegistry $loaderRegistry = new ConfigurationLoaderRegistry(),
-        private ConfigurationMerger $merger = new ConfigurationMerger(),
-        private ConfigurationApplicator $applicator = new ConfigurationApplicator(),
+        private readonly ConfigurationLoaderRegistry $loaderRegistry = new ConfigurationLoaderRegistry(),
+        private readonly ConfigurationMerger $merger = new ConfigurationMerger(),
+        private readonly ConfigurationApplicator $applicator = new ConfigurationApplicator(),
     ) {
     }
 

@@ -7,7 +7,7 @@ namespace CloudCastle\DI\Tests\Fixtures\Autowire;
 /**
  * Вторая часть циклической зависимости.
  */
-final readonly class CircularB
+final class CircularB
 {
     public function __construct(
         public CircularA $partner,

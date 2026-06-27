@@ -1,4 +1,11 @@
-# Фабрики и singleton
+<p align="center">
+  <img src="https://raw.githubusercontent.com/cloudcastle-apps/di/main/assets/logo.svg" alt="CloudCastle DI" width="64">
+</p>
+
+# 🏭 Фабрики и singleton
+
+> [← Главная](Home) · [Сравнение](Comparison) · [Quick start](Quick-start)
+
 
 ```mermaid
 flowchart TD

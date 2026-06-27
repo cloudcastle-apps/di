@@ -1,6 +1,6 @@
 {
     "name": "cloudcastle/di",
-    "description": "Lightweight PSR-11 dependency injection container for PHP 8.3+. Autowiring, declarative configuration (PHP/JSON/YAML/XML), directory scan, custom inject attributes, tagged services, decorators. Лёгкий DI-контейнер с autowiring, конфигурацией из файлов и scan, одна зависимость psr/container.",
+    "description": "Lightweight PSR-11 dependency injection container for PHP 8.1+. Autowiring, declarative configuration (PHP/JSON/YAML/XML), directory scan, custom inject attributes, tagged services, decorators. Лёгкий DI-контейнер с autowiring, конфигурацией из файлов и scan, одна зависимость psr/container.",
     "license": "MIT",
     "type": "library",
     "keywords": [
@@ -17,7 +17,7 @@
         "micro",
         "minimal",
         "php8",
-        "php83",
+        "php81",
         "psr-11",
         "psr11",
         "autowiring",
@@ -51,7 +51,7 @@
         "docs": "https://github.com/cloudcastle-apps/di/wiki"
     },
     "require": {
-        "php": "^8.3",
+        "php": "^8.1",
         "psr/container": "^2.0"
     },
     "require-dev": {
@@ -64,13 +64,13 @@
         "phpdocumentor/shim": "^3.7",
         "phpmd/phpmd": "^2.15",
         "phpstan/extension-installer": "^1.4",
-        "phpstan/phpstan": "^2.1",
-        "phpstan/phpstan-deprecation-rules": "^2.0",
-        "phpstan/phpstan-phpunit": "^2.0",
-        "phpstan/phpstan-strict-rules": "^2.0",
-        "phpunit/phpunit": "^11.5",
-        "psalm/plugin-phpunit": "^0.19",
-        "rector/rector": "^2.0",
+        "phpstan/phpstan": "^1.12 || ^2.1",
+        "phpstan/phpstan-deprecation-rules": "^1.2 || ^2.0",
+        "phpstan/phpstan-phpunit": "^1.4 || ^2.0",
+        "phpstan/phpstan-strict-rules": "^1.6 || ^2.0",
+        "phpunit/phpunit": "^10.5 || ^11.5",
+        "psalm/plugin-phpunit": "^0.19 || ^0.20",
+        "rector/rector": "^1.2 || ^2.0",
         "roave/security-advisories": "dev-latest",
         "squizlabs/php_codesniffer": "^3.12 || ^4.0",
         "vimeo/psalm": "^6.0"
@@ -107,13 +107,13 @@
         },
         "fund": false,
         "platform": {
-            "php": "8.3.31"
+            "php": "8.1.33"
         },
         "sort-packages": true
     },
     "extra": {
         "branch-alias": {
-            "dev-main": "1.6-dev"
+            "dev-main": "1.8-dev"
         }
     },
     "scripts": {

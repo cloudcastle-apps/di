@@ -9,7 +9,7 @@ use CloudCastle\DI\Attribute\Inject;
 /**
  * Сервис с {@see Inject} без явного id — fallback на autowiring по типу.
  */
-final readonly class InjectNullAttributeService
+final class InjectNullAttributeService
 {
     public function __construct(
         #[Inject]

@@ -9,7 +9,7 @@ use CloudCastle\DI\Attribute\Autowire;
 /**
  * Сервис с явным id через {@see Autowire}.
  */
-final readonly class AutowireAttributeService
+final class AutowireAttributeService
 {
     public function __construct(
         #[Autowire(service: 'app.clock')]

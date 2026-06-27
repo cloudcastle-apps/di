@@ -7,7 +7,7 @@ namespace CloudCastle\DI\Tests\Fixtures\Autowire;
 /**
  * Сервис с необязательной nullable-зависимостью.
  */
-final readonly class OptionalDependency
+final class OptionalDependency
 {
     public function __construct(
         public ?Clock $clock = null,

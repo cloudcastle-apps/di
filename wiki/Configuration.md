@@ -1,4 +1,10 @@
-# Конфигурация контейнера
+<p align="center">
+  <img src="https://raw.githubusercontent.com/cloudcastle-apps/di/main/assets/logo.svg" alt="CloudCastle DI" width="64">
+</p>
+
+# 📄 Конфигурация контейнера
+
+> [← Главная](Home) · [📖 Справочник параметров](Configuration-reference) · [Quick start](Quick-start)
 
 Опциональная загрузка определений из **нескольких файлов** (PHP, JSON, YAML, XML). Реализована отдельным сервисом **`ContainerConfigurator`** — контейнер можно по-прежнему собирать только через PHP API.
 

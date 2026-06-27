@@ -9,7 +9,7 @@ namespace CloudCastle\DI\Configuration;
  *
  * Файлы загружаются в лексикографическом порядке пути. Неподдерживаемые расширения пропускаются.
  */
-final readonly class ConfigurationDirectorySource
+final class ConfigurationDirectorySource
 {
     /**
      * @param string $directory Абсолютный или относительный путь к каталогу

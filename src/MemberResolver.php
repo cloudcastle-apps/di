@@ -13,14 +13,14 @@ use ReflectionProperty;
 /**
  * Разрешает зависимости для параметров, свойств и методов при autowiring.
  */
-final readonly class MemberResolver
+final class MemberResolver
 {
-    private AttributeServiceIdReader $attributeReader;
+    private readonly AttributeServiceIdReader $attributeReader;
 
-    private ParameterTypeResolver $typeResolver;
+    private readonly ParameterTypeResolver $typeResolver;
 
     public function __construct(
-        private ContainerInterface $container,
+        private readonly ContainerInterface $container,
         ?AttributeServiceIdReader $attributeReader = null,
     ) {
         $this->attributeReader = $attributeReader ?? new AttributeServiceIdReader();

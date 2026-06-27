@@ -15,7 +15,7 @@ use stdClass;
 #[CoversClass(Container::class)]
 final class ContainerLoadTest extends TestCase
 {
-    private const int SERVICE_COUNT = 2000;
+    private const SERVICE_COUNT = 2000;
 
     public function testRegistersAndResolvesManyServices(): void
     {

@@ -7,7 +7,7 @@ namespace CloudCastle\DI\Tests\Fixtures\Autowire;
 /**
  * Сервис с одной типизированной зависимостью.
  */
-final readonly class LoggerUser
+final class LoggerUser
 {
     public function __construct(
         public Clock $clock,

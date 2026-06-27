@@ -1,4 +1,11 @@
-# call(), bind(), afterResolving и массовая регистрация
+<p align="center">
+  <img src="https://raw.githubusercontent.com/cloudcastle-apps/di/main/assets/logo.svg" alt="CloudCastle DI" width="64">
+</p>
+
+# 🔗 call(), bind(), afterResolving и массовая регистрация
+
+> [← Главная](Home) · [Сравнение](Comparison) · [Quick start](Quick-start)
+
 
 Расширения **v1.3.0**: вызов callable с autowiring, привязка абстракции к реализации, callback после resolve, массовый `set()` и расширенный API тегов.
 

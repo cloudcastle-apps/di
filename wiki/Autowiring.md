@@ -1,4 +1,11 @@
-# Autowiring
+<p align="center">
+  <img src="https://raw.githubusercontent.com/cloudcastle-apps/di/main/assets/logo.svg" alt="CloudCastle DI" width="64">
+</p>
+
+# 🤖 Autowiring
+
+> [← Главная](Home) · [Сравнение](Comparison) · [Quick start](Quick-start)
+
 
 Autowiring создаёт экземпляры классов через reflection. Идентификатор сервиса при autowiring — **полное имя класса (FQCN)**.
 

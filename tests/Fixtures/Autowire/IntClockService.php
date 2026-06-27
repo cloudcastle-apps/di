@@ -7,7 +7,7 @@ namespace CloudCastle\DI\Tests\Fixtures\Autowire;
 /**
  * Сервис с union int|Clock — встроенный тип пропускается, Clock создаётся через autowiring.
  */
-final readonly class IntClockService
+final class IntClockService
 {
     public function __construct(
         public int|Clock $value,

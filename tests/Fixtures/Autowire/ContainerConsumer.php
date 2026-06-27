@@ -9,7 +9,7 @@ use CloudCastle\DI\Contract\ContainerInterface;
 /**
  * Сервис с внедрением контейнера.
  */
-final readonly class ContainerConsumer
+final class ContainerConsumer
 {
     public function __construct(
         public ContainerInterface $container,

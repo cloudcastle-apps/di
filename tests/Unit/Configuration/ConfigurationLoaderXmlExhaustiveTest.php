@@ -9,7 +9,6 @@ use CloudCastle\DI\Exception\ContainerException;
 use CloudCastle\DI\Tests\Fixtures\Autowire\Clock;
 use CloudCastle\DI\Tests\Fixtures\Autowire\CustomServiceIdAttribute;
 use CloudCastle\DI\Tests\Fixtures\Autowire\FileLogger;
-use Override;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
@@ -20,13 +19,11 @@ final class ConfigurationLoaderXmlExhaustiveTest extends TestCase
 
     private string $tempPath;
 
-    #[Override]
     protected function setUp(): void
     {
         $this->tempPath = sys_get_temp_dir() . '/cloudcastle-di-exhaustive.xml';
     }
 
-    #[Override]
     protected function tearDown(): void
     {
         if (is_file($this->tempPath)) {

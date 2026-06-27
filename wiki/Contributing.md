@@ -1,8 +1,15 @@
-# Участие в разработке
+<p align="center">
+  <img src="https://raw.githubusercontent.com/cloudcastle-apps/di/main/assets/logo.svg" alt="CloudCastle DI" width="64">
+</p>
+
+# 🤝 Участие в разработке
+
+> [← Главная](Home) · [Сравнение](Comparison) · [Quick start](Quick-start)
+
 
 ## Требования
 
-- PHP 8.3+
+- PHP 8.1+
 - Composer 2.x
 - расширения: `json`, `mbstring`, `tokenizer`, `xml`
 - PCOV или Xdebug для coverage/mutation
@@ -69,7 +76,7 @@ wiki/                     — исходники GitHub Wiki (публикует
 2. `composer ci` локально — зелёный.
 3. PR в `main` с описанием: что / зачем / как проверить.
 
-Защита `main`: обязательны checks **PHP 8.3**, **PHP 8.4**, **PHP 8.5** (workflow Quality).
+Защита `main`: обязательны checks **PHP 8.1**–**8.5** (workflow Quality).
 
 ## Wiki
 

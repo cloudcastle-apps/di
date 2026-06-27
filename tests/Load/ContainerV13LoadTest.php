@@ -16,9 +16,9 @@ use stdClass;
 #[CoversClass(Container::class)]
 final class ContainerV13LoadTest extends TestCase
 {
-    private const int SERVICE_COUNT = 1500;
+    private const SERVICE_COUNT = 1500;
 
-    private const float TIME_BUDGET_SECONDS = 3.0;
+    private const TIME_BUDGET_SECONDS = 3.0;
 
     public function testAddDefinitionsRegistersAndResolvesManyServices(): void
     {

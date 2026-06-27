@@ -1,4 +1,10 @@
-# Архитектура и принцип работы
+<p align="center">
+  <img src="https://raw.githubusercontent.com/cloudcastle-apps/di/main/assets/logo.svg" alt="CloudCastle DI" width="64">
+</p>
+
+# 🏗️ Архитектура и принцип работы
+
+> [← Главная](Home) · [Сравнение](Comparison) · [Autowiring](Autowiring)
 
 На этой странице — схемы жизненного цикла сервисов, autowiring, конфигурации, заморозки, сканирования и вспомогательных механизмов пакета **cloudcastle/di**.
 

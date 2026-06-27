@@ -12,7 +12,6 @@ use CloudCastle\DI\Tests\Fixtures\Autowire\Clock;
 use CloudCastle\DI\Tests\Fixtures\Autowire\CustomAttributePropertyService;
 use CloudCastle\DI\Tests\Fixtures\Autowire\CustomServiceIdAttribute;
 use CloudCastle\DI\Tests\Fixtures\Autowire\FileLogger;
-use Override;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
@@ -21,7 +20,6 @@ final class ConfigurationApplicatorSectionsTest extends TestCase
 {
     private string $scanDirectory;
 
-    #[Override]
     protected function setUp(): void
     {
         $this->scanDirectory = \dirname(__DIR__, 2) . '/Fixtures/Autowire';

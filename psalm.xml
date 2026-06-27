@@ -12,7 +12,7 @@
     strictBinaryOperands="true"
     totallyTyped="true"
     showInfoInSummary="false"
-    phpVersion="8.3"
+    phpVersion="8.1"
 >
     <projectFiles>
         <directory name="src"/>
@@ -27,4 +27,8 @@
     <plugins>
         <pluginClass class="Psalm\PhpUnitPlugin\Plugin"/>
     </plugins>
+
+    <issueHandlers>
+        <MissingOverrideAttribute errorLevel="suppress"/>
+    </issueHandlers>
 </psalm>

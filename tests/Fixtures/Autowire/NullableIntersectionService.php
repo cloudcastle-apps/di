@@ -10,7 +10,7 @@ use Iterator;
 /**
  * Сервис с nullable intersection-типом.
  */
-final readonly class NullableIntersectionService
+final class NullableIntersectionService
 {
     public function __construct(
         public (Iterator&Countable)|null $storage = null,

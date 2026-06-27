@@ -16,10 +16,10 @@ use ReflectionType;
 /**
  * Разрешает intersection-типы параметров конструктора и свойств.
  */
-final readonly class IntersectionTypeResolver
+final class IntersectionTypeResolver
 {
     public function __construct(
-        private ClassDependencyResolver $classResolver,
+        private readonly ClassDependencyResolver $classResolver,
     ) {
     }
 
