@@ -185,6 +185,8 @@
         "psalm": "psalm --no-cache --no-progress",
         "rector": "rector process --dry-run",
         "rector-fix": "rector process",
+        "sync-issue-views": "python3 tools/sync-github-issue-views.py",
+        "sync-issue-views:recreate": "python3 tools/sync-github-issue-views.py --recreate",
         "test": [
             "@test:unit",
             "@test:integration",

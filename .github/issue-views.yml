@@ -1,0 +1,59 @@
+# Saved views для страницы Issues → Views (cloudcastle-apps/di).
+# Синхронизация: composer sync-issue-views (нужен GITHUB_COOKIE из браузера).
+repository: cloudcastle-apps/di
+repository_id: R_kgDOTFUbXw
+
+views:
+  - name: v2.0 roadmap
+    description: Задачи major-релиза v2.0
+    icon: MILESTONE
+    color: BLUE
+    query: 'is:issue is:open milestone:"v2.0"'
+
+  - name: Backlog
+    description: Идеи без фиксированного релиза
+    icon: INBOX
+    color: GRAY
+    query: 'is:issue is:open milestone:"Backlog"'
+
+  - name: Bugs
+    description: Открытые дефекты
+    icon: BUG
+    color: RED
+    query: 'is:issue is:open label:bug'
+
+  - name: Good first issue
+    description: Задачи для новичков
+    icon: STAR
+    color: GREEN
+    query: 'is:issue is:open label:"good first issue"'
+
+  - name: Roadmap
+    description: Мета-задачи и планирование
+    icon: PROJECT
+    color: PURPLE
+    query: 'is:issue is:open label:roadmap'
+
+  - name: Needs triage
+    description: Без исполнителя и milestone
+    icon: QUESTION
+    color: YELLOW
+    query: 'is:issue is:open no:assignee no:milestone'
+
+  - name: Dependencies
+    description: Обновления зависимостей (Dependabot)
+    icon: PACKAGE
+    color: GRAY
+    query: 'is:issue is:open label:dependencies'
+
+  - name: Area — configuration
+    description: ContainerConfigurator, loaders, merger
+    icon: GEAR
+    color: PURPLE
+    query: 'is:issue is:open label:"area:configuration"'
+
+  - name: Area — container
+    description: Container, tags, decorators
+    icon: REPO
+    color: BLUE
+    query: 'is:issue is:open label:"area:container"'
