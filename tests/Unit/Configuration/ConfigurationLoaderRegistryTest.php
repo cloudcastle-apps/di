@@ -50,4 +50,12 @@ final class ConfigurationLoaderRegistryTest extends TestCase
 
         self::assertIsArray($config['services']);
     }
+
+    public function testLoaderRegistryUsesDefaultLoadersWhenNull(): void
+    {
+        $registry = new ConfigurationLoaderRegistry();
+        $config = $registry->load(\dirname(__DIR__, 2) . '/Fixtures/Config/base.php');
+
+        self::assertIsArray($config['services'] ?? null);
+    }
 }

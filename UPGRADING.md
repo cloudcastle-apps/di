@@ -138,13 +138,36 @@ composer update cloudcastle/di
 
 ## 1.x → 2.0 (будущее)
 
-Major-версия будет описана здесь и в [CHANGELOG.md](CHANGELOG.md) до выхода релиза.
+Major **v2.0** — breaking changes и enterprise-parity (compiled container, contextual binding, scopes). Полный список — в [issue #17](https://github.com/cloudcastle-apps/di/issues/17) и [CHANGELOG.md](CHANGELOG.md) перед релизом.
 
-Планируется заранее:
+### Планируемые breaking changes (черновик)
 
-- описать breaking changes;
-- указать минимальную версию PHP;
-- привести примеры миграции типичных сценариев.
+| Область | Изменение | Миграция |
+|---------|-----------|----------|
+| Минимальная версия PHP | Поднятие до **8.4+** (ориентир) | Обновить `composer.json`, CI и Docker-образы |
+| Deprecated API | Удаление устаревших alias/методов, если появятся в 1.x | Заменить на актуальные из UPGRADING 1.x |
+| Конфигурация | Возможное ужесточение схемы YAML/JSON/XML (обязательные ключи, типы) | Прогнать `configure()` в тестах, сверить с wiki Configuration |
+| Autowiring | Изменение порядка разрешения или opt-in по умолчанию | Явно вызывать `enableAutowiring()` / флаги в config |
+| Compiled container (#24) | Опциональный `dump()` → PHP-класс вместо reflection на hot path | Генерировать compiled-контейнер в build-step |
+| Contextual binding (#25) | Новый API `when()->needs()->give()` | Перенести «магические» bind из фабрик в declarative config |
+| Scopes (#33) | request / transient как first-class | Не полагаться на singleton для request-scoped сервисов |
+
+### Чек-лист перед переходом на 2.0
+
+1. Зафиксировать версию **1.6.x** в production; прочитать release notes 2.0 RC.
+2. `composer update cloudcastle/di` на staging; прогнать полный test-suite и smoke-тесты composition root.
+3. Проверить: `freeze()` в bootstrap, отсутствие `set()` после freeze, `ContainerRegistry::reset()` в PHPUnit.
+4. Заменить удалённые API по таблице в release notes (будет дополнена в RC).
+5. При использовании compiled container — добавить шаг сборки в CI/deploy.
+
+### ADR (Architecture Decision Records)
+
+Решения по v2.0 фиксируются в GitHub Discussions / Issues до появления каталога `docs/adr/`:
+
+- **Compiled container** — [#24](https://github.com/cloudcastle-apps/di/issues/24)
+- **Contextual binding** — [#25](https://github.com/cloudcastle-apps/di/issues/25)
+- **Scopes** — [#33](https://github.com/cloudcastle-apps/di/issues/33)
+- **Breaking policy** — [#17](https://github.com/cloudcastle-apps/di/issues/17)
 
 Следите за [Discussions → Ideas](https://github.com/cloudcastle-apps/di/discussions/categories/ideas) и [Releases](https://github.com/cloudcastle-apps/di/releases).
 

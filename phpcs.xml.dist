@@ -15,6 +15,7 @@
     <rule ref="PSR12"/>
 
     <exclude-pattern>*/MultiScanPair.php</exclude-pattern>
+    <exclude-pattern>*/MixedScanProgression.php</exclude-pattern>
 
     <rule ref="Generic.Files.LineLength">
         <properties>

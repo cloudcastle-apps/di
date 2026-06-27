@@ -34,6 +34,15 @@ final class ContainerAliasTest extends TestCase
         self::assertTrue($container->hasDefinition('alias'));
     }
 
+    public function testHasReturnsTrueForAliasWhenTargetIsMissing(): void
+    {
+        $container = new Container();
+        $container->alias('alias', 'missing.service');
+
+        self::assertTrue($container->has('alias'));
+        self::assertFalse($container->has('missing.service'));
+    }
+
     public function testAliasChainResolvesToFinalTarget(): void
     {
         $clock = new Clock();

@@ -8,6 +8,7 @@ use CloudCastle\DI\ClassScanner;
 use CloudCastle\DI\Exception\ContainerException;
 use CloudCastle\DI\Tests\Fixtures\Autowire\AbstractWorker;
 use CloudCastle\DI\Tests\Fixtures\Autowire\Clock;
+use CloudCastle\DI\Tests\Fixtures\Autowire\Scan\MixedScanConcreteNext;
 use CloudCastle\DI\Tests\Fixtures\Autowire\Scan\MultiScanAlpha;
 use CloudCastle\DI\Tests\Fixtures\Autowire\Scan\MultiScanBeta;
 use CloudCastle\DI\Tests\Fixtures\Autowire\Scan\ScannedService;
@@ -92,7 +93,7 @@ final class ClassScannerTest extends TestCase
             );
 
             self::assertContains(ScannedService::class, $classNames);
-            self::assertCount(4, $classNames);
+            self::assertCount(5, $classNames);
         } finally {
             unlink($emptyFile);
         }
@@ -127,6 +128,7 @@ final class ClassScannerTest extends TestCase
 
         self::assertEqualsCanonicalizing(
             [
+                MixedScanConcreteNext::class,
                 ScannedService::class,
                 SpacedNamespaceService::class,
                 MultiScanAlpha::class,

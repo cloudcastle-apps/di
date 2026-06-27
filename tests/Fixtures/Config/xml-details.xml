@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<container priority="25">
+    <scan>
+        <directory path="/app/src" namespace="App\Domain"/>
+    </scan>
+    <bind>
+        <binding abstract="contract.logger" concrete="CloudCastle\DI\Tests\Fixtures\Autowire\FileLogger" priority="10"/>
+    </bind>
+    <aliases>
+        <alias name="logger" target="contract.logger" priority="5"/>
+    </aliases>
+    <autowire>
+        <class name=""/>
+        <class>CloudCastle\DI\Tests\Fixtures\Autowire\Clock</class>
+    </autowire>
+    <services>
+        <service id="app.label" priority="50">from-xml-scalar</service>
+        <service id="app.service" class="CloudCastle\DI\Tests\Fixtures\Autowire\FileLogger" lazy="false"/>
+    </services>
+</container>

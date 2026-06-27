@@ -90,6 +90,9 @@ jobs:
       - name: Tests performance
         run: composer test:performance
 
+      - name: Benchmark regression check
+        run: composer benchmark-check
+
       - name: Tests coverage
         run: composer test:coverage
 

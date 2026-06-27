@@ -14,6 +14,16 @@ use stdClass;
 #[CoversClass(TaggedServiceLocator::class)]
 final class TaggedServiceLocatorTest extends TestCase
 {
+    public function testLocatorHasRequiresRegisteredDefinition(): void
+    {
+        $container = new Container();
+        $container->tag('orphan', 'handlers');
+
+        $locator = $container->getTaggedLocator('handlers');
+
+        self::assertFalse($locator->has('orphan'));
+    }
+
     public function testLocatorGetReturnsTaggedService(): void
     {
         $container = new Container();

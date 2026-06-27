@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace CloudCastle\DI\Tests\Unit;
 
 use CloudCastle\DI\Container;
+use CloudCastle\DI\Tests\Fixtures\Autowire\AbstractWorker;
 use CloudCastle\DI\Tests\Fixtures\Autowire\FileLogger;
 use CloudCastle\DI\Tests\Fixtures\Autowire\LoggerInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -32,6 +33,15 @@ final class ContainerBindTest extends TestCase
         $container->bind('alias', 'app.service');
 
         self::assertSame($service, $container->get('alias'));
+    }
+
+    public function testBindThrowsWhenConcreteClassIsNotInstantiable(): void
+    {
+        $container = new Container();
+
+        $this->expectException(\CloudCastle\DI\Exception\ContainerException::class);
+
+        $container->bind('worker', AbstractWorker::class);
     }
 
     public function testBindThrowsWhenConcreteIsUnknown(): void

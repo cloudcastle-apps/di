@@ -90,7 +90,8 @@
             "CloudCastle\\DI\\Tests\\": "tests/"
         },
         "classmap": [
-            "tests/Fixtures/Autowire/Scan/MultiScanPair.php"
+            "tests/Fixtures/Autowire/Scan/MultiScanPair.php",
+            "tests/Fixtures/Autowire/Scan/MixedScanProgression.php"
         ]
     },
     "config": {
@@ -120,6 +121,7 @@
             "@phpstan",
             "@psalm"
         ],
+        "benchmark-check": "@php tools/benchmark-report.php --check --tolerance=1.5",
         "benchmark-report": "@php tools/benchmark-report.php --markdown",
         "check": [
             "@lint",
@@ -204,6 +206,7 @@
     },
     "scripts-descriptions": {
         "analyse": "Статический анализ: PHPStan + Psalm",
+        "benchmark-check": "Проверка бенчмарков на регрессию (порог ×1.5 для CI)",
         "benchmark-report": "Markdown-отчёт фактических времён бенчмарков",
         "check": "Полный набор проверок качества перед коммитом",
         "ci": "Полный CI-пайплайн: meta → linters → static-analysis → tests",

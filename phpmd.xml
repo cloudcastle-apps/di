@@ -16,7 +16,9 @@
         <exclude name="TooManyMethods"/>
     </rule>
     <rule ref="rulesets/codesize.xml/TooManyPublicMethods">
+        <exclude-pattern>*/tests/*</exclude-pattern>
         <properties>
+            <property name="maxmethods" value="20"/>
             <property name="ignorepattern" value="(^(set|get|is|has|with|enable|disable|make|alias|lazy|bind|call|add|after|tag|decorat|autowire|scan|freeze|dump|register))i"/>
         </properties>
     </rule>

@@ -267,8 +267,8 @@ final class XmlConfigurationLoader implements ConfigurationLoaderInterface
         foreach ($flags as $flag) {
             $value = $this->readOptionalBoolAttribute($autowiring, $flag);
 
-            if ($value !== null) {
-                $result[$flag] = $value;
+            if ($value === true) {
+                $result[$flag] = true;
             }
         }
 
