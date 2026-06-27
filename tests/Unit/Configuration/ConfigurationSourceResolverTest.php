@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace CloudCastle\DI\Tests\Unit\Configuration;
 
+use CloudCastle\DI\Configuration\ConfigurationDirectoryScan;
 use CloudCastle\DI\Configuration\ConfigurationDirectorySource;
 use CloudCastle\DI\Configuration\ConfigurationFilesSource;
 use CloudCastle\DI\Configuration\ConfigurationLoaderRegistry;
@@ -45,7 +46,7 @@ final class ConfigurationSourceResolverTest extends TestCase
     public function testResolveExpandsConfigurationDirectorySourceRecursively(): void
     {
         $layers = (new ConfigurationSourceResolver(new ConfigurationLoaderRegistry()))->resolve([
-            new ConfigurationDirectorySource($this->fixturesDirectory . '/nested', recursive: true),
+            new ConfigurationDirectorySource($this->fixturesDirectory . '/nested', scan: ConfigurationDirectoryScan::Recursive),
         ]);
 
         self::assertCount(2, $layers);

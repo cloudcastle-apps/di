@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace CloudCastle\DI\Tests\Unit\Configuration;
 
+use CloudCastle\DI\Configuration\ConfigurationDirectoryScan;
 use CloudCastle\DI\Configuration\ConfigurationDirectorySource;
 use CloudCastle\DI\Configuration\ConfigurationFilesSource;
 use CloudCastle\DI\Configuration\ConfigurationMerger;
@@ -158,7 +159,7 @@ final class ContainerConfiguratorTest extends TestCase
         $container = new Container();
         (new ContainerConfigurator())->configure($container, [
             new ConfigurationDirectorySource($this->fixturesDirectory . '/layers'),
-            new ConfigurationDirectorySource($this->fixturesDirectory . '/nested', recursive: true),
+            new ConfigurationDirectorySource($this->fixturesDirectory . '/nested', scan: ConfigurationDirectoryScan::Recursive),
         ]);
 
         self::assertSame('nested-root', $container->get('app.mode'));

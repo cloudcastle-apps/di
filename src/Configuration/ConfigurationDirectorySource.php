@@ -14,12 +14,12 @@ final readonly class ConfigurationDirectorySource
     /**
      * @param string $directory Абсолютный или относительный путь к каталогу
      * @param int|null $priority Приоритет слоя для каждого файла каталога; `null` — порядок в списке источников
-     * @param bool $recursive Обход вложенных каталогов
+     * @param ConfigurationDirectoryScan $scan Режим обхода каталога
      */
     public function __construct(
         public string $directory,
         public ?int $priority = null,
-        public bool $recursive = false,
+        public ConfigurationDirectoryScan $scan = ConfigurationDirectoryScan::Flat,
     ) {
     }
 }

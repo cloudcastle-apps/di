@@ -108,7 +108,7 @@ final class ConfigurationSourceResolver
         /** @var list<array{path: string, filePriority: int|null}> $resolved */
         $resolved = [];
 
-        foreach ($this->collectFiles($source->directory, $source->recursive) as $path) {
+        foreach ($this->collectFiles($source->directory, $source->scan) as $path) {
             $resolved[] = ['path' => $path, 'filePriority' => $source->priority];
         }
 
@@ -118,21 +118,19 @@ final class ConfigurationSourceResolver
     /**
      * @return list<string>
      */
-    private function collectFiles(string $directory, bool $recursive): array
+    private function collectFiles(string $directory, ConfigurationDirectoryScan $scan): array
     {
         /** @var list<string> $paths */
         $paths = [];
 
-        if ($recursive) {
-            $iterator = new RecursiveIteratorIterator(
+        $iterator = $scan === ConfigurationDirectoryScan::Recursive
+            ? new RecursiveIteratorIterator(
                 new RecursiveDirectoryIterator(
                     $directory,
                     FilesystemIterator::SKIP_DOTS | FilesystemIterator::FOLLOW_SYMLINKS,
                 ),
-            );
-        } else {
-            $iterator = new FilesystemIterator($directory, FilesystemIterator::SKIP_DOTS);
-        }
+            )
+            : new FilesystemIterator($directory, FilesystemIterator::SKIP_DOTS);
 
         foreach ($iterator as $file) {
             if (!$file instanceof SplFileInfo || !$file->isFile()) {
