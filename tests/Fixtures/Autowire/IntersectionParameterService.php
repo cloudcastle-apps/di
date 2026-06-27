@@ -10,7 +10,7 @@ use Iterator;
 /**
  * Сервис с intersection-типом (Iterator&Countable).
  */
-final readonly class IntersectionParameterService
+final class IntersectionParameterService
 {
     public function __construct(
         public Iterator&Countable $storage,

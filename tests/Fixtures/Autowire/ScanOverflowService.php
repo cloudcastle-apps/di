@@ -7,6 +7,6 @@ namespace CloudCastle\DI\Tests\Fixtures\Autowire;
 /**
  * Класс в namespace, похожем на Scan, но не входящий в префикс Scan\.
  */
-final readonly class ScanOverflowService
+final class ScanOverflowService
 {
 }

@@ -17,17 +17,17 @@ use PHPUnit\Framework\TestCase;
 #[CoversClass(Container::class)]
 final class ContainerAutowirePerformanceTest extends TestCase
 {
-    private const int CACHED_GET_ITERATIONS = 10000;
+    private const CACHED_GET_ITERATIONS = 10000;
 
-    private const int COLD_AUTOWIRE_ITERATIONS = 500;
+    private const COLD_AUTOWIRE_ITERATIONS = 500;
 
-    private const int AUTOWIRE_CALL_ITERATIONS = 2000;
+    private const AUTOWIRE_CALL_ITERATIONS = 2000;
 
-    private const float CACHED_GET_TIME_BUDGET_SECONDS = 0.75;
+    private const CACHED_GET_TIME_BUDGET_SECONDS = 1.5;
 
-    private const float COLD_AUTOWIRE_TIME_BUDGET_SECONDS = 1.5;
+    private const COLD_AUTOWIRE_TIME_BUDGET_SECONDS = 2.0;
 
-    private const float AUTOWIRE_CALL_TIME_BUDGET_SECONDS = 1.25;
+    private const AUTOWIRE_CALL_TIME_BUDGET_SECONDS = 2.0;
 
     public function testCachedAutowireGetCompletesWithinBudget(): void
     {

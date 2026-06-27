@@ -7,7 +7,7 @@ namespace CloudCastle\DI\Tests\Fixtures\Autowire;
 /**
  * Сервис с union null|Clock без регистрации Clock.
  */
-final readonly class NullOrClockService
+final class NullOrClockService
 {
     public function __construct(
         public null|Clock $clock,

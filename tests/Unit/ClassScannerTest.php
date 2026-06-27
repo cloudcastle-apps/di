@@ -15,7 +15,6 @@ use CloudCastle\DI\Tests\Fixtures\Autowire\Scan\ScannedService;
 use CloudCastle\DI\Tests\Fixtures\Autowire\Scan\SpacedNamespaceService;
 use CloudCastle\DI\Tests\Fixtures\Autowire\ScanOverflowService;
 use CloudCastle\DI\Tests\Fixtures\Autowire\SimpleService;
-use Override;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
@@ -27,7 +26,6 @@ final class ClassScannerTest extends TestCase
 {
     private string $fixturesDirectory;
 
-    #[Override]
     protected function setUp(): void
     {
         $this->fixturesDirectory = \dirname(__DIR__) . '/Fixtures/Autowire';

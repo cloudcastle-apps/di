@@ -7,7 +7,7 @@ namespace CloudCastle\DI\Tests\Fixtures\Autowire;
 /**
  * Сервис с union-типом в конструкторе.
  */
-final readonly class UnionParameterService
+final class UnionParameterService
 {
     public function __construct(
         public Clock|null $clock,

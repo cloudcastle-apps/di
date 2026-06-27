@@ -7,7 +7,7 @@ namespace CloudCastle\DI\Tests\Fixtures\Autowire;
 /**
  * Сервис с nullable-типом без явной регистрации зависимости.
  */
-final readonly class NullableWithoutDefinitionService
+final class NullableWithoutDefinitionService
 {
     public function __construct(
         public ?Clock $clock,

@@ -9,7 +9,7 @@ use CloudCastle\DI\Contract\ServiceIdAttribute;
 /**
  * Заглушка без #[\Attribute] для негативного теста регистрации.
  */
-final readonly class PlainServiceIdAttributeStub implements ServiceIdAttribute
+final class PlainServiceIdAttributeStub implements ServiceIdAttribute
 {
     /**
      * {@inheritDoc}

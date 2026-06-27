@@ -19,7 +19,7 @@ return RectorConfig::configure()
             __DIR__ . '/tests/Unit/CallableInvokerTest.php',
         ],
     ])
-    ->withPhpSets(php83: true)
+    ->withPhpSets(php81: true)
     ->withPreparedSets(
         deadCode: true,
         codeQuality: true,
@@ -29,7 +29,7 @@ return RectorConfig::configure()
         earlyReturn: true,
     )
     ->withSets([
-        LevelSetList::UP_TO_PHP_83,
+        LevelSetList::UP_TO_PHP_81,
         SetList::DEAD_CODE,
         SetList::CODE_QUALITY,
         SetList::TYPE_DECLARATION,

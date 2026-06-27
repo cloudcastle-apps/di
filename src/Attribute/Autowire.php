@@ -6,7 +6,6 @@ namespace CloudCastle\DI\Attribute;
 
 use Attribute;
 use CloudCastle\DI\Contract\ServiceIdAttribute;
-use Override;
 
 /**
  * Явно задаёт сервис контейнера для параметра конструктора, свойства или метода (аналог {@see Inject}).
@@ -16,7 +15,7 @@ use Override;
  * @psalm-suppress PossiblyUnusedMethod Конструктор вызывается через reflection attributes
  */
 #[Attribute(Attribute::TARGET_PARAMETER | Attribute::TARGET_PROPERTY | Attribute::TARGET_METHOD)]
-final readonly class Autowire implements ServiceIdAttribute
+final class Autowire implements ServiceIdAttribute
 {
     /**
      * @param string|null $service Идентификатор сервиса; `null` — не переопределять стратегию
@@ -24,14 +23,13 @@ final readonly class Autowire implements ServiceIdAttribute
      * @psalm-suppress PossiblyUnusedMethod
      */
     public function __construct(
-        public ?string $service = null,
+        public readonly ?string $service = null,
     ) {
     }
 
     /**
      * {@inheritDoc}
      */
-    #[Override]
     public function serviceId(): ?string
     {
         return $this->service;

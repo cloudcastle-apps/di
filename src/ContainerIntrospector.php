@@ -7,7 +7,7 @@ namespace CloudCastle\DI;
 /**
  * Снимок и список id определений контейнера (без resolve сервисов).
  */
-final readonly class ContainerIntrospector
+final class ContainerIntrospector
 {
     /**
      * @param array<string, mixed> $definitions
@@ -24,14 +24,14 @@ final readonly class ContainerIntrospector
      * } $autowiringFlags
      */
     public function __construct(
-        private bool $frozen,
-        private array $definitions,
-        private array $autowired,
-        private array $aliases,
-        private array $tags,
-        private array $decorators,
-        private array $resolved,
-        private array $autowiringFlags,
+        private readonly bool $frozen,
+        private readonly array $definitions,
+        private readonly array $autowired,
+        private readonly array $aliases,
+        private readonly array $tags,
+        private readonly array $decorators,
+        private readonly array $resolved,
+        private readonly array $autowiringFlags,
     ) {
     }
 

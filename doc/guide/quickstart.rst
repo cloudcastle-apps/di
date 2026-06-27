@@ -4,15 +4,18 @@
 Требования
 ----------
 
-- PHP ^8.3
+- PHP ^8.1 (CI: 8.1–8.5)
 - ``psr/container`` ^2.0 (подтягивается автоматически)
+- Опционально: ``ext-yaml`` — YAML-конфигурация
+
+Полное руководство — `Wiki: Quick start <https://github.com/cloudcastle-apps/di/wiki/Quick-start>`_.
 
 Установка
 ---------
 
 .. code-block:: bash
 
-   composer require cloudcastle/di
+   composer require cloudcastle/di:^1.8
 
 Минимальный пример
 ------------------
@@ -26,8 +29,9 @@
    use CloudCastle\DI\Container;
 
    $container = new Container();
-   $container->set('logger', new Psr\Log\NullLogger());
-   $logger = $container->get('logger');
+   $container->enableAutowiring();
+   $container->bind(LoggerInterface::class, FileLogger::class);
+   $service = $container->get(App\Service\UserService::class);
 
 Autowiring
 ----------
@@ -58,6 +62,20 @@ Property и method injection
 
 Подробнее — :doc:`class-scanning`.
 
+Конфигурация из файлов
+----------------------
+
+.. code-block:: php
+
+   use CloudCastle\DI\Configuration\ContainerConfigurator;
+
+   (new ContainerConfigurator())->configure($container, [
+       __DIR__ . '/config/services.php',
+   ]);
+   $container->freeze();
+
+См. :doc:`configuration`.
+
 Прототипы, alias и lazy
 -----------------------
 
@@ -82,6 +100,7 @@ Property и method injection
 Дальше
 ------
 
+* :doc:`comparison` — таблица vs 6 аналогов (PHP-DI, Symfony, Pimple, Laravel, League, Nette)
 * :doc:`autowiring`
 * :doc:`configuration`
 * :doc:`class-scanning`

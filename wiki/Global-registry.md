@@ -1,4 +1,11 @@
-# Глобальный реестр
+<p align="center">
+  <img src="https://raw.githubusercontent.com/cloudcastle-apps/di/main/assets/logo.svg" alt="CloudCastle DI" width="64">
+</p>
+
+# 🌍 Глобальный реестр
+
+> [← Главная](Home) · [Сравнение](Comparison) · [Quick start](Quick-start)
+
 
 `CloudCastle\DI\ContainerRegistry` — статический singleton-реестр **одного** контейнера приложения.
 

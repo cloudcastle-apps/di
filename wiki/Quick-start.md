@@ -1,17 +1,35 @@
-# Быстрый старт
+<p align="center">
+  <img src="https://raw.githubusercontent.com/cloudcastle-apps/di/main/assets/logo.svg" alt="CloudCastle DI" width="80">
+</p>
 
-## Требования
+# ⚡ Быстрый старт
 
-- PHP ^8.3
-- `psr/container` ^2.0 (подтягивается автоматически)
+> От нуля до работающего контейнера за несколько минут.
 
-## Установка
+---
+
+## 📋 Требования
+
+| | |
+|---|---|
+| **PHP** | ^8.1 (CI: 8.1–8.5) |
+| **Composer** | 2.x |
+| **Runtime** | `psr/container` ^2.0 (подтягивается автоматически) |
+| **Опционально** | `ext-yaml` — для YAML-конфигурации |
+
+---
+
+## 📦 Установка
 
 ```bash
-composer require cloudcastle/di
+composer require cloudcastle/di:^1.8
 ```
 
-## Минимальный пример (явная регистрация)
+---
+
+## 1️⃣ Явная регистрация (PSR-11)
+
+Самый простой путь — `set()` и `get()`:
 
 ```php
 <?php
@@ -24,36 +42,40 @@ $container = new Container();
 
 $container->set('config.timezone', 'Europe/Moscow');
 $container->set('logger', new Psr\Log\NullLogger());
+$container->set(
+    'repository',
+    static fn (Container $c) => new UserRepository($c->get('logger')),
+);
 
-$timezone = $container->get('config.timezone');
 $logger = $container->get('logger');
 ```
 
-## Autowiring
+| Метод | Назначение |
+|-------|------------|
+| `set($id, $instance\|callable)` | Регистрация сервиса или фабрики |
+| `get($id)` | Получение (singleton-кэш для фабрик) |
+| `has($id)` | PSR-11: доступен ли сервис |
+| `hasDefinition($id)` | Есть регистрация **без** создания экземпляра |
+
+---
+
+## 2️⃣ Autowiring
 
 ```php
-use CloudCastle\DI\Container;
-
 $container = new Container();
 $container->enableAutowiring();
 
-// id = полное имя класса
+// id = FQCN класса; зависимости — по типам конструктора
 $userService = $container->get(App\Service\UserService::class);
 ```
-
-Класс `UserService` создаётся автоматически; зависимости разрешаются по типам, attributes и (опционально) по имени. Подробнее — [Autowiring](Autowiring).
 
 ### Property и method injection
 
 ```php
-use CloudCastle\DI\Attribute\Inject;
-
-$container->set('app.metrics', $metrics);
-$container->enableAutowiring();
 $container->enablePropertyAutowiring(); // typed properties
-$container->enableMethodAutowiring();   // setter без attribute
+$container->enableMethodAutowiring();   // setter / inject-методы
 
-// #[Inject] на свойстве или inject-методе — без enableProperty/MethodAutowiring
+// #[Inject] на свойстве или методе — без enableProperty/MethodAutowiring
 $service = $container->get(App\Service\ReportService::class);
 ```
 
@@ -65,98 +87,85 @@ use CloudCastle\DI\Attribute\Inject;
 $container->set('app.clock', $clock);
 $container->set('logger', $logger);
 $container->enableAutowiring();
-$container->enableParameterNameAutowiring();
+$container->enableParameterNameAutowiring(); // $logger → get('logger')
 
-// #[Inject('app.clock')] или параметр $logger → get('logger')
+// #[Inject('app.clock')] на параметре конструктора
 $service = $container->get(App\Service\ReportService::class);
 ```
 
-## Сканирование каталога
+👉 [Autowiring](Autowiring) · [Сканирование](Class-scanning)
+
+---
+
+## 3️⃣ Сканирование каталога
 
 ```php
 $container->scan(__DIR__ . '/Services', 'App\\Services\\');
+// instantiable-классы с namespace App\Services\ — через autowire()
+// существующие set() не перезаписываются
 ```
 
-Регистрирует все instantiable-классы в каталоге с namespace `App\Services\`. Существующие `set()` не перезаписываются. Подробнее — [Сканирование классов](Class-scanning).
+---
 
-## Прототипы, alias и lazy
+## 4️⃣ Прототипы, alias и lazy
 
 ```php
-// Прототип
-$job = $container->make(Job::class);
+// Прототип — новый объект каждый раз
+$jobA = $container->make(Job::class);
+$jobB = $container->make(Job::class); // !== $jobA
 
-// Alias интерфейса
+// Alias — интерфейс → id
 $container->alias(LoggerInterface::class, 'logger');
 
-// Lazy-обёртка
+// Lazy — создание при первом getValue()
 $container->set('reports', $container->lazy(ReportGenerator::class));
 ```
 
-Подробнее — [Прототипы, alias и lazy](Prototypes-alias-lazy).
+👉 [Прототипы, alias и lazy](Prototypes-alias-lazy)
 
-## call(), bind() и afterResolving (v1.3)
+---
+
+## 5️⃣ call(), bind(), afterResolving
 
 ```php
 $container->enableAutowiring();
 
-// bind вместо autowire + alias
 $container->bind(LoggerInterface::class, FileLogger::class);
 
-// Массовая регистрация
 $container->addDefinitions([
     'config' => require __DIR__ . '/config.php',
-    'logger' => static fn () => new FileLogger(),
 ]);
 
-// Вызов с autowiring
 $container->call(static fn (OrderService $s) => $s->processPending());
 
-// Пост-обработка после первого создания
 $container->afterResolving(CacheWarmer::class, static function ($id, $w, $c): void {
     $w->warm($c->get('config'));
 });
 ```
 
-Подробнее — [call(), bind(), afterResolving](Call-bind-callbacks).
+👉 [call(), bind(), afterResolving](Call-bind-callbacks)
 
-## Теги: iterator и locator (v1.3)
+---
+
+## 6️⃣ Теги и декораторы
 
 ```php
-$container->tag('handler.a', 'handlers');
-$container->tag('handler.b', 'handlers');
-
-$ids = $container->getTaggedIds('handlers'); // без get()
+$container->tag('handler.email', 'handlers');
+$container->tag('handler.sms', 'handlers');
 
 foreach ($container->getTaggedIterator('handlers') as $handler) {
     $handler->run();
 }
 
 $locator = $container->getTaggedLocator('handlers');
-if ($locator->has('handler.a')) {
-    $locator->get('handler.a');
-}
+$handler = $locator->get('handler.email');
 ```
 
-Подробнее — [Теги и декораторы](Tags-and-decorators).
+👉 [Теги и декораторы](Tags-and-decorators)
 
-## Глобальный реестр
+---
 
-```php
-use CloudCastle\DI\Container;
-use CloudCastle\DI\ContainerRegistry;
-
-$container = new Container();
-$container->enableAutowiring();
-ContainerRegistry::set($container);
-
-$service = ContainerRegistry::get()->get(App\Service\UserService::class);
-```
-
-Подробнее — [Глобальный реестр](Global-registry).
-
-## Конфигурация из файлов (v1.5)
-
-Вместо ручного `set()` / `scan()` можно описать wiring в PHP, JSON, YAML или XML и применить через `ContainerConfigurator`:
+## 7️⃣ Конфигурация из файлов
 
 ```php
 use CloudCastle\DI\Configuration\ContainerConfigurator;
@@ -164,46 +173,22 @@ use CloudCastle\DI\Configuration\ConfigurationSource;
 
 $configurator = new ContainerConfigurator();
 $configurator->configure($container, [
-    new ConfigurationSource(__DIR__ . '/config/services.php'),
+    __DIR__ . '/config/services.php',
     new ConfigurationSource(__DIR__ . '/config/override.json', priority: 10),
 ]);
+
+$container->freeze();
 ```
 
-Подробнее — [Конфигурация из файлов](Configuration).
+Форматы: **PHP** (по умолчанию), **JSON**, **YAML** (`ext-yaml`), **XML**.
 
-## Идентификаторы сервисов
+👉 [Конфигурация](Configuration) · [Справочник параметров](Configuration-reference)
 
-Идентификаторы — произвольные строки:
+---
 
-| Стиль | Пример | Когда |
-|-------|--------|-------|
-| Произвольный ключ | `'logger'`, `'config.db'` | явный `set()` |
-| FQCN | `App\Service\Mailer::class` | autowiring, `scan()` |
+## 8️⃣ Composition root
 
-## PSR-11
-
-`CloudCastle\DI\Container` реализует:
-
-- `Psr\Container\ContainerInterface` — `get()`, `has()`;
-- `CloudCastle\DI\Contract\ContainerInterface` — `set()`, `hasDefinition()`, `make()`, `alias()`, `lazy()`, `call()`, `bind()`, `addDefinitions()`, `afterResolving()`, autowiring, tags, decorators.
-
-```php
-if ($container->has('logger')) {
-    $logger = $container->get('logger');
-}
-```
-
-`hasDefinition()` — регистрация **без** создания экземпляра:
-
-```php
-if ($container->hasDefinition('repository')) {
-    // set() или autowire() есть, get() ещё не вызывался
-}
-```
-
-## Composition root
-
-Собирайте граф зависимостей в одной точке входа (bootstrap):
+Соберите граф в **одной точке** входа:
 
 ```php
 function createContainer(): Container
@@ -211,22 +196,48 @@ function createContainer(): Container
     $container = new Container();
     $container->enableAutowiring();
     $container->scan(__DIR__ . '/../src/Application', 'App\\Application\\');
-
     $container->set(Psr\Log\LoggerInterface::class, new MonologLogger(...));
+    $container->freeze();
 
     return $container;
 }
 ```
 
-В домен передавайте готовые объекты через конструктор — см. [Анти-паттерны](Anti-patterns).
+> ⚠️ Не тяните `Container` в домен — см. [Анти-паттерны](Anti-patterns).
 
-## Дальше
+---
 
-- [Конфигурация из файлов](Configuration)
-- [call(), bind(), afterResolving](Call-bind-callbacks)
-- [Autowiring](Autowiring)
-- [Сканирование классов](Class-scanning)
-- [Теги и декораторы](Tags-and-decorators)
-- [Фабрики и singleton](Factories-and-singleton)
-- [Прототипы, alias и lazy](Prototypes-alias-lazy)
-- [Справочник API](API-reference)
+## 9️⃣ Глобальный реестр (опционально)
+
+```php
+use CloudCastle\DI\ContainerRegistry;
+
+ContainerRegistry::set($container);
+$service = ContainerRegistry::get()->get(App\Service\UserService::class);
+
+// В тестах:
+ContainerRegistry::reset();
+```
+
+👉 [Глобальный реестр](Global-registry)
+
+---
+
+## 🆔 Стили идентификаторов
+
+| Стиль | Пример | Когда |
+|-------|--------|-------|
+| Произвольный ключ | `'logger'`, `'config.db'` | явный `set()` |
+| FQCN | `App\Service\Mailer::class` | autowiring, `scan()` |
+
+---
+
+## ➡️ Дальше
+
+| Тема | Ссылка |
+|------|--------|
+| Сравнение с 6 аналогами | [Comparison](Comparison) |
+| Архитектура и схемы | [Architecture](Architecture) |
+| Полный API | [API-reference](API-reference) |
+| Примеры bootstrap | [Bootstrap](Bootstrap) |
+| FAQ | [FAQ](FAQ) |

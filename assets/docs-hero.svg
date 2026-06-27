@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="280" viewBox="0 0 1200 280" role="img" aria-label="CloudCastle DI Documentation">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f172a"/>
+      <stop offset="50%" stop-color="#1e3a5f"/>
+      <stop offset="100%" stop-color="#0ea5e9"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#38bdf8"/>
+      <stop offset="100%" stop-color="#818cf8"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="280" fill="url(#bg)" rx="16"/>
+  <circle cx="1050" cy="60" r="120" fill="#38bdf8" opacity="0.08"/>
+  <circle cx="150" cy="220" r="90" fill="#818cf8" opacity="0.1"/>
+  <text x="80" y="110" fill="#f8fafc" font-family="system-ui,Segoe UI,sans-serif" font-size="44" font-weight="700">CloudCastle DI</text>
+  <text x="80" y="155" fill="#94a3b8" font-family="system-ui,Segoe UI,sans-serif" font-size="22">PSR-11 · PHP 8.1+ · autowiring · :>=D83C@0F8O · B538</text>
+  <rect x="80" y="185" width="420" height="6" fill="url(#accent)" rx="3"/>
+  <text x="80" y="235" fill="#cbd5e1" font-family="system-ui,Segoe UI,sans-serif" font-size="16">>:C<5=B0F8O · Wiki · !@02=5=85 A 0=0;>30<8</text>
+</svg>

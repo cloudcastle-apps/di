@@ -25,6 +25,8 @@ jobs:
       fail-fast: false
       matrix:
         php-version:
+          - '8.1'
+          - '8.2'
           - '8.3'
           - '8.4'
           - '8.5'
@@ -61,7 +63,7 @@ jobs:
             ${{ runner.os }}-php-${{ matrix.php-version }}-composer-
 
       - name: Install dependencies
-        run: composer install --prefer-dist --no-progress --no-ansi
+        run: composer install --prefer-dist --no-progress --no-ansi --ignore-platform-reqs
 
       - name: PHP version
         run: php -v
@@ -88,6 +90,8 @@ jobs:
         run: composer test:load
 
       - name: Tests performance
+        env:
+          XDEBUG_MODE: off
         run: composer test:performance
 
       - name: Benchmark regression check
@@ -97,6 +101,9 @@ jobs:
         run: composer test:coverage
 
       - name: Tests mutation
+        if: matrix.php-version == '8.3'
+        env:
+          XDEBUG_MODE: off
         run: composer test:mutation
 
       - name: Documentation

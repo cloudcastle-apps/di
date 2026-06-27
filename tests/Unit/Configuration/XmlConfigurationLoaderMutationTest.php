@@ -6,7 +6,6 @@ namespace CloudCastle\DI\Tests\Unit\Configuration;
 
 use CloudCastle\DI\Configuration\Loader\XmlConfigurationLoader;
 use CloudCastle\DI\Exception\ContainerException;
-use Override;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
@@ -17,7 +16,6 @@ final class XmlConfigurationLoaderMutationTest extends TestCase
 
     private string $fixturesDirectory;
 
-    #[Override]
     protected function setUp(): void
     {
         $this->fixturesDirectory = \dirname(__DIR__, 2) . '/Fixtures/Config';

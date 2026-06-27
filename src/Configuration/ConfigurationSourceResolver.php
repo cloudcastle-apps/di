@@ -13,10 +13,10 @@ use SplFileInfo;
 /**
  * Разворачивает смешанный список источников в отдельные слои по файлам.
  */
-final readonly class ConfigurationSourceResolver
+final class ConfigurationSourceResolver
 {
     public function __construct(
-        private ConfigurationLoaderRegistry $loaderRegistry,
+        private readonly ConfigurationLoaderRegistry $loaderRegistry,
     ) {
     }
 

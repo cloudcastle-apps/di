@@ -13,7 +13,6 @@ use CloudCastle\DI\Configuration\Loader\YamlConfigurationLoader;
 use CloudCastle\DI\Container;
 use CloudCastle\DI\Tests\Fixtures\Autowire\Clock;
 use CloudCastle\DI\Tests\Fixtures\Autowire\FileLogger;
-use Override;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
@@ -24,7 +23,6 @@ final class ConfigurationApplicatorBehaviorTest extends TestCase
 {
     private string $fixturesDirectory;
 
-    #[Override]
     protected function setUp(): void
     {
         $this->fixturesDirectory = \dirname(__DIR__, 2) . '/Fixtures/Config';

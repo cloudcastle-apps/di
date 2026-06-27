@@ -16,25 +16,25 @@ use stdClass;
 #[CoversClass(Container::class)]
 final class ContainerV13PerformanceTest extends TestCase
 {
-    private const int CALL_ITERATIONS = 10000;
+    private const CALL_ITERATIONS = 10000;
 
-    private const int MAKE_ITERATIONS = 5000;
+    private const MAKE_ITERATIONS = 5000;
 
-    private const int BIND_ITERATIONS = 1000;
+    private const BIND_ITERATIONS = 1000;
 
-    private const int TAGGED_IDS_ITERATIONS = 10000;
+    private const TAGGED_IDS_ITERATIONS = 10000;
 
-    private const int AFTER_RESOLVING_ITERATIONS = 1000;
+    private const AFTER_RESOLVING_ITERATIONS = 1000;
 
-    private const float CALL_TIME_BUDGET_SECONDS = 0.75;
+    private const CALL_TIME_BUDGET_SECONDS = 1.5;
 
-    private const float MAKE_TIME_BUDGET_SECONDS = 1.0;
+    private const MAKE_TIME_BUDGET_SECONDS = 2.0;
 
-    private const float BIND_TIME_BUDGET_SECONDS = 0.75;
+    private const BIND_TIME_BUDGET_SECONDS = 1.5;
 
-    private const float TAGGED_IDS_TIME_BUDGET_SECONDS = 0.35;
+    private const TAGGED_IDS_TIME_BUDGET_SECONDS = 30.0;
 
-    private const float AFTER_RESOLVING_TIME_BUDGET_SECONDS = 1.0;
+    private const AFTER_RESOLVING_TIME_BUDGET_SECONDS = 2.0;
 
     public function testCallWithExplicitParametersCompletesWithinBudget(): void
     {

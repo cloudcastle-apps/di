@@ -20,7 +20,6 @@ use CloudCastle\DI\Tests\Fixtures\Autowire\PromotedAndPlainPropertyService;
 use CloudCastle\DI\Tests\Fixtures\Autowire\PropertyIntersectionService;
 use CloudCastle\DI\Tests\Fixtures\Autowire\SetterInjectService;
 use CloudCastle\DI\Tests\Fixtures\Autowire\StaticThrowMethodService;
-use Override;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
@@ -36,7 +35,6 @@ use ReflectionProperty;
 #[CoversClass(PropertyInjector::class)]
 final class PropertyMethodInjectionMutationTest extends TestCase
 {
-    #[Override]
     protected function tearDown(): void
     {
         ConstructCountService::$constructCount = 0;

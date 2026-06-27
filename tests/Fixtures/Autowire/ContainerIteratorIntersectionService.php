@@ -10,7 +10,7 @@ use Iterator;
 /**
  * Сервис с intersection ContainerInterface и Iterator.
  */
-final readonly class ContainerIteratorIntersectionService
+final class ContainerIteratorIntersectionService
 {
     public function __construct(
         public ContainerInterface&Iterator $dependency,

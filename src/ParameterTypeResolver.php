@@ -16,14 +16,14 @@ use ReflectionUnionType;
 /**
  * Разрешает параметры конструктора и свойства по reflection-типам.
  */
-final readonly class ParameterTypeResolver
+final class ParameterTypeResolver
 {
-    private ClassDependencyResolver $classResolver;
+    private readonly ClassDependencyResolver $classResolver;
 
-    private IntersectionTypeResolver $intersection;
+    private readonly IntersectionTypeResolver $intersection;
 
     public function __construct(
-        private ContainerInterface $container,
+        private readonly ContainerInterface $container,
     ) {
         $this->classResolver = new ClassDependencyResolver($container);
         $this->intersection = new IntersectionTypeResolver($this->classResolver);

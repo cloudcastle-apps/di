@@ -7,7 +7,7 @@ namespace CloudCastle\DI\Configuration;
 /**
  * Один загруженный слой конфигурации перед слиянием.
  */
-final readonly class ConfigurationLayer
+final class ConfigurationLayer
 {
     /**
      * @param array<string, mixed> $config Распарсенная конфигурация
@@ -16,9 +16,9 @@ final readonly class ConfigurationLayer
      *                               {@see ConfigurationDirectorySource} или {@see ConfigurationFilesSource}
      */
     public function __construct(
-        public array $config,
-        public int $order,
-        public ?int $filePriority,
+        public readonly array $config,
+        public readonly int $order,
+        public readonly ?int $filePriority,
     ) {
     }
 }

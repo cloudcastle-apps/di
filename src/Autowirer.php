@@ -13,13 +13,13 @@ use ReflectionClass;
  *
  * Порядок: конструктор → свойства → методы.
  */
-final readonly class Autowirer
+final class Autowirer
 {
-    private MemberResolver $memberResolver;
+    private readonly MemberResolver $memberResolver;
 
-    private PropertyInjector $propertyInjector;
+    private readonly PropertyInjector $propertyInjector;
 
-    private MethodInjector $methodInjector;
+    private readonly MethodInjector $methodInjector;
 
     public function __construct(
         ContainerInterface $container,

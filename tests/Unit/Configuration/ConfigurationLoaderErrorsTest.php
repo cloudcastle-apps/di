@@ -8,7 +8,6 @@ use CloudCastle\DI\Configuration\Loader\JsonConfigurationLoader;
 use CloudCastle\DI\Configuration\Loader\PhpConfigurationLoader;
 use CloudCastle\DI\Configuration\Loader\XmlConfigurationLoader;
 use CloudCastle\DI\Exception\ContainerException;
-use Override;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
@@ -19,7 +18,6 @@ final class ConfigurationLoaderErrorsTest extends TestCase
 {
     private string $fixturesDirectory;
 
-    #[Override]
     protected function setUp(): void
     {
         $this->fixturesDirectory = \dirname(__DIR__, 2) . '/Fixtures/Config';

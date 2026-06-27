@@ -19,9 +19,9 @@ use stdClass;
 #[CoversClass(TaggedServiceLocator::class)]
 final class ContainerTaggedLoadTest extends TestCase
 {
-    private const int TAGGED_COUNT = 1000;
+    private const TAGGED_COUNT = 1000;
 
-    private const float TIME_BUDGET_SECONDS = 2.5;
+    private const TIME_BUDGET_SECONDS = 2.5;
 
     public function testGetTaggedIdsReturnsManyIdsWithoutResolution(): void
     {

@@ -9,7 +9,7 @@ namespace CloudCastle\DI\Configuration;
  *
  * Файлы загружаются в лексикографическом порядке пути. Неподдерживаемые расширения пропускаются.
  */
-final readonly class ConfigurationDirectorySource
+final class ConfigurationDirectorySource
 {
     /**
      * @param string $directory Абсолютный или относительный путь к каталогу
@@ -17,9 +17,9 @@ final readonly class ConfigurationDirectorySource
      * @param ConfigurationDirectoryScan $scan Режим обхода каталога
      */
     public function __construct(
-        public string $directory,
-        public ?int $priority = null,
-        public ConfigurationDirectoryScan $scan = ConfigurationDirectoryScan::Flat,
+        public readonly string $directory,
+        public readonly ?int $priority = null,
+        public readonly ConfigurationDirectoryScan $scan = ConfigurationDirectoryScan::Flat,
     ) {
     }
 }

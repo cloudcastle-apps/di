@@ -10,7 +10,6 @@ use CloudCastle\DI\Tests\Fixtures\Autowire\Scan\MultiScanAlpha;
 use CloudCastle\DI\Tests\Fixtures\Autowire\Scan\MultiScanBeta;
 use CloudCastle\DI\Tests\Fixtures\Autowire\Scan\ScannedService;
 use CloudCastle\DI\Tests\Fixtures\Autowire\Scan\ScannedStatus;
-use Override;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
@@ -19,7 +18,6 @@ final class ClassScannerExtendedTest extends TestCase
 {
     private string $scanDirectory;
 
-    #[Override]
     protected function setUp(): void
     {
         $this->scanDirectory = \dirname(__DIR__) . '/Fixtures/Autowire/Scan';

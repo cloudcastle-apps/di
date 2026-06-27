@@ -14,7 +14,7 @@ namespace CloudCastle\DI\Configuration;
  */
 final class ConfigurationMerger
 {
-    private const array MERGE_SECTIONS = [
+    private const MERGE_SECTIONS = [
         'services',
         'aliases',
         'bind',

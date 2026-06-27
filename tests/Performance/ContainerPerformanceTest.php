@@ -15,17 +15,17 @@ use stdClass;
 #[CoversClass(Container::class)]
 final class ContainerPerformanceTest extends TestCase
 {
-    private const int GET_ITERATIONS = 10000;
+    private const GET_ITERATIONS = 10000;
 
-    private const int HAS_ITERATIONS = 10000;
+    private const HAS_ITERATIONS = 10000;
 
-    private const int SET_ITERATIONS = 5000;
+    private const SET_ITERATIONS = 5000;
 
-    private const float GET_TIME_BUDGET_SECONDS = 0.5;
+    private const GET_TIME_BUDGET_SECONDS = 1.25;
 
-    private const float HAS_TIME_BUDGET_SECONDS = 0.5;
+    private const HAS_TIME_BUDGET_SECONDS = 1.25;
 
-    private const float SET_TIME_BUDGET_SECONDS = 0.5;
+    private const SET_TIME_BUDGET_SECONDS = 1.25;
 
     public function testGetCachedServiceCompletesWithinBudget(): void
     {

@@ -7,7 +7,6 @@ namespace CloudCastle\DI;
 use CloudCastle\DI\Contract\ContainerInterface;
 use CloudCastle\DI\Exception\ContainerException;
 use CloudCastle\DI\Exception\NotFoundException;
-use Override;
 use ReflectionClass;
 use Throwable;
 
@@ -101,7 +100,6 @@ final class Container implements ContainerInterface
      *
      * @return mixed Экземпляр сервиса или зарегистрированное скалярное значение
      */
-    #[Override]
     public function get(string $id): mixed
     {
         return $this->resolveService($this->aliasResolver->resolve($id), singleton: true);
@@ -110,7 +108,6 @@ final class Container implements ContainerInterface
     /**
      * {@inheritDoc}
      */
-    #[Override]
     public function make(string $id): mixed
     {
         return $this->resolveService($this->aliasResolver->resolve($id), singleton: false);
@@ -119,7 +116,6 @@ final class Container implements ContainerInterface
     /**
      * {@inheritDoc}
      */
-    #[Override]
     public function alias(string $alias, string $targetId): void
     {
         $this->assertMutable();
@@ -129,7 +125,6 @@ final class Container implements ContainerInterface
     /**
      * {@inheritDoc}
      */
-    #[Override]
     public function lazy(string $serviceId): LazyService
     {
         return new LazyService($this, $serviceId);
@@ -138,7 +133,6 @@ final class Container implements ContainerInterface
     /**
      * {@inheritDoc}
      */
-    #[Override]
     public function addDefinitions(array $definitions): void
     {
         /** @psalm-suppress MixedAssignment */
@@ -150,7 +144,6 @@ final class Container implements ContainerInterface
     /**
      * {@inheritDoc}
      */
-    #[Override]
     public function bind(string $abstract, string $concrete): void
     {
         if (class_exists($concrete)) {
@@ -170,7 +163,6 @@ final class Container implements ContainerInterface
     /**
      * {@inheritDoc}
      */
-    #[Override]
     public function call(callable $callable, array $parameters = []): mixed
     {
         return $this->callableInvoker()->invoke($callable, $parameters);
@@ -179,7 +171,6 @@ final class Container implements ContainerInterface
     /**
      * {@inheritDoc}
      */
-    #[Override]
     public function afterResolving(string $id, callable $callback): void
     {
         $this->assertMutable();
@@ -191,7 +182,6 @@ final class Container implements ContainerInterface
      *
      * @return list<string>
      */
-    #[Override]
     public function getTaggedIds(string $tag): array
     {
         return $this->tags[$tag] ?? [];
@@ -200,7 +190,6 @@ final class Container implements ContainerInterface
     /**
      * {@inheritDoc}
      */
-    #[Override]
     public function getTaggedIterator(string $tag): TaggedServiceIterator
     {
         return new TaggedServiceIterator($this, $tag);
@@ -209,7 +198,6 @@ final class Container implements ContainerInterface
     /**
      * {@inheritDoc}
      */
-    #[Override]
     public function getTaggedLocator(string $tag): TaggedServiceLocator
     {
         return new TaggedServiceLocator($this, $tag);
@@ -218,7 +206,6 @@ final class Container implements ContainerInterface
     /**
      * {@inheritDoc}
      */
-    #[Override]
     public function freeze(): void
     {
         $this->frozen = true;
@@ -227,7 +214,6 @@ final class Container implements ContainerInterface
     /**
      * {@inheritDoc}
      */
-    #[Override]
     public function isFrozen(): bool
     {
         return $this->frozen;
@@ -238,7 +224,6 @@ final class Container implements ContainerInterface
      *
      * @return list<string>
      */
-    #[Override]
     public function getDefinitionIds(): array
     {
         return $this->introspector()->definitionIds();
@@ -247,7 +232,6 @@ final class Container implements ContainerInterface
     /**
      * {@inheritDoc}
      */
-    #[Override]
     public function dump(): array
     {
         return $this->introspector()->dump();
@@ -295,7 +279,6 @@ final class Container implements ContainerInterface
      *
      * @return bool `true`, если {@see get()} не бросит NotFoundException
      */
-    #[Override]
     public function has(string $id): bool
     {
         if ($this->aliasResolver->isAlias($id)) {
@@ -312,7 +295,6 @@ final class Container implements ContainerInterface
     /**
      * {@inheritDoc}
      */
-    #[Override]
     public function set(string $id, mixed $concrete): void
     {
         $this->assertMutable();
@@ -323,7 +305,6 @@ final class Container implements ContainerInterface
     /**
      * {@inheritDoc}
      */
-    #[Override]
     public function hasDefinition(string $id): bool
     {
         return isset($this->definitions[$id])
@@ -334,7 +315,6 @@ final class Container implements ContainerInterface
     /**
      * {@inheritDoc}
      */
-    #[Override]
     public function tag(string $id, string $tag): void
     {
         $this->assertMutable();
@@ -352,7 +332,6 @@ final class Container implements ContainerInterface
      *
      * @psalm-suppress MixedAssignment
      */
-    #[Override]
     public function getTagged(string $tag): array
     {
         /** @var array<string, mixed> $services */
@@ -374,7 +353,6 @@ final class Container implements ContainerInterface
     /**
      * {@inheritDoc}
      */
-    #[Override]
     public function decorate(string $id, callable $decorator): void
     {
         $this->assertMutable();
@@ -385,7 +363,6 @@ final class Container implements ContainerInterface
     /**
      * {@inheritDoc}
      */
-    #[Override]
     public function enableAutowiring(): void
     {
         $this->assertMutable();
@@ -395,7 +372,6 @@ final class Container implements ContainerInterface
     /**
      * {@inheritDoc}
      */
-    #[Override]
     public function disableAutowiring(): void
     {
         $this->assertMutable();
@@ -405,7 +381,6 @@ final class Container implements ContainerInterface
     /**
      * {@inheritDoc}
      */
-    #[Override]
     public function isAutowiringEnabled(): bool
     {
         return $this->autowiringEnabled;
@@ -414,7 +389,6 @@ final class Container implements ContainerInterface
     /**
      * {@inheritDoc}
      */
-    #[Override]
     public function enableParameterNameAutowiring(): void
     {
         $this->assertMutable();
@@ -424,7 +398,6 @@ final class Container implements ContainerInterface
     /**
      * {@inheritDoc}
      */
-    #[Override]
     public function disableParameterNameAutowiring(): void
     {
         $this->assertMutable();
@@ -434,7 +407,6 @@ final class Container implements ContainerInterface
     /**
      * {@inheritDoc}
      */
-    #[Override]
     public function isParameterNameAutowiringEnabled(): bool
     {
         return $this->nameAutowiring;
@@ -443,7 +415,6 @@ final class Container implements ContainerInterface
     /**
      * {@inheritDoc}
      */
-    #[Override]
     public function enablePropertyAutowiring(): void
     {
         $this->assertMutable();
@@ -453,7 +424,6 @@ final class Container implements ContainerInterface
     /**
      * {@inheritDoc}
      */
-    #[Override]
     public function disablePropertyAutowiring(): void
     {
         $this->assertMutable();
@@ -463,7 +433,6 @@ final class Container implements ContainerInterface
     /**
      * {@inheritDoc}
      */
-    #[Override]
     public function isPropertyAutowiringEnabled(): bool
     {
         return $this->propertyAutowiring;
@@ -472,7 +441,6 @@ final class Container implements ContainerInterface
     /**
      * {@inheritDoc}
      */
-    #[Override]
     public function enableMethodAutowiring(): void
     {
         $this->assertMutable();
@@ -482,7 +450,6 @@ final class Container implements ContainerInterface
     /**
      * {@inheritDoc}
      */
-    #[Override]
     public function disableMethodAutowiring(): void
     {
         $this->assertMutable();
@@ -492,7 +459,6 @@ final class Container implements ContainerInterface
     /**
      * {@inheritDoc}
      */
-    #[Override]
     public function isMethodAutowiringEnabled(): bool
     {
         return $this->methodAutowiring;
@@ -501,7 +467,6 @@ final class Container implements ContainerInterface
     /**
      * {@inheritDoc}
      */
-    #[Override]
     public function registerAttribute(string $attributeClass): void
     {
         $this->assertMutable();
@@ -511,7 +476,6 @@ final class Container implements ContainerInterface
     /**
      * {@inheritDoc}
      */
-    #[Override]
     public function autowire(string $className): void
     {
         $this->assertMutable();
@@ -523,7 +487,6 @@ final class Container implements ContainerInterface
     /**
      * {@inheritDoc}
      */
-    #[Override]
     public function scan(string $directory, ?string $namespace = null): void
     {
         $scanner = new ClassScanner();

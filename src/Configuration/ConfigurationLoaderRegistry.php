@@ -16,10 +16,10 @@ use CloudCastle\DI\Exception\ContainerException;
  *
  * По умолчанию: PHP (первый), JSON, YAML, XML.
  */
-final readonly class ConfigurationLoaderRegistry
+final class ConfigurationLoaderRegistry
 {
     /** @var list<ConfigurationLoaderInterface> */
-    private array $loaders;
+    private readonly array $loaders;
 
     /**
      * @param list<ConfigurationLoaderInterface>|null $loaders Порядок определяет приоритет при совпадении

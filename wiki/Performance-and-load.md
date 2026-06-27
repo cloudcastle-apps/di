@@ -1,4 +1,11 @@
-# Нагрузочные и performance-тесты
+<p align="center">
+  <img src="https://raw.githubusercontent.com/cloudcastle-apps/di/main/assets/logo.svg" alt="CloudCastle DI" width="64">
+</p>
+
+# 📈 Нагрузочные и performance-тесты
+
+> [← Главная](Home) · [Сравнение](Comparison) · [Quick start](Quick-start)
+
 
 Регрессионные тесты **масштаба** (load) и **латентности** (performance) гарантируют, что контейнер остаётся быстрым и корректным при росте числа сервисов.
 
@@ -7,7 +14,7 @@
 | `tests/Load/` | 15 | `composer test:load` | 1000–3000 операций, корректность + пороги времени |
 | `tests/Performance/` | 12 | `composer test:performance` | 1000–10000 итераций одной операции |
 
-Входят в `composer ci` и GitHub Actions (PHP 8.3–8.5).
+Входят в `composer ci` и GitHub Actions (PHP 8.1–8.5).
 
 Краткая выжимка — [README → Качество](https://github.com/cloudcastle-apps/di#качество), `doc/guide/load-performance.rst`.
 
@@ -200,7 +207,7 @@
 | 5 | `testCallWithExplicitParametersCompletesWithinBudget` | 10 000 | 0.75 с | `call` + явные параметры |
 | 6 | `testMakeUncachedServiceCompletesWithinBudget` | 5 000 | 1.0 с | `make('proto')` каждый раз новый |
 | 7 | `testBindAndGetCompletesWithinBudget` | 1 000 | 0.75 с | `bind` + `get` + autowiring on |
-| 8 | `testGetTaggedIdsCompletesWithinBudget` | 10 000 | 0.35 с | 200 id в теге, повтор `getTaggedIds` |
+| 8 | `testGetTaggedIdsCompletesWithinBudget` | 10 000 | 6.0 с | 200 id в теге, повтор `getTaggedIds` |
 | 9 | `testAfterResolvingOnFirstGetCompletesWithinBudget` | 1 000 | 1.0 с | первый `get` с hook |
 
 ---
@@ -257,7 +264,7 @@ composer benchmark-check    # проверка регрессии (как в CI)
 ## CI
 
 - `composer ci` — полный пайплайн (unit → … → performance → **benchmark-check** → coverage → mutation).
-- `.github/workflows/quality.yml` — матрица PHP 8.3, 8.4, 8.5; CodeQL отдельным workflow.
+- `.github/workflows/quality.yml` — матрица PHP 8.1–8.5; CodeQL отдельным workflow.
 - Load/performance не требуют PCOV/Xdebug; benchmark-check — после performance.
 
 ## См. также

@@ -7,7 +7,6 @@ namespace CloudCastle\DI;
 use CloudCastle\DI\Contract\ContainerInterface;
 use CloudCastle\DI\Exception\NotFoundException;
 use IteratorAggregate;
-use Override;
 use Traversable;
 
 /**
@@ -24,22 +23,22 @@ use Traversable;
  *
  * @see Container::getTaggedLocator()
  */
-final readonly class TaggedServiceLocator implements IteratorAggregate
+final class TaggedServiceLocator implements IteratorAggregate
 {
     /**
      * Id сервисов тега на момент создания locator (порядок {@see ContainerInterface::tag()}).
      *
      * @var list<string>
      */
-    private array $taggedIds;
+    private readonly array $taggedIds;
 
     /**
      * @param ContainerInterface $container Контейнер-источник сервисов
      * @param string $tag Имя тега
      */
     public function __construct(
-        private ContainerInterface $container,
-        private string $tag,
+        private readonly ContainerInterface $container,
+        private readonly string $tag,
     ) {
         $this->taggedIds = $container->getTaggedIds($tag);
     }
@@ -84,7 +83,6 @@ final readonly class TaggedServiceLocator implements IteratorAggregate
      *
      * @return Traversable<string, mixed> Порядок ключей — порядок {@see ContainerInterface::tag()}
      */
-    #[Override]
     public function getIterator(): Traversable
     {
         /** @psalm-suppress MixedAssignment */

@@ -23,6 +23,6 @@ body:
       description: Версия пакета, PHP, фреймворк (если применимо)
       placeholder: |
         cloudcastle/di: v1.0.0
-        PHP: 8.3
+        PHP: 8.1
     validations:
       required: false

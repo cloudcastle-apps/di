@@ -1,4 +1,11 @@
-# Тесты безопасности
+<p align="center">
+  <img src="https://raw.githubusercontent.com/cloudcastle-apps/di/main/assets/logo.svg" alt="CloudCastle DI" width="64">
+</p>
+
+# 🛡️ Тесты безопасности
+
+> [← Главная](Home) · [Сравнение](Comparison) · [Quick start](Quick-start)
+
 
 Каталог: `tests/Security/`. **17 тестов** в двух классах:
 
@@ -109,7 +116,7 @@ composer test:security
 composer ci
 ```
 
-PHP 8.3–8.5 в `.github/workflows/quality.yml`.
+PHP 8.1–8.5 в `.github/workflows/quality.yml`.
 
 ## Рекомендации автору приложения
 

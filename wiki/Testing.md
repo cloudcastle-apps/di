@@ -1,4 +1,11 @@
-# Тестирование
+<p align="center">
+  <img src="https://raw.githubusercontent.com/cloudcastle-apps/di/main/assets/logo.svg" alt="CloudCastle DI" width="64">
+</p>
+
+# 🧪 Тестирование
+
+> [← Главная](Home) · [Сравнение](Comparison) · [Quick start](Quick-start)
+
 
 | Команда | Каталог | Тестов | Назначение |
 |---------|---------|--------|------------|
@@ -33,7 +40,7 @@ composer benchmark-check
 
 ## CI
 
-GitHub Actions (**Quality**): PHP 8.3 / 8.4 / 8.5 — linters, static analysis, все test suites, coverage (per-file), mutation, benchmark-check, phpDocumentor check.
+GitHub Actions (**Quality**): PHP 8.1–8.5 — linters, static analysis, все test suites, coverage (per-file), mutation, benchmark-check, phpDocumentor check.
 
 ## Изоляция тестов
 

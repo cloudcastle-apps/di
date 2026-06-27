@@ -12,15 +12,15 @@ namespace CloudCastle\DI\Configuration;
  *
  * Приоритет слоя применяется ко всем параметрам файла без собственного {@see ConfigurationMerger}.
  */
-final readonly class ConfigurationSource
+final class ConfigurationSource
 {
     /**
      * @param string $path Абсолютный или относительный путь к файлу конфигурации
      * @param int|null $priority Приоритет слоя; `null` — порядок в списке источников
      */
     public function __construct(
-        public string $path,
-        public ?int $priority = null,
+        public readonly string $path,
+        public readonly ?int $priority = null,
     ) {
     }
 }

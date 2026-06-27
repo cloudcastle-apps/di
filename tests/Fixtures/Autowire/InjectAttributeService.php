@@ -9,7 +9,7 @@ use CloudCastle\DI\Attribute\Inject;
 /**
  * Сервис с явным id через {@see Inject}.
  */
-final readonly class InjectAttributeService
+final class InjectAttributeService
 {
     public function __construct(
         #[Inject('app.clock')]

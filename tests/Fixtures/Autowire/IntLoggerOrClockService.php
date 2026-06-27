@@ -7,7 +7,7 @@ namespace CloudCastle\DI\Tests\Fixtures\Autowire;
 /**
  * Union со встроенным типом перед object-типом.
  */
-final readonly class IntLoggerOrClockService
+final class IntLoggerOrClockService
 {
     public function __construct(
         public int|LoggerInterface|Clock $dependency = new Clock(),

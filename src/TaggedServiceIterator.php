@@ -6,7 +6,6 @@ namespace CloudCastle\DI;
 
 use CloudCastle\DI\Contract\ContainerInterface;
 use IteratorAggregate;
-use Override;
 use Traversable;
 
 /**
@@ -22,15 +21,15 @@ use Traversable;
  *
  * @see Container::getTaggedIterator()
  */
-final readonly class TaggedServiceIterator implements IteratorAggregate
+final class TaggedServiceIterator implements IteratorAggregate
 {
     /**
      * @param ContainerInterface $container Контейнер-источник сервисов
      * @param string $tag Имя тега
      */
     public function __construct(
-        private ContainerInterface $container,
-        private string $tag,
+        private readonly ContainerInterface $container,
+        private readonly string $tag,
     ) {
     }
 
@@ -39,7 +38,6 @@ final readonly class TaggedServiceIterator implements IteratorAggregate
      *
      * @return Traversable<int, mixed> Экземпляры в порядке регистрации тега
      */
-    #[Override]
     public function getIterator(): Traversable
     {
         /** @psalm-suppress MixedAssignment */

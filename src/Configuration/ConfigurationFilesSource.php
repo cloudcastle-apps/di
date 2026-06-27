@@ -7,15 +7,15 @@ namespace CloudCastle\DI\Configuration;
 /**
  * Источник конфигурации: явный список файлов с общим приоритетом слоя.
  */
-final readonly class ConfigurationFilesSource
+final class ConfigurationFilesSource
 {
     /**
      * @param list<string> $paths Пути к файлам конфигурации в порядке слияния
      * @param int|null $priority Приоритет слоя для каждого файла; `null` — порядок в списке источников
      */
     public function __construct(
-        public array $paths,
-        public ?int $priority = null,
+        public readonly array $paths,
+        public readonly ?int $priority = null,
     ) {
     }
 }
