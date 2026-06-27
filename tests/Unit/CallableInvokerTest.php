@@ -97,6 +97,21 @@ final class CallableInvokerTest extends TestCase
         self::assertSame('ok', $result);
     }
 
+    public function testReflectCallableBuildsReflectionForInvokableObject(): void
+    {
+        $invokable = new class () {
+            public function __invoke(): void
+            {
+            }
+        };
+        $invoker = new CallableInvoker(new Container());
+        $method = new ReflectionMethod(CallableInvoker::class, 'reflectCallable');
+        $reflection = $method->invoke($invoker, $invokable);
+
+        self::assertInstanceOf(ReflectionMethod::class, $reflection);
+        self::assertSame('__invoke', $reflection->getName());
+    }
+
     public function testInvokeCallsFunctionByName(): void
     {
         $result = (new CallableInvoker(new Container()))->invoke('strlen', ['string' => 'abc']);

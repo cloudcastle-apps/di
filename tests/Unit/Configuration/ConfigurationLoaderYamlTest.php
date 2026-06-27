@@ -89,4 +89,23 @@ final class ConfigurationLoaderYamlTest extends TestCase
             }
         }
     }
+
+    public function testLoadThrowsWhenParserReturnsFalse(): void
+    {
+        $path = sys_get_temp_dir() . '/cloudcastle-di-empty.yaml';
+        file_put_contents($path, '');
+
+        try {
+            $loader = new YamlConfigurationLoader();
+
+            $this->expectException(ContainerException::class);
+            $this->expectExceptionMessage('Ошибка разбора YAML');
+
+            $loader->load($path);
+        } finally {
+            if (is_file($path)) {
+                unlink($path);
+            }
+        }
+    }
 }

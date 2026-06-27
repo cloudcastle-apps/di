@@ -34,15 +34,9 @@ final class YamlConfigurationLoader implements ConfigurationLoaderInterface
             throw new ContainerException(\sprintf('Файл конфигурации "%s" не найден или недоступен.', $path));
         }
 
-        if (!\function_exists('yaml_parse_file')) {
-            throw new ContainerException(
-                'Для загрузки YAML-конфигурации требуется расширение ext-yaml (yaml_parse_file).',
-            );
-        }
-
         $parsed = $this->parseYamlFile($path);
 
-        if ($parsed === false) {
+        if ($parsed === false || $parsed === null) {
             throw new ContainerException(\sprintf('Ошибка разбора YAML-конфигурации "%s".', $path));
         }
 
