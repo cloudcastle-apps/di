@@ -96,6 +96,10 @@ final class ConfigurationMerger
         $result = [];
 
         foreach ($winners as $key => $winner) {
+            if (!\is_string($key)) {
+                continue;
+            }
+
             $separator = strpos($key, '::');
 
             if ($separator === false) {
@@ -104,7 +108,9 @@ final class ConfigurationMerger
 
             $consumerClass = substr($key, 0, $separator);
             $need = substr($key, $separator + 2);
-            $result[$consumerClass][$need] = $winner['value'];
+            /** @var string $giveId */
+            $giveId = $winner['value'];
+            $result[$consumerClass][$need] = $giveId;
         }
 
         return $result;

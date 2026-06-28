@@ -255,6 +255,9 @@ final class ConfigurationMergerTest extends TestCase
             ], 1, null),
         ]);
 
-        self::assertSame('log.high', $merged['contextual'][$consumer][$need]);
+        self::assertIsArray($merged['contextual']);
+        /** @var array<string, array<string, string>> $contextual */
+        $contextual = $merged['contextual'];
+        self::assertSame('log.high', $contextual[$consumer][$need]);
     }
 }
