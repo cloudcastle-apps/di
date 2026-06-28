@@ -65,11 +65,6 @@ quality:
     - echo "=== Tests: coverage ==="
     - composer test:coverage
     - echo "=== Tests: mutation ==="
-    - |
-      if [ "$PHP_VERSION" = "8.3" ]; then
-        XDEBUG_MODE=off composer test:mutation
-      else
-        echo "Skipping mutation on PHP ${PHP_VERSION} (как в GitHub Actions — только PHP 8.3)"
-      fi
+    - XDEBUG_MODE=off composer test:mutation
     - echo "=== Documentation ==="
     - composer docs:check
