@@ -259,6 +259,10 @@ Major **v2.0** — breaking changes и enterprise-parity (**contextual binding**
 - **Scopes** — [#33](https://github.com/cloudcastle-apps/di/issues/33)
 - **Breaking policy** — [#17](https://github.com/cloudcastle-apps/di/issues/17)
 
+**Performance & observability (Backlog):** [#63](https://github.com/cloudcastle-apps/di/issues/63) Memory Pool · [#64](https://github.com/cloudcastle-apps/di/issues/64) Smart Caching · [#65](https://github.com/cloudcastle-apps/di/issues/65) Performance Profiler · [#66](https://github.com/cloudcastle-apps/di/issues/66) Advanced Benchmarks
+
+**Ongoing (1.x):** Bug Fixes · API Improvements · Documentation Updates · More Tests — см. [wiki Home → Roadmap](https://github.com/cloudcastle-apps/di/wiki/Home)
+
 Следите за [Discussions → Ideas](https://github.com/cloudcastle-apps/di/discussions/categories/ideas) и [Releases](https://github.com/cloudcastle-apps/di/releases).
 
 ## Общие рекомендации

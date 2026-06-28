@@ -16,6 +16,12 @@ views:
     color: GREEN
     query: 'is:issue milestone:"v1.9.0"'
 
+  - name: Performance backlog
+    description: Memory pool, caching, profiler, benchmarks
+    icon: ZAP
+    color: YELLOW
+    query: 'is:issue is:open milestone:"Backlog" label:feat'
+
   - name: v2.0 roadmap
     description: Задачи major-релиза v2.0
     icon: MILESTONE

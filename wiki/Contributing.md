@@ -99,8 +99,10 @@ wiki/                     — исходники GitHub Wiki (публикует
 | Milestone | Назначение |
 |-----------|------------|
 | [v1.1.0](https://github.com/cloudcastle-apps/di/milestone/1) | Autowiring, scan, registry, tags, релиз |
-| [Backlog](https://github.com/cloudcastle-apps/di/milestone/2) | Идеи без фиксированного релиза |
+| [Backlog](https://github.com/cloudcastle-apps/di/milestone/2) | Идеи без фиксированного релиза (performance #63–#66, lazy proxy #34) |
 | [v2.0](https://github.com/cloudcastle-apps/di/milestone/3) | Breaking changes (major) |
+
+**Ongoing (1.x):** Bug Fixes · API Improvements · Documentation · More Tests — без отдельного milestone; см. [Home → Roadmap](Home).
 
 Метки: `feat`, `fix`, `release`, `roadmap`, `area:*`, `good first issue`.
 

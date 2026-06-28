@@ -219,6 +219,22 @@ Major **v2.0** — breaking changes и enterprise-parity (**contextual binding**
 - **Scopes** request / transient ([#33](https://github.com/cloudcastle-apps/di/issues/33))
 - Breaking API — [#17](https://github.com/cloudcastle-apps/di/issues/17)
 
+### Performance & observability (Backlog)
+
+| Направление | Issue |
+|-------------|-------|
+| ⚡ Memory Pool — пул объектов для снижения GC | [#63](https://github.com/cloudcastle-apps/di/issues/63) |
+| 🎯 Smart Caching — интеллектуальное кэширование с TTL | [#64](https://github.com/cloudcastle-apps/di/issues/64) |
+| 📊 Performance Profiler — встроенный профилировщик | [#65](https://github.com/cloudcastle-apps/di/issues/65) |
+| 🧪 Advanced Benchmarks — расширенные бенчмарки | [#66](https://github.com/cloudcastle-apps/di/issues/66) |
+
+### Ongoing (1.x patch)
+
+- 🐛 **Bug Fixes** — `label:bug`
+- 🔧 **API Improvements** — без breaking changes
+- 📚 **Documentation Updates** — wiki, UPGRADING, guides
+- 🧪 **More Tests** — coverage, load, mutation
+
 Major-версия будет описана здесь и в [CHANGELOG](https://github.com/cloudcastle-apps/di/blob/main/CHANGELOG.md).
 
 ## Общие рекомендации

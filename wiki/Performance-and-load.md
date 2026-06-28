@@ -267,6 +267,17 @@ composer benchmark-check    # проверка регрессии (как в CI)
 - `.github/workflows/quality.yml` — матрица PHP 8.1–8.5; CodeQL отдельным workflow.
 - Load/performance не требуют PCOV/Xdebug; benchmark-check — после performance.
 
+## Roadmap (планируется)
+
+| | Направление | Issue |
+|---|---|---|
+| ⚡ | **Memory Pool** — пул объектов для снижения GC | [#63](https://github.com/cloudcastle-apps/di/issues/63) |
+| 🎯 | **Smart Caching** — кэширование с TTL | [#64](https://github.com/cloudcastle-apps/di/issues/64) |
+| 📊 | **Performance Profiler** — встроенный профилировщик | [#65](https://github.com/cloudcastle-apps/di/issues/65) |
+| 🧪 | **Advanced Benchmarks** — p50/p95, memory, ops/sec | [#66](https://github.com/cloudcastle-apps/di/issues/66) |
+
+Обзор roadmap — [Home](Home) · [UPGRADING](Upgrading).
+
 ## См. также
 
 - [Тесты безопасности](Security-tests)

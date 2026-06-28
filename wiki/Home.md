@@ -113,6 +113,26 @@ $service = $container->get(App\Service\OrderService::class);
 - **Scopes** (request / transient) — [#33](https://github.com/cloudcastle-apps/di/issues/33)
 - Breaking policy — [#17](https://github.com/cloudcastle-apps/di/issues/17)
 
+### ⚡ Performance & observability (Backlog)
+
+| | Направление | Issue |
+|---|---|---|
+| ⚡ | **Memory Pool** — пул объектов для снижения GC | [#63](https://github.com/cloudcastle-apps/di/issues/63) |
+| 🎯 | **Smart Caching** — кэширование с TTL | [#64](https://github.com/cloudcastle-apps/di/issues/64) |
+| 📊 | **Performance Profiler** — встроенный профилировщик | [#65](https://github.com/cloudcastle-apps/di/issues/65) |
+| 🧪 | **Advanced Benchmarks** — расширенные метрики | [#66](https://github.com/cloudcastle-apps/di/issues/66) |
+
+Подробнее — [Performance-and-load](Performance-and-load).
+
+### 🔧 Ongoing (1.x patch)
+
+| | Направление |
+|---|---|
+| 🐛 | **Bug Fixes** — исправление найденных ошибок (`label:bug`) |
+| 🔧 | **API Improvements** — улучшения существующего API без breaking |
+| 📚 | **Documentation Updates** — wiki, UPGRADING, API-reference |
+| 🧪 | **More Tests** — unit/integration/load/coverage |
+
 Compiled container — **v1.9.0** ([#24](https://github.com/cloudcastle-apps/di/issues/24)). Contextual контракты — **v1.10.0**. Подробнее — [Compiled container](Compiled-container), [Contextual binding](Contextual-binding), [API-reference](API-reference).
 
 ---
