@@ -110,6 +110,18 @@ final class ContainerProfilingSupportTest extends TestCase
         self::assertCount(3, $this->support->report(limit: 0)['top_slowest']);
     }
 
+    public function testReportDefaultLimitKeepsTenSlowestEntries(): void
+    {
+        $this->support->enable();
+
+        for ($index = 0; $index < 11; ++$index) {
+            $this->support->measure('get', 'svc-' . $index, static fn (): int => $index);
+        }
+
+        self::assertCount(10, $this->support->report()['top_slowest']);
+        self::assertSame(11, $this->support->report()['sample_count']);
+    }
+
     public function testMeasureRecordsElapsedTimeInMilliseconds(): void
     {
         $this->support->enable();

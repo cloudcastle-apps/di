@@ -95,14 +95,14 @@ final class ContainerProfilerTest extends TestCase
 
     public function testReportTotalMsUsesFourDecimalRounding(): void
     {
-        $this->profiler->record('get', 'a', 1.11115);
-        $this->profiler->record('get', 'b', 2.22225);
+        $this->profiler->record('get', 'a', 1.111155);
+        $this->profiler->record('get', 'b', 2.222255);
 
         $report = $this->profiler->report();
 
-        self::assertSame(3.3335, $report['total_ms']);
-        self::assertSame(3.3335, $report['by_operation']['get']['total_ms']);
-        self::assertSame(1.6668, $report['by_operation']['get']['avg_ms']);
+        self::assertSame(3.3334, $report['total_ms']);
+        self::assertSame(3.3334, $report['by_operation']['get']['total_ms']);
+        self::assertSame(1.6667, $report['by_operation']['get']['avg_ms']);
     }
 
     public function testTopSlowestOrderIsStrictlyDescending(): void

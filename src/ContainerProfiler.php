@@ -15,6 +15,9 @@ namespace CloudCastle\DI;
  */
 final class ContainerProfiler
 {
+    /** Точность округления миллисекунд в отчёте */
+    private const MILLISECONDS_PRECISION = 4;
+
     /**
      * Накопленные замеры в порядке регистрации.
      *
@@ -41,7 +44,7 @@ final class ContainerProfiler
         $this->samples[] = [
             'operation' => $operation,
             'target' => $target,
-            'elapsed_ms' => round($elapsedMs, 4),
+            'elapsed_ms' => $elapsedMs,
             'cached' => $cached,
         ];
     }
@@ -81,7 +84,6 @@ final class ContainerProfiler
                 $byOperation[$operation] = [
                     'count' => 0,
                     'total_ms' => 0.0,
-                    'avg_ms' => 0.0,
                 ];
             }
 
@@ -89,12 +91,17 @@ final class ContainerProfiler
             $byOperation[$operation]['total_ms'] += $sample['elapsed_ms'];
         }
 
+        /** @var array<string, array{count: int, total_ms: float, avg_ms: float}> $byOperationReport */
+        $byOperationReport = [];
+
         foreach ($byOperation as $operation => $stats) {
-            $byOperation[$operation]['total_ms'] = round($stats['total_ms'], 4);
-            $byOperation[$operation]['avg_ms'] = round(
-                $stats['total_ms'] / (float) max($stats['count'], 1),
-                4,
-            );
+            $byOperationReport[$operation] = [
+                'count' => $stats['count'],
+                'total_ms' => self::roundMilliseconds($stats['total_ms']),
+                'avg_ms' => self::roundMilliseconds(
+                    $stats['total_ms'] / (float) $stats['count'],
+                ),
+            ];
         }
 
         $sorted = $this->samples;
@@ -107,11 +114,26 @@ final class ContainerProfiler
             $sorted = \array_slice($sorted, 0, $limit);
         }
 
+        $sorted = array_map(
+            static fn (array $sample): array => [
+                'operation' => $sample['operation'],
+                'target' => $sample['target'],
+                'elapsed_ms' => self::roundMilliseconds($sample['elapsed_ms']),
+                'cached' => $sample['cached'],
+            ],
+            $sorted,
+        );
+
         return [
             'sample_count' => \count($this->samples),
-            'total_ms' => round($totalMs, 4),
-            'by_operation' => $byOperation,
+            'total_ms' => self::roundMilliseconds($totalMs),
+            'by_operation' => $byOperationReport,
             'top_slowest' => $sorted,
         ];
+    }
+
+    private static function roundMilliseconds(float $milliseconds): float
+    {
+        return round($milliseconds, self::MILLISECONDS_PRECISION);
     }
 }
