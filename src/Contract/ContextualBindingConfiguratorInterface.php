@@ -11,6 +11,8 @@ namespace CloudCastle\DI\Contract;
  * Метод {@see when()} появится на {@see ContainerInterface} в части 2 декомпозиции.
  *
  * @see ContextualBindingRegistryInterface
+ *
+ * @psalm-api Публичный контракт v2.0 (#25); реализация — часть 2 декомпозиции.
  */
 interface ContextualBindingConfiguratorInterface
 {

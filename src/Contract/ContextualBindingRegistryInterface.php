@@ -10,6 +10,8 @@ use CloudCastle\DI\ContextualBinding;
  * Хранилище contextual-привязок для autowiring (#25).
  *
  * Реализация появится в runtime-слое v2.0; контракт фиксирует API до интеграции в {@see ContainerInterface}.
+ *
+ * @psalm-api Публичный контракт v2.0 (#25); реализация — часть 2 декомпозиции.
  */
 interface ContextualBindingRegistryInterface
 {

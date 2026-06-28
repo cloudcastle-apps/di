@@ -9,6 +9,8 @@ namespace CloudCastle\DI\Contract;
  *
  * @see ContextualBindingConfiguratorInterface
  * @see ContextualBindingNeedsInterface
+ *
+ * @psalm-api Публичный контракт v2.0 (#25); реализация — часть 2 декомпозиции.
  */
 interface ContextualBindingGiveInterface
 {

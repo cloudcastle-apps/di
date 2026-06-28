@@ -8,6 +8,8 @@ namespace CloudCastle\DI\Contract;
  * Вторая ступень fluent API: {@see needs()}.
  *
  * @see ContextualBindingConfiguratorInterface
+ *
+ * @psalm-api Публичный контракт v2.0 (#25); реализация — часть 2 декомпозиции.
  */
 interface ContextualBindingNeedsInterface
 {
