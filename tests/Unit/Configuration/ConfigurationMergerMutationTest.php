@@ -8,8 +8,10 @@ use CloudCastle\DI\Configuration\ConfigurationLayer;
 use CloudCastle\DI\Configuration\ConfigurationMerger;
 use CloudCastle\DI\Tests\Fixtures\Autowire\Clock;
 use CloudCastle\DI\Tests\Fixtures\Autowire\FileLogger;
+use CloudCastle\DI\Tests\Fixtures\ContextualBinding\ReportService;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 
 #[CoversClass(ConfigurationMerger::class)]
 final class ConfigurationMergerMutationTest extends TestCase
@@ -228,5 +230,76 @@ final class ConfigurationMergerMutationTest extends TestCase
         $services = $this->assertConfigMap($merged, 'services');
 
         self::assertSame('first', $services['id']);
+    }
+
+    public function testMergerSkipsInvalidContextualNeedButProcessesFollowingRules(): void
+    {
+        $consumer = ReportService::class;
+        $logger = LoggerInterface::class;
+        $secondaryNeed = 'App\\Contracts\\SecondaryPort';
+
+        $merged = (new ConfigurationMerger())->merge([
+            new ConfigurationLayer([
+                'contextual' => [
+                    $consumer => [
+                        456 => 'skip.invalid-need',
+                        $logger => 'log.memory',
+                        $secondaryNeed => 'port.impl',
+                    ],
+                ],
+            ], 0, null),
+        ]);
+
+        $contextual = $this->assertConfigMap($merged, 'contextual');
+        $needsMap = $this->assertConfigMap($contextual, $consumer);
+
+        self::assertSame('log.memory', $needsMap[$logger]);
+        self::assertSame('port.impl', $needsMap[$secondaryNeed]);
+    }
+
+    public function testMergerSkipsInvalidContextualGiveButProcessesFollowingRules(): void
+    {
+        $consumer = ReportService::class;
+        $logger = LoggerInterface::class;
+        $secondaryNeed = 'App\\Contracts\\SecondaryPort';
+
+        $merged = (new ConfigurationMerger())->merge([
+            new ConfigurationLayer([
+                'contextual' => [
+                    $consumer => [
+                        $logger => ['invalid' => 'structure'],
+                        $secondaryNeed => 'port.impl',
+                    ],
+                ],
+            ], 0, null),
+        ]);
+
+        $contextual = $this->assertConfigMap($merged, 'contextual');
+        $needsMap = $this->assertConfigMap($contextual, $consumer);
+
+        self::assertArrayNotHasKey($logger, $needsMap);
+        self::assertSame('port.impl', $needsMap[$secondaryNeed]);
+    }
+
+    public function testMergerSkipsInvalidContextualConsumerButProcessesFollowingConsumer(): void
+    {
+        $consumer = ReportService::class;
+        $logger = LoggerInterface::class;
+
+        $merged = (new ConfigurationMerger())->merge([
+            new ConfigurationLayer([
+                'contextual' => [
+                    123 => [$logger => 'skip.invalid-consumer'],
+                    $consumer => [
+                        $logger => 'log.memory',
+                    ],
+                ],
+            ], 0, null),
+        ]);
+
+        $contextual = $this->assertConfigMap($merged, 'contextual');
+        $needsMap = $this->assertConfigMap($contextual, $consumer);
+
+        self::assertSame('log.memory', $needsMap[$logger]);
     }
 }
