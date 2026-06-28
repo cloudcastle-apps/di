@@ -12,6 +12,7 @@ use CloudCastle\DI\Tests\Fixtures\Autowire\Scan\ScannedService;
 use CloudCastle\DI\Tests\Fixtures\Autowire\Scan\ScannedStatus;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
+use ReflectionMethod;
 
 #[CoversClass(ClassScanner::class)]
 final class ClassScannerExtendedTest extends TestCase
@@ -83,6 +84,37 @@ final class ClassScannerExtendedTest extends TestCase
         } finally {
             if (is_file($directory . '/Empty.php')) {
                 unlink($directory . '/Empty.php');
+            }
+
+            if (is_dir($directory)) {
+                rmdir($directory);
+            }
+        }
+    }
+
+    public function testExtractDeclaredTypeNamesReturnsEmptyWhenPatternMatchingFails(): void
+    {
+        $directory = sys_get_temp_dir() . '/cloudcastle-di-scan-' . uniqid('', true);
+        mkdir($directory);
+        $path = $directory . '/Backtrack.php';
+        file_put_contents(
+            $path,
+            '<?php declare(strict_types=1); namespace CloudCastle\\DI\\Tests\\Fixtures;'
+            . str_repeat(' class BacktrackTarget', 5000),
+        );
+
+        $previousLimit = \ini_get('pcre.backtrack_limit');
+        ini_set('pcre.backtrack_limit', '1');
+
+        try {
+            $method = new ReflectionMethod(ClassScanner::class, 'extractDeclaredTypeNames');
+
+            self::assertSame([], $method->invoke(new ClassScanner(), $path));
+        } finally {
+            ini_set('pcre.backtrack_limit', (string) $previousLimit);
+
+            if (is_file($path)) {
+                unlink($path);
             }
 
             if (is_dir($directory)) {

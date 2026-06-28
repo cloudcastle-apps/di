@@ -106,6 +106,20 @@ final class ConfigurationApplicatorFilteringTest extends TestCase
         self::assertFalse($container->isAutowiringEnabled());
     }
 
+    public function testApplySkipsNonArrayScanEntries(): void
+    {
+        $container = new Container();
+
+        (new ConfigurationApplicator())->apply($container, [
+            'scan' => [
+                'invalid-entry',
+                123,
+            ],
+        ]);
+
+        self::assertFalse($container->isAutowiringEnabled());
+    }
+
     public function testApplyIgnoresNonArrayAutowiringSection(): void
     {
         $container = new Container();

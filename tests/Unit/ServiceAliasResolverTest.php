@@ -46,6 +46,18 @@ final class ServiceAliasResolverTest extends TestCase
         self::assertFalse($resolver->isAlias('target'));
     }
 
+    public function testGetAliasesReturnsRegisteredMap(): void
+    {
+        $resolver = new ServiceAliasResolver();
+        $resolver->alias('alias', 'target');
+        $resolver->alias('second', 'third');
+
+        self::assertSame(
+            ['alias' => 'target', 'second' => 'third'],
+            $resolver->getAliases(),
+        );
+    }
+
     public function testAliasThrowsOnDirectCycle(): void
     {
         $resolver = new ServiceAliasResolver();

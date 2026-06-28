@@ -12,7 +12,6 @@ use SimpleXMLElement;
 /**
  * Загрузчик XML-конфигурации контейнера.
  *
- * @psalm-suppress RedundantCondition SimpleXML всегда возвращает узел; isset отсекает пустые секции
  * @psalm-suppress MixedAssignment Динамические секции XML-конфигурации
  */
 final class XmlConfigurationLoader implements ConfigurationLoaderInterface
@@ -64,10 +63,7 @@ final class XmlConfigurationLoader implements ConfigurationLoaderInterface
 
             $node = $xml->{$section};
 
-            if (!$node instanceof SimpleXMLElement) {
-                continue;
-            }
-
+            /** @var SimpleXMLElement $node */
             $config[$section] = $parser($node);
         }
 

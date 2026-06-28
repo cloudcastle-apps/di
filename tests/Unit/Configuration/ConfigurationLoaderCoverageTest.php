@@ -52,12 +52,8 @@ final class ConfigurationLoaderCoverageTest extends TestCase
         (new PhpConfigurationLoader())->load(sys_get_temp_dir() . '/cloudcastle-di-missing.php');
     }
 
-    public function testYamlLoaderCoversOverlayFixtureWhenExtensionAvailable(): void
+    public function testYamlLoaderCoversOverlayFixture(): void
     {
-        if (!\function_exists('yaml_parse_file')) {
-            self::markTestSkipped('Для YAML-тестов требуется ext-yaml.');
-        }
-
         $this->assertConfigArray((new YamlConfigurationLoader())->load($this->fixturesDirectory . '/overlay.yaml'));
     }
 
