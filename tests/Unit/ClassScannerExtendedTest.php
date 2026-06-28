@@ -108,7 +108,6 @@ final class ClassScannerExtendedTest extends TestCase
 
         try {
             $method = new ReflectionMethod(ClassScanner::class, 'extractDeclaredTypeNames');
-            $method->setAccessible(true);
 
             self::assertSame([], $method->invoke(new ClassScanner(), $path));
         } finally {
