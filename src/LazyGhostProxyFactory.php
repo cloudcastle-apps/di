@@ -65,7 +65,8 @@ final class LazyGhostProxyFactory
             },
         );
 
-        /** @var object $proxy */
+        \assert(\is_object($proxy)); // @codeCoverageIgnore
+
         return $proxy;
     }
 
