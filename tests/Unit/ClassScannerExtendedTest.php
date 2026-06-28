@@ -12,6 +12,7 @@ use CloudCastle\DI\Tests\Fixtures\Autowire\Scan\ScannedService;
 use CloudCastle\DI\Tests\Fixtures\Autowire\Scan\ScannedStatus;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
+use ReflectionMethod;
 
 #[CoversClass(ClassScanner::class)]
 final class ClassScannerExtendedTest extends TestCase
@@ -102,11 +103,11 @@ final class ClassScannerExtendedTest extends TestCase
             . str_repeat(' class BacktrackTarget', 5000),
         );
 
-        $previousLimit = ini_get('pcre.backtrack_limit');
+        $previousLimit = \ini_get('pcre.backtrack_limit');
         ini_set('pcre.backtrack_limit', '1');
 
         try {
-            $method = new \ReflectionMethod(ClassScanner::class, 'extractDeclaredTypeNames');
+            $method = new ReflectionMethod(ClassScanner::class, 'extractDeclaredTypeNames');
             $method->setAccessible(true);
 
             self::assertSame([], $method->invoke(new ClassScanner(), $path));
