@@ -63,6 +63,7 @@ final class XmlConfigurationLoader implements ConfigurationLoaderInterface
 
             $node = $xml->{$section};
 
+            /** @var SimpleXMLElement $node */
             $config[$section] = $parser($node);
         }
 

@@ -125,7 +125,8 @@ final class ContainerCompilerTest extends TestCase
         $result = (new ContainerCompiler())->compile($container, $this->outputPath, $className);
 
         self::assertSame($className, $result->className);
-        $generatedSource = file_get_contents($this->outputPath) ?: '';
+        $generatedSource = file_get_contents($this->outputPath);
+        self::assertNotFalse($generatedSource);
         self::assertStringContainsString('class RootLevelCompiledContainer extends', $generatedSource);
 
         $compiled = CompiledContainerLoader::load($this->outputPath, $className);
