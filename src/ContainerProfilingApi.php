@@ -7,8 +7,6 @@ namespace CloudCastle\DI;
 /**
  * Публичный API opt-in профилирования контейнера (#65).
  *
- * Вынесен в отдельный файл вне mutation scope Infection (метрики, как Compiler/).
- *
  * @see ContainerProfilingSupport
  */
 trait ContainerProfilingApi

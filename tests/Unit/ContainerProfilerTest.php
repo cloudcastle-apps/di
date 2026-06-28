@@ -156,4 +156,29 @@ final class ContainerProfilerTest extends TestCase
         self::assertSame(4.5678, $stats['total_ms']);
         self::assertSame(4.5678, $stats['avg_ms']);
     }
+
+    public function testRecordStoresOperationTargetAndCachedFlag(): void
+    {
+        $this->profiler->record('call', 'handler', 2.5, cached: true);
+
+        $sample = $this->profiler->report()['top_slowest'][0];
+
+        self::assertSame('call', $sample['operation']);
+        self::assertSame('handler', $sample['target']);
+        self::assertSame(2.5, $sample['elapsed_ms']);
+        self::assertTrue($sample['cached']);
+    }
+
+    public function testSampleCountReflectsAllRecordsWhenTopSlowestIsLimited(): void
+    {
+        for ($index = 0; $index < 5; ++$index) {
+            $this->profiler->record('get', 'svc-' . $index, (float) $index);
+        }
+
+        $report = $this->profiler->report(limit: 2);
+
+        self::assertSame(5, $report['sample_count']);
+        self::assertSame(10.0, $report['total_ms']);
+        self::assertCount(2, $report['top_slowest']);
+    }
 }

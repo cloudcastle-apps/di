@@ -16,7 +16,6 @@
 
 - **Тесты:** +9 PHPUnit (profiler)
 - PHPMD: `maxfields` 18→20 для `Container`
-- Infection: `ContainerProfiler`, `ContainerProfilingSupport` и `ContainerProfilingApi` вне mutation scope (метрики, как `Compiler/`)
 
 ## [1.14.0] — 2026-06-28
 

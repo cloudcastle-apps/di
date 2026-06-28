@@ -134,6 +134,68 @@ final class ContainerProfilingSupportTest extends TestCase
         );
     }
 
+    public function testDescribeCallableFormatsClosure(): void
+    {
+        self::assertSame('closure', ContainerProfilingSupport::describeCallable(static fn (): int => 1));
+    }
+
+    public function testDescribeCallableFormatsFunctionName(): void
+    {
+        self::assertSame('strlen', ContainerProfilingSupport::describeCallable('strlen'));
+    }
+
+    public function testDescribeCallableFormatsInvokableObject(): void
+    {
+        $invokable = new class () {
+            public function __invoke(): void
+            {
+            }
+        };
+
+        self::assertSame(
+            $invokable::class . '::__invoke',
+            ContainerProfilingSupport::describeCallable($invokable),
+        );
+    }
+
+    public function testTrackGetRecordsOperationAndCachedFlag(): void
+    {
+        $this->support->enable();
+
+        $this->support->trackGet('svc', true, static fn (): int => 1);
+
+        $sample = $this->support->report()['top_slowest'][0];
+
+        self::assertSame('get', $sample['operation']);
+        self::assertSame('svc', $sample['target']);
+        self::assertTrue($sample['cached']);
+    }
+
+    public function testTrackMakeRecordsMakeOperation(): void
+    {
+        $this->support->enable();
+
+        $this->support->trackMake('proto', static fn (): string => 'ok');
+
+        $sample = $this->support->report()['top_slowest'][0];
+
+        self::assertSame('make', $sample['operation']);
+        self::assertSame('proto', $sample['target']);
+        self::assertFalse($sample['cached']);
+    }
+
+    public function testTrackCallRecordsCallOperation(): void
+    {
+        $this->support->enable();
+
+        $this->support->trackCall('closure', static fn (): int => 7);
+
+        $sample = $this->support->report()['top_slowest'][0];
+
+        self::assertSame('call', $sample['operation']);
+        self::assertSame('closure', $sample['target']);
+    }
+
     public static function exampleStatic(): void
     {
     }
