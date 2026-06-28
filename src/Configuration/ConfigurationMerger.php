@@ -56,6 +56,18 @@ final class ConfigurationMerger
      */
     private function mergeContextualSection(array $layers): array
     {
+        $winners = $this->collectContextualWinners($layers);
+
+        return $this->buildContextualResult($winners);
+    }
+
+    /**
+     * @param list<ConfigurationLayer> $layers
+     *
+     * @return array<string, array{effectivePriority: int, order: int, value: string}>
+     */
+    private function collectContextualWinners(array $layers): array
+    {
         /** @var array<string, array{effectivePriority: int, order: int, value: string}> $winners */
         $winners = [];
 
@@ -92,6 +104,16 @@ final class ConfigurationMerger
             }
         }
 
+        return $winners;
+    }
+
+    /**
+     * @param array<string, array{effectivePriority: int, order: int, value: string}> $winners
+     *
+     * @return array<string, array<string, string>>
+     */
+    private function buildContextualResult(array $winners): array
+    {
         /** @var array<string, array<string, string>> $result */
         $result = [];
 
