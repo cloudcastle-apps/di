@@ -2,6 +2,26 @@
 
 Руководство по переходу между версиями **cloudcastle/di**.
 
+## 1.15.0 → 1.16.0
+
+### Добавлено (обратно совместимо)
+
+- **Memory Pool** ([#63](https://github.com/cloudcastle-apps/di/issues/63))
+- Opt-in pooling для `make()`: `enablePooling($id)`, `releaseToPool($id, $instance)` — без изменений поведения, пока не включено
+- Сервисы с `PoolableInterface` сбрасываются через `reset()` перед возвратом в пул
+
+```php
+$container->enablePooling(Worker::class, maxSize: 32);
+
+$worker = $container->make(Worker::class);
+// ... use ...
+$container->releaseToPool(Worker::class, $worker);
+```
+
+```bash
+composer update cloudcastle/di
+```
+
 ## 1.14.0 → 1.15.0
 
 ### Добавлено (обратно совместимо)

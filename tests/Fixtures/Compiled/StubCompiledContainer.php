@@ -6,6 +6,7 @@ namespace CloudCastle\DI\Tests\Fixtures\Compiled;
 
 use CloudCastle\DI\Compiler\AbstractCompiledContainer;
 use CloudCastle\DI\Exception\NotFoundException;
+use CloudCastle\DI\Tests\Fixtures\MemoryPool\ResetCounter;
 
 /**
  * Минимальный compiled-контейнер для unit-тестов {@see AbstractCompiledContainer}.
@@ -21,7 +22,7 @@ final class StubCompiledContainer extends AbstractCompiledContainer
             compiledClassName: self::class,
             aliases: ['alias.id' => 'value', 'alias.only' => 'missing'],
             tags: ['group' => ['missing', 'value'], 'empty' => []],
-            definitionIds: ['value', 'null-value'],
+            definitionIds: ['value', 'null-value', 'counter'],
             contextual: $contextual,
         );
     }
@@ -33,6 +34,7 @@ final class StubCompiledContainer extends AbstractCompiledContainer
         return match ($id) {
             'value' => 'compiled-value',
             'null-value' => null,
+            'counter' => new ResetCounter(value: 3),
             default => throw new NotFoundException(\sprintf('Сервис "%s" не зарегистрирован.', $id)),
         };
     }

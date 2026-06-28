@@ -56,6 +56,16 @@ Opt-in замеры `get()` / `make()` / `call()` без overhead в prod:
 | `profileReport($limit)` | top-N медленных операций + агрегаты по типу |
 | `resetProfile()` | Очистить накопленные замеры |
 
+### Memory Pool (v1.16.0, #63)
+
+Opt-in переиспользование экземпляров для `make()`:
+
+| Метод | Назначение |
+|-------|------------|
+| `enablePooling($id, $maxSize)` | Включить пул для id |
+| `releaseToPool($id, $instance)` | Вернуть экземпляр в пул (`PoolableInterface::reset()`) |
+| `poolStats($id)` | Свободные экземпляры и лимит |
+
 ---
 
 ## Load: `ContainerLoadTest` (базовый API)
@@ -282,7 +292,7 @@ composer benchmark-check    # проверка регрессии (как в CI)
 
 | | Направление | Issue |
 |---|---|---|
-| ⚡ | **Memory Pool** — пул объектов для снижения GC | [#63](https://github.com/cloudcastle-apps/di/issues/63) |
+| ⚡ | **Memory Pool** — пул объектов для снижения GC | [#63](https://github.com/cloudcastle-apps/di/issues/63) ✅ v1.16.0 |
 | 🎯 | **Smart Caching** — кэширование с TTL | [#64](https://github.com/cloudcastle-apps/di/issues/64) |
 | 🧪 | **Advanced Benchmarks** — p50/p95, memory, ops/sec | [#66](https://github.com/cloudcastle-apps/di/issues/66) ✅ v1.14.0 |
 

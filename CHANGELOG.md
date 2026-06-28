@@ -3,6 +3,20 @@
 Формат основан на [Keep a Changelog](https://keepachangelog.com/ru/1.1.0/),
 версионирование — [SemVer](https://semver.org/lang/ru/).
 
+## [1.16.0] — 2026-06-28
+
+### Добавлено
+
+- **Memory Pool** ([#63](https://github.com/cloudcastle-apps/di/issues/63))
+- Opt-in object pool для `make()`: `enablePooling()`, `releaseToPool()`, `poolStats()`
+- `PoolableInterface` с `reset()` для resettable-сервисов
+- `ServiceObjectPool`, `ContainerMemoryPoolSupport` — переиспользование экземпляров на hot path
+
+### Изменено
+
+- **Тесты:** +10 PHPUnit (memory pool)
+- PHPMD: `maxfields` 20→22 для `Container`
+
 ## [1.15.0] — 2026-06-28
 
 ### Добавлено
