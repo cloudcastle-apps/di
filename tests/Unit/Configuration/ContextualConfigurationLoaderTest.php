@@ -35,6 +35,8 @@ final class ContextualConfigurationLoaderTest extends TestCase
         $report = $container->get(ReportService::class);
         $audit = $container->get(AuditService::class);
 
+        self::assertInstanceOf(ReportService::class, $report);
+        self::assertInstanceOf(AuditService::class, $audit);
         self::assertInstanceOf(MemoryLogger::class, $report->logger);
         self::assertInstanceOf(FileLogger::class, $audit->logger);
     }
