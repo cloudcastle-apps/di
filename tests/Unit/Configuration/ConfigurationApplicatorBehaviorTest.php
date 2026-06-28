@@ -134,4 +134,21 @@ final class ConfigurationApplicatorBehaviorTest extends TestCase
 
         self::assertIsArray($config['bind'] ?? null);
     }
+
+    public function testAutowiringEnabledOnlyWhenFlagStrictlyTrue(): void
+    {
+        $container = new Container();
+
+        (new ConfigurationApplicator())->apply($container, [
+            'autowiring' => ['enabled' => 1],
+        ]);
+
+        self::assertFalse($container->isAutowiringEnabled());
+
+        (new ConfigurationApplicator())->apply($container, [
+            'autowiring' => ['enabled' => true],
+        ]);
+
+        self::assertTrue($container->isAutowiringEnabled());
+    }
 }

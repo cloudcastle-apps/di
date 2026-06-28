@@ -284,4 +284,24 @@ final class ConfigurationMergerTest extends TestCase
 
         self::assertSame([], $merged['contextual']);
     }
+
+    public function testMergerSkipsInvalidContextualLayerButProcessesFollowingLayer(): void
+    {
+        $consumer = ReportService::class;
+        $need = \Psr\Log\LoggerInterface::class;
+
+        $merged = (new ConfigurationMerger())->merge([
+            new ConfigurationLayer(['contextual' => 'not-an-array'], 0, null),
+            new ConfigurationLayer([
+                'contextual' => [
+                    $consumer => [$need => 'log.memory'],
+                ],
+            ], 1, null),
+        ]);
+
+        self::assertIsArray($merged['contextual']);
+        /** @var array<string, array<string, string>> $contextual */
+        $contextual = $merged['contextual'];
+        self::assertSame('log.memory', $contextual[$consumer][$need]);
+    }
 }

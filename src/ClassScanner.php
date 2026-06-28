@@ -69,21 +69,21 @@ final class ClassScanner
             new RecursiveDirectoryIterator($directory, FilesystemIterator::SKIP_DOTS),
         );
 
-        /** @var list<SplFileInfo> $phpFiles */
-        $phpFiles = [];
+        /** @var list<SplFileInfo> $allFiles */
+        $allFiles = [];
 
         foreach ($iterator as $file) {
             /** @var SplFileInfo $file */
+            $allFiles[] = $file;
+        }
+
+        usort($allFiles, $this->compareSplFileInfoByPath(...));
+
+        foreach ($allFiles as $file) {
             if ($file->getExtension() !== 'php') {
                 continue;
             }
 
-            $phpFiles[] = $file;
-        }
-
-        usort($phpFiles, $this->compareSplFileInfoByPath(...));
-
-        foreach ($phpFiles as $file) {
             yield $file;
         }
     }

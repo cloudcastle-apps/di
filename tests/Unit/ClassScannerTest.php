@@ -13,6 +13,7 @@ use CloudCastle\DI\Tests\Fixtures\Autowire\Scan\MultiScanAlpha;
 use CloudCastle\DI\Tests\Fixtures\Autowire\Scan\MultiScanBeta;
 use CloudCastle\DI\Tests\Fixtures\Autowire\Scan\ScannedService;
 use CloudCastle\DI\Tests\Fixtures\Autowire\Scan\SpacedNamespaceService;
+use CloudCastle\DI\Tests\Fixtures\Autowire\ScanOrder\ScanOrderTarget;
 use CloudCastle\DI\Tests\Fixtures\Autowire\ScanOverflowService;
 use CloudCastle\DI\Tests\Fixtures\Autowire\SimpleService;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -219,5 +220,41 @@ final class ClassScannerTest extends TestCase
             unlink($directory . '/AbstractOnly.php');
             rmdir($directory);
         }
+    }
+
+    public function testScanFindsClassWhenCommittedNonPhpMarkerIsSortedFirst(): void
+    {
+        $directory = \dirname(__DIR__) . '/Fixtures/Autowire/ScanOrder';
+        $scanner = new ClassScanner();
+        $classNames = $scanner->scan(
+            $directory,
+            'CloudCastle\\DI\\Tests\\Fixtures\\Autowire\\ScanOrder\\',
+        );
+
+        self::assertSame([ScanOrderTarget::class], $classNames);
+    }
+
+    public function testScanFindsConcreteClassAfterAbstractInSameFile(): void
+    {
+        $scanner = new ClassScanner();
+        $classNames = $scanner->scan(
+            $this->fixturesDirectory . '/Scan',
+            'CloudCastle\\DI\\Tests\\Fixtures\\Autowire\\Scan\\',
+        );
+
+        self::assertContains(MixedScanConcreteNext::class, $classNames);
+    }
+
+    public function testScanFindsMultipleClassesInSingleFile(): void
+    {
+        $scanner = new ClassScanner();
+        $classNames = $scanner->scan(
+            $this->fixturesDirectory . '/Scan',
+            'CloudCastle\\DI\\Tests\\Fixtures\\Autowire\\Scan\\',
+        );
+
+        self::assertContains(MultiScanAlpha::class, $classNames);
+        self::assertContains(MultiScanBeta::class, $classNames);
+        self::assertContains(ScannedService::class, $classNames);
     }
 }
