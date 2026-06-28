@@ -81,16 +81,16 @@ final class ClassScanner
             $phpFiles[] = $file;
         }
 
-        usort(
-            $phpFiles,
-            static function (SplFileInfo $left, SplFileInfo $right): int {
-                return strcmp($left->getPathname(), $right->getPathname());
-            },
-        );
+        usort($phpFiles, $this->compareSplFileInfoByPath(...));
 
         foreach ($phpFiles as $file) {
             yield $file;
         }
+    }
+
+    private function compareSplFileInfoByPath(SplFileInfo $left, SplFileInfo $right): int
+    {
+        return strcmp($left->getPathname(), $right->getPathname());
     }
 
     /**
