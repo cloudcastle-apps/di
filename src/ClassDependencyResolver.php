@@ -18,8 +18,16 @@ final class ClassDependencyResolver
     ) {
     }
 
-    public function canResolve(string $typeName): bool
+    public function canResolve(string $typeName, ?string $consumerClass = null): bool
     {
+        if ($consumerClass !== null) {
+            $contextualGive = $this->container->contextualGive($consumerClass, $typeName);
+
+            if ($contextualGive !== null) {
+                return $this->container->has($contextualGive);
+            }
+        }
+
         if ($typeName === ContainerInterface::class || $typeName === PsrContainerInterface::class) {
             return true;
         }
@@ -35,8 +43,16 @@ final class ClassDependencyResolver
         return (new ReflectionClass($typeName))->isInstantiable();
     }
 
-    public function resolve(string $typeName): mixed
+    public function resolve(string $typeName, ?string $consumerClass = null): mixed
     {
+        if ($consumerClass !== null) {
+            $contextualGive = $this->container->contextualGive($consumerClass, $typeName);
+
+            if ($contextualGive !== null) {
+                return $this->container->get($contextualGive);
+            }
+        }
+
         if ($typeName === ContainerInterface::class || $typeName === PsrContainerInterface::class) {
             return $this->container;
         }

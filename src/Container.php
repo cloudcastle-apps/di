@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace CloudCastle\DI;
 
 use CloudCastle\DI\Contract\ContainerInterface;
+use CloudCastle\DI\Contract\ContextualBindingNeedsInterface;
 use CloudCastle\DI\Exception\ContainerException;
 use CloudCastle\DI\Exception\NotFoundException;
 use ReflectionClass;
@@ -76,6 +77,9 @@ final class Container implements ContainerInterface
     /** Реестр PHP attributes для autowiring (встроенные и пользовательские) */
     private readonly AttributeServiceIdRegistry $attributeRegistry;
 
+    /** Contextual when/needs/give (#25) */
+    private readonly ContextualBindingSupport $contextual;
+
     /**
      * Создаёт пустой контейнер с внутренними резолверами alias, экземпляров и after-resolving.
      */
@@ -85,6 +89,9 @@ final class Container implements ContainerInterface
         $this->instanceResolver = new ServiceInstanceResolver($this);
         $this->resolveHooks = new AfterResolvingDispatcher();
         $this->attributeRegistry = new AttributeServiceIdRegistry();
+        $this->contextual = new ContextualBindingSupport(function (): void {
+            $this->assertMutable();
+        });
     }
 
     /**
@@ -158,6 +165,28 @@ final class Container implements ContainerInterface
         }
 
         $this->alias($abstract, $concrete);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function when(string $consumerClass): ContextualBindingNeedsInterface
+    {
+        $this->assertMutable();
+
+        if (!class_exists($consumerClass)) {
+            throw new ContainerException(\sprintf('Класс "%s" не найден.', $consumerClass));
+        }
+
+        return $this->contextual->when($consumerClass);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function contextualGive(string $consumerClass, string $need): ?string
+    {
+        return $this->contextual->contextualGive($consumerClass, $need);
     }
 
     /**

@@ -112,7 +112,7 @@ flowchart LR
 | **Tagged iterator / locator** | ✅ | ✅ | ✅ | ❌ | ⚠️ | ✅ | **CloudCastle**, PHP-DI, Symfony, **Nette** |
 | **Декораторы** | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ | **Паритет** |
 | **Lazy loading** | ✅ | ✅ proxy | ✅ ghost | ❌ | ✅ | ✅ | **Symfony** (ghost proxies) |
-| **Contextual binding** | ❌ v2 | ✅ | ✅ | ❌ | ✅ | ✅ | **PHP-DI**, Symfony, Laravel, **Nette** |
+| **Contextual binding** | ⚠️ v1.11 runtime | ✅ | ✅ | ❌ | ✅ | ✅ | **PHP-DI**, Symfony, Laravel, **Nette** |
 | **Scopes (request и т.д.)** | ❌ v2 | ⚠️ | ✅ | ❌ | ✅ | ⚠️ | **Symfony**, **Laravel** |
 
 ### Интеграция и прочее
@@ -169,14 +169,14 @@ flowchart LR
 | 🏷️ | Теги, iterator, locator, декораторы, `call()`, `bind()` |
 | 🧊 | `freeze()`, `dump()`, `ContainerRegistry` |
 | 🧪 | 607 тестов, 100% line coverage `src/`, benchmark-check в CI |
-| 📋 | Contextual binding — **контракты** v1.10 ([#25](https://github.com/cloudcastle-apps/di/issues/25) ч.1 ✅) |
+| 📋 | Contextual binding — runtime v1.11 ([#25](https://github.com/cloudcastle-apps/di/issues/25) ч.2 ✅) |
 
 ### Ограничения (v1.x)
 
 | | |
 |---|---|
 | 🚀 | **Compiled container** — `ContainerCompiler`, build-step ([#24](https://github.com/cloudcastle-apps/di/issues/24)) |
-| 🚧 | Contextual **runtime** — [v2 #25](https://github.com/cloudcastle-apps/di/issues/25) часть 2+ |
+| 🚧 | Contextual **config/compiled** — [#25](https://github.com/cloudcastle-apps/di/issues/25) часть 3–4 |
 | 📌 | `scan()` — regex-парсинг, не AST |
 | 👥 | Меньше community, чем PHP-DI / Symfony / **Nette** |
 

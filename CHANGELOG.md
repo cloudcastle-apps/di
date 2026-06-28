@@ -3,6 +3,20 @@
 Формат основан на [Keep a Changelog](https://keepachangelog.com/ru/1.1.0/),
 версионирование — [SemVer](https://semver.org/lang/ru/).
 
+## [1.11.0] — 2026-06-28
+
+### Добавлено
+
+- **Contextual binding — runtime** ([#25](https://github.com/cloudcastle-apps/di/issues/25), часть 2 из 4)
+- `Container::when()` / `needs()` / `give()` — fluent API на runtime-контейнере
+- `ContextualBindingRegistry`, `ContextualBindingSupport` — хранилище и autowiring по контексту потребителя
+- `ContextualBindingRegistrarInterface`
+
+### Изменено
+
+- **Тесты:** 614 PHPUnit (unit 562, integration 8, security 17, load 15, performance 12)
+- PHPMD: пороги complexity/methods для `Container` (+contextual API)
+
 ## [1.10.0] — 2026-06-28
 
 ### Добавлено
@@ -249,6 +263,7 @@
 - CI для GitHub Actions и GitLab CI
 - Инструменты качества: PHPStan max, Psalm level 1, PHPCS, PHPMD, Deptrac, Rector
 
+[1.11.0]: https://github.com/cloudcastle-apps/di/compare/v1.10.0...v1.11.0
 [1.10.0]: https://github.com/cloudcastle-apps/di/compare/v1.9.0...v1.10.0
 [1.9.0]: https://github.com/cloudcastle-apps/di/compare/v1.8.0...v1.9.0
 [1.8.0]: https://github.com/cloudcastle-apps/di/compare/v1.7.0...v1.8.0

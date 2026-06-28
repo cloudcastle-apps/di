@@ -2,6 +2,25 @@
 
 Руководство по переходу между версиями **cloudcastle/di**.
 
+## 1.10.0 → 1.11.0
+
+### Добавлено (обратно совместимо)
+
+- **Runtime contextual binding** ([#25](https://github.com/cloudcastle-apps/di/issues/25), часть 2): `Container::when()->needs()->give()`
+- Autowiring учитывает правила для класса-потребителя (constructor/property/method)
+
+```php
+$container->when(ReportService::class)
+    ->needs(LoggerInterface::class)
+    ->give('memory.logger');
+```
+
+Compiled container — contextual **ещё не** в hot path (часть 4). См. [Contextual binding](https://github.com/cloudcastle-apps/di/wiki/Contextual-binding).
+
+```bash
+composer update cloudcastle/di
+```
+
 ## 1.9.0 → 1.10.0
 
 ### Добавлено (обратно совместимо)
@@ -9,7 +28,7 @@
 - **Контракты contextual binding** ([#25](https://github.com/cloudcastle-apps/di/issues/25), часть 1): `ContextualBinding`, `ContextualBindingRegistryInterface`, fluent `when/needs/give`
 - Wiki: [Contextual binding](https://github.com/cloudcastle-apps/di/wiki/Contextual-binding)
 
-Runtime (`Container::when()`) **ещё не реализован** — поведение контейнера не меняется.
+Runtime (`Container::when()`) **реализован** в v1.11.0 (часть 2). Config/compiled — части 3–4.
 
 ```bash
 composer update cloudcastle/di

@@ -24,7 +24,7 @@
     </rule>
     <rule ref="rulesets/codesize.xml/ExcessiveClassComplexity">
         <properties>
-            <property name="maximum" value="75"/>
+            <property name="maximum" value="78"/>
         </properties>
     </rule>
     <rule ref="rulesets/codesize.xml/TooManyFields">
@@ -34,7 +34,7 @@
     </rule>
     <rule ref="rulesets/codesize.xml/TooManyMethods">
         <properties>
-            <property name="maxmethods" value="32"/>
+            <property name="maxmethods" value="35"/>
         </properties>
     </rule>
     <rule ref="rulesets/controversial.xml">

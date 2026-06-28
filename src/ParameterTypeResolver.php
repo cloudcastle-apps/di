@@ -34,6 +34,7 @@ final class ParameterTypeResolver
      */
     public function resolve(ReflectionParameter $parameter): mixed
     {
+        $consumerClass = $parameter->getDeclaringClass()?->getName();
         $type = $parameter->getType();
 
         if ($type === null) {
@@ -41,15 +42,15 @@ final class ParameterTypeResolver
         }
 
         if ($type instanceof ReflectionUnionType) {
-            return $this->resolveUnionParameter($parameter, $type);
+            return $this->resolveUnionParameter($parameter, $type, $consumerClass);
         }
 
         if ($type instanceof ReflectionIntersectionType) {
-            return $this->intersection->resolve($parameter, $type);
+            return $this->intersection->resolve($parameter, $type, $consumerClass);
         }
 
         /** @var ReflectionNamedType $type */
-        return $this->resolveNamedTypeParameter($parameter, $type);
+        return $this->resolveNamedTypeParameter($parameter, $type, $consumerClass);
     }
 
     /**
@@ -57,6 +58,7 @@ final class ParameterTypeResolver
      */
     public function resolveProperty(ReflectionProperty $property): mixed
     {
+        $consumerClass = $property->getDeclaringClass()->getName();
         $type = $property->getType();
 
         if ($type === null) {
@@ -67,33 +69,39 @@ final class ParameterTypeResolver
         }
 
         if ($type instanceof ReflectionUnionType) {
-            return $this->resolveUnionProperty($property, $type);
+            return $this->resolveUnionProperty($property, $type, $consumerClass);
         }
 
         if ($type instanceof ReflectionIntersectionType) {
-            return $this->intersection->resolve($property, $type);
+            return $this->intersection->resolve($property, $type, $consumerClass);
         }
 
         /** @var ReflectionNamedType $type */
-        return $this->resolveNamedTypeProperty($property, $type);
+        return $this->resolveNamedTypeProperty($property, $type, $consumerClass);
     }
 
-    private function resolveUnionParameter(ReflectionParameter $parameter, ReflectionUnionType $type): mixed
-    {
+    private function resolveUnionParameter(
+        ReflectionParameter $parameter,
+        ReflectionUnionType $type,
+        ?string $consumerClass,
+    ): mixed {
         foreach ($this->filterObjectNamedTypes($type->getTypes()) as $namedType) {
-            if ($this->classResolver->canResolve($namedType->getName())) {
-                return $this->classResolver->resolve($namedType->getName());
+            if ($this->classResolver->canResolve($namedType->getName(), $consumerClass)) {
+                return $this->classResolver->resolve($namedType->getName(), $consumerClass);
             }
         }
 
         return $this->resolveDefaultValue($parameter);
     }
 
-    private function resolveUnionProperty(ReflectionProperty $property, ReflectionUnionType $type): mixed
-    {
+    private function resolveUnionProperty(
+        ReflectionProperty $property,
+        ReflectionUnionType $type,
+        string $consumerClass,
+    ): mixed {
         foreach ($this->filterObjectNamedTypes($type->getTypes()) as $namedType) {
-            if ($this->classResolver->canResolve($namedType->getName())) {
-                return $this->classResolver->resolve($namedType->getName());
+            if ($this->classResolver->canResolve($namedType->getName(), $consumerClass)) {
+                return $this->classResolver->resolve($namedType->getName(), $consumerClass);
             }
         }
 
@@ -107,8 +115,11 @@ final class ParameterTypeResolver
         ));
     }
 
-    private function resolveNamedTypeParameter(ReflectionParameter $parameter, ReflectionNamedType $type): mixed
-    {
+    private function resolveNamedTypeParameter(
+        ReflectionParameter $parameter,
+        ReflectionNamedType $type,
+        ?string $consumerClass,
+    ): mixed {
         if ($type->isBuiltin()) {
             return $this->resolveDefaultValue($parameter);
         }
@@ -119,8 +130,8 @@ final class ParameterTypeResolver
             return $parameter->getDefaultValue();
         }
 
-        if ($this->classResolver->canResolve($typeName)) {
-            return $this->classResolver->resolve($typeName);
+        if ($this->classResolver->canResolve($typeName, $consumerClass)) {
+            return $this->classResolver->resolve($typeName, $consumerClass);
         }
 
         if ($parameter->allowsNull()) {
@@ -130,8 +141,11 @@ final class ParameterTypeResolver
         return $this->resolveDefaultValue($parameter);
     }
 
-    private function resolveNamedTypeProperty(ReflectionProperty $property, ReflectionNamedType $type): mixed
-    {
+    private function resolveNamedTypeProperty(
+        ReflectionProperty $property,
+        ReflectionNamedType $type,
+        string $consumerClass,
+    ): mixed {
         if ($type->isBuiltin()) {
             throw new ContainerException(\sprintf(
                 'Не удалось разрешить свойство $%s.',
@@ -141,8 +155,8 @@ final class ParameterTypeResolver
 
         $typeName = $type->getName();
 
-        if ($this->classResolver->canResolve($typeName)) {
-            return $this->classResolver->resolve($typeName);
+        if ($this->classResolver->canResolve($typeName, $consumerClass)) {
+            return $this->classResolver->resolve($typeName, $consumerClass);
         }
 
         if ($type->allowsNull()) {
