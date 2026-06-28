@@ -8,8 +8,10 @@ use CloudCastle\DI\Configuration\ConfigurationApplicator;
 use CloudCastle\DI\Container;
 use CloudCastle\DI\Tests\Fixtures\Autowire\Clock;
 use CloudCastle\DI\Tests\Fixtures\Autowire\FileLogger;
+use CloudCastle\DI\Tests\Fixtures\ContextualBinding\ReportService;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 
 #[CoversClass(ConfigurationApplicator::class)]
 final class ConfigurationApplicatorFilteringTest extends TestCase
@@ -146,5 +148,68 @@ final class ConfigurationApplicatorFilteringTest extends TestCase
         ]);
 
         self::assertFalse($container->hasDefinition('invalid'));
+    }
+
+    public function testApplySkipsInvalidContextualNeedButProcessesFollowingRules(): void
+    {
+        $container = new Container();
+
+        (new ConfigurationApplicator())->apply($container, [
+            'contextual' => [
+                ReportService::class => [
+                    456 => 'skip.invalid-need',
+                    LoggerInterface::class => 'memory.logger',
+                    'App\\Contracts\\SecondaryPort' => 'port.impl',
+                ],
+            ],
+        ]);
+
+        self::assertSame(
+            'memory.logger',
+            $container->contextualGive(ReportService::class, LoggerInterface::class),
+        );
+        self::assertSame(
+            'port.impl',
+            $container->contextualGive(ReportService::class, 'App\\Contracts\\SecondaryPort'),
+        );
+    }
+
+    public function testApplySkipsInvalidContextualGiveButProcessesFollowingRules(): void
+    {
+        $container = new Container();
+
+        (new ConfigurationApplicator())->apply($container, [
+            'contextual' => [
+                ReportService::class => [
+                    LoggerInterface::class => 789,
+                    'App\\Contracts\\SecondaryPort' => 'port.impl',
+                ],
+            ],
+        ]);
+
+        self::assertNull($container->contextualGive(ReportService::class, LoggerInterface::class));
+        self::assertSame(
+            'port.impl',
+            $container->contextualGive(ReportService::class, 'App\\Contracts\\SecondaryPort'),
+        );
+    }
+
+    public function testApplySkipsInvalidContextualConsumerButProcessesFollowingConsumer(): void
+    {
+        $container = new Container();
+
+        (new ConfigurationApplicator())->apply($container, [
+            'contextual' => [
+                123 => [LoggerInterface::class => 'skip.invalid-consumer'],
+                ReportService::class => [
+                    LoggerInterface::class => 'memory.logger',
+                ],
+            ],
+        ]);
+
+        self::assertSame(
+            'memory.logger',
+            $container->contextualGive(ReportService::class, LoggerInterface::class),
+        );
     }
 }
