@@ -196,7 +196,9 @@ final class ContainerProfilingTest extends TestCase
         });
         $container->enableProfiling();
 
+        /** @var object $first */
         $first = $container->get('svc');
+        /** @var object $second */
         $second = $container->get('svc');
 
         self::assertSame($first, $second);
