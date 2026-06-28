@@ -85,6 +85,7 @@ final class XmlConfigurationLoader implements ConfigurationLoaderInterface
             'services' => $this->parseServices(...),
             'aliases' => $this->parseAliases(...),
             'bind' => $this->parseBind(...),
+            'contextual' => $this->parseContextual(...),
             'autowire' => $this->parseAutowireList(...),
             'tags' => $this->parseTags(...),
             'scan' => $this->parseScan(...),
@@ -166,6 +167,29 @@ final class XmlConfigurationLoader implements ConfigurationLoaderInterface
             $abstract = $this->readRequiredAttribute($binding, 'abstract');
             $concrete = $this->readRequiredAttribute($binding, 'concrete');
             $result[$abstract] = $this->wrapWithPriority($concrete, $binding);
+        }
+
+        return $result;
+    }
+
+    /**
+     * @return array<string, array<string, string|array{value: string, priority?: int}>>
+     */
+    private function parseContextual(SimpleXMLElement $contextual): array
+    {
+        $result = [];
+
+        foreach ($contextual->when as $when) {
+            $consumerClass = $this->readRequiredAttribute($when, 'class');
+            $needs = [];
+
+            foreach ($when->need as $need) {
+                $type = $this->readRequiredAttribute($need, 'type');
+                $give = $this->readRequiredAttribute($need, 'give');
+                $needs[$type] = $this->wrapWithPriority($give, $need);
+            }
+
+            $result[$consumerClass] = $needs;
         }
 
         return $result;

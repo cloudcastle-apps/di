@@ -2,6 +2,34 @@
 
 Руководство по переходу между версиями **cloudcastle/di**.
 
+## 1.11.0 → 1.12.0
+
+### Добавлено (обратно совместимо)
+
+- **Contextual binding в конфигурации** ([#25](https://github.com/cloudcastle-apps/di/issues/25), часть 3): секция `contextual` в PHP/JSON/YAML/XML
+
+```php
+return [
+    'contextual' => [
+        ReportService::class => [
+            LoggerInterface::class => 'memory.logger',
+        ],
+    ],
+];
+```
+
+```yaml
+contextual:
+  App\ReportService:
+    Psr\Log\LoggerInterface: memory.logger
+```
+
+Compiled container — contextual **ещё не** в hot path (часть 4).
+
+```bash
+composer update cloudcastle/di
+```
+
 ## 1.10.0 → 1.11.0
 
 ### Добавлено (обратно совместимо)

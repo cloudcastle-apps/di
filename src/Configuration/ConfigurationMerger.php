@@ -18,6 +18,7 @@ final class ConfigurationMerger
         'services',
         'aliases',
         'bind',
+        'contextual',
         'autowire',
         'register_attributes',
         'tags',
@@ -36,10 +37,109 @@ final class ConfigurationMerger
         $merged = [];
 
         foreach (self::MERGE_SECTIONS as $section) {
+            if ($section === 'contextual') {
+                $merged[$section] = $this->mergeContextualSection($layers);
+
+                continue;
+            }
+
             $merged[$section] = $this->mergeSection($layers, $section);
         }
 
         return $merged;
+    }
+
+    /**
+     * @param list<ConfigurationLayer> $layers
+     *
+     * @return array<string, array<string, string>>
+     */
+    private function mergeContextualSection(array $layers): array
+    {
+        $winners = $this->collectContextualWinners($layers);
+
+        return $this->buildContextualResult($winners);
+    }
+
+    /**
+     * @param list<ConfigurationLayer> $layers
+     *
+     * @return array<int|string, array{effectivePriority: int, order: int, value: mixed}>
+     */
+    private function collectContextualWinners(array $layers): array
+    {
+        /** @var array<string, array{effectivePriority: int, order: int, value: string}> $winners */
+        $winners = [];
+
+        foreach ($layers as $layer) {
+            $sectionData = $layer->config['contextual'] ?? null;
+
+            if (!\is_array($sectionData)) {
+                continue;
+            }
+
+            $layerDefaultPriority = $this->resolveLayerDefaultPriority($layer);
+
+            foreach ($sectionData as $consumerClass => $needsMap) {
+                if (!\is_string($consumerClass) || !\is_array($needsMap)) {
+                    continue;
+                }
+
+                foreach ($needsMap as $need => $give) {
+                    if (!\is_string($need)) {
+                        continue;
+                    }
+
+                    [$giveValue, $entryPriority] = $this->unwrapEntry($give);
+
+                    if (!\is_string($giveValue)) {
+                        continue;
+                    }
+
+                    $key = $consumerClass . '::' . $need;
+                    $effectivePriority = $entryPriority ?? $layerDefaultPriority;
+
+                    $this->considerWinner($winners, $key, $effectivePriority, $layer->order, $giveValue);
+                }
+            }
+        }
+
+        return $winners;
+    }
+
+    /**
+     * @param array<int|string, array{effectivePriority: int, order: int, value: mixed}> $winners
+     *
+     * @return array<string, array<string, string>>
+     */
+    private function buildContextualResult(array $winners): array
+    {
+        /** @var array<string, array<string, string>> $result */
+        $result = [];
+
+        foreach ($winners as $key => $winner) {
+            if (!\is_string($key)) {
+                continue;
+            }
+
+            $separator = strpos($key, '::');
+
+            if ($separator === false) {
+                continue;
+            }
+
+            $giveId = $winner['value'];
+
+            if (!\is_string($giveId)) {
+                continue;
+            }
+
+            $consumerClass = substr($key, 0, $separator);
+            $need = substr($key, $separator + 2);
+            $result[$consumerClass][$need] = $giveId;
+        }
+
+        return $result;
     }
 
     /**

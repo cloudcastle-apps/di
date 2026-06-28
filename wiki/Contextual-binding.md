@@ -12,16 +12,16 @@
 
 ---
 
-## Статус (v1.11.0)
+## Статус (v1.12.0)
 
 | Этап | Статус | MR / релиз |
 |------|--------|------------|
 | **1. Контракты** | ✅ v1.10.0 | [#61](https://github.com/cloudcastle-apps/di/pull/61) |
 | **2. Runtime** | ✅ v1.11.0 | `Container::when()`, registry, autowirer |
-| **3. Config** | 🔜 | PHP/JSON/YAML/XML |
+| **3. Config** | ✅ v1.12.0 | секция `contextual` в PHP/JSON/YAML/XML |
 | **4. Compiler** | 🔜 | compiled container parity |
 
-Полный runtime **доступен** на runtime-контейнере (v1.11.0). Config (#25 ч.3) и compiled (#25 ч.4) — в roadmap.
+Полный runtime и **declarative config** доступны (v1.11–1.12). Compiled (#25 ч.4) — в roadmap.
 
 ### Пример (runtime)
 
@@ -35,6 +35,18 @@ $container->when(ReportService::class)
 
 $report = $container->get(ReportService::class); // MemoryLogger
 $other = $container->get(AuditService::class);   // default binding
+```
+
+### Пример (config, v1.12.0)
+
+```yaml
+contextual:
+  App\ReportService:
+    Psr\Log\LoggerInterface: memory.logger
+```
+
+```php
+(new ContainerConfigurator())->configure($container, [__DIR__ . '/container.yaml']);
 ```
 
 ---

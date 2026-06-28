@@ -213,13 +213,14 @@ $configurator->apply($container, [
 | `services` | `map<string, mixed>` | `set()`, `bind()`, `autowire()`, `lazy()` |
 | `autowire` | `list<string>` | `autowire($class)` |
 | `bind` | `map<string, string>` | `bind($abstract, $concrete)` |
+| `contextual` | `map<consumer, map<need, give>>` | `when()->needs()->give()` (v1.12) |
 | `aliases` | `map<string, string>` | `alias($alias, $target)` |
 | `tags` | `map<string, list<string>>` | `tag($id, $tag)` |
 
 ### Порядок применения секций
 
 ```
-register_attributes → autowiring → scan → services → autowire → bind → aliases → tags
+register_attributes → autowiring → scan → services → autowire → bind → contextual → aliases → tags
 ```
 
 Сначала регистрируются attributes и флаги autowiring, затем scan добавляет классы, потом явные `services`, и т.д.
@@ -529,6 +530,50 @@ LoggerInterface::class => [
     'priority' => 100,
 ],
 ```
+
+---
+
+## Секция `contextual`
+
+Contextual binding: для класса-потребителя (`when`) переопределить зависимость (`needs`) на id сервиса (`give`). Доступно с **v1.12.0**.
+
+**PHP:**
+
+```php
+'contextual' => [
+    ReportService::class => [
+        LoggerInterface::class => 'memory.logger',
+    ],
+],
+```
+
+**YAML:**
+
+```yaml
+contextual:
+  App\ReportService:
+    Psr\Log\LoggerInterface: memory.logger
+```
+
+**XML:**
+
+```xml
+<contextual>
+    <when class="App\ReportService">
+        <need type="Psr\Log\LoggerInterface" give="memory.logger"/>
+    </when>
+</contextual>
+```
+
+С `priority` на уровне `give` (как в `bind`):
+
+```php
+ReportService::class => [
+    LoggerInterface::class => ['value' => 'memory.logger', 'priority' => 100],
+],
+```
+
+При слиянии слоёв побеждает правило с большим `priority` для пары (consumer, need); правила разных `needs` одного consumer **объединяются**.
 
 ---
 
