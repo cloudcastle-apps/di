@@ -75,6 +75,8 @@ final class LazyGhostProxyFactory
      * @param ReflectionClass<object> $interface
      *
      * @return class-string
+     *
+     * @infection-ignore-all
      */
     private static function resolveProxyClass(ReflectionClass $interface): string
     {
