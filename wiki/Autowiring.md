@@ -457,9 +457,11 @@ Autowired-сервис кэшируется: повторный `get(FQCN)` — 
 
 ## Ограничения
 
-CloudCastle DI **не** поддерживает:
+CloudCastle DI **не** поддерживает в **compiled-контейнере** (v1.9):
 
-- compiled container;
+- property / method injection, callable-фабрики, `decorate()`, `afterResolving()` — см. [Compiled container](Compiled-container);
+
+Runtime-контейнер **не** поддерживает:
 - autoconfigure Symfony / event subscribers;
 - private inject-методы без attributes (только public/protected).
 

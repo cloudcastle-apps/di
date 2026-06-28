@@ -68,14 +68,14 @@ composer ci
 | `composer phpmd` | PHP Mess Detector |
 | `composer deptrac` | Архитектурные слои |
 | `composer rector` / `composer rector-fix` | Rector (dry-run / apply) |
-| `composer test:unit` | Unit-тесты (463) |
-| `composer test:integration` | Интеграционные тесты (5) |
+| `composer test:unit` | Unit-тесты (552) |
+| `composer test:integration` | Интеграционные тесты (8) |
 | `composer test:security` | Тесты безопасности (17) |
 | `composer test:load` | Нагрузочные тесты (15) |
 | `composer test:performance` | Производительность (12) |
 | `composer benchmark-report` | Markdown-отчёт фактических времён |
 | `composer benchmark-check` | Проверка регрессии бенчмарков (×1.5, CI) |
-| `composer test:coverage` | Покрытие (ожидается ≥95% строк, ~98% фактически) |
+| `composer test:coverage` | Покрытие (100% line coverage `src/`, per-file ≥95%) |
 | `composer test:mutation` | Infection (MSI ≥94% по `src/`, PHP 8.3+) |
 | `composer docs` | Генерация API-документации в `docs/` |
 

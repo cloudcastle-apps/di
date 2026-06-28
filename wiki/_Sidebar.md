@@ -6,6 +6,7 @@
 - [⚡ Быстрый старт](Quick-start)
 - [📊 **Сравнение**](Comparison) — 5 аналогов, таблица + победители
 - [🧪 Bootstrap](Bootstrap)
+- [🚀 Compiled container](Compiled-container)
 - [🤖 Autowiring](Autowiring)
 - [📄 Конфигурация](Configuration)
 - [📖 Справочник конфигурации](Configuration-reference)

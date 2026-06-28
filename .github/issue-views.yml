@@ -4,6 +4,12 @@ repository: cloudcastle-apps/di
 repository_id: R_kgDOTFUbXw
 
 views:
+  - name: v1.9 features
+    description: Compiled container и релиз 1.9
+    icon: ROCKET
+    color: GREEN
+    query: 'is:issue milestone:"v1.9.0"'
+
   - name: v2.0 roadmap
     description: Задачи major-релиза v2.0
     icon: MILESTONE

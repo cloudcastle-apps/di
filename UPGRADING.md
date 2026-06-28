@@ -2,6 +2,25 @@
 
 Руководство по переходу между версиями **cloudcastle/di**.
 
+## 1.8.0 → 1.9.0
+
+### Добавлено (обратно совместимо)
+
+- **`ContainerCompiler`** — компиляция замороженного контейнера в PHP-класс без reflection на hot path ([#24](https://github.com/cloudcastle-apps/di/issues/24))
+- Классы `CloudCastle\DI\Compiler\*`, контракты `ContainerCompilerInterface`, `CompiledContainerInterface`
+- Wiki: [Compiled container](https://github.com/cloudcastle-apps/di/wiki/Compiled-container)
+
+### Изменено
+
+- Покрытие: **100%** line coverage по `src/`; per-file gate ≥95%
+- Тесты: 604 PHPUnit
+
+Runtime-контейнер **без изменений** для существующего кода. Compiled — опциональный build-step.
+
+```bash
+composer update cloudcastle/di
+```
+
 ## 1.7.0 → 1.8.0
 
 ### Изменения (breaking)
@@ -197,7 +216,7 @@ composer update cloudcastle/di
 
 ## 1.x → 2.0 (будущее)
 
-Major **v2.0** — breaking changes и enterprise-parity (compiled container, contextual binding, scopes). Полный список — в [issue #17](https://github.com/cloudcastle-apps/di/issues/17) и [CHANGELOG.md](CHANGELOG.md) перед релизом.
+Major **v2.0** — breaking changes и enterprise-parity (**contextual binding**, **scopes**). **Compiled container** реализован в **1.9.0** ([#24](https://github.com/cloudcastle-apps/di/issues/24) закрыт).
 
 ### Планируемые breaking changes (черновик)
 
@@ -207,23 +226,22 @@ Major **v2.0** — breaking changes и enterprise-parity (compiled container, co
 | Deprecated API | Удаление устаревших alias/методов, если появятся в 1.x | Заменить на актуальные из UPGRADING 1.x |
 | Конфигурация | Возможное ужесточение схемы YAML/JSON/XML (обязательные ключи, типы) | Прогнать `configure()` в тестах, сверить с wiki Configuration |
 | Autowiring | Изменение порядка разрешения или opt-in по умолчанию | Явно вызывать `enableAutowiring()` / флаги в config |
-| Compiled container (#24) | Опциональный `dump()` → PHP-класс вместо reflection на hot path | Генерировать compiled-контейнер в build-step |
 | Contextual binding (#25) | Новый API `when()->needs()->give()` | Перенести «магические» bind из фабрик в declarative config |
 | Scopes (#33) | request / transient как first-class | Не полагаться на singleton для request-scoped сервисов |
 
 ### Чек-лист перед переходом на 2.0
 
-1. Зафиксировать версию **1.7.x** в production; прочитать release notes 2.0 RC.
+1. Зафиксировать версию **1.9.x** в production; прочитать release notes 2.0 RC.
 2. `composer update cloudcastle/di` на staging; прогнать полный test-suite и smoke-тесты composition root.
 3. Проверить: `freeze()` в bootstrap, отсутствие `set()` после freeze, `ContainerRegistry::reset()` в PHPUnit.
 4. Заменить удалённые API по таблице в release notes (будет дополнена в RC).
-5. При использовании compiled container — добавить шаг сборки в CI/deploy.
+5. При использовании compiled container — шаг `ContainerCompiler::compile()` в CI/deploy (см. wiki Compiled container).
 
 ### ADR (Architecture Decision Records)
 
 Решения по v2.0 фиксируются в GitHub Discussions / Issues до появления каталога `docs/adr/`:
 
-- **Compiled container** — [#24](https://github.com/cloudcastle-apps/di/issues/24)
+- **Compiled container** — реализовано в v1.9.0 ([#24](https://github.com/cloudcastle-apps/di/issues/24))
 - **Contextual binding** — [#25](https://github.com/cloudcastle-apps/di/issues/25)
 - **Scopes** — [#33](https://github.com/cloudcastle-apps/di/issues/33)
 - **Breaking policy** — [#17](https://github.com/cloudcastle-apps/di/issues/17)

@@ -451,9 +451,9 @@ interface ContainerInterface extends \Psr\Container\ContainerInterface
 
 ---
 
-## v2: Compiled container (контракты)
+## v1.9: Compiled container
 
-> ⚠️ **Статус:** контракты и value object уже в кодовой базе; **runtime-компилятор** — задача [#24](https://github.com/cloudcastle-apps/di/issues/24). Пока используйте обычный `Container` + `freeze()`.
+> **Статус:** реализовано в v1.9.0 ([#24](https://github.com/cloudcastle-apps/di/issues/24)). Руководство — [Compiled container](Compiled-container).
 
 ### `CloudCastle\DI\Contract\ContainerCompilerInterface`
 
@@ -461,9 +461,15 @@ interface ContainerInterface extends \Psr\Container\ContainerInterface
 
 | Метод | Описание |
 |-------|----------|
-| `compile(ContainerInterface $container, string $outputPath, ?string $className = null): ContainerCompileResult` | Пишет `.php` с классом wiring; рекомендуется вызывать после `freeze()` |
+| `compile(ContainerInterface $container, string $outputPath, ?string $className = null): ContainerCompileResult` | Пишет `.php` с классом wiring; **обязательно** после `freeze()` |
 
-**Первый этап v2** покрывает: `set`, `autowire`, `alias`, tags. Contextual binding — [#25](https://github.com/cloudcastle-apps/di/issues/25).
+**Поддерживает:** `set` (literal / prebuilt object), `autowire` (constructor only), `alias`, tags.
+
+**Не поддерживает:** callable-фабрики, глобальный autowiring, property/method injection, `decorate()`, `afterResolving()`. Contextual binding — [#25](https://github.com/cloudcastle-apps/di/issues/25).
+
+### `CloudCastle\DI\Compiler\ContainerCompiler`
+
+Реализация `ContainerCompilerInterface`. Зависимости: `ContainerCompileSnapshotBuilder`, `CompiledContainerPhpGenerator`.
 
 ### `CloudCastle\DI\Contract\CompiledContainerInterface`
 
@@ -473,9 +479,13 @@ interface ContainerInterface extends \Psr\Container\ContainerInterface
 |-------|----------|
 | `getCompiledClassName(): string` | FQCN сгенерированного класса |
 
+### `CloudCastle\DI\Compiler\AbstractCompiledContainer`
+
+Базовый класс сгенерированных контейнеров. Immutable, `isFrozen()` всегда `true`.
+
 ### `CloudCastle\DI\Compiler\ContainerCompileResult`
 
-Value object результата компиляции (immutable): путь к файлу, FQCN класса, метаданные.
+Value object результата компиляции (immutable): `className`, `outputPath`.
 
 ### `CloudCastle\DI\Exception\ContainerCompileException`
 

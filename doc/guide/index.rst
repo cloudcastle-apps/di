@@ -10,7 +10,7 @@ CloudCastle DI
 
 **Возможности:** autowiring (constructor, property, method), конфигурация PHP/JSON/YAML/XML,
 ``scan()``, прототипы ``make()``, alias, lazy, ``call()`` / ``bind()``, after-resolving hooks,
-tagged services, декораторы, ``freeze()``, ``ContainerRegistry``.
+tagged services, декораторы, ``freeze()``, compiled container (v1.9), ``ContainerRegistry``.
 
 **Документация онлайн:** `Wiki <https://github.com/cloudcastle-apps/di/wiki/Home>`_ ·
 `Сравнение с аналогами <https://github.com/cloudcastle-apps/di/wiki/Comparison>`_.
@@ -30,4 +30,5 @@ tagged services, декораторы, ``freeze()``, ``ContainerRegistry``.
    testing
    anti-patterns
    comparison
+   compiled-container
    load-performance

@@ -36,7 +36,7 @@ src/
   Configuration/            — ContainerConfigurator, загрузчики, merger
   Attribute/              — Inject, Autowire
   Contract/               — ContainerInterface, compiler contracts, ServiceIdAttribute
-  Compiler/               — ContainerCompileResult (v2 contracts)
+  Compiler/               — ContainerCompiler, compiled container (v1.9)
   Exception/              — NotFoundException, ContainerException
 tests/Unit/               — unit-тесты
 tests/Integration/        — интеграционные
@@ -62,7 +62,7 @@ wiki/                     — исходники GitHub Wiki (публикует
 |---------|------------|
 | `composer check` | быстрая проверка |
 | `composer ci` | полный пайплайн (как в GitHub Actions) |
-| `composer test:unit` | unit-тесты (463) |
+| `composer test:unit` | unit-тесты (552) |
 | `composer test:load` | нагрузочные (15) |
 | `composer test:performance` | производительность (12) |
 | `composer benchmark-report` | фактические времена бенчмарков |

@@ -9,8 +9,8 @@
 
 | Команда | Каталог | Тестов | Назначение |
 |---------|---------|--------|------------|
-| `composer test:unit` | `tests/Unit/` | 463 | API, autowiring, configuration, freeze, compiler contracts |
-| `composer test:integration` | `tests/Integration/` | 5 | Сценарии с несколькими сервисами |
+| `composer test:unit` | `tests/Unit/` | 552 | API, autowiring, configuration, freeze, compiler |
+| `composer test:integration` | `tests/Integration/` | 8 | Parity runtime vs compiled, multi-service |
 | `composer test:security` | `tests/Security/` | 17 | Инъекции, утечки в сообщениях об ошибках |
 | `composer test:load` | `tests/Load/` | 15 | Массовые операции (~6000 resolve) |
 | `composer test:performance` | `tests/Performance/` | 12 | PHPBench, регрессия hot path |
@@ -18,9 +18,9 @@
 | `composer test:coverage` | PHPUnit + PCOV | — | ≥95% строк **и** ≥95% per-file (`tools/coverage-check.php`) |
 | `composer benchmark-check` | PHPBench | — | Регрессия производительности (×1.5 порог) |
 
-**Всего:** 512 PHPUnit-тестов (без coverage/mutation/benchmark-check).
+**Всего:** 604 PHPUnit-теста (552 + 8 + 17 + 15 + 12; без coverage/mutation/benchmark-check).
 
-Фактические метрики (v1.8): покрытие строк **~98%**; per-file ≥95%; Infection MSI **≥94%** по всему `src/` (включая `src/Configuration/`). Mutation-тесты в CI выполняются только на PHP 8.3+ (требование Infection 0.33).
+Фактические метрики (v1.9): покрытие строк **100%** по `src/` (1298/1298); per-file ≥95%; Infection MSI **≥94%** (`src/Compiler/` вне mutation scope). Mutation-тесты в CI — только PHP 8.3+.
 
 ## Быстрый старт
 
@@ -37,7 +37,8 @@ composer ci                # полный пайплайн как в GitHub Acti
 
 - `tests/Unit/` — контейнер, autowiring, configuration, loaders, freeze/dump
 - `tests/Unit/Configuration/*MutationTest.php` — сценарии для Infection
-- `tests/Unit/Compiler/` — контракты compiled container (v2, #24)
+- `tests/Unit/Compiler/` — `ContainerCompiler`, snapshot builder, generator, planner
+- `tests/Integration/CompiledContainerIntegrationTest.php` — parity runtime vs compiled
 - `tests/Fixtures/` — классы и конфиги для autowire и `ContainerConfigurator`
 
 ## CI

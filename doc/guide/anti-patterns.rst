@@ -30,7 +30,7 @@ Autowiring
 
 Attributes, intersection-типы и autowiring по имени параметра **поддерживаются**, как и autowiring **свойств** и **методов** (``enablePropertyAutowiring()``, ``enableMethodAutowiring()``), но не заменяют явный composition root.
 
-Compiled container и YAML/XML — **не** поддерживаются.
+**Compiled container** (v1.9) — только constructor autowiring; property/method injection в compiled **не** поддерживается. YAML/XML — через ``ContainerConfigurator`` (v1.5).
 
 Циклы в фабриках
 ----------------

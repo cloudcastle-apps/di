@@ -22,7 +22,7 @@
 ## 📦 Установка
 
 ```bash
-composer require cloudcastle/di:^1.8
+composer require cloudcastle/di:^1.9
 ```
 
 ---

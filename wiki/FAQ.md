@@ -10,7 +10,7 @@
 
 **Сравнение с 5 аналогами** и колонкой победителей — **[Comparison](Comparison)**.
 
-Кратко: компактный PSR-11 контейнер (`psr/container`), autowiring, `scan()`, теги — **без** compiled container. Нет contextual binding (v2); для него сейчас PHP-DI, Symfony DI или Nette DI.
+Кратко: компактный PSR-11 контейнер (`psr/container`), autowiring, `scan()`, теги, **compiled container** (v1.9). Нет contextual binding (v2 [#25](https://github.com/cloudcastle-apps/di/issues/25)); для него — PHP-DI, Symfony DI или Nette DI.
 
 ## Есть autowiring?
 
@@ -73,6 +73,10 @@ $container->scan(__DIR__ . '/Services', 'App\\Services\\');
 - **`lazy($serviceId)`** — отложенное создание через `LazyService::getValue()`
 
 См. [Прототипы, alias и lazy](Prototypes-alias-lazy).
+
+## Есть compiled container?
+
+**Да** (v1.9.0). `ContainerCompiler` генерирует PHP-класс из замороженного контейнера — без reflection на hot path `get()`. Поддерживаются `set`, `autowire`, `alias`, tags; **не** фабрики, property/method injection, decorators. См. [Compiled container](Compiled-container).
 
 ## Поддерживаются PHP attributes?
 

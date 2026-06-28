@@ -80,8 +80,10 @@ $container->enableParameterNameAutowiring();
 
 CloudCastle DI **не** поддерживает:
 
-- конфиг YAML / compiled container;
-- autoconfigure и прочие возможности Symfony kernel.
+- autoconfigure и прочие возможности Symfony kernel;
+- contextual binding (v2 [#25](https://github.com/cloudcastle-apps/di/issues/25)).
+
+**YAML/JSON/XML** — через `ContainerConfigurator` (v1.5). **Compiled container** — v1.9 ([Compiled container](Compiled-container)); с ограничениями (только constructor autowiring, без фабрик).
 
 **Поддерживается:** autowiring конструктора, **свойств** и **методов**; attributes; intersection; autowiring по имени — см. [Autowiring](Autowiring).
 
