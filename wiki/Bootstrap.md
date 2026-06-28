@@ -371,10 +371,20 @@ function createTestContainer(array $overrides = []): ContainerInterface
 }
 ```
 
+## Production: compiled и opt-in (v1.9–1.18)
+
+После wiring на dev/stage:
+
+1. **`freeze()`** — запрет изменений графа ([Compiled container](Compiled-container)).
+2. **`ContainerCompiler`** — генерация compiled-класса для prod (hot path без reflection).
+3. **Opt-in** (только если нужно): `enableProfiling()` (v1.15), `enablePooling()` (v1.16), `cacheFor()` / `cacheTagFor()` (v1.17), `lazyGhost()` для interface (v1.18, suggest `symfony/var-exporter`).
+
+Подробнее — [Performance and load](Performance-and-load), [Prototypes-alias-lazy](Prototypes-alias-lazy).
+
 ## Рекомендации
 
 - **Одна точка сборки** — регистрируйте все сервисы в одном месте (composition root), не размазывайте set() по коду.
 - **Возвращайте интерфейс** — createContainer() возвращает ContainerInterface, а не конкретный Container.
 - **CLI vs HTTP** — для консольных команд собирайте облегчённый контейнер без middleware и HTTP-стека.
-- **Тесты изолированы** — новый Container на каждый тест гарантирует чистоту состояния.
+- **Тесты изолированы** — новый Container на каждый test; `ContainerRegistry::reset()` в `tearDown` при глобальном реестре.
 - **Не передавайте контейнер в доменный слой** — см. [Анти-паттерны](Anti-patterns).

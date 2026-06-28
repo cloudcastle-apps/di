@@ -9,10 +9,11 @@
 
 ## Требования
 
-- PHP 8.1+
+- PHP **8.1–8.5** (CI-матрица)
 - Composer 2.x
-- расширения: `json`, `mbstring`, `tokenizer`, `xml`
-- PCOV или Xdebug для coverage/mutation
+- расширения: `json`, `mbstring`, `tokenizer`, `xml`, `dom`, `libxml`
+- `ext-yaml` — для YAML-конфигурации и полного `composer ci`
+- PCOV или Xdebug — для `test:coverage` / локального Infection
 
 ## Настройка
 
@@ -26,25 +27,23 @@ composer install
 
 ```
 src/
-  Container.php           — основной контейнер
-  Autowirer.php           — autowiring: конструктор → свойства → методы
-  MemberResolver.php      — attributes, by-name, типы
-  PropertyInjector.php    — injection в свойства
-  MethodInjector.php      — inject-методы, setter
-  ParameterTypeResolver.php — union, intersection, named types
-  AttributeServiceIdRegistry.php — реестр inject-attributes
-  Configuration/            — ContainerConfigurator, загрузчики, merger
-  Attribute/              — Inject, Autowire
-  Contract/               — ContainerInterface, compiler contracts, ServiceIdAttribute
-  Compiler/               — ContainerCompiler, compiled container (v1.9)
-  Exception/              — NotFoundException, ContainerException
-tests/Unit/               — unit-тесты
-tests/Integration/        — интеграционные
-tests/Security/           — безопасность
-tests/Load/               — нагрузка
-tests/Performance/        — производительность
-doc/guide/                — исходники пользовательской документации (RST)
-wiki/                     — исходники GitHub Wiki (публикуется Actions)
+  Container.php              — основной контейнер
+  LazyGhostProxyFactory.php  — lazy ghost/proxy (v1.18, opt-in var-exporter)
+  Autowirer.php              — autowiring: конструктор → свойства → методы
+  ContainerProfiler.php      — performance profiler (v1.15)
+  ServiceObjectPool.php      — memory pool для make() (v1.16)
+  ServiceTtlRegistry.php     — smart cache TTL (v1.17)
+  Configuration/             — ContainerConfigurator, загрузчики, merger
+  Compiler/                  — ContainerCompiler, compiled container (v1.9)
+  Contract/                  — ContainerInterface, compiler contracts
+tests/Unit/                  — 689 unit-тестов
+tests/Integration/           — 11 integration
+tests/Security/              — 17 security
+tests/Load/                  — 15 load
+tests/Performance/           — 12 performance
+doc/guide/                   — RST для phpDocumentor
+wiki/                        — исходники GitHub Wiki
+tools/                       — coverage-check, infection runner, benchmarks
 ```
 
 ## Архитектура (Deptrac)
@@ -56,66 +55,47 @@ wiki/                     — исходники GitHub Wiki (публикует
 | Exception | `CloudCastle\DI\Exception\` | PSR |
 | Tests | `CloudCastle\DI\Tests\` | все слои src |
 
+External: `Symfony\Component\VarExporter\*` — только `LazyGhostProxyFactory` (opt-in lazy ghost).
+
 ## Команды
 
 | Команда | Назначение |
 |---------|------------|
-| `composer check` | быстрая проверка |
-| `composer ci` | полный пайплайн (как в GitHub Actions) |
-| `composer test:unit` | unit-тесты (555) |
-| `composer test:load` | нагрузочные (15) |
-| `composer test:performance` | производительность (12) |
-| `composer benchmark-report` | фактические времена бенчмарков |
-| `composer benchmark-check` | регрессия бенчмарков (CI) |
-| `composer test:coverage` | покрытие (≥95% строк, ~98% фактически) |
-| `composer test:mutation` | Infection (MSI ≥94% по `src/`, PHP 8.3+) |
-| `composer docs` | API-документация в `docs/` |
+| `composer check` | lint + analyse + phpcs + phpmd + deptrac + test |
+| `composer ci` | полный пайплайн (как GitHub Actions Quality) |
+| `composer ci:meta` | normalize, audit, unused |
+| `composer ci:linters` | parallel-lint, cs-fixer, phpcs |
+| `composer ci:static-analysis` | phpstan, psalm, phpmd, deptrac, rector |
+| `composer test:unit` | 689 unit-тестов |
+| `composer test:coverage` | ≥95% per-file + project |
+| `composer test:mutation` | Infection MSI ≥94% |
+| `composer docs:check` | phpDocumentor + `tools/docs-check.php` |
 
 ## Pull Request
 
 1. Ветка от актуального `main`.
-2. `composer ci` локально — зелёный.
-3. PR в `main` с описанием: что / зачем / как проверить.
+2. `composer ci` локально — зелёный (PHP 8.1+).
+3. PR в `main`: что / зачем / как проверить.
 
-Защита `main`: обязательны checks **PHP 8.1**–**8.5** (workflow Quality).
+Защита `main`: обязательны checks **PHP 8.1**–**8.5** (workflow **Quality**).
 
 ## Wiki
 
-Страницы wiki хранятся в каталоге `wiki/` репозитория. При push в `main` workflow **Publish wiki** синхронизирует их с вкладкой Wiki.
+Страницы wiki — каталог `wiki/`. При push в `main` workflow **Publish wiki** синхронизирует их с вкладкой Wiki.
 
-Служебные страницы: `_Sidebar.md` (боковое меню), `_Footer.md` (футер на каждой странице).
+Служебные: `_Sidebar.md`, `_Footer.md`.
 
-**Ссылки между страницами Wiki** — без суффикса `.md` (например `[Autowiring](Autowiring)`): на GitHub Wiki открывается отрендеренная страница, а не сырой markdown.
+**Ссылки между страницами** — без `.md` (например `[Autowiring](Autowiring)`).
 
-Основные страницы:
-
-- [Home](Home) — обзор
-- [Quick-start](Quick-start) · [Autowiring](Autowiring) · [API-reference](API-reference)
-
-## Issues, Milestones и Views
-
-Репозиторий использует **Milestones** и **labels** для roadmap:
+## Issues, Milestones
 
 | Milestone | Назначение |
 |-----------|------------|
-| [v1.1.0](https://github.com/cloudcastle-apps/di/milestone/1) | Autowiring, scan, registry, tags, релиз |
-| [Backlog](https://github.com/cloudcastle-apps/di/milestone/2) | Идеи без фиксированного релиза (performance #63–#66, lazy proxy #34) |
-| [v2.0](https://github.com/cloudcastle-apps/di/milestone/3) | Breaking changes (major) |
-
-**Ongoing (1.x):** Bug Fixes · API Improvements · Documentation · More Tests — без отдельного milestone; см. [Home → Roadmap](Home).
+| [v1.18.0](https://github.com/cloudcastle-apps/di/milestone/10) | Lazy ghost proxy (#34) |
+| [Backlog](https://github.com/cloudcastle-apps/di/milestone/2) | Идеи без фиксированного релиза |
+| [v2.0](https://github.com/cloudcastle-apps/di/milestone/3) | Breaking changes (scopes #33, policy #17) |
 
 Метки: `feat`, `fix`, `release`, `roadmap`, `area:*`, `good first issue`.
-
-**Рекомендуемые Issue Views** (Issues → Views → New view → сохранить поиск):
-
-| View | Фильтр |
-|------|--------|
-| Open roadmap | `is:issue is:open milestone:v1.1.0` |
-| Backlog | `is:issue is:open milestone:Backlog` |
-| Good first issue | `is:issue is:open label:"good first issue"` |
-| Bugs | `is:issue is:open label:bug` |
-
-Скрипты для maintainers (повторная инициализация): `scripts/github-bootstrap.sh`, `scripts/github-create-issues.sh`.
 
 Закреплённый roadmap: [issue #12](https://github.com/cloudcastle-apps/di/issues/12).
 

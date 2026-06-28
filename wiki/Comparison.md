@@ -136,7 +136,7 @@ flowchart LR
 | ✅ Подходит | ❌ Лучше другой вариант |
 |-------------|-------------------------|
 | Composition root в **библиотеке**, CLI, API | Уже **Symfony** / **Laravel** / **Nette** |
-| Autowiring + теги **без** фреймворка | **Compiled** (v1.9) + конфиг; contextual — v2 |
+| Autowiring + теги **без** фреймворка | **Compiled** (v1.9) + конфиг + **contextual** (v1.10–1.13) |
 | Граф **~10–500** сервисов | **Legacy PHP &lt; 8.1** |
 | **Одна** зависимость `psr/container` | 3–5 `set()` без autowire → **Pimple** |
 | Декларативный конфиг опционален | Огромный enterprise-граф + bundles → **Symfony** |
@@ -150,7 +150,7 @@ flowchart LR
 | **Pimple** | `$p['id'] = fn` → `set()`; `enableAutowiring()` для FQCN |
 | **PHP-DI** | definitions → `set()` / `bind()` / `ContainerConfigurator`; compiler — `ContainerCompiler` (v1.9) |
 | **Symfony** | `services.yaml` → `ContainerConfigurator` или PHP bootstrap |
-| **Laravel** | providers → composition root; contextual → `bind()` (без per-class контекста в v1.x) |
+| **Laravel** | providers → composition root; contextual → `when()->needs()->give()` (v1.11+) |
 | **Nette** | NEON → PHP/YAML/XML через `ContainerConfigurator`; extensions → `tag()` / bootstrap |
 
 Подробнее — [Быстрый старт](Quick-start), [Конфигурация](Configuration), [Обновление версий](Upgrading).
@@ -168,8 +168,9 @@ flowchart LR
 | 📁 | `scan()`, конфиг PHP/JSON/YAML/XML, каталоги (v1.7) |
 | 🏷️ | Теги, iterator, locator, декораторы, `call()`, `bind()` |
 | 🧊 | `freeze()`, `dump()`, `ContainerRegistry` |
-| 🧪 | 607 тестов, 100% line coverage `src/`, benchmark-check в CI |
-| 📋 | Contextual binding — runtime v1.11 ([#25](https://github.com/cloudcastle-apps/di/issues/25) ч.2 ✅) |
+| 🧪 | 744 PHPUnit-теста, ≥95% coverage (per-file), mutation MSI ≥94%, benchmark-check в CI |
+| 📋 | Contextual binding — runtime/config/compiled v1.10–1.13 ([#25](https://github.com/cloudcastle-apps/di/issues/25) ✅) |
+| 👻 | Lazy ghost — `lazyGhost()` v1.18 ([#34](https://github.com/cloudcastle-apps/di/issues/34), opt-in var-exporter) |
 
 ### Ограничения (v1.x)
 

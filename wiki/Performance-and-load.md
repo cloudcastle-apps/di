@@ -44,7 +44,21 @@
 | `composer benchmark-report-json` | Только JSON-отчёт |
 | `composer benchmark-check` | Регрессия: **elapsed** и **memory peak** > порога ×1.5 (CI после `test:performance`) |
 
-`tools/benchmark-lib.php` — сценарии runtime/compiled/contextual binding; артефакты CI (PHP 8.3): `benchmark-reports`.
+`tools/benchmark-lib.php` — сценарии runtime/compiled/contextual binding; артефакты CI: `benchmark-reports-php-{8.1..8.5}`.
+
+### Lazy ghost proxy (v1.18.0, #34)
+
+Opt-in Symfony-style proxy для interface — без autoload реализации до первого вызова метода:
+
+```bash
+composer require symfony/var-exporter
+```
+
+| Метод | Назначение |
+|-------|------------|
+| `lazyGhost($interface, $serviceId)` | Proxy; `get($serviceId)` при первом вызове метода |
+
+Overhead только при использовании; без `symfony/var-exporter` — `ContainerException`. См. [Prototypes-alias-lazy](Prototypes-alias-lazy).
 
 ### Performance Profiler (v1.15.0, #65)
 
@@ -299,15 +313,17 @@ composer benchmark-check    # проверка регрессии (как в CI)
 - `.github/workflows/quality.yml` — матрица PHP 8.1–8.5; CodeQL отдельным workflow.
 - Load/performance не требуют PCOV/Xdebug; benchmark-check — после performance.
 
-## Roadmap (планируется)
+## Реализовано (performance roadmap)
 
-| | Направление | Issue |
+| | Направление | Релиз |
 |---|---|---|
-| ⚡ | **Memory Pool** — пул объектов для снижения GC | [#63](https://github.com/cloudcastle-apps/di/issues/63) ✅ v1.16.0 |
-| 🎯 | **Smart Caching** — кэширование с TTL | [#64](https://github.com/cloudcastle-apps/di/issues/64) ✅ v1.17.0 |
-| 🧪 | **Advanced Benchmarks** — p50/p95, memory, ops/sec | [#66](https://github.com/cloudcastle-apps/di/issues/66) ✅ v1.14.0 |
+| 🧪 | **Advanced Benchmarks** — p50/p95/p99, ops/sec | v1.14.0 ([#66](https://github.com/cloudcastle-apps/di/issues/66)) |
+| 📊 | **Performance Profiler** | v1.15.0 ([#65](https://github.com/cloudcastle-apps/di/issues/65)) |
+| ⚡ | **Memory Pool** | v1.16.0 ([#63](https://github.com/cloudcastle-apps/di/issues/63)) |
+| 🎯 | **Smart Caching** | v1.17.0 ([#64](https://github.com/cloudcastle-apps/di/issues/64)) |
+| 👻 | **Lazy ghost proxy** | v1.18.0 ([#34](https://github.com/cloudcastle-apps/di/issues/34)) |
 
-Обзор roadmap — [Home](Home) · [UPGRADING](Upgrading).
+Обзор — [Home](Home) · [Upgrading](Upgrading).
 
 ## См. также
 

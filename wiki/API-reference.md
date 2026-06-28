@@ -466,14 +466,93 @@ interface ContainerInterface extends \Psr\Container\ContainerInterface
     public function getDefinitionIds(): array;
     /** @return array<string, mixed> */
     public function dump(): array;
+
+    public function enableProfiling(): void;
+    public function disableProfiling(): void;
+    public function isProfilingEnabled(): bool;
+    public function resetProfile(): void;
+    /** @return array<string, mixed> */
+    public function profileReport(int $limit = 10): array;
+
+    public function enablePooling(string $serviceId, int $maxSize = 16): void;
+    public function disablePooling(string $serviceId): void;
+    public function isPoolingEnabled(string $serviceId): bool;
+    public function releaseToPool(string $serviceId, object $instance): void;
+    public function clearPool(string $serviceId): void;
+    public function clearAllPools(): void;
+    /** @return array{configured: bool, max_size: int, available: int} */
+    public function poolStats(string $serviceId): array;
+
+    public function cacheFor(string $serviceId, int $ttlSeconds): void;
+    public function cacheTagFor(string $tag, int $ttlSeconds): void;
+    public function forget(string $serviceId): void;
+    public function forgetTag(string $tag): void;
+    public function forgetAll(): void;
+    /** @return array<string, mixed> */
+    public function cacheStats(string $serviceId): array;
 }
 ```
 
 ---
 
+## v1.18: Lazy ghost proxy
+
+> **Статус:** v1.18.0 ([#34](https://github.com/cloudcastle-apps/di/issues/34)). Руководство — [Прототипы, alias и lazy](Prototypes-alias-lazy).
+
+| Метод | Описание |
+|-------|----------|
+| `lazyGhost(string $type, string $serviceId): object` | Proxy для interface; `get($serviceId)` при первом вызове метода |
+| `LazyGhostProxyFactory::isAvailable(): bool` | Установлен ли `symfony/var-exporter` |
+
+Opt-in: `composer require symfony/var-exporter`. Тот же API в `AbstractCompiledContainer`.
+
+---
+
+## v1.17: Smart Caching
+
+> **Статус:** v1.17.0 ([#64](https://github.com/cloudcastle-apps/di/issues/64)). Руководство — [Performance and load](Performance-and-load).
+
+| Метод | Описание |
+|-------|----------|
+| `cacheFor($id, $ttlSeconds)` | TTL singleton-кэша для id |
+| `cacheTagFor($tag, $ttlSeconds)` | TTL для всех сервисов с тегом |
+| `forget($id)` / `forgetTag($tag)` / `forgetAll()` | Явная инвалидация |
+| `cacheStats($id)` | Метаданные TTL для id |
+
+При `set()` / `bind()` singleton-кэш для id сбрасывается автоматически.
+
+---
+
+## v1.16: Memory Pool
+
+> **Статус:** v1.16.0 ([#63](https://github.com/cloudcastle-apps/di/issues/63)). Руководство — [Performance and load](Performance-and-load).
+
+| Метод | Описание |
+|-------|----------|
+| `enablePooling($serviceId, $maxSize = 16)` | Пул для `make()` |
+| `releaseToPool($serviceId, $instance)` | Вернуть экземпляр в пул |
+| `poolStats($serviceId)` | `{configured, max_size, available}` |
+
+Объекты с `PoolableInterface::reset()` сбрасываются перед возвратом в пул.
+
+---
+
+## v1.15: Performance Profiler
+
+> **Статус:** v1.15.0 ([#65](https://github.com/cloudcastle-apps/di/issues/65)). Руководство — [Performance and load](Performance-and-load).
+
+| Метод | Описание |
+|-------|----------|
+| `enableProfiling()` / `disableProfiling()` | Opt-in сбор замеров |
+| `profileReport($limit = 10)` | Top-N медленных `get`/`make`/`call` + агрегаты |
+
+По умолчанию выключено — нулевой overhead в prod.
+
+---
+
 ## v1.11: Contextual binding (runtime)
 
-> **Статус:** runtime в **v1.11.0** ([#25](https://github.com/cloudcastle-apps/di/issues/25), часть 2 из 4). Руководство — [Contextual binding](Contextual-binding).
+> **Статус:** **завершено** v1.10–1.13 ([#25](https://github.com/cloudcastle-apps/di/issues/25)). Руководство — [Contextual binding](Contextual-binding).
 
 ### `CloudCastle\DI\Contract\ContainerInterface`
 
@@ -498,7 +577,7 @@ interface ContainerInterface extends \Psr\Container\ContainerInterface
 
 ## v1.10: Contextual binding (контракты)
 
-> **Статус:** контракты в **v1.10.0** ([#25](https://github.com/cloudcastle-apps/di/issues/25), часть 1 из 4). Руководство — [Contextual binding](Contextual-binding).
+> **Статус:** часть цепочки v1.10–1.13 ([#25](https://github.com/cloudcastle-apps/di/issues/25), **завершено**). Руководство — [Contextual binding](Contextual-binding).
 
 ### `CloudCastle\DI\ContextualBinding`
 

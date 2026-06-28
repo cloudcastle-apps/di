@@ -15,7 +15,7 @@
 - [🌍 Глобальный реестр](Global-registry)
 - [🏷️ Теги и декораторы](Tags-and-decorators)
 - [🔗 call(), bind(), hooks](Call-bind-callbacks)
-- [🔄 Прототипы, alias, lazy](Prototypes-alias-lazy)
+- [🔄 Прототипы, alias, lazy, lazyGhost](Prototypes-alias-lazy)
 - [📋 Справочник API](API-reference)
 - [🏭 Фабрики и singleton](Factories-and-singleton)
 

@@ -63,9 +63,9 @@ composer update cloudcastle/di
 
 ### Изменено
 
-- **Покрытие:** 100% line coverage по `src/`; per-file gate ≥95%
-- **Тесты:** 604 PHPUnit (unit 552, integration 8, security 17, load 15, performance 12)
-- CI: `test:performance` с `XDEBUG_MODE=off`; mutation только на PHP 8.3+
+- **Покрытие:** per-file gate ≥95%; фактически ~99.8% line coverage
+- **Тесты:** 744 PHPUnit (689 unit + 11 integration + 17 security + 15 load + 12 performance)
+- CI: `test:performance` с `XDEBUG_MODE=off`; mutation на **PHP 8.1–8.5**
 
 ### Рекомендации
 
@@ -114,7 +114,7 @@ composer update cloudcastle/di
 ### Изменения (обратно совместимо)
 
 - **CI:** `composer benchmark-check` и шаг регрессии бенчмарков в GitHub Actions
-- **Infection:** MSI ≥94% по всему `src/`, включая `Configuration/` (PHP 8.3+ для mutation)
+- **Infection:** MSI ≥94%, Covered MSI ≥94% (`src/`, без `Compiler/`); CI — PHP 8.1–8.5
 - **XmlConfigurationLoader:** в `autowiring` только явные `true`-флаги
 
 Код приложения **не меняется**, если не опираетесь на ключи `autowiring.* === false` после парсинга XML.
@@ -241,21 +241,22 @@ composer update cloudcastle/di
 
 ## 1.x → 2.0 (будущее)
 
-Major **v2.0** — breaking changes и enterprise-parity (**contextual binding**, **scopes**). Compiled container **уже в 1.9.0** ([#24](https://github.com/cloudcastle-apps/di/issues/24) закрыт).
+Major **v2.0** — breaking changes и **scopes** ([#33](https://github.com/cloudcastle-apps/di/issues/33)), policy [#17](https://github.com/cloudcastle-apps/di/issues/17). Уже в 1.x: compiled container v1.9 ([#24](https://github.com/cloudcastle-apps/di/issues/24)), contextual binding v1.10–1.13 ([#25](https://github.com/cloudcastle-apps/di/issues/25)), observability v1.14–1.18.
 
 ### Планируется в v2.0
 
-- **Contextual binding** ([#25](https://github.com/cloudcastle-apps/di/issues/25))
 - **Scopes** request / transient ([#33](https://github.com/cloudcastle-apps/di/issues/33))
 - Breaking API — [#17](https://github.com/cloudcastle-apps/di/issues/17)
 
-### Performance & observability (Backlog)
+### Performance & observability (реализовано в 1.x)
 
 | Направление | Issue |
 |-------------|-------|
+| 👻 Lazy ghost proxy — `lazyGhost()` | ✅ v1.18.0 ([#34](https://github.com/cloudcastle-apps/di/issues/34)) |
 | ⚡ Memory Pool — пул объектов для снижения GC | ✅ v1.16.0 |
 | 🎯 Smart Caching — интеллектуальное кэширование с TTL | ✅ v1.17.0 |
 | 📊 Performance Profiler — opt-in get/make/call | ✅ v1.15.0 |
+| 🧪 Advanced Benchmarks — p50/p95/p99 | ✅ v1.14.0 ([#66](https://github.com/cloudcastle-apps/di/issues/66)) |
 | 🧪 Advanced Benchmarks — расширенные бенчмарки | ✅ v1.14.0 |
 
 ### Ongoing (1.x patch)

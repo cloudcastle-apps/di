@@ -10,7 +10,7 @@
 
 **Сравнение с 5 аналогами** и колонкой победителей — **[Comparison](Comparison)**.
 
-Кратко: компактный PSR-11 контейнер (`psr/container`), autowiring, `scan()`, теги, **compiled container** (v1.9), **контракты contextual binding** (v1.10). Runtime contextual — [#25](https://github.com/cloudcastle-apps/di/issues/25) часть 2+; для полного contextual сейчас — PHP-DI, Symfony DI или Nette DI.
+Кратко: компактный PSR-11 контейнер (`psr/container`), autowiring, `scan()`, теги, **compiled container** (v1.9), **contextual binding** runtime/config/compiled (v1.10–1.13), opt-in **profiler / memory pool / smart cache** (v1.15–1.17), **lazy ghost** (v1.18). Полная таблица — [Comparison](Comparison).
 
 ## Есть autowiring?
 
@@ -79,11 +79,30 @@ $container->scan(__DIR__ . '/Services', 'App\\Services\\');
 
 См. [Прототипы, alias и lazy](Prototypes-alias-lazy).
 
+## Есть profiler, memory pool и smart cache?
+
+**Да**, opt-in (не влияют на prod по умолчанию):
+
+| Фича | Версия | API |
+|------|--------|-----|
+| Performance Profiler | v1.15 | `enableProfiling()`, `profileReport()` |
+| Memory Pool | v1.16 | `enablePooling()`, `releaseToPool()`, `poolStats()` |
+| Smart Caching | v1.17 | `cacheFor()`, `cacheTagFor()`, `forget()`, `cacheStats()` |
+
+См. [Performance and load](Performance-and-load).
+
 ## Есть contextual binding?
 
-**Контракты** — **да** (v1.10.0): `ContextualBinding`, `ContextualBindingRegistryInterface`, fluent `when/needs/give` ([#25](https://github.com/cloudcastle-apps/di/issues/25), часть 1).
+**Да**, полностью (v1.10–1.13, [#25](https://github.com/cloudcastle-apps/di/issues/25) завершён):
 
-**Runtime** (`Container::when()`) — **да** (v1.11.0). **Config** — **да** (v1.12.0). **Compiled** — **да** (v1.13.0, [#25](https://github.com/cloudcastle-apps/di/issues/25) завершён).
+| Слой | Версия | API |
+|------|--------|-----|
+| Контракты | v1.10.0 | `ContextualBinding`, `ContextualBindingRegistryInterface`, fluent `when/needs/give` |
+| Runtime | v1.11.0 | `Container::when()->needs()->give()` |
+| Config | v1.12.0 | секция `contextual` в PHP/JSON/YAML/XML |
+| Compiled | v1.13.0 | `contextualGive()` в сгенерированном классе |
+
+Руководство — [Contextual binding](Contextual-binding).
 
 ## Есть compiled container?
 

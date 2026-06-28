@@ -81,9 +81,9 @@ $container->enableParameterNameAutowiring();
 CloudCastle DI **не** поддерживает:
 
 - autoconfigure и прочие возможности Symfony kernel;
-- contextual binding (v2 [#25](https://github.com/cloudcastle-apps/di/issues/25)).
+- bundles, event dispatcher wiring «из коробки», как в Symfony.
 
-**YAML/JSON/XML** — через `ContainerConfigurator` (v1.5). **Compiled container** — v1.9 ([Compiled container](Compiled-container)); с ограничениями (только constructor autowiring, без фабрик).
+**Contextual binding** — **да** (v1.10–1.13, [#25](https://github.com/cloudcastle-apps/di/issues/25)): runtime, config и compiled. **YAML/JSON/XML** — через `ContainerConfigurator` (v1.5). **Compiled container** — v1.9 ([Compiled container](Compiled-container)); с ограничениями (только constructor autowiring, без фабрик). **Lazy ghost** — v1.18 ([Prototypes-alias-lazy](Prototypes-alias-lazy), opt-in `symfony/var-exporter`).
 
 **Поддерживается:** autowiring конструктора, **свойств** и **методов**; attributes; intersection; autowiring по имени — см. [Autowiring](Autowiring).
 
