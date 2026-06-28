@@ -3,6 +3,23 @@
 Формат основан на [Keep a Changelog](https://keepachangelog.com/ru/1.1.0/),
 версионирование — [SemVer](https://semver.org/lang/ru/).
 
+## [1.10.0] — 2026-06-28
+
+### Добавлено
+
+- **Contextual binding — контракты** ([#25](https://github.com/cloudcastle-apps/di/issues/25), часть 1 из 4, [#61](https://github.com/cloudcastle-apps/di/pull/61))
+- `ContextualBinding` — value object when/needs/give
+- `ContextualBindingRegistryInterface`, fluent-интерфейсы `when()` / `needs()` / `give()`
+
+### Изменено
+
+- **Тесты:** 607 PHPUnit (unit 555, integration 8, security 17, load 15, performance 12)
+
+### Документация
+
+- Wiki: [Contextual binding](wiki/Contextual-binding.md), обновлены Home, API-reference, Upgrading
+- `UPGRADING.md`: секция 1.9.0 → 1.10.0
+
 ## [1.9.0] — 2026-06-25
 
 ### Добавлено
@@ -232,6 +249,7 @@
 - CI для GitHub Actions и GitLab CI
 - Инструменты качества: PHPStan max, Psalm level 1, PHPCS, PHPMD, Deptrac, Rector
 
+[1.10.0]: https://github.com/cloudcastle-apps/di/compare/v1.9.0...v1.10.0
 [1.9.0]: https://github.com/cloudcastle-apps/di/compare/v1.8.0...v1.9.0
 [1.8.0]: https://github.com/cloudcastle-apps/di/compare/v1.7.0...v1.8.0
 [1.7.0]: https://github.com/cloudcastle-apps/di/compare/v1.6.0...v1.7.0

@@ -451,6 +451,42 @@ interface ContainerInterface extends \Psr\Container\ContainerInterface
 
 ---
 
+## v1.10: Contextual binding (контракты)
+
+> **Статус:** контракты в **v1.10.0** ([#25](https://github.com/cloudcastle-apps/di/issues/25), часть 1 из 4). Runtime `Container::when()` — часть 2. Руководство — [Contextual binding](Contextual-binding).
+
+### `CloudCastle\DI\ContextualBinding`
+
+Value object: `consumerClass`, `need`, `give`.
+
+### `CloudCastle\DI\Contract\ContextualBindingConfiguratorInterface`
+
+| Метод | Описание |
+|-------|----------|
+| `when(string $consumerClass): ContextualBindingNeedsInterface` | Класс-потребитель |
+
+### `CloudCastle\DI\Contract\ContextualBindingNeedsInterface`
+
+| Метод | Описание |
+|-------|----------|
+| `needs(string $need): ContextualBindingGiveInterface` | Тип или id зависимости |
+
+### `CloudCastle\DI\Contract\ContextualBindingGiveInterface`
+
+| Метод | Описание |
+|-------|----------|
+| `give(string $serviceId): void` | id или FQCN реализации |
+
+### `CloudCastle\DI\Contract\ContextualBindingRegistryInterface`
+
+| Метод | Описание |
+|-------|----------|
+| `register(ContextualBinding $binding): void` | Зарегистрировать правило |
+| `bindingsFor(string $consumerClass): list<ContextualBinding>` | Правила для класса |
+| `resolve(string $consumerClass, string $need): ?string` | id give или `null` |
+
+---
+
 ## v1.9: Compiled container
 
 > **Статус:** реализовано в v1.9.0 ([#24](https://github.com/cloudcastle-apps/di/issues/24)). Руководство — [Compiled container](Compiled-container).

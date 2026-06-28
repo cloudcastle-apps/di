@@ -10,7 +10,7 @@
 
 **Сравнение с 5 аналогами** и колонкой победителей — **[Comparison](Comparison)**.
 
-Кратко: компактный PSR-11 контейнер (`psr/container`), autowiring, `scan()`, теги, **compiled container** (v1.9). Нет contextual binding (v2 [#25](https://github.com/cloudcastle-apps/di/issues/25)); для него — PHP-DI, Symfony DI или Nette DI.
+Кратко: компактный PSR-11 контейнер (`psr/container`), autowiring, `scan()`, теги, **compiled container** (v1.9), **контракты contextual binding** (v1.10). Runtime contextual — [#25](https://github.com/cloudcastle-apps/di/issues/25) часть 2+; для полного contextual сейчас — PHP-DI, Symfony DI или Nette DI.
 
 ## Есть autowiring?
 
@@ -73,6 +73,12 @@ $container->scan(__DIR__ . '/Services', 'App\\Services\\');
 - **`lazy($serviceId)`** — отложенное создание через `LazyService::getValue()`
 
 См. [Прототипы, alias и lazy](Prototypes-alias-lazy).
+
+## Есть contextual binding?
+
+**Контракты** — **да** (v1.10.0): `ContextualBinding`, `ContextualBindingRegistryInterface`, fluent `when/needs/give` ([#25](https://github.com/cloudcastle-apps/di/issues/25), часть 1).
+
+**Runtime** (`Container::when()`) — **ещё нет** (часть 2 декомпозиции). Пока используйте `#[Inject]`, `bind()` или явные id. См. [Contextual binding](Contextual-binding).
 
 ## Есть compiled container?
 

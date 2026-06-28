@@ -42,7 +42,7 @@
 
 - уже **Symfony** / **Laravel** / **Nette** → встроенный DI;
 - **3–5** сервисов без autowire → **Pimple**;
-- **compiled container** (v1.9) или **contextual binding** прямо сейчас → **PHP-DI**, **Symfony DI** или **Nette DI** (contextual); compiled — также **CloudCastle DI** v1.9+.
+- **compiled container** (v1.9+) или **полный contextual binding** (runtime) прямо сейчас → **PHP-DI**, **Symfony DI** или **Nette DI**; контракты contextual — **CloudCastle DI** v1.10+ ([#25](https://github.com/cloudcastle-apps/di/issues/25)).
 
 Сводка (фрагмент)
 -----------------
@@ -76,7 +76,7 @@
      - ✅
      - Паритет
    * - Compiled / contextual
-     - ✅ v1.9
+     - ✅ compiled v1.9; contextual контракты v1.10
      - ✅
      - ✅
      - ❌

@@ -8,12 +8,12 @@ authors:
 repository-code: https://github.com/cloudcastle-apps/di
 url: https://packagist.org/packages/cloudcastle/di
 license: MIT
-version: 1.9.0
-date-released: 2026-06-25
+version: 1.10.0
+date-released: 2026-06-28
 abstract: >-
   Lightweight PSR-11 dependency injection container for PHP 8.1+ with autowiring,
   declarative configuration (PHP/JSON/YAML/XML), directory scan, compiled container,
-  tagged services, and decorators. Runtime dependency: psr/container only.
+  contextual binding contracts, tagged services, and decorators. Runtime dependency: psr/container only.
 keywords:
   - php
   - dependency-injection
@@ -33,6 +33,6 @@ preferred-citation:
   authors:
     - name: CloudCastle
       affiliation: cloudcastle-apps
-  version: 1.9.0
+  version: 1.10.0
   year: 2026
   url: https://github.com/cloudcastle-apps/di

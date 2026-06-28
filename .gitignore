@@ -11,3 +11,4 @@
 /phpstan-baseline.neon
 /.deptrac.cache
 /tools/*.phar
+/.idea/
