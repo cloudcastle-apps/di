@@ -37,7 +37,14 @@ final class ServiceInstanceResolverMutationTest extends TestCase
             $resolving,
             $decorators,
             static fn (string $id): bool => $id === 'svc',
-            function (string $id) use ($resolver, &$definitions, &$resolved, &$resolving, $decorators, &$attempts): object {
+            function (string $id) use (
+                $resolver,
+                &$definitions,
+                &$resolved,
+                &$resolving,
+                $decorators,
+                &$attempts,
+            ): object {
                 ++$attempts;
 
                 if ($attempts === 1) {
