@@ -50,6 +50,8 @@ final class CompiledContainerContextualBindingTest extends TestCase
 
         self::assertInstanceOf(ReportService::class, $compiledReport);
         self::assertInstanceOf(AuditService::class, $compiledAudit);
+        self::assertInstanceOf(ReportService::class, $runtimeReport);
+        self::assertInstanceOf(AuditService::class, $runtimeAudit);
         self::assertInstanceOf(MemoryLogger::class, $compiledReport->logger);
         self::assertInstanceOf(FileLogger::class, $compiledAudit->logger);
         self::assertInstanceOf(MemoryLogger::class, $runtimeReport->logger);
