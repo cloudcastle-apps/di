@@ -5,7 +5,9 @@
             "src"
         ],
         "excludes": [
-            "Compiler"
+            "Compiler",
+            "ContainerProfiler.php",
+            "ContainerProfilingSupport.php"
         ]
     },
     "logs": {
