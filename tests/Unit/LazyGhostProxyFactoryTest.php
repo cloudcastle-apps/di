@@ -10,6 +10,8 @@ use CloudCastle\DI\LazyGhostProxyFactory;
 use CloudCastle\DI\Tests\Fixtures\LazyGhost\HeavyContract;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
+use ReflectionClass;
+use ReflectionMethod;
 use stdClass;
 
 #[CoversClass(LazyGhostProxyFactory::class)]
@@ -57,12 +59,12 @@ final class LazyGhostProxyFactoryTest extends TestCase
             self::markTestSkipped('symfony/var-exporter не установлен.');
         }
 
-        $method = new \ReflectionMethod(LazyGhostProxyFactory::class, 'resolveProxyClass');
+        $method = new ReflectionMethod(LazyGhostProxyFactory::class, 'resolveProxyClass');
 
         $this->expectException(ContainerException::class);
         $this->expectExceptionMessage('Не удалось создать lazy ghost');
 
-        $method->invoke(null, new \ReflectionClass(stdClass::class));
+        $method->invoke(null, new ReflectionClass(stdClass::class));
     }
 
     public function testCreateReusesGeneratedProxyClassForSameInterface(): void
