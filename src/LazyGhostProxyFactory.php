@@ -39,7 +39,7 @@ final class LazyGhostProxyFactory
     public static function create(ContainerInterface $container, string $type, string $serviceId): object
     {
         if (!self::isAvailable()) {
-            throw new ContainerException('lazyGhost() требует symfony/var-exporter. Установите: composer require symfony/var-exporter'); // @codeCoverageIgnore
+            throw new ContainerException('lazyGhost() требует symfony/var-exporter.'); // @codeCoverageIgnore
         }
 
         $reflection = new ReflectionClass($type);
