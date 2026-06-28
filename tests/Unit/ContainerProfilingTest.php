@@ -91,6 +91,19 @@ final class ContainerProfilingTest extends TestCase
         self::assertSame(1, $container->profileReport()['sample_count']);
     }
 
+    public function testProfileReportDefaultLimitReturnsTenEntries(): void
+    {
+        $container = new Container();
+        $container->enableProfiling();
+
+        for ($index = 0; $index < 11; ++$index) {
+            $container->set('svc-' . $index, new stdClass());
+            $container->get('svc-' . $index);
+        }
+
+        self::assertCount(10, $container->profileReport()['top_slowest']);
+    }
+
     public function testDescribeCallableFormatsTargets(): void
     {
         self::assertSame('closure', ContainerProfilingSupport::describeCallable(static fn (): int => 1));

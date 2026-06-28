@@ -59,4 +59,30 @@ final class ContainerProfilerTest extends TestCase
 
         self::assertSame(0, $this->profiler->report()['sample_count']);
     }
+
+    public function testRecordRoundsElapsedMilliseconds(): void
+    {
+        $this->profiler->record('get', 'svc', 1.23456789);
+
+        self::assertSame(1.2346, $this->profiler->report()['top_slowest'][0]['elapsed_ms']);
+    }
+
+    public function testReportWithLimitZeroReturnsAllSamples(): void
+    {
+        $this->profiler->record('get', 'a', 1.0);
+        $this->profiler->record('get', 'b', 2.0);
+        $this->profiler->record('get', 'c', 3.0);
+
+        self::assertCount(3, $this->profiler->report(limit: 0)['top_slowest']);
+    }
+
+    public function testReportDefaultLimitKeepsTenSlowestEntries(): void
+    {
+        for ($index = 0; $index < 11; ++$index) {
+            $this->profiler->record('get', 'svc-' . $index, (float) $index);
+        }
+
+        self::assertCount(10, $this->profiler->report()['top_slowest']);
+        self::assertSame(10.0, $this->profiler->report()['top_slowest'][0]['elapsed_ms']);
+    }
 }
