@@ -114,9 +114,9 @@ final class ContainerProfilingTest extends TestCase
         $container->make('proto');
         $container->call(static fn (): int => 1);
 
-        $operations = array_column($container->profileReport(limit: 0)['top_slowest'], 'operation');
+        $operations = array_keys($container->profileReport()['by_operation']);
 
-        self::assertSame(['get', 'make', 'call'], array_values(array_unique($operations)));
+        self::assertEqualsCanonicalizing(['get', 'make', 'call'], $operations);
     }
 
     public function testProfileReportReflectsDisabledState(): void
