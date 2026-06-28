@@ -5,13 +5,16 @@
             "src"
         ],
         "excludes": [
+            "src/Compiler/AbstractCompiledContainer.php",
             "src/Compiler/CompileConstructorPlanner.php",
             "src/Compiler/CompileParameterReferenceResolver.php",
             "src/Compiler/CompiledContainerPhpGenerator.php",
             "src/Compiler/ContainerCompileSnapshotBuilder.php",
+            "src/Compiler/ContainerCompiler.php",
             "src/Compiler/CompileServiceBinding.php",
             "src/Compiler/CompileServiceKind.php",
-            "src/Compiler/ContainerCompileSnapshot.php"
+            "src/Compiler/ContainerCompileSnapshot.php",
+            "src/Compiler/ContainerCompileResult.php"
         ]
     },
     "logs": {
