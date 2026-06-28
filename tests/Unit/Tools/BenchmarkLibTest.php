@@ -6,7 +6,7 @@ namespace CloudCastle\DI\Tests\Unit\Tools;
 
 use PHPUnit\Framework\TestCase;
 
-require_once dirname(__DIR__, 3) . '/tools/benchmark-lib.php';
+require_once \dirname(__DIR__, 3) . '/tools/benchmark-lib.php';
 
 final class BenchmarkLibTest extends TestCase
 {
