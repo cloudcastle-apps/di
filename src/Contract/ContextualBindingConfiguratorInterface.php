@@ -8,7 +8,7 @@ namespace CloudCastle\DI\Contract;
  * Fluent API contextual binding (#25): `when(A)->needs(B)->give(C)`.
  *
  * Аналог Laravel `when()->needs()->give()` и PHP-DI contextual definitions.
- * Метод {@see when()} появится на {@see ContainerInterface} в части 2 декомпозиции.
+ * Метод {@see when()} доступен на {@see ContainerInterface} с v1.11.0 (#25, часть 2).
  *
  * @see ContextualBindingRegistryInterface
  *

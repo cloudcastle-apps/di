@@ -9,7 +9,7 @@
 
 | Команда | Каталог | Тестов | Назначение |
 |---------|---------|--------|------------|
-| `composer test:unit` | `tests/Unit/` | 555 | API, autowiring, configuration, freeze, compiler, contextual contracts |
+| `composer test:unit` | `tests/Unit/` | 562 | API, autowiring, contextual binding runtime |
 | `composer test:integration` | `tests/Integration/` | 8 | Parity runtime vs compiled, multi-service |
 | `composer test:security` | `tests/Security/` | 17 | Инъекции, утечки в сообщениях об ошибках |
 | `composer test:load` | `tests/Load/` | 15 | Массовые операции (~6000 resolve) |
@@ -18,7 +18,7 @@
 | `composer test:coverage` | PHPUnit + PCOV | — | ≥95% строк **и** ≥95% per-file (`tools/coverage-check.php`) |
 | `composer benchmark-check` | PHPBench | — | Регрессия производительности (×1.5 порог) |
 
-**Всего:** 607 PHPUnit-тестов (555 + 8 + 17 + 15 + 12; без coverage/mutation/benchmark-check).
+**Всего:** 614 PHPUnit-тестов (562 + 8 + 17 + 15 + 12; без coverage/mutation/benchmark-check).
 
 Фактические метрики (v1.10): покрытие строк **100%** по `src/`; per-file ≥95%; Infection MSI **≥94%** (`src/Compiler/` вне mutation scope). Mutation-тесты в CI — только PHP 8.3+.
 
@@ -39,6 +39,7 @@ composer ci                # полный пайплайн как в GitHub Acti
 - `tests/Unit/Configuration/*MutationTest.php` — сценарии для Infection
 - `tests/Unit/Compiler/` — `ContainerCompiler`, snapshot builder, generator, planner
 - `tests/Unit/Contract/ContextualBindingContractTest.php` — контракты contextual binding (#25)
+- `tests/Unit/ContainerContextualBindingTest.php` — runtime when/needs/give (#25)
 - `tests/Integration/CompiledContainerIntegrationTest.php` — parity runtime vs compiled
 - `tests/Fixtures/` — классы и конфиги для autowire и `ContainerConfigurator`
 

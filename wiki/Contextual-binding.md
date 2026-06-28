@@ -12,20 +12,34 @@
 
 ---
 
-## Статус (v1.10.0)
+## Статус (v1.11.0)
 
 | Этап | Статус | MR / релиз |
 |------|--------|------------|
 | **1. Контракты** | ✅ v1.10.0 | [#61](https://github.com/cloudcastle-apps/di/pull/61) |
-| **2. Runtime** | 🔜 | `Container::when()`, registry, autowirer |
+| **2. Runtime** | ✅ v1.11.0 | `Container::when()`, registry, autowirer |
 | **3. Config** | 🔜 | PHP/JSON/YAML/XML |
 | **4. Compiler** | 🔜 | compiled container parity |
 
-Полный runtime **ещё не доступен** — используйте `#[Inject]` / `bind()` / явные id.
+Полный runtime **доступен** на runtime-контейнере (v1.11.0). Config (#25 ч.3) и compiled (#25 ч.4) — в roadmap.
+
+### Пример (runtime)
+
+```php
+$container->enableAutowiring();
+$container->bind(LoggerInterface::class, 'default.logger');
+$container->set('memory.logger', new MemoryLogger());
+$container->when(ReportService::class)
+    ->needs(LoggerInterface::class)
+    ->give('memory.logger');
+
+$report = $container->get(ReportService::class); // MemoryLogger
+$other = $container->get(AuditService::class);   // default binding
+```
 
 ---
 
-## Контракты (v1.10.0)
+## Контракты (v1.10.0) и runtime (v1.11.0)
 
 ### `ContextualBinding`
 
@@ -34,7 +48,7 @@ Value object: `consumerClass` (when), `need` (needs), `give` (id или FQCN).
 ### Fluent API (интерфейсы)
 
 ```php
-$container->when(ReportController::class)  // ContainerInterface — часть 2
+$container->when(ReportController::class)
     ->needs(LoggerInterface::class)
     ->give(FileLogger::class);
 ```

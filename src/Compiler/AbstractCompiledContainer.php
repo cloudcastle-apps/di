@@ -7,6 +7,7 @@ namespace CloudCastle\DI\Compiler;
 use CloudCastle\DI\AttributeServiceIdReader;
 use CloudCastle\DI\CallableInvoker;
 use CloudCastle\DI\Contract\CompiledContainerInterface;
+use CloudCastle\DI\Contract\ContextualBindingNeedsInterface;
 use CloudCastle\DI\Exception\ContainerException;
 use CloudCastle\DI\Exception\NotFoundException;
 use CloudCastle\DI\LazyService;
@@ -215,6 +216,18 @@ abstract class AbstractCompiledContainer implements CompiledContainerInterface
     public function bind(string $abstract, string $concrete): void
     {
         $this->assertImmutable();
+    }
+
+    public function when(string $consumerClass): ContextualBindingNeedsInterface
+    {
+        $this->assertImmutable();
+
+        throw new ContainerException('Contextual binding недоступен в compiled-контейнере.');
+    }
+
+    public function contextualGive(string $consumerClass, string $need): ?string
+    {
+        return null;
     }
 
     public function call(callable $callable, array $parameters = []): mixed

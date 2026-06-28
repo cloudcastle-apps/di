@@ -451,9 +451,34 @@ interface ContainerInterface extends \Psr\Container\ContainerInterface
 
 ---
 
+## v1.11: Contextual binding (runtime)
+
+> **Статус:** runtime в **v1.11.0** ([#25](https://github.com/cloudcastle-apps/di/issues/25), часть 2 из 4). Руководство — [Contextual binding](Contextual-binding).
+
+### `CloudCastle\DI\Contract\ContainerInterface`
+
+| Метод | Описание |
+|-------|----------|
+| `when(string $consumerClass): ContextualBindingNeedsInterface` | Fluent when/needs/give |
+| `contextualGive(string $consumerClass, string $need): ?string` | id give или `null` |
+
+### `CloudCastle\DI\ContextualBindingRegistry`
+
+| Метод | Описание |
+|-------|----------|
+| `register(ContextualBinding $binding): void` | Добавить правило |
+| `bindingsFor(string $consumerClass): list<ContextualBinding>` | Правила для класса |
+| `resolve(string $consumerClass, string $need): ?string` | id give или `null` |
+
+### `CloudCastle\DI\ContextualBindingSupport`
+
+Фасад registry + configurator для `Container`.
+
+---
+
 ## v1.10: Contextual binding (контракты)
 
-> **Статус:** контракты в **v1.10.0** ([#25](https://github.com/cloudcastle-apps/di/issues/25), часть 1 из 4). Runtime `Container::when()` — часть 2. Руководство — [Contextual binding](Contextual-binding).
+> **Статус:** контракты в **v1.10.0** ([#25](https://github.com/cloudcastle-apps/di/issues/25), часть 1 из 4). Руководство — [Contextual binding](Contextual-binding).
 
 ### `CloudCastle\DI\ContextualBinding`
 

@@ -255,6 +255,26 @@ interface ContainerInterface extends PsrContainerInterface
     public function bind(string $abstract, string $concrete): void;
 
     /**
+     * Начинает contextual binding: при создании {@see $consumerClass} зависимость {@see needs()} → {@see give()}.
+     *
+     * Аналог `when(A)->needs(B)->give(C)`. Последнее правило для пары (consumer, need) побеждает.
+     * Не работает после {@see freeze()}.
+     *
+     * @param string $consumerClass FQCN класса-потребителя (when)
+     *
+     * @throws \CloudCastle\DI\Exception\ContainerException Если класс не найден или контейнер заморожен
+     */
+    public function when(string $consumerClass): ContextualBindingNeedsInterface;
+
+    /**
+     * Возвращает id сервиса из contextual give для пары (consumer, need) или `null`.
+     *
+     * @param string $consumerClass FQCN класса-потребителя
+     * @param string $need FQCN типа или id зависимости (needs)
+     */
+    public function contextualGive(string $consumerClass, string $need): ?string;
+
+    /**
      * Вызывает callable с autowiring параметров (те же правила, что у конструктора при {@see get()}).
      *
      * Поддерживаются closure, first-class callable, `[object, 'method']`, invokable-объекты

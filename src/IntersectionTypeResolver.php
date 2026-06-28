@@ -23,17 +23,20 @@ final class IntersectionTypeResolver
     ) {
     }
 
-    public function resolve(ReflectionParameter|ReflectionProperty $member, ReflectionIntersectionType $type): mixed
-    {
+    public function resolve(
+        ReflectionParameter|ReflectionProperty $member,
+        ReflectionIntersectionType $type,
+        ?string $consumerClass = null,
+    ): mixed {
         $typeNames = $this->collectTypeNames($this->filterObjectNamedTypes($type->getTypes()));
 
         foreach ($typeNames as $candidateId) {
-            if (!$this->classResolver->canResolve($candidateId)) {
+            if (!$this->classResolver->canResolve($candidateId, $consumerClass)) {
                 continue;
             }
 
             /** @psalm-suppress MixedAssignment */
-            $instance = $this->classResolver->resolve($candidateId);
+            $instance = $this->classResolver->resolve($candidateId, $consumerClass);
 
             if ($this->satisfiesIntersection($instance, $typeNames)) {
                 return $instance;

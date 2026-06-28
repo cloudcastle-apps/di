@@ -72,7 +72,7 @@
 | **Теги** | `tag()`, iterator, locator, `decorate()` |
 | **Прочее** | `freeze()`, `dump()`, `ContainerRegistry` |
 | **Compiled (v1.9)** | `ContainerCompiler` — PHP-класс без reflection на hot path |
-| **Contextual (v1.10)** | Контракты `when/needs/give` — runtime в v2 ([#25](https://github.com/cloudcastle-apps/di/issues/25)) |
+| **Contextual (v1.11)** | `Container::when()->needs()->give()` — runtime ([#25](https://github.com/cloudcastle-apps/di/issues/25)) |
 
 </details>
 
@@ -210,7 +210,7 @@ composer ci
 
 | | |
 |---|---|
-| **Тесты** | 607 PHPUnit (unit 555, integration 8, security 17, load 15, performance 12) |
+| **Тесты** | 614 PHPUnit (unit 562, integration 8, security 17, load 15, performance 12) |
 | **Статика** | PHPStan max, Psalm L1, Rector |
 | **Coverage** | 100% line coverage `src/`, per-file ≥95%, Infection MSI ≥94% |
 | **CI** | PHP 8.1–8.5, benchmark-check, CodeQL |

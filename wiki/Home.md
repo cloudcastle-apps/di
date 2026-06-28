@@ -88,7 +88,7 @@ $service = $container->get(App\Service\OrderService::class);
 
 ### 🔗 Contextual binding (v1.10, контракты)
 - `ContextualBinding`, fluent `when/needs/give` — **контракты** (#25)
-- Runtime `Container::when()` — часть 2 (v2.0 milestone)
+- Runtime `Container::when()` — **v1.11.0** ([#25](https://github.com/cloudcastle-apps/di/issues/25) часть 2 ✅)
 
 </td>
 </tr>
@@ -109,7 +109,7 @@ $service = $container->get(App\Service\OrderService::class);
 
 ### 🔮 Roadmap v2
 
-- **Contextual binding runtime** — [#25](https://github.com/cloudcastle-apps/di/issues/25) (часть 1 ✅ v1.10.0)
+- **Contextual binding runtime** — [#25](https://github.com/cloudcastle-apps/di/issues/25) (часть 1 ✅ v1.10.0, часть 2 ✅ v1.11.0)
 - **Scopes** (request / transient) — [#33](https://github.com/cloudcastle-apps/di/issues/33)
 - Breaking policy — [#17](https://github.com/cloudcastle-apps/di/issues/17)
 

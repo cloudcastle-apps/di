@@ -9,6 +9,16 @@
 
 Руководство по переходу между версиями **cloudcastle/di**.
 
+## 1.10.0 → 1.11.0
+
+### Добавлено (обратно совместимо)
+
+- **Runtime contextual binding** — `Container::when()->needs()->give()` ([#25](https://github.com/cloudcastle-apps/di/issues/25), часть 2)
+
+```bash
+composer update cloudcastle/di
+```
+
 ## 1.9.0 → 1.10.0
 
 ### Добавлено (обратно совместимо)
