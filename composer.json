@@ -75,11 +75,13 @@
         "rector/rector": "^1.2 || ^2.0",
         "roave/security-advisories": "dev-latest",
         "squizlabs/php_codesniffer": "^3.12 || ^4.0",
+        "symfony/var-exporter": "^6.4",
         "vimeo/psalm": "^6.0",
         "webmozart/assert": "^1.11"
     },
     "suggest": {
-        "ext-yaml": "Загрузка YAML-конфигурации контейнера (ContainerConfigurator)"
+        "ext-yaml": "Загрузка YAML-конфигурации контейнера (ContainerConfigurator)",
+        "symfony/var-exporter": "Lazy ghost/proxy через Container::lazyGhost() (#34)"
     },
     "minimum-stability": "stable",
     "prefer-stable": true,

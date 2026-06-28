@@ -3,6 +3,20 @@
 Формат основан на [Keep a Changelog](https://keepachangelog.com/ru/1.1.0/),
 версионирование — [SemVer](https://semver.org/lang/ru/).
 
+## [1.18.0] — 2026-06-28
+
+### Добавлено
+
+- **Lazy ghost/proxy** ([#34](https://github.com/cloudcastle-apps/di/issues/34))
+- `Container::lazyGhost()` — Symfony-style proxy для interface без загрузки реализации до первого вызова метода
+- `LazyGhostProxyFactory` — opt-in через `symfony/var-exporter` (suggest, не runtime dep)
+- Тот же API в `AbstractCompiledContainer`
+
+### Изменено
+
+- **Тесты:** +5 PHPUnit (lazy ghost)
+- **Dev:** `symfony/var-exporter` ^6.4 для CI и локальных тестов
+
 ## [1.17.0] — 2026-06-28
 
 ### Добавлено

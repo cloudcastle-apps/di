@@ -139,12 +139,12 @@ final class AbstractCompiledContainerTest extends TestCase
         self::assertSame(StubCompiledContainer::class, $container->getCompiledClassName());
         self::assertTrue($container->isFrozen());
         $container->freeze();
-        self::assertSame(['counter', 'null-value', 'value'], $container->getDefinitionIds());
+        self::assertSame(['counter', 'heavy', 'null-value', 'value'], $container->getDefinitionIds());
 
         $dump = $container->dump();
 
         self::assertTrue($dump['frozen']);
-        self::assertSame(['counter', 'null-value', 'value'], $dump['definitions']);
+        self::assertSame(['counter', 'heavy', 'null-value', 'value'], $dump['definitions']);
         self::assertSame([], $dump['autowired']);
         self::assertSame(['alias.id' => 'value', 'alias.only' => 'missing'], $dump['aliases']);
         self::assertSame(['group' => ['missing', 'value'], 'empty' => []], $dump['tags']);

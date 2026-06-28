@@ -17,7 +17,7 @@
 
 > 💡 **Для кого:** библиотеки, CLI, API, composition root, тесты — когда Symfony/Laravel избыточны, а Pimple уже мал.
 
-**Текущая версия:** [1.17.0](https://github.com/cloudcastle-apps/di/releases/tag/v1.17.0) · [Packagist](https://packagist.org/packages/cloudcastle/di)
+**Текущая версия:** [1.18.0](https://github.com/cloudcastle-apps/di/releases/tag/v1.18.0) · [Packagist](https://packagist.org/packages/cloudcastle/di)
 
 ---
 
@@ -83,7 +83,7 @@ $service = $container->get(App\Service\OrderService::class);
 
 ### ⚡ Расширения
 - `call()`, `bind()`, `afterResolving()`
-- `alias()`, `lazy()`, `freeze()`, `dump()`
+- `alias()`, `lazy()`, `lazyGhost()`, `freeze()`, `dump()`
 - `ContainerRegistry` — глобальный реестр
 
 ### 🔗 Contextual binding (v1.10, контракты)

@@ -13,6 +13,7 @@ use CloudCastle\DI\Contract\CompiledContainerInterface;
 use CloudCastle\DI\Contract\ContextualBindingNeedsInterface;
 use CloudCastle\DI\Exception\ContainerException;
 use CloudCastle\DI\Exception\NotFoundException;
+use CloudCastle\DI\LazyGhostProxyFactory;
 use CloudCastle\DI\LazyService;
 use CloudCastle\DI\ServiceAliasResolver;
 use CloudCastle\DI\TaggedServiceIterator;
@@ -250,6 +251,15 @@ abstract class AbstractCompiledContainer implements CompiledContainerInterface
     public function lazy(string $serviceId): LazyService
     {
         return new LazyService($this, $serviceId);
+    }
+
+    public function lazyGhost(string $type, string $serviceId): object
+    {
+        return LazyGhostProxyFactory::create(
+            $this,
+            $type,
+            $this->aliasResolver->resolve($serviceId),
+        );
     }
 
     public function addDefinitions(array $definitions): void

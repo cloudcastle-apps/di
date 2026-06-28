@@ -178,6 +178,18 @@ final class Container implements ContainerInterface
     /**
      * {@inheritDoc}
      */
+    public function lazyGhost(string $type, string $serviceId): object
+    {
+        return LazyGhostProxyFactory::create(
+            $this,
+            $type,
+            $this->aliasResolver->resolve($serviceId),
+        );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function addDefinitions(array $definitions): void
     {
         /** @psalm-suppress MixedAssignment */
