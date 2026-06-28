@@ -109,10 +109,6 @@ final class CallableInvoker
                 throw new ContainerException('Неподдерживаемый тип callable.');
             }
 
-            if (\is_object($objectOrMethod)) {
-                return new ReflectionMethod($objectOrMethod, $method);
-            }
-
             /** @var class-string $objectOrMethod */
             return new ReflectionMethod($objectOrMethod, $method);
         }
