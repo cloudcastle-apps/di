@@ -60,8 +60,13 @@ final class ContainerProfilingTest extends TestCase
         $container->get('cached');
         $container->get('cached');
 
+        $samples = $container->profileReport()['top_slowest'];
+
+        self::assertFalse($samples[0]['cached']);
+        self::assertTrue($samples[1]['cached']);
+
         $cachedSamples = array_values(array_filter(
-            $container->profileReport()['top_slowest'],
+            $samples,
             static fn (array $row): bool => $row['operation'] === 'get' && $row['cached'],
         ));
 

@@ -93,6 +93,37 @@ final class ContainerProfilerTest extends TestCase
         self::assertCount(3, $this->profiler->report(limit: 0)['top_slowest']);
     }
 
+    public function testReportTotalMsUsesFourDecimalRounding(): void
+    {
+        $this->profiler->record('get', 'a', 1.11115);
+        $this->profiler->record('get', 'b', 2.22225);
+
+        $report = $this->profiler->report();
+
+        self::assertSame(3.3335, $report['total_ms']);
+        self::assertSame(3.3335, $report['by_operation']['get']['total_ms']);
+        self::assertSame(1.6668, $report['by_operation']['get']['avg_ms']);
+    }
+
+    public function testTopSlowestOrderIsStrictlyDescending(): void
+    {
+        foreach ([10.0, 7.5, 5.0, 2.5, 1.0] as $index => $elapsedMs) {
+            $this->profiler->record('get', 'svc-' . $index, $elapsedMs);
+        }
+
+        self::assertSame(
+            [10.0, 7.5, 5.0, 2.5, 1.0],
+            array_column($this->profiler->report(limit: 0)['top_slowest'], 'elapsed_ms'),
+        );
+    }
+
+    public function testRecordStoresCachedFlagFalseByDefault(): void
+    {
+        $this->profiler->record('get', 'svc', 1.0);
+
+        self::assertFalse($this->profiler->report()['top_slowest'][0]['cached']);
+    }
+
     public function testReportDefaultLimitKeepsTenSlowestEntries(): void
     {
         for ($index = 0; $index < 11; ++$index) {
