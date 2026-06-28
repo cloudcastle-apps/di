@@ -64,7 +64,7 @@ final class ConfigurationMerger
     /**
      * @param list<ConfigurationLayer> $layers
      *
-     * @return array<string, array{effectivePriority: int, order: int, value: string}>
+     * @return array<int|string, array{effectivePriority: int, order: int, value: mixed}>
      */
     private function collectContextualWinners(array $layers): array
     {
@@ -108,7 +108,7 @@ final class ConfigurationMerger
     }
 
     /**
-     * @param array<string, array{effectivePriority: int, order: int, value: string}> $winners
+     * @param array<int|string, array{effectivePriority: int, order: int, value: mixed}> $winners
      *
      * @return array<string, array<string, string>>
      */
@@ -128,10 +128,14 @@ final class ConfigurationMerger
                 continue;
             }
 
+            $giveId = $winner['value'];
+
+            if (!\is_string($giveId)) {
+                continue;
+            }
+
             $consumerClass = substr($key, 0, $separator);
             $need = substr($key, $separator + 2);
-            /** @var string $giveId */
-            $giveId = $winner['value'];
             $result[$consumerClass][$need] = $giveId;
         }
 
