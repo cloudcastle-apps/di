@@ -98,7 +98,7 @@ flowchart LR
 | **JSON / YAML / XML** | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ NEON | **Symfony**, **Nette**, **CloudCastle** |
 | **Каталог конфигов (v1.7)** | ✅ | ⚠️ | ✅ | ❌ | ✅ | ✅ | **CloudCastle**, Symfony, **Nette** |
 | **Приоритеты слоёв** | ✅ | ⚠️ | ✅ | ❌ | ✅ | ✅ | **Symfony**, **CloudCastle**, **Nette** |
-| **Compiled container (prod)** | ⚠️ v2 контракты | ✅ | ✅ | ❌ | ✅ | ✅ | **PHP-DI**, **Symfony**, Laravel, **Nette** |
+| **Compiled container (prod)** | ✅ v1.9 | ✅ | ✅ | ❌ | ✅ | ✅ | **PHP-DI**, **Symfony**, Laravel, **Nette** |
 
 ### Расширенный API
 
@@ -136,7 +136,7 @@ flowchart LR
 | ✅ Подходит | ❌ Лучше другой вариант |
 |-------------|-------------------------|
 | Composition root в **библиотеке**, CLI, API | Уже **Symfony** / **Laravel** / **Nette** |
-| Autowiring + теги **без** фреймворка | **Compiled** + **contextual** **сейчас** → PHP-DI, Symfony, **Nette** |
+| Autowiring + теги **без** фреймворка | **Compiled** (v1.9) + конфиг; contextual — v2 |
 | Граф **~10–500** сервисов | **Legacy PHP &lt; 8.1** |
 | **Одна** зависимость `psr/container` | 3–5 `set()` без autowire → **Pimple** |
 | Декларативный конфиг опционален | Огромный enterprise-граф + bundles → **Symfony** |
@@ -148,7 +148,7 @@ flowchart LR
 | Из | Действия |
 |----|----------|
 | **Pimple** | `$p['id'] = fn` → `set()`; `enableAutowiring()` для FQCN |
-| **PHP-DI** | definitions → `set()` / `bind()` / `ContainerConfigurator`; compiler — в v2 (#24) |
+| **PHP-DI** | definitions → `set()` / `bind()` / `ContainerConfigurator`; compiler — `ContainerCompiler` (v1.9) |
 | **Symfony** | `services.yaml` → `ContainerConfigurator` или PHP bootstrap |
 | **Laravel** | providers → composition root; contextual → `bind()` (без per-class контекста в v1.x) |
 | **Nette** | NEON → PHP/YAML/XML через `ContainerConfigurator`; extensions → `tag()` / bootstrap |
@@ -168,13 +168,13 @@ flowchart LR
 | 📁 | `scan()`, конфиг PHP/JSON/YAML/XML, каталоги (v1.7) |
 | 🏷️ | Теги, iterator, locator, декораторы, `call()`, `bind()` |
 | 🧊 | `freeze()`, `dump()`, `ContainerRegistry` |
-| 🧪 | 512 тестов, benchmark-check в CI |
+| 🧪 | 604 теста, 100% line coverage `src/`, benchmark-check в CI |
 
 ### Ограничения (v1.x)
 
 | | |
 |---|---|
-| 🚧 | Compiled container — только **контракты** v2; runtime compile в [#24](https://github.com/cloudcastle-apps/di/issues/24) |
+| 🚀 | **Compiled container** — `ContainerCompiler`, build-step ([#24](https://github.com/cloudcastle-apps/di/issues/24)) |
 | 🚧 | Нет contextual binding — [v2 #25](https://github.com/cloudcastle-apps/di/issues/25) |
 | 📌 | `scan()` — regex-парсинг, не AST |
 | 👥 | Меньше community, чем PHP-DI / Symfony / **Nette** |
@@ -194,4 +194,4 @@ flowchart LR
 - [FAQ](FAQ)
 - [Архитектура](Architecture)
 - [Анти-паттерны](Anti-patterns)
-- [Roadmap v2](https://github.com/cloudcastle-apps/di/issues/17) · [#24 compiled container](https://github.com/cloudcastle-apps/di/issues/24)
+- [Roadmap v2](https://github.com/cloudcastle-apps/di/issues/17) · [Compiled container](Compiled-container)

@@ -3,6 +3,26 @@
 Формат основан на [Keep a Changelog](https://keepachangelog.com/ru/1.1.0/),
 версионирование — [SemVer](https://semver.org/lang/ru/).
 
+## [1.9.0] — 2026-06-25
+
+### Добавлено
+
+- **`ContainerCompiler`** — компиляция замороженного контейнера в PHP-класс ([#24](https://github.com/cloudcastle-apps/di/issues/24))
+- `Compiler/*`: `ContainerCompileSnapshotBuilder`, `CompiledContainerPhpGenerator`, `CompileConstructorPlanner`, `CompileParameterReferenceResolver`
+- **`AbstractCompiledContainer`** — базовый runtime-класс сгенерированных контейнеров
+- Интеграционные тесты parity runtime vs compiled
+
+### Изменено
+
+- **Покрытие:** 100% line coverage по `src/`; убраны skip в YAML-тестах
+- **Тесты:** 604 PHPUnit (unit 552, integration 8, security 17, load 15, performance 12)
+- CI: `test:performance` с `XDEBUG_MODE=off`; mutation только PHP 8.3+
+
+### Документация
+
+- Wiki: [Compiled container](wiki/Compiled-container.md), обновлены Comparison, API-reference, Upgrading
+- `UPGRADING.md`: секция 1.8.0 → 1.9.0
+
 ## [1.8.0] — 2026-06-25
 
 ### Изменено
@@ -212,6 +232,7 @@
 - CI для GitHub Actions и GitLab CI
 - Инструменты качества: PHPStan max, Psalm level 1, PHPCS, PHPMD, Deptrac, Rector
 
+[1.9.0]: https://github.com/cloudcastle-apps/di/compare/v1.8.0...v1.9.0
 [1.8.0]: https://github.com/cloudcastle-apps/di/compare/v1.7.0...v1.8.0
 [1.7.0]: https://github.com/cloudcastle-apps/di/compare/v1.6.0...v1.7.0
 [1.6.0]: https://github.com/cloudcastle-apps/di/compare/v1.5.0...v1.6.0

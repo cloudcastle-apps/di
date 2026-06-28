@@ -9,6 +9,30 @@
 
 Руководство по переходу между версиями **cloudcastle/di**.
 
+## 1.8.0 → 1.9.0
+
+### Добавлено (обратно совместимо)
+
+- **`ContainerCompiler`** — компиляция замороженного контейнера в PHP-класс без reflection на hot path ([#24](https://github.com/cloudcastle-apps/di/issues/24))
+- Классы `Compiler/*`: snapshot builder, PHP generator, constructor planner, parameter resolver
+- **`CompiledContainerInterface`**, **`AbstractCompiledContainer`** — runtime compiled-контейнера
+- Интеграционные тесты parity runtime vs compiled
+
+### Изменено
+
+- **Покрытие:** 100% line coverage по `src/`; per-file gate ≥95%
+- **Тесты:** 604 PHPUnit (unit 552, integration 8, security 17, load 15, performance 12)
+- CI: `test:performance` с `XDEBUG_MODE=off`; mutation только на PHP 8.3+
+
+### Рекомендации
+
+1. Для production с большим числом `get()` — [Compiled container](Compiled-container): `freeze()` → `ContainerCompiler::compile()` в build-step.
+2. Compiled **не** заменяет runtime-контейнер с фабриками и property/method injection — см. ограничения в wiki.
+
+```bash
+composer update cloudcastle/di
+```
+
 ## 1.7.0 → 1.8.0
 
 ### Изменения (breaking)
@@ -174,23 +198,13 @@ composer update cloudcastle/di
 
 ## 1.x → 2.0 (будущее)
 
-### Уже в кодовой базе (контракты)
-
-Следующие типы **не меняют** поведение v1.x runtime-контейнера — это подготовка к [#24](https://github.com/cloudcastle-apps/di/issues/24):
-
-| Тип | Назначение |
-|-----|------------|
-| `ContainerCompilerInterface` | API компиляции замороженного контейнера в PHP-класс |
-| `CompiledContainerInterface` | Маркер compiled-контейнера (`getCompiledClassName()`) |
-| `ContainerCompileResult` | Value object результата компиляции |
-| `ContainerCompileException` | Ошибки компиляции |
-
-**Реализация compiler** появится в v2.0. До этого используйте `Container` + `freeze()` как сейчас.
+Major **v2.0** — breaking changes и enterprise-parity (**contextual binding**, **scopes**). Compiled container **уже в 1.9.0** ([#24](https://github.com/cloudcastle-apps/di/issues/24) закрыт).
 
 ### Планируется в v2.0
 
-- Runtime **compiled container** без reflection на hot path ([#24](https://github.com/cloudcastle-apps/di/issues/24))
 - **Contextual binding** ([#25](https://github.com/cloudcastle-apps/di/issues/25))
+- **Scopes** request / transient ([#33](https://github.com/cloudcastle-apps/di/issues/33))
+- Breaking API — [#17](https://github.com/cloudcastle-apps/di/issues/17)
 
 Major-версия будет описана здесь и в [CHANGELOG](https://github.com/cloudcastle-apps/di/blob/main/CHANGELOG.md).
 

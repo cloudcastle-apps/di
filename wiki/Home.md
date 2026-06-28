@@ -17,14 +17,14 @@
 
 > 💡 **Для кого:** библиотеки, CLI, API, composition root, тесты — когда Symfony/Laravel избыточны, а Pimple уже мал.
 
-**Текущая версия:** [1.8.0](https://github.com/cloudcastle-apps/di/releases/tag/v1.8.0) · [Packagist](https://packagist.org/packages/cloudcastle/di)
+**Текущая версия:** [1.9.0](https://github.com/cloudcastle-apps/di/releases/tag/v1.9.0) · [Packagist](https://packagist.org/packages/cloudcastle/di)
 
 ---
 
 ## 🚀 Быстрый старт
 
 ```bash
-composer require cloudcastle/di:^1.8
+composer require cloudcastle/di:^1.9
 ```
 
 ```php
@@ -86,6 +86,10 @@ $service = $container->get(App\Service\OrderService::class);
 - `alias()`, `lazy()`, `freeze()`, `dump()`
 - `ContainerRegistry` — глобальный реестр
 
+### 🚀 Compiled container (v1.9+)
+- `ContainerCompiler` — compile в PHP-класс без reflection на hot path
+- `set`, `autowire`, `alias`, tags; build-step в CI/deploy
+
 </td>
 </tr>
 </table>
@@ -100,16 +104,16 @@ $service = $container->get(App\Service\OrderService::class);
 |---|---|
 | 📋 | **[Сравнение — полная таблица](Comparison)** |
 | ⚡ | Одна зависимость `psr/container` |
-| 🎯 | Autowiring + конфиг без compiler |
-| 🚧 | Compiled container — контракты v2 (#24); contextual — v2 (#25) |
+| 🎯 | Autowiring + конфиг + **compiled container** (v1.9) |
+| 🚧 | Contextual binding — v2 ([#25](https://github.com/cloudcastle-apps/di/issues/25)) |
 
-### 🔮 Roadmap v2 (контракты)
+### 🔮 Roadmap v2
 
-- `ContainerCompilerInterface` — компиляция замороженного контейнера в PHP-класс
-- `CompiledContainerInterface` — маркер compiled-контейнера без reflection на hot path
-- Реализация compiler — [#24](https://github.com/cloudcastle-apps/di/issues/24); contextual binding — [#25](https://github.com/cloudcastle-apps/di/issues/25)
+- **Contextual binding** — [#25](https://github.com/cloudcastle-apps/di/issues/25)
+- **Scopes** (request / transient) — [#33](https://github.com/cloudcastle-apps/di/issues/33)
+- Breaking policy — [#17](https://github.com/cloudcastle-apps/di/issues/17)
 
-Подробнее — [API-reference](API-reference#v2-compiled-container-контракты), [Upgrading](Upgrading).
+Compiled container — **v1.9.0** ([#24](https://github.com/cloudcastle-apps/di/issues/24) закрыт). Подробнее — [Compiled container](Compiled-container), [API-reference](API-reference#compiled-container-v19).
 
 ---
 
@@ -163,6 +167,7 @@ flowchart TB
 | [📋 API](API-reference) | Все методы и исключения |
 | [🏭 Фабрики и singleton](Factories-and-singleton) | Callable, кэш, циклы |
 | [🧪 Bootstrap](Bootstrap) | Plain PHP, CLI, тесты |
+| [🚀 Compiled container](Compiled-container) | ContainerCompiler, build-step, ограничения |
 
 ### 🔬 Качество
 
