@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace CloudCastle\DI;
 
+use Closure;
 use CloudCastle\DI\Contract\ContextualBindingNeedsInterface;
 use CloudCastle\DI\Contract\ContextualBindingRegistrarInterface;
-use Closure;
 
 /**
  * Runtime contextual when/needs/give (#25, часть 2).
