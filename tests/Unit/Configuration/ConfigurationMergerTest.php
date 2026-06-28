@@ -275,7 +275,7 @@ final class ConfigurationMergerTest extends TestCase
                     $consumer => 'not-a-needs-map',
                     'App\\Orphan' => [
                         456 => 'skip.invalid-need',
-                        $need => ['value' => 'skip.non-string-give'],
+                        $need => ['invalid' => 'structure'],
                     ],
                 ],
             ], 0, null),
