@@ -27,6 +27,10 @@
         </testsuite>
     </testsuites>
 
+    <logging>
+        <junit outputFile="var/coverage/coverage-xml/junit.xml"/>
+    </logging>
+
     <source>
         <include>
             <directory suffix=".php">src</directory>
@@ -36,6 +40,7 @@
     <coverage>
         <report>
             <clover outputFile="var/coverage/clover.xml"/>
+            <xml outputDirectory="var/coverage/coverage-xml"/>
             <text outputFile="php://stdout" showUncoveredFiles="true" showOnlySummary="false"/>
         </report>
     </coverage>

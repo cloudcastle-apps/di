@@ -37,6 +37,13 @@ if ($initialTestPhpOptions !== []) {
     $infectionArgs[] = '--initial-tests-php-options=' . implode(' ', $initialTestPhpOptions);
 }
 
+$coverageDirectory = dirname(__DIR__) . '/var/coverage/coverage-xml';
+
+if (is_dir($coverageDirectory)) {
+    $infectionArgs[] = '--coverage=' . $coverageDirectory;
+    $infectionArgs[] = '--skip-initial-tests';
+}
+
 $escaped = array_map(
     static fn (string $part): string => escapeshellarg($part),
     array_merge([PHP_BINARY], $phpArgs, $infectionArgs),
