@@ -27,7 +27,9 @@ if (!extension_loaded('yaml')) {
     $initialTestPhpOptions[] = '-d extension=yaml';
 }
 
-if (extension_loaded('pcov')) {
+if (extension_loaded('xdebug')) {
+    $initialTestPhpOptions[] = '-d xdebug.mode=coverage';
+} elseif (extension_loaded('pcov')) {
     $projectRoot = dirname(__DIR__);
     $initialTestPhpOptions[] = '-d pcov.enabled=1';
     $initialTestPhpOptions[] = '-d pcov.directory=' . $projectRoot . '/src';
@@ -35,13 +37,6 @@ if (extension_loaded('pcov')) {
 
 if ($initialTestPhpOptions !== []) {
     $infectionArgs[] = '--initial-tests-php-options=' . implode(' ', $initialTestPhpOptions);
-}
-
-$coverageDirectory = dirname(__DIR__) . '/var/coverage/coverage-xml';
-
-if (is_dir($coverageDirectory)) {
-    $infectionArgs[] = '--coverage=' . $coverageDirectory;
-    $infectionArgs[] = '--skip-initial-tests';
 }
 
 $escaped = array_map(
