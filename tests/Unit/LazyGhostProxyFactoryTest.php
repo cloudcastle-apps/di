@@ -46,6 +46,7 @@ final class LazyGhostProxyFactoryTest extends TestCase
         $container->set('scalar', 'not-an-object');
 
         $proxy = LazyGhostProxyFactory::create($container, HeavyContract::class, 'scalar');
+        self::assertInstanceOf(HeavyContract::class, $proxy);
 
         $this->expectException(ContainerException::class);
         $this->expectExceptionMessage('lazyGhost(): сервис "scalar" должен быть объектом');
