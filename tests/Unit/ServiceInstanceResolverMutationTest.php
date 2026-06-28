@@ -48,7 +48,7 @@ final class ServiceInstanceResolverMutationTest extends TestCase
                 ++$attempts;
 
                 if ($attempts === 1) {
-                    return $resolver->resolve(
+                    $nested = $resolver->resolve(
                         $id,
                         false,
                         $definitions,
@@ -58,6 +58,10 @@ final class ServiceInstanceResolverMutationTest extends TestCase
                         static fn (string $serviceId): bool => $serviceId === 'svc',
                         static fn (): object => new stdClass(),
                     );
+
+                    self::assertIsObject($nested);
+
+                    return $nested;
                 }
 
                 return new stdClass();
