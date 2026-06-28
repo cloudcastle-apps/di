@@ -202,7 +202,10 @@
         "test:integration": "@phpunit --testsuite integration",
         "test:load": "@phpunit --testsuite load",
         "test:mutation": "@infection",
-        "test:performance": "@phpunit --testsuite performance",
+        "test:performance": [
+            "@putenv XDEBUG_MODE=off",
+            "@phpunit --testsuite performance"
+        ],
         "test:security": "@phpunit --testsuite security",
         "test:unit": "@phpunit --testsuite unit",
         "unused": "composer-unused"
