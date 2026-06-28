@@ -197,6 +197,7 @@ final class ContainerSmartCacheTest extends TestCase
         $container->set('svc', static fn (): stdClass => new stdClass());
         $container->cacheFor('svc', ttlSeconds: 30);
         $container->get('svc');
+
         $clock->now = 1_005.0;
         $container->get('svc');
 
@@ -212,6 +213,7 @@ final class ContainerSmartCacheTest extends TestCase
         $container->set('svc', static fn (): stdClass => new stdClass());
         $container->cacheFor('svc', ttlSeconds: 25);
         $container->get('svc');
+
         $clock->now = 1_010.0;
         $container->make('svc');
 
