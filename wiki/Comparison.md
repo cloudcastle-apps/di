@@ -111,7 +111,7 @@ flowchart LR
 | **Tagged services** | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ | **Паритет** |
 | **Tagged iterator / locator** | ✅ | ✅ | ✅ | ❌ | ⚠️ | ✅ | **CloudCastle**, PHP-DI, Symfony, **Nette** |
 | **Декораторы** | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ | **Паритет** |
-| **Lazy loading** | ✅ | ✅ proxy | ✅ ghost | ❌ | ✅ | ✅ | **Symfony** (ghost proxies) |
+| **Lazy loading** | ✅ `lazy()` + **`lazyGhost()`** (opt-in) | ✅ proxy | ✅ ghost | ❌ | ✅ | ✅ | **Symfony** (ghost); **CloudCastle** (ghost opt-in) |
 | **Contextual binding** | ⚠️ v1.11 runtime | ✅ | ✅ | ❌ | ✅ | ✅ | **PHP-DI**, Symfony, Laravel, **Nette** |
 | **Scopes (request и т.д.)** | ❌ v2 | ⚠️ | ✅ | ❌ | ✅ | ⚠️ | **Symfony**, **Laravel** |
 

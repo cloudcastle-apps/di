@@ -24,7 +24,7 @@
 ## 🚀 Быстрый старт
 
 ```bash
-composer require cloudcastle/di:^1.15
+composer require cloudcastle/di:^1.18
 ```
 
 ```php
@@ -83,7 +83,7 @@ $service = $container->get(App\Service\OrderService::class);
 
 ### ⚡ Расширения
 - `call()`, `bind()`, `afterResolving()`
-- `alias()`, `lazy()`, `lazyGhost()`, `freeze()`, `dump()`
+- `alias()`, `lazy()`, **`lazyGhost()`** (v1.18, opt-in `symfony/var-exporter`), `freeze()`, `dump()`
 - `ContainerRegistry` — глобальный реестр
 
 ### 🔗 Contextual binding (v1.10, контракты)

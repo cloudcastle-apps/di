@@ -148,6 +148,14 @@
 
 Возвращает обёртку; первый `getValue()` вызывает `$container->get($serviceId)` и кэширует результат внутри `LazyService`.
 
+#### `lazyGhost(string $type, string $serviceId): object`
+
+**v1.18.0** ([#34](https://github.com/cloudcastle-apps/di/issues/34)). Создаёт lazy ghost/proxy для **interface**; реализация (`get($serviceId)`) выполняется при первом вызове метода на proxy.
+
+- `$type` — `class-string` interface
+- Требует opt-in `symfony/var-exporter` (не runtime dep)
+- **Исключение:** `ContainerException` — пакет не установлен, тип не interface, сервис не объект
+
 Подробнее — [Прототипы, alias и lazy](Prototypes-alias-lazy).
 
 ### call(), bind(), addDefinitions(), afterResolving
@@ -337,6 +345,17 @@
 
 ---
 
+## `CloudCastle\DI\LazyGhostProxyFactory`
+
+**v1.18.0.** Внутренняя фабрика для `Container::lazyGhost()`. Не предназначена для прямого использования в приложении.
+
+| Метод | Описание |
+|-------|----------|
+| `isAvailable(): bool` | `true`, если установлен `symfony/var-exporter` (`ProxyHelper`) |
+| `create(ContainerInterface $container, string $type, string $serviceId): object` | Создаёт lazy proxy для interface |
+
+---
+
 ## `CloudCastle\DI\ServiceAliasResolver`
 
 Внутренний класс; используется `Container::alias()`.
@@ -430,6 +449,7 @@ interface ContainerInterface extends \Psr\Container\ContainerInterface
     public function make(string $id): mixed;
     public function alias(string $alias, string $targetId): void;
     public function lazy(string $serviceId): \CloudCastle\DI\LazyService;
+    public function lazyGhost(string $type, string $serviceId): object;
     public function addDefinitions(array $definitions): void;
     public function bind(string $abstract, string $concrete): void;
     public function call(callable $callable, array $parameters = []): mixed;

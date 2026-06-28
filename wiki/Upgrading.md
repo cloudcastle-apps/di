@@ -9,6 +9,26 @@
 
 Руководство по переходу между версиями **cloudcastle/di**.
 
+## 1.17.0 → 1.18.0
+
+### Добавлено (обратно совместимо)
+
+- **Lazy ghost/proxy** ([#34](https://github.com/cloudcastle-apps/di/issues/34))
+- `Container::lazyGhost($interface, $serviceId)` — Symfony-style proxy для interface; реализация создаётся при первом вызове метода
+- Opt-in: `composer require symfony/var-exporter` (не входит в runtime deps контейнера)
+- Для обёртки `LazyService` без ghost по-прежнему используйте `lazy()`
+
+```php
+composer require symfony/var-exporter
+
+$container->set('reports', fn (): ReportGeneratorInterface => new ReportGenerator());
+$container->set('contract', $container->lazyGhost(ReportGeneratorInterface::class, 'reports'));
+```
+
+```bash
+composer update cloudcastle/di
+```
+
 ## 1.10.0 → 1.11.0
 
 ### Добавлено (обратно совместимо)

@@ -72,6 +72,11 @@ $container->scan(__DIR__ . '/Services', 'App\\Services\\');
 - **`alias($alias, $targetId)`** — альтернативный id
 - **`lazy($serviceId)`** — отложенное создание через `LazyService::getValue()`
 
+**Lazy ghost** (v1.18.0, [#34](https://github.com/cloudcastle-apps/di/issues/34)):
+
+- **`lazyGhost($interface, $serviceId)`** — proxy для interface; класс реализации не загружается до первого вызова метода
+- Требует opt-in `symfony/var-exporter` (`composer require symfony/var-exporter`)
+
 См. [Прототипы, alias и lazy](Prototypes-alias-lazy).
 
 ## Есть contextual binding?

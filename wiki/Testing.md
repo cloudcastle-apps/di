@@ -18,7 +18,7 @@
 | `composer test:coverage` | PHPUnit + PCOV | — | ≥95% строк **и** ≥95% per-file (`tools/coverage-check.php`) |
 | `composer benchmark-check` | PHPBench | — | Регрессия производительности (×1.5 порог) |
 
-**Всего:** 614 PHPUnit-тестов (562 + 8 + 17 + 15 + 12; без coverage/mutation/benchmark-check).
+**Всего:** 744 PHPUnit-теста (689 unit + 11 integration + 17 security + 15 load + 12 performance; coverage/mutation — подмножество без performance).
 
 Фактические метрики (v1.10): покрытие строк **100%** по `src/`; per-file ≥95%; Infection MSI **≥94%** (`src/Compiler/` вне mutation scope). Mutation-тесты в CI — только PHP 8.3+.
 
