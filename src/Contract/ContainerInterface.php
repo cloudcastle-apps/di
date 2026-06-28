@@ -461,4 +461,46 @@ interface ContainerInterface extends PsrContainerInterface
      * @return array{configured: bool, max_size: int, available: int}
      */
     public function poolStats(string $serviceId): array;
+
+    /**
+     * Задаёт TTL singleton-кэша для id (#64).
+     *
+     * После истечения TTL следующий {@see get()} создаёт экземпляр заново.
+     *
+     * @param int $ttlSeconds Длительность кэша в секундах (не меньше 1)
+     */
+    public function cacheFor(string $serviceId, int $ttlSeconds): void;
+
+    /**
+     * Задаёт TTL singleton-кэша для всех сервисов с тегом (#64).
+     *
+     * Если у id задан свой TTL через {@see cacheFor()}, он имеет приоритет над тегом.
+     */
+    public function cacheTagFor(string $tag, int $ttlSeconds): void;
+
+    /**
+     * Явно удаляет singleton-кэш id (до истечения TTL).
+     */
+    public function forget(string $serviceId): void;
+
+    /**
+     * Удаляет singleton-кэш всех сервисов с указанным тегом.
+     */
+    public function forgetTag(string $tag): void;
+
+    /**
+     * Очищает весь singleton-кэш контейнера.
+     */
+    public function forgetAll(): void;
+
+    /**
+     * @return array{
+     *     configured: bool,
+     *     ttl_seconds: int|null,
+     *     cached: bool,
+     *     expires_at: float|null,
+     *     expired: bool
+     * }
+     */
+    public function cacheStats(string $serviceId): array;
 }

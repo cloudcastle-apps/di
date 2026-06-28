@@ -234,7 +234,7 @@ Major **v2.0** — breaking changes и enterprise-parity (**contextual binding**
 | Направление | Issue |
 |-------------|-------|
 | ⚡ Memory Pool — пул объектов для снижения GC | ✅ v1.16.0 |
-| 🎯 Smart Caching — интеллектуальное кэширование с TTL | [#64](https://github.com/cloudcastle-apps/di/issues/64) |
+| 🎯 Smart Caching — интеллектуальное кэширование с TTL | ✅ v1.17.0 |
 | 📊 Performance Profiler — opt-in get/make/call | ✅ v1.15.0 |
 | 🧪 Advanced Benchmarks — расширенные бенчмарки | ✅ v1.14.0 |
 

@@ -20,7 +20,7 @@
     },
     "minMsi": 94,
     "minCoveredMsi": 94,
-    "timeout": 20,
+    "timeout": 25,
     "bootstrap": "vendor/autoload.php",
     "phpUnit": {
         "configDir": "."

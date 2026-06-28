@@ -2,6 +2,27 @@
 
 Руководство по переходу между версиями **cloudcastle/di**.
 
+## 1.16.0 → 1.17.0
+
+### Добавлено (обратно совместимо)
+
+- **Smart Caching** ([#64](https://github.com/cloudcastle-apps/di/issues/64))
+- Opt-in TTL для singleton-кэша `get()`: `cacheFor($id, $ttlSeconds)`, `cacheTagFor($tag, $ttlSeconds)`
+- Явная инвалидация: `forget($id)`, `forgetTag($tag)`, `forgetAll()` — без изменений, пока TTL не задан
+- `set()` и `bind()` по-прежнему сбрасывают singleton-кэш затронутых id
+
+```php
+$container->cacheFor(ConfigLoader::class, ttlSeconds: 300);
+
+$config = $container->get(ConfigLoader::class);
+// ... через 5 минут или явно:
+$container->forget(ConfigLoader::class);
+```
+
+```bash
+composer update cloudcastle/di
+```
+
 ## 1.15.0 → 1.16.0
 
 ### Добавлено (обратно совместимо)

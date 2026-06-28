@@ -101,10 +101,9 @@ jobs:
         run: composer benchmark-report
 
       - name: Upload benchmark artifacts
-        if: matrix.php-version == '8.3'
         uses: actions/upload-artifact@v4
         with:
-          name: benchmark-reports
+          name: benchmark-reports-php-${{ matrix.php-version }}
           path: var/benchmark/
           if-no-files-found: error
 
@@ -112,7 +111,6 @@ jobs:
         run: composer test:coverage
 
       - name: Tests mutation
-        if: matrix.php-version == '8.3'
         env:
           XDEBUG_MODE: off
         run: composer test:mutation
