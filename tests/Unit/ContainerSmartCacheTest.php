@@ -174,4 +174,56 @@ final class ContainerSmartCacheTest extends TestCase
 
         self::assertTrue($container->cacheStats('svc')['expired']);
     }
+
+    public function testCacheStatsReportsExpiresAtAfterGet(): void
+    {
+        $clock = new class () {
+            public float $now = 1_000.0;
+        };
+        $container = new Container(smartCacheClock: fn (): float => $clock->now);
+        $container->set('svc', static fn (): stdClass => new stdClass());
+        $container->cacheFor('svc', ttlSeconds: 20);
+        $container->get('svc');
+
+        self::assertSame(1_020.0, $container->cacheStats('svc')['expires_at']);
+    }
+
+    public function testTouchTimestampNotUpdatedOnSubsequentGetWithinTtl(): void
+    {
+        $clock = new class () {
+            public float $now = 1_000.0;
+        };
+        $container = new Container(smartCacheClock: fn (): float => $clock->now);
+        $container->set('svc', static fn (): stdClass => new stdClass());
+        $container->cacheFor('svc', ttlSeconds: 30);
+        $container->get('svc');
+        $clock->now = 1_005.0;
+        $container->get('svc');
+
+        self::assertSame(1_030.0, $container->cacheStats('svc')['expires_at']);
+    }
+
+    public function testMakeDoesNotUpdateTouchTimestamp(): void
+    {
+        $clock = new class () {
+            public float $now = 1_000.0;
+        };
+        $container = new Container(smartCacheClock: fn (): float => $clock->now);
+        $container->set('svc', static fn (): stdClass => new stdClass());
+        $container->cacheFor('svc', ttlSeconds: 25);
+        $container->get('svc');
+        $clock->now = 1_010.0;
+        $container->make('svc');
+
+        self::assertSame(1_025.0, $container->cacheStats('svc')['expires_at']);
+    }
+
+    public function testCacheStatsReportsNotExpiredWhenServiceIsNotCached(): void
+    {
+        $container = new Container();
+        $container->set('svc', static fn (): stdClass => new stdClass());
+        $container->cacheFor('svc', ttlSeconds: 60);
+
+        self::assertFalse($container->cacheStats('svc')['expired']);
+    }
 }

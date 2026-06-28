@@ -138,4 +138,19 @@ final class ContainerSmartCacheSupportTest extends TestCase
 
         self::assertFalse($this->support->stats('svc', [], $this->resolved)['cached']);
     }
+
+    public function testStatsReturnsNullExpiresAtWhenCachedWithoutTimestamp(): void
+    {
+        $this->support->configureFor('svc', ttlSeconds: 10);
+        $this->resolved['svc'] = new stdClass();
+
+        self::assertNull($this->support->stats('svc', [], $this->resolved)['expires_at']);
+    }
+
+    public function testStatsReportsNotExpiredWhenServiceIsNotCached(): void
+    {
+        $this->support->configureFor('svc', ttlSeconds: 30);
+
+        self::assertFalse($this->support->stats('svc', [], $this->resolved)['expired']);
+    }
 }
