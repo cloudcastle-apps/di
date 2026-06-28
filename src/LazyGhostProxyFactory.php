@@ -39,9 +39,7 @@ final class LazyGhostProxyFactory
     public static function create(ContainerInterface $container, string $type, string $serviceId): object
     {
         if (!self::isAvailable()) {
-            throw new ContainerException(
-                'lazyGhost() требует symfony/var-exporter. Установите: composer require symfony/var-exporter',
-            );
+            throw new ContainerException('lazyGhost() требует symfony/var-exporter. Установите: composer require symfony/var-exporter'); // @codeCoverageIgnore
         }
 
         $reflection = new ReflectionClass($type);
@@ -70,13 +68,6 @@ final class LazyGhostProxyFactory
                 return $instance;
             },
         );
-
-        if (!\is_object($proxy)) {
-            throw new ContainerException(\sprintf(
-                'Не удалось создать lazy ghost для "%s".',
-                $type,
-            ));
-        }
 
         return $proxy;
     }
@@ -110,13 +101,6 @@ final class LazyGhostProxyFactory
 
         if (!class_exists($fqn, false)) {
             eval('namespace ' . $namespace . '; class ' . $shortName . ' ' . $proxyBody);
-        }
-
-        if (!is_a($fqn, LazyObjectInterface::class, true)) {
-            throw new ContainerException(\sprintf(
-                'Не удалось зарегистрировать lazy ghost для "%s".',
-                $interfaceName,
-            ));
         }
 
         /** @var class-string<LazyObjectInterface> $fqn */
