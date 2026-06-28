@@ -14,7 +14,7 @@
 
 ### Изменено
 
-- **Тесты:** +10 PHPUnit (lazy ghost)
+- **Тесты:** 744 PHPUnit (+10 lazy ghost)
 - **Dev:** `symfony/var-exporter` ^6.4 для CI и локальных тестов
 - **Wiki / guide:** `lazyGhost()`, сравнение с Symfony ghost, FAQ, API reference
 

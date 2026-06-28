@@ -33,6 +33,6 @@ preferred-citation:
   authors:
     - name: CloudCastle
       affiliation: cloudcastle-apps
-  version: 1.10.0
+  version: 1.18.0
   year: 2026
   url: https://github.com/cloudcastle-apps/di

@@ -14,7 +14,7 @@
 
 | Package | Description |
 |---------|-------------|
-| [**cloudcastle/di**](https://github.com/cloudcastle-apps/di) | PSR-11 DI container for PHP 8.1+. Autowiring, configuration (PHP/JSON/YAML/XML), scan, tags, decorators. [`composer require cloudcastle/di`](https://packagist.org/packages/cloudcastle/di) |
+| [**cloudcastle/di**](https://github.com/cloudcastle-apps/di) | PSR-11 DI container for PHP 8.1+. Autowiring, config, scan, compiled container, contextual binding, lazy ghost (opt-in). Latest: **v1.18.0**. [`composer require cloudcastle/di:^1.18`](https://packagist.org/packages/cloudcastle/di) |
 
 ## Quick links
 

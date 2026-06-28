@@ -1,6 +1,6 @@
 {
     "name": "cloudcastle/di",
-    "description": "Lightweight PSR-11 dependency injection container for PHP 8.1+. Autowiring, declarative configuration (PHP/JSON/YAML/XML), directory scan, compiled container, custom inject attributes, tagged services, decorators. Лёгкий DI-контейнер с autowiring, конфигурацией из файлов, compile в PHP-класс и scan, одна зависимость psr/container.",
+    "description": "Lightweight PSR-11 dependency injection container for PHP 8.1+. Autowiring, declarative configuration (PHP/JSON/YAML/XML), directory scan, compiled container, contextual binding, lazy ghost proxy (opt-in), profiler/memory pool/smart cache (opt-in), custom inject attributes, tagged services, decorators. Лёгкий DI-контейнер с autowiring, конфигурацией из файлов, compile в PHP-класс и scan, одна зависимость psr/container.",
     "license": "MIT",
     "type": "library",
     "keywords": [
@@ -115,7 +115,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-main": "1.15-dev"
+            "dev-main": "1.19-dev"
         }
     },
     "scripts": {

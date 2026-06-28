@@ -68,15 +68,15 @@ composer ci
 | `composer phpmd` | PHP Mess Detector |
 | `composer deptrac` | Архитектурные слои |
 | `composer rector` / `composer rector-fix` | Rector (dry-run / apply) |
-| `composer test:unit` | Unit-тесты (555) |
-| `composer test:integration` | Интеграционные тесты (8) |
+| `composer test:unit` | Unit-тесты (689) |
+| `composer test:integration` | Интеграционные тесты (11) |
 | `composer test:security` | Тесты безопасности (17) |
 | `composer test:load` | Нагрузочные тесты (15) |
 | `composer test:performance` | Производительность (12) |
 | `composer benchmark-report` | Markdown-отчёт фактических времён |
 | `composer benchmark-check` | Проверка регрессии бенчмарков (×1.5, CI) |
-| `composer test:coverage` | Покрытие (100% line coverage `src/`, per-file ≥95%) |
-| `composer test:mutation` | Infection (MSI ≥94% по `src/`, PHP 8.3+) |
+| `composer test:coverage` | Покрытие (≥95% line per-file, ~99.8% типично) |
+| `composer test:mutation` | Infection (MSI ≥94% по `src/`, PHP 8.1–8.5 в CI) |
 | `composer docs` | Генерация API-документации в `docs/` |
 
 ## Стиль кода
@@ -89,7 +89,7 @@ composer ci
 ## GitHub: Issues и Wiki
 
 - **Wiki** — исходники в `wiki/`, синхронизация через workflow `Publish wiki` при push в `main`. Онлайн: https://github.com/cloudcastle-apps/di/wiki/Home
-- **Milestones** — v1.1.0, Backlog, v2.0 (см. [Milestones](https://github.com/cloudcastle-apps/di/milestones))
+- **Milestones** — [v1.18.0](https://github.com/cloudcastle-apps/di/milestone/10) (lazy ghost), [Backlog](https://github.com/cloudcastle-apps/di/milestone/2), [v2.0](https://github.com/cloudcastle-apps/di/milestone/3)
 - **Labels** — `feat`, `fix`, `area:*`, `roadmap`, `release`; инициализация: `scripts/github-bootstrap.sh`
 - **Issue Views** — сохранённые поиски (см. [wiki/Contributing.md](wiki/Contributing.md) § Issues, Milestones и Views)
 

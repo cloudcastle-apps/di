@@ -29,7 +29,7 @@
 [![PHP Version](https://img.shields.io/packagist/php-v/cloudcastle/di.svg)](https://packagist.org/packages/cloudcastle/di)
 [![License](https://img.shields.io/packagist/l/cloudcastle/di.svg)](https://packagist.org/packages/cloudcastle/di)
 [![Quality](https://github.com/cloudcastle-apps/di/actions/workflows/quality.yml/badge.svg)](https://github.com/cloudcastle-apps/di/actions/workflows/quality.yml)
-[![Coverage](https://img.shields.io/badge/coverage-100%25-brightgreen)](https://github.com/cloudcastle-apps/di/blob/main/CONTRIBUTING.md)
+[![Coverage](https://img.shields.io/badge/coverage-%E2%89%A595%25-brightgreen)](https://github.com/cloudcastle-apps/di/blob/main/CONTRIBUTING.md)
 [![GitHub Discussions](https://img.shields.io/github/discussions/cloudcastle-apps/di)](https://github.com/cloudcastle-apps/di/discussions)
 
 **English:** Lightweight [PSR-11](https://www.php-fig.org/psr/psr-11/) dependency injection container for PHP 8.1+. Explicit `set()` / `get()` wiring, optional constructor/property/method autowiring, **declarative configuration** (PHP/JSON/YAML/XML), directory scan, **prototypes (`make`)**, **aliases**, **lazy services**, **callable invocation (`call`)**, **interface binding (`bind`)**, **after-resolving hooks**, **custom inject attributes**, tagged services (ids / iterator / locator), decorators, global registry — one runtime dependency (`psr/container`).
@@ -44,16 +44,16 @@
 |---|:---:|:---:|:---:|:---:|:---:|:---:|
 | **Runtime deps** | 1 | неск. | symfony/* | 0 | illuminate/* | nette/* |
 | **Autowiring** | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ |
-| **Compiled / contextual** | ✅ compiled (v1.9) | ✅ | ✅ | ❌ | ✅ | ✅ |
+| **Compiled / contextual** | ✅ compiled (v1.9) + contextual (v1.10–1.13) | ✅ | ✅ | ❌ | ✅ | ✅ |
 | **Конфиг YAML/JSON** | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ NEON |
 
 **Полная таблица** (5 аналогов, колонка 🏆 победитель): **[Wiki: Comparison](https://github.com/cloudcastle-apps/di/wiki/Comparison)**
 
 | ✅ Подходит | ❌ Лучше другой |
 |-------------|-----------------|
-| Composition root, CLI, API, библиотеки | Уже Symfony / Laravel |
-| Autowiring без фреймворка | Compiled container (v1.9) |
-| Одна зависимость `psr/container` | Legacy PHP &lt; 8.1 |
+| Composition root, CLI, API, библиотеки | Уже Symfony / Laravel / Nette |
+| Autowiring + compiled + contextual без фреймворка | Legacy PHP &lt; 8.1 |
+| Одна зависимость `psr/container` | 3–5 `set()` без autowire → Pimple |
 
 ---
 
@@ -68,11 +68,12 @@
 | **Autowiring** | constructor, property, method; `Inject` / `Autowire`; union, intersection |
 | **Scan** | `scan()` — обход каталога, фильтр namespace |
 | **Конфиг** | `ContainerConfigurator` — PHP, JSON, YAML, XML; priority; каталоги (v1.7) |
-| **Расширения** | `make()`, `alias()`, `lazy()`, `call()`, `bind()`, `afterResolving()` |
+| **Расширения** | `make()`, `alias()`, `lazy()`, **`lazyGhost()`** (v1.18), `call()`, `bind()`, `afterResolving()` |
 | **Теги** | `tag()`, iterator, locator, `decorate()` |
 | **Прочее** | `freeze()`, `dump()`, `ContainerRegistry` |
 | **Compiled (v1.9)** | `ContainerCompiler` — PHP-класс без reflection на hot path |
-| **Contextual (v1.11)** | `Container::when()->needs()->give()` — runtime ([#25](https://github.com/cloudcastle-apps/di/issues/25)) |
+| **Contextual (v1.10–1.13)** | `when()->needs()->give()` — runtime, config, compiled ([#25](https://github.com/cloudcastle-apps/di/issues/25)) |
+| **Observability (opt-in)** | profiler (v1.15), memory pool (v1.16), smart cache TTL (v1.17) — см. [Performance](https://github.com/cloudcastle-apps/di/wiki/Performance-and-load) |
 
 </details>
 
@@ -122,7 +123,7 @@ flowchart TB
 ## 📦 Установка
 
 ```bash
-composer require cloudcastle/di:^1.8
+composer require cloudcastle/di:^1.18
 ```
 
 ## ⚡ Быстрый старт
@@ -210,9 +211,9 @@ composer ci
 
 | | |
 |---|---|
-| **Тесты** | 614 PHPUnit (unit 562, integration 8, security 17, load 15, performance 12) |
-| **Статика** | PHPStan max, Psalm L1, Rector |
-| **Coverage** | 100% line coverage `src/`, per-file ≥95%, Infection MSI ≥94% |
+| **Тесты** | 744 PHPUnit (unit 689, integration 11, security 17, load 15, performance 12) |
+| **Статика** | PHPStan max, Psalm 6 (errorLevel 1), PHPMD, Deptrac, Rector |
+| **Coverage** | ≥95% line (per-file), ~99.8% типично; Infection MSI ≥94% |
 | **CI** | PHP 8.1–8.5, benchmark-check, CodeQL |
 
 [Wiki: Testing](https://github.com/cloudcastle-apps/di/wiki/Testing) · [Performance-and-load](https://github.com/cloudcastle-apps/di/wiki/Performance-and-load)

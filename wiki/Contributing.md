@@ -91,7 +91,7 @@ External: `Symfony\Component\VarExporter\*` — только `LazyGhostProxyFact
 
 | Milestone | Назначение |
 |-----------|------------|
-| [v1.18.0](https://github.com/cloudcastle-apps/di/milestone/10) | Lazy ghost proxy (#34) |
+| [v1.18.0](https://github.com/cloudcastle-apps/di/milestone/10) | Lazy ghost proxy (#34) — **выпущен** |
 | [Backlog](https://github.com/cloudcastle-apps/di/milestone/2) | Идеи без фиксированного релиза |
 | [v2.0](https://github.com/cloudcastle-apps/di/milestone/3) | Breaking changes (scopes #33, policy #17) |
 

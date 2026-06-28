@@ -93,7 +93,7 @@ composer update cloudcastle/di
 Оставайтесь на **1.7.x** или обновите PHP.
 
 ```bash
-composer require cloudcastle/di:^1.8
+composer require cloudcastle/di:^1.18
 ```
 
 ## 1.6.0 → 1.7.0
