@@ -10,6 +10,7 @@ declare(strict_types=1);
 $infectionArgs = array_merge(
     [
         'vendor/bin/infection',
+        '--configuration=infection.json.dist',
         '--threads=4',
         '--min-msi=94',
         '--min-covered-msi=94',

@@ -30,4 +30,16 @@ final class ServiceAliasResolverMutationTest extends TestCase
 
         $resolver->alias('z', 'x');
     }
+
+    public function testResolveThrowsOnThreeStepAliasCycle(): void
+    {
+        $resolver = new ServiceAliasResolver();
+        $aliases = (new \ReflectionClass(ServiceAliasResolver::class))->getProperty('aliases');
+        $aliases->setValue($resolver, ['first' => 'second', 'second' => 'third', 'third' => 'first']);
+
+        $this->expectException(\CloudCastle\DI\Exception\ContainerException::class);
+        $this->expectExceptionMessage('циклическая цепочка alias');
+
+        $resolver->resolve('first');
+    }
 }
