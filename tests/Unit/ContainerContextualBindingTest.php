@@ -5,6 +5,11 @@ declare(strict_types=1);
 namespace CloudCastle\DI\Tests\Unit;
 
 use CloudCastle\DI\Container;
+use CloudCastle\DI\ContextualBinding;
+use CloudCastle\DI\ContextualBindingConfigurator;
+use CloudCastle\DI\ContextualBindingGive;
+use CloudCastle\DI\ContextualBindingNeeds;
+use CloudCastle\DI\ContextualBindingSupport;
 use CloudCastle\DI\Exception\ContainerException;
 use CloudCastle\DI\Tests\Fixtures\Autowire\FileLogger;
 use CloudCastle\DI\Tests\Fixtures\Autowire\LoggerInterface;
@@ -15,6 +20,11 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
 #[CoversClass(Container::class)]
+#[CoversClass(ContextualBinding::class)]
+#[CoversClass(ContextualBindingConfigurator::class)]
+#[CoversClass(ContextualBindingGive::class)]
+#[CoversClass(ContextualBindingNeeds::class)]
+#[CoversClass(ContextualBindingSupport::class)]
 final class ContainerContextualBindingTest extends TestCase
 {
     public function testWhenNeedsGiveOverridesDependencyForConsumerOnly(): void

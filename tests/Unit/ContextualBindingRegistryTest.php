@@ -9,6 +9,7 @@ use CloudCastle\DI\ContextualBindingRegistry;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
+#[CoversClass(ContextualBinding::class)]
 #[CoversClass(ContextualBindingRegistry::class)]
 final class ContextualBindingRegistryTest extends TestCase
 {
