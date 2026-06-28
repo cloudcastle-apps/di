@@ -68,7 +68,7 @@ External: `Symfony\Component\VarExporter\*` — только `LazyGhostProxyFact
 | `composer ci:static-analysis` | phpstan, psalm, phpmd, deptrac, rector |
 | `composer test:unit` | 689 unit-тестов |
 | `composer test:coverage` | ≥95% per-file + project |
-| `composer test:mutation` | Infection MSI ≥94% |
+| `composer test:mutation` | Infection MSI **100%** |
 | `composer docs:check` | phpDocumentor + `tools/docs-check.php` |
 
 ## Pull Request

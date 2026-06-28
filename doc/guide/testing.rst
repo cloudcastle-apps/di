@@ -83,7 +83,7 @@ Autowiring в тестах
    composer test:load          # 15 нагрузочных
    composer test:performance   # 12 performance
    composer test:coverage      # ≥95% per-file, ~99.8% типично
-   composer test:mutation      # Infection, MSI ≥94% по src/ (CI: PHP 8.1–8.5)
+   composer test:mutation      # Infection, MSI 100% по src/ (CI: PHP 8.1–8.5)
    composer benchmark-report   # фактические бенчмарки
    composer benchmark-check    # регрессия (CI)
    composer ci

@@ -18,9 +18,9 @@
     "mutators": {
         "@default": true
     },
-    "minMsi": 94,
-    "minCoveredMsi": 94,
-    "timeout": 25,
+    "minMsi": 100,
+    "minCoveredMsi": 100,
+    "timeout": 90,
     "bootstrap": "vendor/autoload.php",
     "phpUnit": {
         "configDir": "."

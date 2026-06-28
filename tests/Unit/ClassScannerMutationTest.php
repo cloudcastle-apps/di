@@ -22,7 +22,7 @@ final class ClassScannerMutationTest extends TestCase
 
     public function testScanSkipsNonPhpFilesAndContinuesScanningPhpSources(): void
     {
-        $noisePath = $this->scanDirectory . '/mutation-noise.txt';
+        $noisePath = $this->scanDirectory . '/AAAA-mutation-noise.txt';
         file_put_contents($noisePath, 'noise');
 
         try {
