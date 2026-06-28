@@ -78,7 +78,7 @@ final class ContainerProfilingSupport
             $this->profiler->record(
                 $operation,
                 $target,
-                (microtime(true) - $startedAt) * 1000,
+                (microtime(true) - $startedAt) * 1000.0,
                 $cached,
             );
         }
@@ -105,10 +105,6 @@ final class ContainerProfilingSupport
             return $className . '::' . $method;
         }
 
-        if (\is_object($callable)) {
-            return $callable::class . '::__invoke';
-        }
-
-        return 'callable';
+        return $callable::class . '::__invoke';
     }
 }

@@ -72,7 +72,7 @@ final class ContainerProfiler
         foreach ($byOperation as $operation => $stats) {
             $byOperation[$operation]['total_ms'] = round($stats['total_ms'], 4);
             $byOperation[$operation]['avg_ms'] = round(
-                $stats['total_ms'] / max($stats['count'], 1),
+                $stats['total_ms'] / (float) max($stats['count'], 1),
                 4,
             );
         }
