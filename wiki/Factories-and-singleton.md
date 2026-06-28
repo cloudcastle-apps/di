@@ -139,3 +139,17 @@ $container->set('heavy', $container->lazy(HeavyService::class));
 $lazy = $container->get('heavy');
 $service = $lazy->getValue(); // первый get() внутри LazyService
 ```
+
+## `lazyGhost()` — ghost/proxy для interface (v1.18)
+
+```bash
+composer require symfony/var-exporter
+```
+
+```php
+$container->set('reports', fn (): ReportGeneratorInterface => new ReportGenerator());
+$proxy = $container->lazyGhost(ReportGeneratorInterface::class, 'reports');
+$proxy->generate(); // реализация загружается здесь
+```
+
+См. [Прототипы, alias и lazy](Prototypes-alias-lazy#lazyghost--ghostproxy-для-interface-v1180).

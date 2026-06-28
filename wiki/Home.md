@@ -17,14 +17,14 @@
 
 > 💡 **Для кого:** библиотеки, CLI, API, composition root, тесты — когда Symfony/Laravel избыточны, а Pimple уже мал.
 
-**Текущая версия:** [1.17.0](https://github.com/cloudcastle-apps/di/releases/tag/v1.17.0) · [Packagist](https://packagist.org/packages/cloudcastle/di)
+**Текущая версия:** [1.18.0](https://github.com/cloudcastle-apps/di/releases/tag/v1.18.0) · [Packagist](https://packagist.org/packages/cloudcastle/di)
 
 ---
 
 ## 🚀 Быстрый старт
 
 ```bash
-composer require cloudcastle/di:^1.15
+composer require cloudcastle/di:^1.18
 ```
 
 ```php
@@ -83,12 +83,16 @@ $service = $container->get(App\Service\OrderService::class);
 
 ### ⚡ Расширения
 - `call()`, `bind()`, `afterResolving()`
-- `alias()`, `lazy()`, `freeze()`, `dump()`
+- `alias()`, `lazy()`, **`lazyGhost()`** (v1.18, opt-in `symfony/var-exporter`), `freeze()`, `dump()`
 - `ContainerRegistry` — глобальный реестр
 
-### 🔗 Contextual binding (v1.10, контракты)
-- `ContextualBinding`, fluent `when/needs/give` — **контракты** (#25)
-- Runtime `Container::when()` — **v1.11.0** ([#25](https://github.com/cloudcastle-apps/di/issues/25) часть 2 ✅)
+### 🔗 Contextual binding (v1.10–1.13)
+- Fluent `when/needs/give` — контракты, runtime, config, compiled ([#25](https://github.com/cloudcastle-apps/di/issues/25) ✅)
+
+### 📈 Observability & perf (opt-in)
+- **Profiler** — `enableProfiling()`, `profileReport()` (v1.15)
+- **Memory pool** — `enablePooling()`, `releaseToPool()` (v1.16)
+- **Smart cache** — `cacheFor()`, `forgetTag()` (v1.17)
 
 </td>
 </tr>
@@ -104,23 +108,25 @@ $service = $container->get(App\Service\OrderService::class);
 |---|---|
 | 📋 | **[Сравнение — полная таблица](Comparison)** |
 | ⚡ | Одна зависимость `psr/container` |
-| 🎯 | Autowiring + compiled + **контракты** contextual (v1.10) |
-| 🚧 | Contextual runtime — [#25](https://github.com/cloudcastle-apps/di/issues/25) часть 2+ |
+| 🎯 | Autowiring + compiled + contextual **runtime/config/compiled** (v1.10–1.13) |
+| 👻 | Lazy ghost proxy — **v1.18.0** ([#34](https://github.com/cloudcastle-apps/di/issues/34)) |
 
 ### 🔮 Roadmap v2
 
-- **Contextual binding runtime** — [#25](https://github.com/cloudcastle-apps/di/issues/25) (часть 1 ✅ v1.10.0, часть 2 ✅ v1.11.0)
 - **Scopes** (request / transient) — [#33](https://github.com/cloudcastle-apps/di/issues/33)
 - Breaking policy — [#17](https://github.com/cloudcastle-apps/di/issues/17)
 
-### ⚡ Performance & observability (Backlog)
+Contextual binding ([#25](https://github.com/cloudcastle-apps/di/issues/25)) — **завершён** (v1.10–1.13).
 
-| | Направление | Issue |
+### ⚡ Performance & observability
+
+| | Направление | Issue / релиз |
 |---|---|---|
-| ⚡ | **Memory Pool** — пул объектов для снижения GC | [#63](https://github.com/cloudcastle-apps/di/issues/63) ✅ v1.16.0 |
-| 🎯 | **Smart Caching** — кэширование с TTL | [#64](https://github.com/cloudcastle-apps/di/issues/64) ✅ v1.17.0 |
-| 📊 | **Performance Profiler** — opt-in get/make/call (#65) | ✅ v1.15.0 |
-| 🧪 | **Advanced Benchmarks** — расширенные метрики | [#66](https://github.com/cloudcastle-apps/di/issues/66) |
+| 📊 | **Performance Profiler** — opt-in get/make/call | ✅ v1.15.0 ([#65](https://github.com/cloudcastle-apps/di/issues/65)) |
+| ⚡ | **Memory Pool** — пул объектов для `make()` | ✅ v1.16.0 ([#63](https://github.com/cloudcastle-apps/di/issues/63)) |
+| 🎯 | **Smart Caching** — TTL per id/tag | ✅ v1.17.0 ([#64](https://github.com/cloudcastle-apps/di/issues/64)) |
+| 🧪 | **Advanced Benchmarks** — p50/p95/p99 | ✅ v1.14.0 ([#66](https://github.com/cloudcastle-apps/di/issues/66)) |
+| 👻 | **Lazy ghost proxy** — `lazyGhost()` | ✅ v1.18.0 ([#34](https://github.com/cloudcastle-apps/di/issues/34), PR [#74](https://github.com/cloudcastle-apps/di/pull/74)) |
 
 Подробнее — [Performance-and-load](Performance-and-load).
 
@@ -182,7 +188,7 @@ flowchart TB
 | [📂 Сканирование](Class-scanning) | `scan()`, namespace, ограничения |
 | [🏷️ Теги и декораторы](Tags-and-decorators) | tag, iterator, locator, decorate |
 | [🔗 call(), bind(), hooks](Call-bind-callbacks) | CallableInvoker, afterResolving |
-| [🔄 Прототипы, alias, lazy](Prototypes-alias-lazy) | make, alias, LazyService |
+| [🔄 Прототипы, alias, lazy, lazyGhost](Prototypes-alias-lazy) | make, alias, LazyService, ghost proxy |
 | [🌍 Глобальный реестр](Global-registry) | ContainerRegistry |
 | [📋 API](API-reference) | Все методы и исключения |
 | [🏭 Фабрики и singleton](Factories-and-singleton) | Callable, кэш, циклы |

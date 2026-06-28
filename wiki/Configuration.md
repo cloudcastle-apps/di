@@ -188,4 +188,5 @@ new ContainerConfigurator(
 - [**Справочник параметров конфигурации**](Configuration-reference) — все ключи и примеры по форматам
 - [Примеры bootstrap](Bootstrap) — PHP-конфиги и prod `freeze()`
 - [Autowiring](Autowiring) — `register_attributes` и пользовательские attributes
+- [Performance and load](Performance-and-load) — profiler, pool, smart cache, lazy ghost (только PHP API, не ключи конфига)
 - [Справочник API](API-reference) — `ContainerConfigurator`, `registerAttribute()`

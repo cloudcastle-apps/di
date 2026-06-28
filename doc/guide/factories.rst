@@ -45,6 +45,17 @@
    $container->alias(ClockInterface::class, 'app.clock');
    $container->set('heavy', $container->lazy(HeavyService::class));
 
+``lazyGhost()`` (v1.18)
+-----------------------
+
+Ghost/proxy для interface без autoload реализации до первого вызова метода. Opt-in: ``symfony/var-exporter``.
+
+.. code-block:: php
+
+   $container->set('reports', fn (): ReportGeneratorInterface => new ReportGenerator());
+   $proxy = $container->lazyGhost(ReportGeneratorInterface::class, 'reports');
+   $proxy->generate();
+
 Поддерживаемые callable
 -----------------------
 

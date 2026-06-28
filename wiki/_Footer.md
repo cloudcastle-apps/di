@@ -1,7 +1,7 @@
 ---
 
 <p align="center">
-  <strong><a href="Home">CloudCastle DI</a></strong> · PHP 8.1+ · PSR-11
+  <strong><a href="Home">CloudCastle DI</a></strong> · v1.18.0 · PHP 8.1+ · PSR-11
 </p>
 
 <p align="center">

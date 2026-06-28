@@ -107,6 +107,7 @@ flowchart LR
 | Autowiring по имени параметра (`enableParameterNameAutowiring`) | ✅ |
 | Union / intersection в конструкторе | ✅ (как в runtime) |
 | `get()`, `has()`, `make()`, `call()` | ✅ (compiled immutable + frozen) |
+| `lazyGhost()` | ✅ (v1.18, opt-in `symfony/var-exporter`) |
 | `dump()`, `getDefinitionIds()` | ✅ |
 
 ---

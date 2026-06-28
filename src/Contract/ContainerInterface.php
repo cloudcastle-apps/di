@@ -231,6 +231,19 @@ interface ContainerInterface extends PsrContainerInterface
     public function lazy(string $serviceId): LazyService;
 
     /**
+     * Создаёт lazy ghost/proxy для интерфейса без загрузки реализации до первого вызова метода.
+     *
+     * Требует opt-in пакет `symfony/var-exporter` (не входит в runtime deps контейнера).
+     * Для обёртки {@see LazyService} без ghost используйте {@see lazy()}.
+     *
+     * @param class-string $type Интерфейс сервиса
+     * @param string $serviceId Id сервиса для {@see get()} при инициализации proxy
+     *
+     * @throws \CloudCastle\DI\Exception\ContainerException Если var-exporter недоступен или тип не interface
+     */
+    public function lazyGhost(string $type, string $serviceId): object;
+
+    /**
      * Регистрирует несколько определений за один вызов (последовательный {@see set()}).
      *
      * Каждая пара id → concrete обрабатывается как отдельный {@see set()}: сбрасывается singleton-кэш

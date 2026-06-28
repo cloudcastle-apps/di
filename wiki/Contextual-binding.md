@@ -81,10 +81,9 @@ $container->when(ReportController::class)
 
 ---
 
-## Roadmap
+## Статус issue #25
 
-- Issue [#25](https://github.com/cloudcastle-apps/di/issues/25) — milestone **v2.0** (runtime + config + compiler)
-- Декомпозиция: [комментарий в #25](https://github.com/cloudcastle-apps/di/issues/25#issuecomment-4825334534)
+Issue [#25](https://github.com/cloudcastle-apps/di/issues/25) **завершён** в v1.13.0: runtime (v1.11), config (v1.12), compiler (v1.13). Декомпозиция — [комментарий в #25](https://github.com/cloudcastle-apps/di/issues/25#issuecomment-4825334534).
 
 ---
 

@@ -7,7 +7,7 @@
 > [← Главная](Home) · [Сравнение](Comparison) · [Quick start](Quick-start)
 
 
-Версия **1.2.0** добавляет три дополнения к базовому `get()` / `set()`:
+К базовому `get()` / `set()` добавлены дополнения:
 
 > Схемы resolve, alias и lazy — [Архитектура](Architecture#get-и-make-общий-путь-разрешения).
 
@@ -16,6 +16,7 @@
 | `make(string $id)` | новый экземпляр **без** singleton-кэша |
 | `alias(string $alias, string $targetId)` | альтернативный id → целевой сервис |
 | `lazy(string $serviceId)` | отложенное создание через `LazyService` |
+| `lazyGhost(string $type, string $serviceId)` | **v1.18** — ghost/proxy для interface без autoload реализации до первого вызова метода |
 
 ```mermaid
 flowchart LR
@@ -32,6 +33,10 @@ flowchart LR
     subgraph lazyPath [lazy]
         L[LazyService] -->|getValue первый раз| G1
         L -->|getValue повторно| Inner[кэш внутри LazyService]
+    end
+
+    subgraph ghostPath [lazyGhost — v1.18]
+        P[proxy interface] -->|первый вызов метода| G3[get serviceId]
     end
 ```
 
@@ -101,6 +106,43 @@ $same = $lazy->getValue();      // тот же экземпляр из кэша 
 
 Удобно передавать «тяжёлые» зависимости через `set()`, не создавая их до первого использования.
 
+## `lazyGhost()` — ghost/proxy для interface (v1.18.0)
+
+Symfony-style **lazy ghost**: proxy реализует **только interface**, класс реализации **не autoload'ится** до первого вызова метода на proxy.
+
+**Opt-in:** пакет `symfony/var-exporter` не входит в runtime-зависимости контейнера — только в `composer suggest` / dev для тестов.
+
+```bash
+composer require symfony/var-exporter
+```
+
+```php
+$container->set('reports', static fn (): ReportGeneratorInterface => new ReportGenerator());
+
+$proxy = $container->lazyGhost(ReportGeneratorInterface::class, 'reports');
+// класс ReportGenerator ещё не загружен
+
+$result = $proxy->generate(); // первый вызов → $container->get('reports')
+```
+
+Поведение:
+
+- `$type` — **только** `class-string` interface; для класса — `ContainerException`;
+- при первом вызове метода proxy вызывается `$container->get($serviceId)` (с учётом alias);
+- реализация через `LazyGhostProxyFactory` + `ProxyHelper::generateLazyProxy()`;
+- если `symfony/var-exporter` не установлен — `ContainerException` при вызове `lazyGhost()`;
+- тот же API в **`AbstractCompiledContainer`** (compiled runtime).
+
+### `lazy()` vs `lazyGhost()`
+
+| | `lazy()` | `lazyGhost()` |
+|---|----------|---------------|
+| Возвращает | `LazyService` (обёртка) | объект proxy (interface) |
+| Autoload реализации | при `getValue()` | при **первом вызове метода** proxy |
+| Тип | любой id сервиса | только interface |
+| Зависимость | нет | opt-in `symfony/var-exporter` |
+| Типичный use-case | отложить `get()` | не загружать тяжёлый класс до использования API |
+
 ## Сравнение `get()` и `make()`
 
 | | `get()` | `make()` |
@@ -114,4 +156,6 @@ $same = $lazy->getValue();      // тот же экземпляр из кэша 
 ## См. также
 
 - [Фабрики и singleton](Factories-and-singleton)
+- [Compiled container](Compiled-container) — `lazyGhost()` в compiled runtime
 - [Справочник API](API-reference)
+- [Обновление 1.17 → 1.18](Upgrading#1170--1180)

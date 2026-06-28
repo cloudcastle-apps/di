@@ -111,6 +111,10 @@ flowchart TB
 | `ContainerConfigurator` | Загрузка конфигурации из PHP/JSON/YAML/XML, слияние по приоритетам, `apply()` к контейнеру |
 | `AttributeServiceIdRegistry` | Пользовательские PHP-attributes для autowiring (`registerAttribute()`) |
 | `LazyService` | Отложенный `get()` при первом `getValue()` |
+| `LazyGhostProxyFactory` | Lazy ghost/proxy для interface (v1.18, opt-in var-exporter) |
+| `ContainerProfiler` | Opt-in замеры get/make/call (v1.15) |
+| `ServiceObjectPool` | Object pool для `make()` (v1.16) |
+| `ServiceTtlRegistry` | TTL singleton-кэша (v1.17) |
 | `ContainerRegistry` | Глобальный singleton-контейнер приложения |
 
 ---

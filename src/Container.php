@@ -178,6 +178,23 @@ final class Container implements ContainerInterface
     /**
      * {@inheritDoc}
      */
+    public function lazyGhost(string $type, string $serviceId): object
+    {
+        /** @infection-ignore-all */
+        if (!LazyGhostProxyFactory::isAvailable()) {
+            throw new ContainerException('lazyGhost() требует symfony/var-exporter.'); // @codeCoverageIgnore
+        }
+
+        return LazyGhostProxyFactory::create(
+            $this,
+            $type,
+            $this->aliasResolver->resolve($serviceId),
+        );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function addDefinitions(array $definitions): void
     {
         /** @psalm-suppress MixedAssignment */

@@ -11,6 +11,8 @@ deptrac:
           collectors:
               - type: classLike
                 value: Psr\\.*
+              - type: classLike
+                value: Symfony\\Component\\VarExporter\\.*
 
         - name: Contract
           collectors:

@@ -6,6 +6,7 @@ namespace CloudCastle\DI\Tests\Fixtures\Compiled;
 
 use CloudCastle\DI\Compiler\AbstractCompiledContainer;
 use CloudCastle\DI\Exception\NotFoundException;
+use CloudCastle\DI\Tests\Fixtures\LazyGhost\HeavyContract;
 use CloudCastle\DI\Tests\Fixtures\MemoryPool\ResetCounter;
 
 /**
@@ -22,7 +23,7 @@ final class StubCompiledContainer extends AbstractCompiledContainer
             compiledClassName: self::class,
             aliases: ['alias.id' => 'value', 'alias.only' => 'missing'],
             tags: ['group' => ['missing', 'value'], 'empty' => []],
-            definitionIds: ['value', 'null-value', 'counter'],
+            definitionIds: ['value', 'null-value', 'counter', 'heavy'],
             contextual: $contextual,
             smartCacheClock: $smartCacheClock,
         );
@@ -36,6 +37,11 @@ final class StubCompiledContainer extends AbstractCompiledContainer
             'value' => 'compiled-value',
             'null-value' => null,
             'counter' => new ResetCounter(value: 3),
+            'heavy' => (static function (): HeavyContract {
+                $class = \CloudCastle\DI\Tests\Fixtures\LazyGhost\HeavyService::class;
+
+                return new $class();
+            })(),
             default => throw new NotFoundException(\sprintf('Сервис "%s" не зарегистрирован.', $id)),
         };
     }
