@@ -3,6 +3,19 @@
 Формат основан на [Keep a Changelog](https://keepachangelog.com/ru/1.1.0/),
 версионирование — [SemVer](https://semver.org/lang/ru/).
 
+## [1.13.0] — 2026-06-28
+
+### Добавлено
+
+- **Contextual binding — compiled container** ([#25](https://github.com/cloudcastle-apps/di/issues/25), часть 4 из 4)
+- Компилятор учитывает `when/needs/give` при генерации аргументов конструктора
+- `AbstractCompiledContainer::contextualGive()` — baked map из snapshot
+- `ContextualBindingRegistry::exportContextualMap()` для compile snapshot
+
+### Изменено
+
+- **Тесты:** +8 PHPUnit (compiler/integration contextual)
+
 ## [1.12.0] — 2026-06-28
 
 ### Добавлено

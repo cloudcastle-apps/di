@@ -12,16 +12,16 @@
 
 ---
 
-## Статус (v1.12.0)
+## Статус (v1.13.0)
 
 | Этап | Статус | MR / релиз |
 |------|--------|------------|
 | **1. Контракты** | ✅ v1.10.0 | [#61](https://github.com/cloudcastle-apps/di/pull/61) |
 | **2. Runtime** | ✅ v1.11.0 | `Container::when()`, registry, autowirer |
 | **3. Config** | ✅ v1.12.0 | секция `contextual` в PHP/JSON/YAML/XML |
-| **4. Compiler** | 🔜 | compiled container parity |
+| **4. Compiler** | ✅ v1.13.0 | compile snapshot + `contextualGive()` |
 
-Полный runtime и **declarative config** доступны (v1.11–1.12). Compiled (#25 ч.4) — в roadmap.
+Runtime, config и **compiled container** поддерживают contextual binding (#25 завершён).
 
 ### Пример (runtime)
 

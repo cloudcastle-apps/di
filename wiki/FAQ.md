@@ -78,7 +78,7 @@ $container->scan(__DIR__ . '/Services', 'App\\Services\\');
 
 **Контракты** — **да** (v1.10.0): `ContextualBinding`, `ContextualBindingRegistryInterface`, fluent `when/needs/give` ([#25](https://github.com/cloudcastle-apps/di/issues/25), часть 1).
 
-**Runtime** (`Container::when()`) — **да** (v1.11.0, часть 2). Config и compiled — части 3–4 ([#25](https://github.com/cloudcastle-apps/di/issues/25)).
+**Runtime** (`Container::when()`) — **да** (v1.11.0). **Config** — **да** (v1.12.0). **Compiled** — **да** (v1.13.0, [#25](https://github.com/cloudcastle-apps/di/issues/25) завершён).
 
 ## Есть compiled container?
 

@@ -15,13 +15,14 @@ final class StubCompiledContainer extends AbstractCompiledContainer
     /** @var array<string, int> */
     private array $createCounts = [];
 
-    public function __construct()
+    public function __construct(array $contextual = [])
     {
         parent::__construct(
             compiledClassName: self::class,
             aliases: ['alias.id' => 'value', 'alias.only' => 'missing'],
             tags: ['group' => ['missing', 'value'], 'empty' => []],
             definitionIds: ['value', 'null-value'],
+            contextual: $contextual,
         );
     }
 

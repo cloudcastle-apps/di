@@ -9,8 +9,13 @@ use CloudCastle\DI\Compiler\ContainerCompileSnapshotBuilder;
 use CloudCastle\DI\Container;
 use CloudCastle\DI\Exception\ContainerCompileException;
 use CloudCastle\DI\Tests\Fixtures\Autowire\Clock;
+use CloudCastle\DI\Tests\Fixtures\Autowire\FileLogger;
+use CloudCastle\DI\Tests\Fixtures\Autowire\LoggerInterface;
 use CloudCastle\DI\Tests\Fixtures\Autowire\LoggerUser;
 use CloudCastle\DI\Tests\Fixtures\Autowire\SimpleService;
+use CloudCastle\DI\Tests\Fixtures\ContextualBinding\AuditService;
+use CloudCastle\DI\Tests\Fixtures\ContextualBinding\MemoryLogger;
+use CloudCastle\DI\Tests\Fixtures\ContextualBinding\ReportService;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
@@ -50,6 +55,27 @@ final class ContainerCompileSnapshotBuilderTest extends TestCase
 
         $autowired = $this->findBinding($snapshot->bindings, SimpleService::class);
         self::assertSame(CompileServiceKind::Autowired, $autowired->kind);
+    }
+
+    public function testBuildExportsContextualBindings(): void
+    {
+        $container = new Container();
+        $container->set('memory.logger', new MemoryLogger());
+        $container->set('default.logger', new FileLogger());
+        $container->bind(LoggerInterface::class, 'default.logger');
+        $container->when(ReportService::class)
+            ->needs(LoggerInterface::class)
+            ->give('memory.logger');
+        $container->autowire(ReportService::class);
+        $container->autowire(AuditService::class);
+        $container->freeze();
+
+        $snapshot = $this->builder->build($container);
+
+        self::assertSame(
+            [ReportService::class => [LoggerInterface::class => 'memory.logger']],
+            $snapshot->contextual,
+        );
     }
 
     public function testBuildRejectsUnfrozenContainer(): void

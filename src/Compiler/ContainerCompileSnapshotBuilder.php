@@ -35,6 +35,7 @@ final class ContainerCompileSnapshotBuilder
             aliases: $dump['aliases'],
             tags: $dump['tags'],
             bindings: $this->collectBindings($container, $dump['autowired']),
+            contextual: $container->exportContextualBindings(),
         );
     }
 

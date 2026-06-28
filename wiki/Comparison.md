@@ -176,7 +176,7 @@ flowchart LR
 | | |
 |---|---|
 | 🚀 | **Compiled container** — `ContainerCompiler`, build-step ([#24](https://github.com/cloudcastle-apps/di/issues/24)) |
-| 🚧 | Contextual **config/compiled** — [#25](https://github.com/cloudcastle-apps/di/issues/25) часть 3–4 |
+| ✅ | Contextual **runtime/config/compiled** — [#25](https://github.com/cloudcastle-apps/di/issues/25) v1.10–1.13 |
 | 📌 | `scan()` — regex-парсинг, не AST |
 | 👥 | Меньше community, чем PHP-DI / Symfony / **Nette** |
 

@@ -63,6 +63,19 @@ final class ContainerContextualBindingTest extends TestCase
         self::assertNull($container->contextualGive(AuditService::class, LoggerInterface::class));
     }
 
+    public function testExportContextualBindingsReturnsRegisteredMap(): void
+    {
+        $container = new Container();
+        $container->when(ReportService::class)
+            ->needs(LoggerInterface::class)
+            ->give('memory.logger');
+
+        self::assertSame(
+            [ReportService::class => [LoggerInterface::class => 'memory.logger']],
+            $container->exportContextualBindings(),
+        );
+    }
+
     public function testWhenFailsAfterFreeze(): void
     {
         $container = new Container();

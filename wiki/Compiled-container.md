@@ -126,7 +126,7 @@ flowchart LR
 | Property / method attributes inject | Только constructor |
 | `set($id, new Foo($dep))` — объект с аргументами конструктора | Используйте `autowire()` |
 
-**Contextual binding** ([#25](https://github.com/cloudcastle-apps/di/issues/25)) в compiled-контейнере **не** поддерживается.
+**Contextual binding** ([#25](https://github.com/cloudcastle-apps/di/issues/25)) — **да** с v1.13.0: правила bake-in в конструктор и `contextualGive()`; `when()` на compiled-контейнере недоступен.
 
 ---
 

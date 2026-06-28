@@ -45,4 +45,21 @@ final class ContextualBindingRegistry implements ContextualBindingRegistryInterf
 
         return $give;
     }
+
+    /**
+     * @return array<string, array<string, string>>
+     */
+    public function exportContextualMap(): array
+    {
+        /** @var array<string, array<string, string>> $result */
+        $result = [];
+
+        foreach ($this->bindings as $consumerClass => $bindings) {
+            foreach ($bindings as $binding) {
+                $result[$consumerClass][$binding->need] = $binding->give;
+            }
+        }
+
+        return $result;
+    }
 }

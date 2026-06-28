@@ -48,4 +48,19 @@ final class ContextualBindingRegistryTest extends TestCase
         self::assertSame([$first, $second], $registry->bindingsFor('App\\A'));
         self::assertSame([], $registry->bindingsFor('App\\Missing'));
     }
+
+    public function testExportContextualMapReturnsConsumerNeedGive(): void
+    {
+        $registry = new ContextualBindingRegistry();
+        $registry->register(new ContextualBinding('App\\Report', \Psr\Log\LoggerInterface::class, 'log.memory'));
+        $registry->register(new ContextualBinding('App\\Audit', \Psr\Log\LoggerInterface::class, 'log.file'));
+
+        self::assertSame(
+            [
+                'App\\Report' => [\Psr\Log\LoggerInterface::class => 'log.memory'],
+                'App\\Audit' => [\Psr\Log\LoggerInterface::class => 'log.file'],
+            ],
+            $registry->exportContextualMap(),
+        );
+    }
 }
