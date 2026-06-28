@@ -12,6 +12,7 @@ use CloudCastle\DI\Contract\ContextualBindingRegistryInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
+use ReflectionMethod;
 
 #[CoversClass(ContextualBinding::class)]
 final class ContextualBindingContractTest extends TestCase
@@ -32,7 +33,7 @@ final class ContextualBindingContractTest extends TestCase
     public function testRegistryInterfaceDeclaresExpectedMethods(): void
     {
         $methods = array_map(
-            static fn (\ReflectionMethod $method): string => $method->getName(),
+            static fn (ReflectionMethod $method): string => $method->getName(),
             (new ReflectionClass(ContextualBindingRegistryInterface::class))->getMethods(),
         );
 
