@@ -95,6 +95,9 @@
         "classmap": [
             "tests/Fixtures/Autowire/Scan/MultiScanPair.php",
             "tests/Fixtures/Autowire/Scan/MixedScanProgression.php"
+        ],
+        "files": [
+            "tools/benchmark-lib.php"
         ]
     },
     "config": {
