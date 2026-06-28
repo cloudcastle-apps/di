@@ -3,6 +3,7 @@ parameters:
     paths:
         - src
         - tests
+        - tools/benchmark-lib.php
     excludePaths:
         - tests/Fixtures/*
     tmpDir: var/cache/phpstan

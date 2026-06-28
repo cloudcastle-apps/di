@@ -40,10 +40,11 @@
 
 | Команда | Назначение |
 |---------|------------|
-| `composer benchmark-report` | Markdown-отчёт фактических времён на **вашей** машине |
-| `composer benchmark-check` | Падает при регрессии > порога ×1.5 (шаг CI после `test:performance`) |
+| `composer benchmark-report` | Markdown + JSON в `var/benchmark/` (p50/p95/p99, ops/sec, memory peak) |
+| `composer benchmark-report-json` | Только JSON-отчёт |
+| `composer benchmark-check` | Регрессия: **elapsed** и **memory peak** > порога ×1.5 (CI после `test:performance`) |
 
-`tools/benchmark-lib.php` — общая логика сценариев для report и check.
+`tools/benchmark-lib.php` — сценарии runtime/compiled/contextual binding; артефакты CI (PHP 8.3): `benchmark-reports`.
 
 ---
 

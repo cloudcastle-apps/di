@@ -2,6 +2,20 @@
 
 Руководство по переходу между версиями **cloudcastle/di**.
 
+## 1.13.0 → 1.14.0
+
+### Добавлено (обратно совместимо)
+
+- **Advanced Benchmarks** ([#66](https://github.com/cloudcastle-apps/di/issues/66))
+- `composer benchmark-report` пишет `var/benchmark/benchmark.md` и `benchmark.json`
+- `composer benchmark-report-json` — JSON-отчёт для CI artifacts
+- `benchmark-check` проверяет wall time **и** memory peak (×1.5)
+
+```bash
+composer update cloudcastle/di
+composer benchmark-report
+```
+
 ## 1.12.0 → 1.13.0
 
 ### Добавлено (обратно совместимо)
