@@ -370,4 +370,52 @@ interface ContainerInterface extends PsrContainerInterface
      * }
      */
     public function dump(): array;
+
+    /**
+     * Включает или отключает сбор замеров {@see get()}, {@see make()} и {@see call()} (#65).
+     *
+     * Opt-in режим для dev/staging: в prod профилирование выключено по умолчанию,
+     * overhead появляется только после явного вызова.
+     */
+    public function enableProfiling(): void;
+
+    /**
+     * Отключает профилирование без сброса накопленных замеров.
+     *
+     * Эквивалент повторного вызова {@see enableProfiling()} после {@see disableProfiling()}.
+     */
+    public function disableProfiling(): void;
+
+    /**
+     * Проверяет, включён ли сбор замеров resolve/call.
+     */
+    public function isProfilingEnabled(): bool;
+
+    /**
+     * Сбрасывает все накопленные замеры профилировщика.
+     *
+     * Не меняет состояние enabled/disabled.
+     */
+    public function resetProfile(): void;
+
+    /**
+     * Возвращает отчёт профилировщика: агрегаты по операции и top-N медленных resolve/call.
+     *
+     * Каждая запись `top_slowest` содержит:
+     * - `operation` — `get`, `make` или `call`;
+     * - `target` — id сервиса или описание callable;
+     * - `elapsed_ms` — длительность одного вызова;
+     * - `cached` — для `get`, был ли singleton уже в кэше.
+     *
+     * @param int $limit Максимум записей в `top_slowest`; `0` — все замеры по убыванию времени
+     *
+     * @return array{
+     *     enabled: bool,
+     *     sample_count: int,
+     *     total_ms: float,
+     *     by_operation: array<string, array{count: int, total_ms: float, avg_ms: float}>,
+     *     top_slowest: list<array{operation: string, target: string, elapsed_ms: float, cached: bool}>
+     * }
+     */
+    public function profileReport(int $limit = 10): array;
 }

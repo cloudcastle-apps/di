@@ -76,6 +76,14 @@ final class ContainerContextualBindingTest extends TestCase
         );
     }
 
+    public function testWhenThrowsWhenConsumerClassDoesNotExist(): void
+    {
+        $this->expectException(ContainerException::class);
+        $this->expectExceptionMessageMatches('/не найден/u');
+
+        (new Container())->when('CloudCastle\\DI\\Tests\\Fixtures\\MissingConsumerClassForWhen');
+    }
+
     public function testWhenFailsAfterFreeze(): void
     {
         $container = new Container();

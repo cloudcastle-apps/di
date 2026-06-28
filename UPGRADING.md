@@ -2,6 +2,24 @@
 
 Руководство по переходу между версиями **cloudcastle/di**.
 
+## 1.14.0 → 1.15.0
+
+### Добавлено (обратно совместимо)
+
+- **Performance Profiler** ([#65](https://github.com/cloudcastle-apps/di/issues/65))
+- Opt-in: `enableProfiling()`, `profileReport($limit)`, `resetProfile()` — без overhead, пока не включено
+
+```php
+$container->enableProfiling();
+// ... bootstrap / requests ...
+$report = $container->profileReport(10);
+$container->resetProfile();
+```
+
+```bash
+composer update cloudcastle/di
+```
+
 ## 1.13.0 → 1.14.0
 
 ### Добавлено (обратно совместимо)

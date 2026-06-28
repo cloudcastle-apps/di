@@ -11,7 +11,7 @@ $infectionArgs = array_merge(
     [
         'vendor/bin/infection',
         '--configuration=infection.json.dist',
-        '--threads=4',
+        '--threads=1',
         '--min-msi=94',
         '--min-covered-msi=94',
         '--logger-github',

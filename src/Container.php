@@ -26,6 +26,8 @@ use Throwable;
  */
 final class Container implements ContainerInterface
 {
+    use ContainerProfilingApi;
+
     /** @var array<string, mixed> Определения сервисов: экземпляр, скаляр или фабрика */
     private array $definitions = [];
 
@@ -80,6 +82,9 @@ final class Container implements ContainerInterface
     /** Contextual when/needs/give (#25) */
     private readonly ContextualBindingSupport $contextual;
 
+    /** Opt-in профилирование get/make/call (#65); по умолчанию выключено */
+    private readonly ContainerProfilingSupport $profiling;
+
     /**
      * Создаёт пустой контейнер с внутренними резолверами alias, экземпляров и after-resolving.
      */
@@ -92,6 +97,7 @@ final class Container implements ContainerInterface
         $this->contextual = new ContextualBindingSupport(function (): void {
             $this->assertMutable();
         });
+        $this->profiling = new ContainerProfilingSupport();
     }
 
     /**
@@ -109,7 +115,14 @@ final class Container implements ContainerInterface
      */
     public function get(string $id): mixed
     {
-        return $this->resolveService($this->aliasResolver->resolve($id), singleton: true);
+        $resolvedId = $this->aliasResolver->resolve($id);
+        $wasCached = isset($this->resolved[$resolvedId]);
+
+        return $this->profiling->trackGet(
+            $resolvedId,
+            $wasCached,
+            fn (): mixed => $this->resolveService($resolvedId, singleton: true),
+        );
     }
 
     /**
@@ -117,7 +130,12 @@ final class Container implements ContainerInterface
      */
     public function make(string $id): mixed
     {
-        return $this->resolveService($this->aliasResolver->resolve($id), singleton: false);
+        $resolvedId = $this->aliasResolver->resolve($id);
+
+        return $this->profiling->trackMake(
+            $resolvedId,
+            fn (): mixed => $this->resolveService($resolvedId, singleton: false),
+        );
     }
 
     /**
@@ -202,7 +220,12 @@ final class Container implements ContainerInterface
      */
     public function call(callable $callable, array $parameters = []): mixed
     {
-        return $this->callableInvoker()->invoke($callable, $parameters);
+        $target = ContainerProfilingSupport::describeCallable($callable);
+
+        return $this->profiling->trackCall(
+            $target,
+            fn (): mixed => $this->callableInvoker()->invoke($callable, $parameters),
+        );
     }
 
     /**

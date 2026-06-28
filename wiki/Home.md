@@ -17,14 +17,14 @@
 
 > 💡 **Для кого:** библиотеки, CLI, API, composition root, тесты — когда Symfony/Laravel избыточны, а Pimple уже мал.
 
-**Текущая версия:** [1.10.0](https://github.com/cloudcastle-apps/di/releases/tag/v1.10.0) · [Packagist](https://packagist.org/packages/cloudcastle/di)
+**Текущая версия:** [1.15.0](https://github.com/cloudcastle-apps/di/releases/tag/v1.15.0) · [Packagist](https://packagist.org/packages/cloudcastle/di)
 
 ---
 
 ## 🚀 Быстрый старт
 
 ```bash
-composer require cloudcastle/di:^1.10
+composer require cloudcastle/di:^1.15
 ```
 
 ```php
@@ -119,7 +119,7 @@ $service = $container->get(App\Service\OrderService::class);
 |---|---|---|
 | ⚡ | **Memory Pool** — пул объектов для снижения GC | [#63](https://github.com/cloudcastle-apps/di/issues/63) |
 | 🎯 | **Smart Caching** — кэширование с TTL | [#64](https://github.com/cloudcastle-apps/di/issues/64) |
-| 📊 | **Performance Profiler** — встроенный профилировщик | [#65](https://github.com/cloudcastle-apps/di/issues/65) |
+| 📊 | **Performance Profiler** — opt-in get/make/call (#65) | ✅ v1.15.0 |
 | 🧪 | **Advanced Benchmarks** — расширенные метрики | [#66](https://github.com/cloudcastle-apps/di/issues/66) |
 
 Подробнее — [Performance-and-load](Performance-and-load).
