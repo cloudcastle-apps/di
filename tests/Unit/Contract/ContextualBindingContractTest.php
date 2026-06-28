@@ -21,12 +21,12 @@ final class ContextualBindingContractTest extends TestCase
     {
         $binding = new ContextualBinding(
             consumerClass: 'App\\ReportController',
-            need: 'Psr\\Log\\LoggerInterface',
+            need: \Psr\Log\LoggerInterface::class,
             give: 'App\\Log\\FileLogger',
         );
 
         self::assertSame('App\\ReportController', $binding->consumerClass);
-        self::assertSame('Psr\\Log\\LoggerInterface', $binding->need);
+        self::assertSame(\Psr\Log\LoggerInterface::class, $binding->need);
         self::assertSame('App\\Log\\FileLogger', $binding->give);
     }
 
