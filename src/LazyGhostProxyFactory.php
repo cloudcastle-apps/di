@@ -65,6 +65,7 @@ final class LazyGhostProxyFactory
             },
         );
 
+        /** @infection-ignore-all */
         \assert(\is_object($proxy)); // @codeCoverageIgnore
 
         return $proxy;

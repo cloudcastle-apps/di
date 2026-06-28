@@ -180,6 +180,7 @@ final class Container implements ContainerInterface
      */
     public function lazyGhost(string $type, string $serviceId): object
     {
+        /** @infection-ignore-all */
         if (!LazyGhostProxyFactory::isAvailable()) {
             throw new ContainerException('lazyGhost() требует symfony/var-exporter.'); // @codeCoverageIgnore
         }

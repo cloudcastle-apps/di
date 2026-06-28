@@ -102,7 +102,13 @@ final class LazyGhostProxyFactoryTest extends TestCase
 
         $proxy = LazyGhostProxyFactory::create($container, HeavyContract::class, 'heavy');
 
+        self::assertSame($this->expectedProxyClassFor(HeavyContract::class), $proxy::class);
         self::assertSame('heavy-result', $this->asHeavyContract($proxy)->work());
+    }
+
+    private function expectedProxyClassFor(string $interface): string
+    {
+        return 'CloudCastle\\DI\\Internal\\LazyGhostProxy_' . str_replace('\\', '_', $interface);
     }
 
     private function asHeavyContract(object $proxy): HeavyContract

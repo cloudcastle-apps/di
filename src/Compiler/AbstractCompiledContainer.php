@@ -255,6 +255,7 @@ abstract class AbstractCompiledContainer implements CompiledContainerInterface
 
     public function lazyGhost(string $type, string $serviceId): object
     {
+        /** @infection-ignore-all */
         if (!LazyGhostProxyFactory::isAvailable()) {
             throw new ContainerException('lazyGhost() требует symfony/var-exporter.'); // @codeCoverageIgnore
         }
