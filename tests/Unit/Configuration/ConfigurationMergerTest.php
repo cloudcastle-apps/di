@@ -209,7 +209,7 @@ final class ConfigurationMergerTest extends TestCase
         $merger = new ConfigurationMerger();
         $report = 'App\\ReportService';
         $audit = 'App\\AuditService';
-        $logger = 'Psr\\Log\\LoggerInterface';
+        $logger = \Psr\Log\LoggerInterface::class;
         $mailer = 'App\\MailerInterface';
 
         $merged = $merger->merge([
@@ -238,7 +238,7 @@ final class ConfigurationMergerTest extends TestCase
     {
         $merger = new ConfigurationMerger();
         $consumer = 'App\\ReportService';
-        $need = 'Psr\\Log\\LoggerInterface';
+        $need = \Psr\Log\LoggerInterface::class;
 
         $merged = $merger->merge([
             new ConfigurationLayer([
