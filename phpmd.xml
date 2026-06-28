@@ -21,7 +21,7 @@
         <exclude-pattern>*/tests/*</exclude-pattern>
         <properties>
             <property name="maxmethods" value="20"/>
-            <property name="ignorepattern" value="(^(set|get|is|has|with|enable|disable|make|alias|lazy|bind|call|add|after|tag|decorat|autowire|scan|freeze|dump|register|profile|reset))i"/>
+            <property name="ignorepattern" value="(^(set|get|is|has|with|enable|disable|make|alias|lazy|bind|call|add|after|tag|decorat|autowire|scan|freeze|dump|register|profile|reset|pool|release|clear))i"/>
         </properties>
     </rule>
     <rule ref="rulesets/codesize.xml/ExcessiveClassComplexity">
@@ -36,7 +36,7 @@
     </rule>
     <rule ref="rulesets/codesize.xml/TooManyFields">
         <properties>
-            <property name="maxfields" value="20"/>
+            <property name="maxfields" value="22"/>
         </properties>
     </rule>
     <rule ref="rulesets/codesize.xml/TooManyMethods">

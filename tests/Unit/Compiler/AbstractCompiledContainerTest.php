@@ -9,6 +9,7 @@ use CloudCastle\DI\Compiler\AbstractCompiledContainer;
 use CloudCastle\DI\Exception\ContainerException;
 use CloudCastle\DI\Exception\NotFoundException;
 use CloudCastle\DI\Tests\Fixtures\Compiled\StubCompiledContainer;
+use CloudCastle\DI\Tests\Fixtures\MemoryPool\ResetCounter;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
@@ -138,12 +139,12 @@ final class AbstractCompiledContainerTest extends TestCase
         self::assertSame(StubCompiledContainer::class, $container->getCompiledClassName());
         self::assertTrue($container->isFrozen());
         $container->freeze();
-        self::assertSame(['null-value', 'value'], $container->getDefinitionIds());
+        self::assertSame(['counter', 'null-value', 'value'], $container->getDefinitionIds());
 
         $dump = $container->dump();
 
         self::assertTrue($dump['frozen']);
-        self::assertSame(['null-value', 'value'], $dump['definitions']);
+        self::assertSame(['counter', 'null-value', 'value'], $dump['definitions']);
         self::assertSame([], $dump['autowired']);
         self::assertSame(['alias.id' => 'value', 'alias.only' => 'missing'], $dump['aliases']);
         self::assertSame(['group' => ['missing', 'value'], 'empty' => []], $dump['tags']);
@@ -196,6 +197,23 @@ final class AbstractCompiledContainerTest extends TestCase
 
         $container->resetProfile();
         self::assertSame(0, $container->profileReport()['sample_count']);
+    }
+
+    public function testPoolingReusesReleasedInstanceInCompiledMake(): void
+    {
+        ResetCounter::resetCounters();
+        $container = new StubCompiledContainer();
+        $container->enablePooling('counter');
+
+        $first = $container->make('counter');
+        self::assertInstanceOf(ResetCounter::class, $first);
+        $container->releaseToPool('counter', $first);
+        $second = $container->make('counter');
+        self::assertInstanceOf(ResetCounter::class, $second);
+
+        self::assertSame($first, $second);
+        self::assertSame(1, $container->createCount('counter'));
+        self::assertSame(0, $second->value);
     }
 
     public function testAutowiringFlagsAreDisabled(): void

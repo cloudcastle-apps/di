@@ -26,6 +26,7 @@ use Throwable;
  */
 final class Container implements ContainerInterface
 {
+    use ContainerMemoryPoolApi;
     use ContainerProfilingApi;
 
     /** @var array<string, mixed> Определения сервисов: экземпляр, скаляр или фабрика */
@@ -85,6 +86,9 @@ final class Container implements ContainerInterface
     /** Opt-in профилирование get/make/call (#65); по умолчанию выключено */
     private readonly ContainerProfilingSupport $profiling;
 
+    /** Opt-in object pool для {@see make()} (#63); по умолчанию выключен */
+    private readonly ContainerMemoryPoolSupport $memoryPool;
+
     /**
      * Создаёт пустой контейнер с внутренними резолверами alias, экземпляров и after-resolving.
      */
@@ -98,6 +102,7 @@ final class Container implements ContainerInterface
             $this->assertMutable();
         });
         $this->profiling = new ContainerProfilingSupport();
+        $this->memoryPool = new ContainerMemoryPoolSupport();
     }
 
     /**
@@ -132,9 +137,12 @@ final class Container implements ContainerInterface
     {
         $resolvedId = $this->aliasResolver->resolve($id);
 
-        return $this->profiling->trackMake(
+        return $this->memoryPool->make(
             $resolvedId,
-            fn (): mixed => $this->resolveService($resolvedId, singleton: false),
+            fn (): mixed => $this->profiling->trackMake(
+                $resolvedId,
+                fn (): mixed => $this->resolveService($resolvedId, singleton: false),
+            ),
         );
     }
 

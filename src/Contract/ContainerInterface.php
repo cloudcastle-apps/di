@@ -418,4 +418,47 @@ interface ContainerInterface extends PsrContainerInterface
      * }
      */
     public function profileReport(int $limit = 10): array;
+
+    /**
+     * Включает object pool для {@see make()} указанного id (#63).
+     *
+     * Повторные {@see make()} переиспользуют экземпляры, возвращённые через {@see releaseToPool()}.
+     * Перед возвратом в пул вызывается {@see \CloudCastle\DI\Contract\PoolableInterface::reset()}, если реализован.
+     *
+     * @param string $serviceId Id сервиса (после alias — тот же id, что передаётся в {@see make()})
+     * @param int $maxSize Максимум свободных экземпляров в пуле (по умолчанию 16)
+     */
+    public function enablePooling(string $serviceId, int $maxSize = 16): void;
+
+    /**
+     * Отключает пул для id и удаляет накопленные свободные экземпляры.
+     */
+    public function disablePooling(string $serviceId): void;
+
+    /**
+     * Проверяет, включён ли object pool для id.
+     */
+    public function isPoolingEnabled(string $serviceId): bool;
+
+    /**
+     * Возвращает экземпляр в пул после {@see make()} с включённым pooling.
+     *
+     * @throws \CloudCastle\DI\Exception\ContainerException Если пул для id не включён
+     */
+    public function releaseToPool(string $serviceId, object $instance): void;
+
+    /**
+     * Удаляет свободные экземпляры в пуле id без отключения pooling.
+     */
+    public function clearPool(string $serviceId): void;
+
+    /**
+     * Удаляет все свободные экземпляры во всех включённых пулах.
+     */
+    public function clearAllPools(): void;
+
+    /**
+     * @return array{configured: bool, max_size: int, available: int}
+     */
+    public function poolStats(string $serviceId): array;
 }

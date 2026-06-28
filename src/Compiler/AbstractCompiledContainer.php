@@ -6,6 +6,7 @@ namespace CloudCastle\DI\Compiler;
 
 use CloudCastle\DI\AttributeServiceIdReader;
 use CloudCastle\DI\CallableInvoker;
+use CloudCastle\DI\ContainerMemoryPoolSupport;
 use CloudCastle\DI\ContainerProfilingSupport;
 use CloudCastle\DI\Contract\CompiledContainerInterface;
 use CloudCastle\DI\Contract\ContextualBindingNeedsInterface;
@@ -23,6 +24,7 @@ use CloudCastle\DI\TaggedServiceLocator;
  */
 abstract class AbstractCompiledContainer implements CompiledContainerInterface
 {
+    use \CloudCastle\DI\ContainerMemoryPoolApi;
     use \CloudCastle\DI\ContainerProfilingApi;
 
     /** @var array<string, mixed> */
@@ -34,6 +36,9 @@ abstract class AbstractCompiledContainer implements CompiledContainerInterface
 
     /** Opt-in профилирование get/make/call (#65) */
     private readonly ContainerProfilingSupport $profiling;
+
+    /** Opt-in object pool для {@see make()} (#63) */
+    private readonly ContainerMemoryPoolSupport $memoryPool;
 
     /**
      * @param array<string, string> $aliases
@@ -55,6 +60,7 @@ abstract class AbstractCompiledContainer implements CompiledContainerInterface
         }
 
         $this->profiling = new ContainerProfilingSupport();
+        $this->memoryPool = new ContainerMemoryPoolSupport();
     }
 
     abstract protected function create(string $id): mixed;
@@ -101,15 +107,18 @@ abstract class AbstractCompiledContainer implements CompiledContainerInterface
     {
         $resolvedId = $this->aliasResolver->resolve($id);
 
-        return $this->profiling->trackMake(
+        return $this->memoryPool->make(
             $resolvedId,
-            function () use ($resolvedId, $id): mixed {
-                if (!$this->canCreate($resolvedId)) {
-                    throw new NotFoundException(\sprintf('Сервис "%s" не зарегистрирован.', $id));
-                }
+            fn (): mixed => $this->profiling->trackMake(
+                $resolvedId,
+                function () use ($resolvedId, $id): mixed {
+                    if (!$this->canCreate($resolvedId)) {
+                        throw new NotFoundException(\sprintf('Сервис "%s" не зарегистрирован.', $id));
+                    }
 
-                return $this->create($resolvedId);
-            },
+                    return $this->create($resolvedId);
+                },
+            ),
         );
     }
 
