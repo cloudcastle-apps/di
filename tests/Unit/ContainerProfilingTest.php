@@ -104,6 +104,30 @@ final class ContainerProfilingTest extends TestCase
         self::assertCount(10, $container->profileReport()['top_slowest']);
     }
 
+    public function testProfileReportListsOperationNames(): void
+    {
+        $container = new Container();
+        $container->set('proto', new stdClass());
+        $container->enableProfiling();
+
+        $container->get('proto');
+        $container->make('proto');
+        $container->call(static fn (): int => 1);
+
+        $operations = array_column($container->profileReport(limit: 0)['top_slowest'], 'operation');
+
+        self::assertSame(['get', 'make', 'call'], array_values(array_unique($operations)));
+    }
+
+    public function testProfileReportReflectsDisabledState(): void
+    {
+        $container = new Container();
+        $container->enableProfiling();
+        $container->disableProfiling();
+
+        self::assertFalse($container->profileReport()['enabled']);
+    }
+
     public function testDescribeCallableFormatsTargets(): void
     {
         self::assertSame('closure', ContainerProfilingSupport::describeCallable(static fn (): int => 1));

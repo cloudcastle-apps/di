@@ -46,10 +46,27 @@ final class ContainerProfilerTest extends TestCase
         self::assertSame(6.0, $report['by_operation']['get']['total_ms']);
         self::assertSame(3.0, $report['by_operation']['get']['avg_ms']);
         self::assertSame(1, $report['by_operation']['make']['count']);
+        self::assertSame(3.0, $report['by_operation']['make']['total_ms']);
+        self::assertSame(3.0, $report['by_operation']['make']['avg_ms']);
+        self::assertSame(1, $report['by_operation']['call']['count']);
+        self::assertSame(2.0, $report['by_operation']['call']['total_ms']);
+        self::assertSame(2.0, $report['by_operation']['call']['avg_ms']);
         self::assertCount(2, $report['top_slowest']);
         self::assertSame('slow', $report['top_slowest'][0]['target']);
         self::assertTrue($report['top_slowest'][0]['cached']);
         self::assertSame('proto', $report['top_slowest'][1]['target']);
+    }
+
+    public function testReportSortsAllSamplesWhenLimitIsZero(): void
+    {
+        $this->profiler->record('get', 'fast', 1.0);
+        $this->profiler->record('get', 'slow', 5.0);
+        $this->profiler->record('get', 'mid', 3.0);
+
+        self::assertSame(
+            ['slow', 'mid', 'fast'],
+            array_column($this->profiler->report(limit: 0)['top_slowest'], 'target'),
+        );
     }
 
     public function testResetClearsSamples(): void

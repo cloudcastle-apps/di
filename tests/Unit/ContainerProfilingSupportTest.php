@@ -100,4 +100,30 @@ final class ContainerProfilingSupportTest extends TestCase
         self::assertCount(2, $this->support->report(limit: 2)['top_slowest']);
         self::assertCount(3, $this->support->report(limit: 0)['top_slowest']);
     }
+
+    public function testMeasureRecordsElapsedTimeInMilliseconds(): void
+    {
+        $this->support->enable();
+
+        $this->support->measure('get', 'slow', static function (): void {
+            usleep(2000);
+        });
+
+        $elapsedMs = $this->support->report()['top_slowest'][0]['elapsed_ms'];
+
+        self::assertGreaterThan(0.5, $elapsedMs);
+        self::assertLessThan(50.0, $elapsedMs);
+    }
+
+    public function testDescribeCallableFormatsClassStringArrayCallable(): void
+    {
+        self::assertSame(
+            self::class . '::exampleStatic',
+            ContainerProfilingSupport::describeCallable([self::class, 'exampleStatic']),
+        );
+    }
+
+    public static function exampleStatic(): void
+    {
+    }
 }
