@@ -26,6 +26,8 @@ use Throwable;
  */
 final class Container implements ContainerInterface
 {
+    use ContainerProfilingApi;
+
     /** @var array<string, mixed> Определения сервисов: экземпляр, скаляр или фабрика */
     private array $definitions = [];
 
@@ -293,46 +295,6 @@ final class Container implements ContainerInterface
     public function dump(): array
     {
         return $this->introspector()->dump();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function enableProfiling(): void
-    {
-        $this->profiling->enable();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function disableProfiling(): void
-    {
-        $this->profiling->disable();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function isProfilingEnabled(): bool
-    {
-        return $this->profiling->isEnabled();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function resetProfile(): void
-    {
-        $this->profiling->reset();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function profileReport(int $limit = 10): array
-    {
-        return $this->profiling->report($limit);
     }
 
     /**

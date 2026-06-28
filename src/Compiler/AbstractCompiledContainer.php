@@ -23,6 +23,8 @@ use CloudCastle\DI\TaggedServiceLocator;
  */
 abstract class AbstractCompiledContainer implements CompiledContainerInterface
 {
+    use \CloudCastle\DI\ContainerProfilingApi;
+
     /** @var array<string, mixed> */
     private array $resolved = [];
 
@@ -322,40 +324,6 @@ abstract class AbstractCompiledContainer implements CompiledContainerInterface
     public function set(string $id, mixed $concrete): void
     {
         $this->assertImmutable();
-    }
-
-    public function enableProfiling(): void
-    {
-        $this->profiling->enable();
-    }
-
-    public function disableProfiling(): void
-    {
-        $this->profiling->disable();
-    }
-
-    public function isProfilingEnabled(): bool
-    {
-        return $this->profiling->isEnabled();
-    }
-
-    public function resetProfile(): void
-    {
-        $this->profiling->reset();
-    }
-
-    /**
-     * @return array{
-     *     enabled: bool,
-     *     sample_count: int,
-     *     total_ms: float,
-     *     by_operation: array<string, array{count: int, total_ms: float, avg_ms: float}>,
-     *     top_slowest: list<array{operation: string, target: string, elapsed_ms: float, cached: bool}>
-     * }
-     */
-    public function profileReport(int $limit = 10): array
-    {
-        return $this->profiling->report($limit);
     }
 
     private function canCreate(string $id): bool
