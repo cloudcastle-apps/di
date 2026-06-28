@@ -60,6 +60,15 @@ final class ContainerProfilingSupportTest extends TestCase
         self::assertTrue($report['top_slowest'][0]['cached']);
     }
 
+    public function testMeasureDefaultsCachedFlagToFalse(): void
+    {
+        $this->support->enable();
+
+        $this->support->measure('get', 'svc', static fn (): int => 1);
+
+        self::assertFalse($this->support->report()['top_slowest'][0]['cached']);
+    }
+
     public function testMeasureRecordsSampleWhenCallbackThrows(): void
     {
         $this->support->enable();

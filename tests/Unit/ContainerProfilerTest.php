@@ -133,4 +133,27 @@ final class ContainerProfilerTest extends TestCase
         self::assertCount(10, $this->profiler->report()['top_slowest']);
         self::assertSame(10.0, $this->profiler->report()['top_slowest'][0]['elapsed_ms']);
     }
+
+    public function testReportLimitOneReturnsSlowestSample(): void
+    {
+        $this->profiler->record('get', 'fast', 1.0);
+        $this->profiler->record('get', 'slow', 9.0);
+
+        $report = $this->profiler->report(limit: 1);
+
+        self::assertSame(2, $report['sample_count']);
+        self::assertCount(1, $report['top_slowest']);
+        self::assertSame('slow', $report['top_slowest'][0]['target']);
+    }
+
+    public function testSingleSampleAverageEqualsElapsed(): void
+    {
+        $this->profiler->record('make', 'only', 4.5678);
+
+        $stats = $this->profiler->report()['by_operation']['make'];
+
+        self::assertSame(1, $stats['count']);
+        self::assertSame(4.5678, $stats['total_ms']);
+        self::assertSame(4.5678, $stats['avg_ms']);
+    }
 }
