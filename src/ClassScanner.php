@@ -83,7 +83,9 @@ final class ClassScanner
 
         usort(
             $phpFiles,
-            static fn (SplFileInfo $left, SplFileInfo $right): int => strcmp($left->getPathname(), $right->getPathname()),
+            static function (SplFileInfo $left, SplFileInfo $right): int {
+                return strcmp($left->getPathname(), $right->getPathname());
+            },
         );
 
         foreach ($phpFiles as $file) {
