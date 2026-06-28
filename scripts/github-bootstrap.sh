@@ -43,8 +43,8 @@ create_milestone() {
     gh api "repos/$REPO/milestones" "${args[@]}"
 }
 
-create_milestone "v1.4.0" "freeze(), introspection, ergonomics" "2026-09-30T12:00:00Z"
-create_milestone "v1.5.0" "ContainerConfigurator, registerAttribute, declarative config" "2026-10-15T12:00:00Z"
+create_milestone "v1.18.0" "Lazy ghost proxy (#34) — Container::lazyGhost(), symfony/var-exporter opt-in"
+create_milestone "v1.19.0" "Следующий 1.x после v1.18 — patch/minor без breaking changes"
 create_milestone "Backlog" "Идеи и улучшения без фиксированного релиза"
 create_milestone "v2.0" "Breaking changes (major)"
 

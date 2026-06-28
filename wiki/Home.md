@@ -111,7 +111,11 @@ $service = $container->get(App\Service\OrderService::class);
 | 🎯 | Autowiring + compiled + contextual **runtime/config/compiled** (v1.10–1.13) |
 | 👻 | Lazy ghost proxy — **v1.18.0** ([#34](https://github.com/cloudcastle-apps/di/issues/34)) |
 
-### 🔮 Roadmap v2
+### 🔮 Roadmap
+
+**v1.19.0** (текущий 1.x) — patch/minor без breaking: баги, улучшения API, docs, тесты ([#75](https://github.com/cloudcastle-apps/di/issues/75)).
+
+**v2.0** (major):
 
 - **Scopes** (request / transient) — [#33](https://github.com/cloudcastle-apps/di/issues/33)
 - Breaking policy — [#17](https://github.com/cloudcastle-apps/di/issues/17)

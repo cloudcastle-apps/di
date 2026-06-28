@@ -89,7 +89,7 @@ composer ci
 ## GitHub: Issues и Wiki
 
 - **Wiki** — исходники в `wiki/`, синхронизация через workflow `Publish wiki` при push в `main`. Онлайн: https://github.com/cloudcastle-apps/di/wiki/Home
-- **Milestones** — [v1.18.0](https://github.com/cloudcastle-apps/di/milestone/10) (lazy ghost), [Backlog](https://github.com/cloudcastle-apps/di/milestone/2), [v2.0](https://github.com/cloudcastle-apps/di/milestone/3)
+- **Milestones** — [v1.19.0](https://github.com/cloudcastle-apps/di/milestone/11) (текущий 1.x), [v1.18.0](https://github.com/cloudcastle-apps/di/milestone/10) (выпущен), [Backlog](https://github.com/cloudcastle-apps/di/milestone/2), [v2.0](https://github.com/cloudcastle-apps/di/milestone/3)
 - **Labels** — `feat`, `fix`, `area:*`, `roadmap`, `release`; инициализация: `scripts/github-bootstrap.sh`
 - **Issue Views** — сохранённые поиски (см. [wiki/Contributing.md](wiki/Contributing.md) § Issues, Milestones и Views)
 
