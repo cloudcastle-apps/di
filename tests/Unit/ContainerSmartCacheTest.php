@@ -159,4 +159,19 @@ final class ContainerSmartCacheTest extends TestCase
 
         self::assertSame(2, $calls);
     }
+
+    public function testCacheStatsReportsExpiredAfterTtlElapses(): void
+    {
+        $clock = new class () {
+            public float $now = 1_000.0;
+        };
+        $container = new Container(smartCacheClock: fn (): float => $clock->now);
+        $container->set('svc', static fn (): stdClass => new stdClass());
+        $container->cacheFor('svc', ttlSeconds: 15);
+        $container->get('svc');
+
+        $clock->now = 1_015.0;
+
+        self::assertTrue($container->cacheStats('svc')['expired']);
+    }
 }

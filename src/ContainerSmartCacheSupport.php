@@ -62,9 +62,11 @@ final class ContainerSmartCacheSupport
             return;
         }
 
-        if (!$this->isFresh($serviceId, $ttl)) {
-            unset($resolved[$serviceId], $this->cachedAt[$serviceId]);
+        if (!$this->isExpired($serviceId, $ttl)) {
+            return;
         }
+
+        unset($resolved[$serviceId], $this->cachedAt[$serviceId]);
     }
 
     /**
@@ -129,7 +131,7 @@ final class ContainerSmartCacheSupport
         $expiresAt = ($ttl !== null && $cachedAt !== null) ? $cachedAt + (float) $ttl : null;
         $expired = $cached
             && $ttl !== null
-            && ($cachedAt === null || ($this->clock)() - $cachedAt >= $ttl);
+            && $this->isExpired($serviceId, $ttl);
 
         return [
             'configured' => $ttl !== null,
@@ -140,12 +142,12 @@ final class ContainerSmartCacheSupport
         ];
     }
 
-    private function isFresh(string $serviceId, int $ttl): bool
+    private function isExpired(string $serviceId, int $ttl): bool
     {
         if (!isset($this->cachedAt[$serviceId])) {
-            return false;
+            return true;
         }
 
-        return ($this->clock)() - $this->cachedAt[$serviceId] < $ttl;
+        return ($this->clock)() - $this->cachedAt[$serviceId] >= $ttl;
     }
 }

@@ -98,4 +98,44 @@ final class ContainerSmartCacheSupportTest extends TestCase
         self::assertSame(1_020.0, $stats['expires_at']);
         self::assertFalse($stats['expired']);
     }
+
+    public function testStatsMarksExpiredOnExactTtlBoundary(): void
+    {
+        $this->support->configureFor('svc', ttlSeconds: 10);
+        $this->resolved['svc'] = new stdClass();
+        $this->support->touch('svc');
+        $this->now = 1_010.0;
+
+        self::assertTrue($this->support->stats('svc', [], $this->resolved)['expired']);
+    }
+
+    public function testStatsMarksExpiredWhenCachedWithoutTimestamp(): void
+    {
+        $this->support->configureFor('svc', ttlSeconds: 60);
+        $this->resolved['svc'] = new stdClass();
+
+        self::assertTrue($this->support->stats('svc', [], $this->resolved)['expired']);
+    }
+
+    public function testEvictIfExpiredUsesShortestTagTtlAmongMultipleTags(): void
+    {
+        $this->support->configureTagFor('slow', ttlSeconds: 120);
+        $this->support->configureTagFor('fast', ttlSeconds: 5);
+        $this->resolved['svc'] = new stdClass();
+        $this->support->touch('svc');
+        $this->now += 5.0;
+
+        $this->support->evictIfExpired('svc', ['slow', 'fast'], $this->resolved);
+
+        self::assertArrayNotHasKey('svc', $this->resolved);
+    }
+
+    public function testForgetRemovesCachedEntryAndTimestamp(): void
+    {
+        $this->resolved['svc'] = new stdClass();
+        $this->support->touch('svc');
+        $this->support->forget('svc', $this->resolved);
+
+        self::assertFalse($this->support->stats('svc', [], $this->resolved)['cached']);
+    }
 }
