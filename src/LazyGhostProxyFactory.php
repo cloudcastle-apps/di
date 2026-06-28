@@ -69,7 +69,7 @@ final class LazyGhostProxyFactory
             },
         );
 
-        assert(\is_object($proxy));
+        \assert(\is_object($proxy));
 
         return $proxy;
     }
