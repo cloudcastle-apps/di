@@ -89,7 +89,7 @@ final class Container implements ContainerInterface
         $this->instanceResolver = new ServiceInstanceResolver($this);
         $this->resolveHooks = new AfterResolvingDispatcher();
         $this->attributeRegistry = new AttributeServiceIdRegistry();
-        $this->contextual = new ContextualBindingSupport();
+        $this->contextual = new ContextualBindingSupport(fn (): void => $this->assertMutable());
     }
 
     /**

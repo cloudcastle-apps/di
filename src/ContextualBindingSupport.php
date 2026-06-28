@@ -16,10 +16,17 @@ final class ContextualBindingSupport implements ContextualBindingRegistrarInterf
 
     private readonly ContextualBindingConfigurator $configurator;
 
-    public function __construct()
+    /** @var \Closure(): void|null */
+    private readonly ?\Closure $assertMutable;
+
+    /**
+     * @param \Closure(): void|null $assertMutable Проверка mutability контейнера перед register
+     */
+    public function __construct(?\Closure $assertMutable = null)
     {
         $this->registry = new ContextualBindingRegistry();
         $this->configurator = new ContextualBindingConfigurator($this);
+        $this->assertMutable = $assertMutable;
     }
 
     public function when(string $consumerClass): ContextualBindingNeedsInterface
@@ -37,6 +44,10 @@ final class ContextualBindingSupport implements ContextualBindingRegistrarInterf
      */
     public function registerContextualBinding(ContextualBinding $binding): void
     {
+        if ($this->assertMutable !== null) {
+            ($this->assertMutable)();
+        }
+
         $this->registry->register($binding);
     }
 }
