@@ -7,6 +7,7 @@
 - [📊 **Сравнение**](Comparison) — 5 аналогов, таблица + победители
 - [🧪 Bootstrap](Bootstrap)
 - [🚀 Compiled container](Compiled-container)
+- [🔗 Contextual binding](Contextual-binding)
 - [🤖 Autowiring](Autowiring)
 - [📄 Конфигурация](Configuration)
 - [📖 Справочник конфигурации](Configuration-reference)

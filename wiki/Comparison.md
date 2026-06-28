@@ -168,14 +168,15 @@ flowchart LR
 | 📁 | `scan()`, конфиг PHP/JSON/YAML/XML, каталоги (v1.7) |
 | 🏷️ | Теги, iterator, locator, декораторы, `call()`, `bind()` |
 | 🧊 | `freeze()`, `dump()`, `ContainerRegistry` |
-| 🧪 | 604 теста, 100% line coverage `src/`, benchmark-check в CI |
+| 🧪 | 607 тестов, 100% line coverage `src/`, benchmark-check в CI |
+| 📋 | Contextual binding — **контракты** v1.10 ([#25](https://github.com/cloudcastle-apps/di/issues/25) ч.1 ✅) |
 
 ### Ограничения (v1.x)
 
 | | |
 |---|---|
 | 🚀 | **Compiled container** — `ContainerCompiler`, build-step ([#24](https://github.com/cloudcastle-apps/di/issues/24)) |
-| 🚧 | Нет contextual binding — [v2 #25](https://github.com/cloudcastle-apps/di/issues/25) |
+| 🚧 | Contextual **runtime** — [v2 #25](https://github.com/cloudcastle-apps/di/issues/25) часть 2+ |
 | 📌 | `scan()` — regex-парсинг, не AST |
 | 👥 | Меньше community, чем PHP-DI / Symfony / **Nette** |
 

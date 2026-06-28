@@ -2,6 +2,19 @@
 
 Руководство по переходу между версиями **cloudcastle/di**.
 
+## 1.9.0 → 1.10.0
+
+### Добавлено (обратно совместимо)
+
+- **Контракты contextual binding** ([#25](https://github.com/cloudcastle-apps/di/issues/25), часть 1): `ContextualBinding`, `ContextualBindingRegistryInterface`, fluent `when/needs/give`
+- Wiki: [Contextual binding](https://github.com/cloudcastle-apps/di/wiki/Contextual-binding)
+
+Runtime (`Container::when()`) **ещё не реализован** — поведение контейнера не меняется.
+
+```bash
+composer update cloudcastle/di
+```
+
 ## 1.8.0 → 1.9.0
 
 ### Добавлено (обратно совместимо)
