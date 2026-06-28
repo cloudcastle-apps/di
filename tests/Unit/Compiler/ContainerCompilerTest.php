@@ -115,6 +115,23 @@ final class ContainerCompilerTest extends TestCase
         self::assertSame($compiled->get(Clock::class), $user->clock);
     }
 
+    public function testCompileGeneratesClassWithoutNamespaceSeparator(): void
+    {
+        $container = new Container();
+        $container->set(Clock::class, new Clock());
+        $container->freeze();
+
+        $className = 'RootLevelCompiledContainer';
+        $result = (new ContainerCompiler())->compile($container, $this->outputPath, $className);
+
+        self::assertSame($className, $result->className);
+        self::assertStringContainsString('class RootLevelCompiledContainer extends', file_get_contents($this->outputPath) ?: '');
+
+        $compiled = CompiledContainerLoader::load($this->outputPath, $className);
+
+        self::assertInstanceOf(Clock::class, $compiled->get(Clock::class));
+    }
+
     public function testCompileRejectsForeignContainerImplementation(): void
     {
         $container = $this->createMock(ContainerInterface::class);

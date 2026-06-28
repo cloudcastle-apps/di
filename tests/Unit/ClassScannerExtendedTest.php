@@ -90,4 +90,36 @@ final class ClassScannerExtendedTest extends TestCase
             }
         }
     }
+
+    public function testExtractDeclaredTypeNamesReturnsEmptyWhenPatternMatchingFails(): void
+    {
+        $directory = sys_get_temp_dir() . '/cloudcastle-di-scan-' . uniqid('', true);
+        mkdir($directory);
+        $path = $directory . '/Backtrack.php';
+        file_put_contents(
+            $path,
+            '<?php declare(strict_types=1); namespace CloudCastle\\DI\\Tests\\Fixtures;'
+            . str_repeat(' class BacktrackTarget', 5000),
+        );
+
+        $previousLimit = ini_get('pcre.backtrack_limit');
+        ini_set('pcre.backtrack_limit', '1');
+
+        try {
+            $method = new \ReflectionMethod(ClassScanner::class, 'extractDeclaredTypeNames');
+            $method->setAccessible(true);
+
+            self::assertSame([], $method->invoke(new ClassScanner(), $path));
+        } finally {
+            ini_set('pcre.backtrack_limit', (string) $previousLimit);
+
+            if (is_file($path)) {
+                unlink($path);
+            }
+
+            if (is_dir($directory)) {
+                rmdir($directory);
+            }
+        }
+    }
 }

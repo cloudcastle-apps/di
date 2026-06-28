@@ -83,12 +83,8 @@ final class ConfigurationLoaderTest extends TestCase
         self::assertIsArray($config['autowiring'] ?? null);
     }
 
-    public function testYamlLoaderBehaviourDependsOnExtensionAvailability(): void
+    public function testYamlLoaderParsesOverlayFixture(): void
     {
-        if (!\function_exists('yaml_parse_file')) {
-            self::markTestSkipped('Для YAML-тестов требуется ext-yaml.');
-        }
-
         $loader = new YamlConfigurationLoader();
 
         self::assertTrue($loader->supports($this->fixturesDirectory . '/overlay.yaml'));

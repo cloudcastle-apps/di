@@ -2,13 +2,4 @@
 
 declare(strict_types=1);
 
-require dirname(__DIR__) . '/vendor/autoload.php';
-
-if (!function_exists('yaml_parse_file')) {
-    fwrite(
-        STDERR,
-        'Для test:coverage требуется расширение ext-yaml (yaml_parse_file).' . PHP_EOL,
-    );
-
-    exit(1);
-}
+require __DIR__ . '/bootstrap.php';
