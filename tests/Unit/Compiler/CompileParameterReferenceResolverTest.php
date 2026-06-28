@@ -19,7 +19,6 @@ use CloudCastle\DI\Tests\Fixtures\Autowire\LegacyUntypedService;
 use CloudCastle\DI\Tests\Fixtures\Autowire\LoggerInterface;
 use CloudCastle\DI\Tests\Fixtures\Autowire\LoggerOrClockService;
 use CloudCastle\DI\Tests\Fixtures\Autowire\LoggerUser;
-use CloudCastle\DI\Tests\Fixtures\Autowire\LoggerInterface;
 use CloudCastle\DI\Tests\Fixtures\Autowire\NamedLoggerConsumer;
 use CloudCastle\DI\Tests\Fixtures\Autowire\OptionalDependency;
 use CloudCastle\DI\Tests\Fixtures\Autowire\PsrContainerConsumer;
