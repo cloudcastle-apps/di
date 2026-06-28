@@ -147,4 +147,21 @@ final class ConfigurationMergerReflectionTest extends TestCase
 
         self::assertSame('keep', $services['id']);
     }
+
+    public function testBuildContextualResultSkipsInvalidWinnerEntries(): void
+    {
+        $method = (new ReflectionClass(ConfigurationMerger::class))->getMethod('buildContextualResult');
+        /** @var array<string, array<string, string>> $result */
+        $result = $method->invoke(new ConfigurationMerger(), [
+            0 => ['value' => 'ignored-service'],
+            'MissingSeparator' => ['value' => 'ignored-service'],
+            'Consumer::need' => ['value' => 42],
+            'ValidConsumer::validNeed' => ['value' => 'target.service'],
+        ]);
+
+        self::assertSame(
+            ['ValidConsumer' => ['validNeed' => 'target.service']],
+            $result,
+        );
+    }
 }

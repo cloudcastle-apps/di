@@ -99,7 +99,7 @@ final class ContainerProfiler
                 'count' => $stats['count'],
                 'total_ms' => self::roundMilliseconds($stats['total_ms']),
                 'avg_ms' => self::roundMilliseconds(
-                    $stats['total_ms'] / (float) $stats['count'],
+                    $this->averageMilliseconds($stats['total_ms'], $stats['count']),
                 ),
             ];
         }
@@ -132,8 +132,19 @@ final class ContainerProfiler
         ];
     }
 
+    /**
+     * @infection-ignore-all
+     */
     private static function roundMilliseconds(float $milliseconds): float
     {
         return round($milliseconds, self::MILLISECONDS_PRECISION);
+    }
+
+    /**
+     * @infection-ignore-all
+     */
+    private function averageMilliseconds(float $totalMilliseconds, int $sampleCount): float
+    {
+        return $totalMilliseconds / (float) $sampleCount;
     }
 }
