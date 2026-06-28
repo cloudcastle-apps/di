@@ -13,10 +13,6 @@
 - `--json`, `--output-dir` в `benchmark-report.php`; артефакты CI `benchmark-reports`
 - Регрессия по elapsed **и** memory peak (×1.5)
 
-### Изменено
-
-- **Тесты:** +4 unit (`BenchmarkLibTest`)
-
 ## [1.13.0] — 2026-06-28
 
 ### Добавлено
