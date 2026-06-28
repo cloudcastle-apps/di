@@ -173,6 +173,57 @@ final class ContainerProfilingTest extends TestCase
         self::assertCount(3, $container->profileReport(limit: 0)['top_slowest']);
     }
 
+    public function testGetProfileTargetUsesResolvedIdAfterAlias(): void
+    {
+        $container = new Container();
+        $container->alias('alias.id', 'target.id');
+        $container->set('target.id', new stdClass());
+        $container->enableProfiling();
+
+        $container->get('alias.id');
+
+        self::assertSame('target.id', $container->profileReport()['top_slowest'][0]['target']);
+    }
+
+    public function testProfilingPreservesSingletonCaching(): void
+    {
+        $calls = 0;
+        $container = new Container();
+        $container->set('svc', static function () use (&$calls): stdClass {
+            ++$calls;
+
+            return new stdClass();
+        });
+        $container->enableProfiling();
+
+        $first = $container->get('svc');
+        $second = $container->get('svc');
+
+        self::assertSame($first, $second);
+        self::assertSame(1, $calls);
+    }
+
+    public function testMakeProfileUsesMakeOperation(): void
+    {
+        $container = new Container();
+        $container->set('proto', new stdClass());
+        $container->enableProfiling();
+
+        $container->make('proto');
+
+        self::assertSame('make', $container->profileReport()['top_slowest'][0]['operation']);
+    }
+
+    public function testCallProfileTargetDescribesCallable(): void
+    {
+        $container = new Container();
+        $container->enableProfiling();
+        $container->call(static fn (): int => 1);
+
+        self::assertSame('call', $container->profileReport()['top_slowest'][0]['operation']);
+        self::assertSame('closure', $container->profileReport()['top_slowest'][0]['target']);
+    }
+
     public function testDescribeCallableFormatsTargets(): void
     {
         self::assertSame('closure', ContainerProfilingSupport::describeCallable(static fn (): int => 1));
