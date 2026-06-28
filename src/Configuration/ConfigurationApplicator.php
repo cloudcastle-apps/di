@@ -36,6 +36,7 @@ final class ConfigurationApplicator
         $this->applyServices($container, $config);
         $this->applyAutowire($container, $config);
         $this->applyBind($container, $config);
+        $this->applyContextual($container, $config);
         $this->applyAliases($container, $config);
         $this->applyTags($container, $config);
     }
@@ -167,6 +168,26 @@ final class ConfigurationApplicator
         foreach ($this->sectionList($config, 'bind') as $abstract => $concrete) {
             if (\is_string($abstract) && \is_string($concrete)) {
                 $container->bind($abstract, $concrete);
+            }
+        }
+    }
+
+    /**
+     * @param array<string, mixed> $config
+     */
+    private function applyContextual(ContainerInterface $container, array $config): void
+    {
+        foreach ($this->sectionList($config, 'contextual') as $consumerClass => $needsMap) {
+            if (!\is_string($consumerClass) || !\is_array($needsMap)) {
+                continue;
+            }
+
+            foreach ($needsMap as $need => $give) {
+                if (!\is_string($need) || !\is_string($give)) {
+                    continue;
+                }
+
+                $container->when($consumerClass)->needs($need)->give($give);
             }
         }
     }

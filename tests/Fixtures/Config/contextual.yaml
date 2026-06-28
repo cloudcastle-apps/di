@@ -1,0 +1,19 @@
+autowiring:
+  enabled: true
+
+autowire:
+  - CloudCastle\DI\Tests\Fixtures\ContextualBinding\ReportService
+  - CloudCastle\DI\Tests\Fixtures\ContextualBinding\AuditService
+
+services:
+  memory.logger:
+    class: CloudCastle\DI\Tests\Fixtures\ContextualBinding\MemoryLogger
+  default.logger:
+    class: CloudCastle\DI\Tests\Fixtures\Autowire\FileLogger
+
+bind:
+  CloudCastle\DI\Tests\Fixtures\Autowire\LoggerInterface: default.logger
+
+contextual:
+  CloudCastle\DI\Tests\Fixtures\ContextualBinding\ReportService:
+    CloudCastle\DI\Tests\Fixtures\Autowire\LoggerInterface: memory.logger

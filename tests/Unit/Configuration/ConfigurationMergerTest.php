@@ -203,4 +203,58 @@ final class ConfigurationMergerTest extends TestCase
         $services = $merged['services'];
         self::assertSame('winner', $services['shared']);
     }
+
+    public function testMergerMergesContextualRulesByConsumerAndNeed(): void
+    {
+        $merger = new ConfigurationMerger();
+        $report = 'App\\ReportService';
+        $audit = 'App\\AuditService';
+        $logger = 'Psr\\Log\\LoggerInterface';
+        $mailer = 'App\\MailerInterface';
+
+        $merged = $merger->merge([
+            new ConfigurationLayer([
+                'contextual' => [
+                    $report => [$logger => 'log.file'],
+                    $audit => [$logger => 'log.audit'],
+                ],
+            ], 0, null),
+            new ConfigurationLayer([
+                'contextual' => [
+                    $report => [$mailer => 'mail.smtp', $logger => 'log.memory'],
+                ],
+            ], 1, null),
+        ]);
+
+        self::assertIsArray($merged['contextual']);
+        /** @var array<string, array<string, string>> $contextual */
+        $contextual = $merged['contextual'];
+        self::assertSame('log.memory', $contextual[$report][$logger]);
+        self::assertSame('mail.smtp', $contextual[$report][$mailer]);
+        self::assertSame('log.audit', $contextual[$audit][$logger]);
+    }
+
+    public function testMergerContextualRespectsExplicitGivePriority(): void
+    {
+        $merger = new ConfigurationMerger();
+        $consumer = 'App\\ReportService';
+        $need = 'Psr\\Log\\LoggerInterface';
+
+        $merged = $merger->merge([
+            new ConfigurationLayer([
+                'contextual' => [
+                    $consumer => [
+                        $need => ['value' => 'log.high', 'priority' => 100],
+                    ],
+                ],
+            ], 0, null),
+            new ConfigurationLayer([
+                'contextual' => [
+                    $consumer => [$need => 'log.low'],
+                ],
+            ], 1, null),
+        ]);
+
+        self::assertSame('log.high', $merged['contextual'][$consumer][$need]);
+    }
 }

@@ -12,6 +12,10 @@ use CloudCastle\DI\Tests\Fixtures\Autowire\Clock;
 use CloudCastle\DI\Tests\Fixtures\Autowire\CustomAttributePropertyService;
 use CloudCastle\DI\Tests\Fixtures\Autowire\CustomServiceIdAttribute;
 use CloudCastle\DI\Tests\Fixtures\Autowire\FileLogger;
+use CloudCastle\DI\Tests\Fixtures\Autowire\LoggerInterface;
+use CloudCastle\DI\Tests\Fixtures\ContextualBinding\AuditService;
+use CloudCastle\DI\Tests\Fixtures\ContextualBinding\MemoryLogger;
+use CloudCastle\DI\Tests\Fixtures\ContextualBinding\ReportService;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
@@ -118,5 +122,33 @@ final class ConfigurationApplicatorSectionsTest extends TestCase
 
         $locator = new TaggedServiceLocator($container, 'handlers');
         self::assertCount(2, iterator_to_array($locator));
+    }
+
+    public function testApplyContextualRegistersWhenNeedsGiveRules(): void
+    {
+        $container = new Container();
+        $container->enableAutowiring();
+        $container->set('memory.logger', new MemoryLogger());
+        $container->set('default.logger', new FileLogger());
+        $container->bind(LoggerInterface::class, 'default.logger');
+
+        (new ConfigurationApplicator())->apply($container, [
+            'contextual' => [
+                ReportService::class => [
+                    LoggerInterface::class => 'memory.logger',
+                ],
+            ],
+            'autowire' => [ReportService::class, AuditService::class],
+        ]);
+
+        $report = $container->get(ReportService::class);
+        $audit = $container->get(AuditService::class);
+
+        self::assertInstanceOf(MemoryLogger::class, $report->logger);
+        self::assertInstanceOf(FileLogger::class, $audit->logger);
+        self::assertSame(
+            'memory.logger',
+            $container->contextualGive(ReportService::class, LoggerInterface::class),
+        );
     }
 }

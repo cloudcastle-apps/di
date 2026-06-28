@@ -3,6 +3,18 @@
 Формат основан на [Keep a Changelog](https://keepachangelog.com/ru/1.1.0/),
 версионирование — [SemVer](https://semver.org/lang/ru/).
 
+## [1.12.0] — 2026-06-28
+
+### Добавлено
+
+- **Contextual binding — конфигурация** ([#25](https://github.com/cloudcastle-apps/di/issues/25), часть 3 из 4)
+- Секция `contextual` в PHP/JSON/YAML/XML — `when` → `needs` → `give` через `ContainerConfigurator`
+- Слияние contextual-правил по паре (consumer, need) с поддержкой `priority`
+
+### Изменено
+
+- **Тесты:** 607 PHPUnit (+5 configuration/contextual)
+
 ## [1.11.0] — 2026-06-28
 
 ### Добавлено

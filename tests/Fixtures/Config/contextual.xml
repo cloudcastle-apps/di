@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<container>
+    <autowiring enabled="true"/>
+    <autowire>
+        <class name="CloudCastle\DI\Tests\Fixtures\ContextualBinding\ReportService"/>
+        <class name="CloudCastle\DI\Tests\Fixtures\ContextualBinding\AuditService"/>
+    </autowire>
+    <services>
+        <service id="memory.logger" class="CloudCastle\DI\Tests\Fixtures\ContextualBinding\MemoryLogger"/>
+        <service id="default.logger" class="CloudCastle\DI\Tests\Fixtures\Autowire\FileLogger"/>
+    </services>
+    <bind>
+        <binding abstract="CloudCastle\DI\Tests\Fixtures\Autowire\LoggerInterface" concrete="default.logger"/>
+    </bind>
+    <contextual>
+        <when class="CloudCastle\DI\Tests\Fixtures\ContextualBinding\ReportService">
+            <need type="CloudCastle\DI\Tests\Fixtures\Autowire\LoggerInterface" give="memory.logger"/>
+        </when>
+    </contextual>
+</container>
