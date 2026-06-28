@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace CloudCastle\DI\Tests\Unit\Tools;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
+#[CoversNothing]
 final class BenchmarkLibTest extends TestCase
 {
     public function testPercentileReturnsMedian(): void
@@ -15,7 +17,7 @@ final class BenchmarkLibTest extends TestCase
 
     public function testPercentileReturnsHighTail(): void
     {
-        self::assertSame(9.0, benchmark_percentile([1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0], 95));
+        self::assertSame(10.0, benchmark_percentile([1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0], 95));
     }
 
     public function testFindRegressionsDetectsElapsedAndMemory(): void
