@@ -86,4 +86,29 @@ final class LazyGhostProxyFactoryTest extends TestCase
 
         self::assertSame($first::class, $second::class);
     }
+
+    public function testCreateLazyProxyInitializesImplementationOnMethodCall(): void
+    {
+        if (!LazyGhostProxyFactory::isAvailable()) {
+            self::markTestSkipped('symfony/var-exporter не установлен.');
+        }
+
+        $container = new Container();
+        $container->set('heavy', static function (): HeavyContract {
+            $class = \CloudCastle\DI\Tests\Fixtures\LazyGhost\HeavyService::class;
+
+            return new $class();
+        });
+
+        $proxy = LazyGhostProxyFactory::create($container, HeavyContract::class, 'heavy');
+
+        self::assertSame('heavy-result', $this->asHeavyContract($proxy)->work());
+    }
+
+    private function asHeavyContract(object $proxy): HeavyContract
+    {
+        self::assertInstanceOf(HeavyContract::class, $proxy);
+
+        return $proxy;
+    }
 }

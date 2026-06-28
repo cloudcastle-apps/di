@@ -12,6 +12,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
 #[CoversClass(AbstractCompiledContainer::class)]
+#[CoversClass(LazyGhostProxyFactory::class)]
 final class AbstractCompiledContainerLazyGhostTest extends TestCase
 {
     public function testLazyGhostWorksInCompiledContainer(): void
