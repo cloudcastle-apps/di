@@ -105,6 +105,8 @@ final class ContainerProfilingSupport
             return $className . '::' . $method;
         }
 
+        \assert(\is_object($callable));
+
         return $callable::class . '::__invoke';
     }
 }
