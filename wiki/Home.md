@@ -17,7 +17,7 @@
 
 > 💡 **Для кого:** библиотеки, CLI, API, composition root, тесты — когда Symfony/Laravel избыточны, а Pimple уже мал.
 
-**Текущая версия:** [1.15.0](https://github.com/cloudcastle-apps/di/releases/tag/v1.15.0) · [Packagist](https://packagist.org/packages/cloudcastle/di)
+**Текущая версия:** [1.16.0](https://github.com/cloudcastle-apps/di/releases/tag/v1.16.0) · [Packagist](https://packagist.org/packages/cloudcastle/di)
 
 ---
 
