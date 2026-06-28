@@ -6,6 +6,7 @@ namespace CloudCastle\DI\Compiler;
 
 use CloudCastle\DI\AttributeServiceIdReader;
 use CloudCastle\DI\CallableInvoker;
+use CloudCastle\DI\ContainerProfilingSupport;
 use CloudCastle\DI\Contract\CompiledContainerInterface;
 use CloudCastle\DI\Contract\ContextualBindingNeedsInterface;
 use CloudCastle\DI\Exception\ContainerException;
@@ -29,6 +30,9 @@ abstract class AbstractCompiledContainer implements CompiledContainerInterface
 
     private ?CallableInvoker $callableInvoker = null;
 
+    /** Opt-in профилирование get/make/call (#65) */
+    private readonly ContainerProfilingSupport $profiling;
+
     /**
      * @param array<string, string> $aliases
      * @param array<string, list<string>> $tags
@@ -47,6 +51,8 @@ abstract class AbstractCompiledContainer implements CompiledContainerInterface
         foreach ($aliases as $alias => $targetId) {
             $this->aliasResolver->alias($alias, $targetId);
         }
+
+        $this->profiling = new ContainerProfilingSupport();
     }
 
     abstract protected function create(string $id): mixed;
@@ -59,16 +65,24 @@ abstract class AbstractCompiledContainer implements CompiledContainerInterface
     public function get(string $id): mixed
     {
         $resolvedId = $this->aliasResolver->resolve($id);
+        $wasCached = isset($this->resolved[$resolvedId]);
 
-        if (isset($this->resolved[$resolvedId])) {
-            return $this->resolved[$resolvedId];
-        }
+        return $this->profiling->measure(
+            'get',
+            $resolvedId,
+            function () use ($resolvedId, $id): mixed {
+                if (isset($this->resolved[$resolvedId])) {
+                    return $this->resolved[$resolvedId];
+                }
 
-        if (!$this->canCreate($resolvedId)) {
-            throw new NotFoundException(\sprintf('Сервис "%s" не зарегистрирован.', $id));
-        }
+                if (!$this->canCreate($resolvedId)) {
+                    throw new NotFoundException(\sprintf('Сервис "%s" не зарегистрирован.', $id));
+                }
 
-        return $this->resolveAndCache($resolvedId);
+                return $this->resolveAndCache($resolvedId);
+            },
+            $wasCached,
+        );
     }
 
     public function has(string $id): bool
@@ -86,11 +100,17 @@ abstract class AbstractCompiledContainer implements CompiledContainerInterface
     {
         $resolvedId = $this->aliasResolver->resolve($id);
 
-        if (!$this->canCreate($resolvedId)) {
-            throw new NotFoundException(\sprintf('Сервис "%s" не зарегистрирован.', $id));
-        }
+        return $this->profiling->measure(
+            'make',
+            $resolvedId,
+            function () use ($resolvedId, $id): mixed {
+                if (!$this->canCreate($resolvedId)) {
+                    throw new NotFoundException(\sprintf('Сервис "%s" не зарегистрирован.', $id));
+                }
 
-        return $this->create($resolvedId);
+                return $this->create($resolvedId);
+            },
+        );
     }
 
     public function hasDefinition(string $id): bool
@@ -234,7 +254,13 @@ abstract class AbstractCompiledContainer implements CompiledContainerInterface
 
     public function call(callable $callable, array $parameters = []): mixed
     {
-        return $this->callableInvoker()->invoke($callable, $parameters);
+        $target = ContainerProfilingSupport::describeCallable($callable);
+
+        return $this->profiling->measure(
+            'call',
+            $target,
+            fn (): mixed => $this->callableInvoker()->invoke($callable, $parameters),
+        );
     }
 
     public function afterResolving(string $id, callable $callback): void
@@ -299,6 +325,40 @@ abstract class AbstractCompiledContainer implements CompiledContainerInterface
     public function set(string $id, mixed $concrete): void
     {
         $this->assertImmutable();
+    }
+
+    public function enableProfiling(): void
+    {
+        $this->profiling->enable();
+    }
+
+    public function disableProfiling(): void
+    {
+        $this->profiling->disable();
+    }
+
+    public function isProfilingEnabled(): bool
+    {
+        return $this->profiling->isEnabled();
+    }
+
+    public function resetProfile(): void
+    {
+        $this->profiling->reset();
+    }
+
+    /**
+     * @return array{
+     *     enabled: bool,
+     *     sample_count: int,
+     *     total_ms: float,
+     *     by_operation: array<string, array{count: int, total_ms: float, avg_ms: float}>,
+     *     top_slowest: list<array{operation: string, target: string, elapsed_ms: float, cached: bool}>
+     * }
+     */
+    public function profileReport(int $limit = 10): array
+    {
+        return $this->profiling->report($limit);
     }
 
     private function canCreate(string $id): bool

@@ -10,6 +10,7 @@
 - **Performance Profiler** ([#65](https://github.com/cloudcastle-apps/di/issues/65))
 - `Container::enableProfiling()` / `disableProfiling()` / `profileReport()` / `resetProfile()` — opt-in замеры get/make/call
 - `ContainerProfiler`, `ContainerProfilingSupport` — агрегаты и top-N медленных операций
+- Тот же profiling API в `AbstractCompiledContainer` (compiled-контейнеры)
 
 ### Изменено
 

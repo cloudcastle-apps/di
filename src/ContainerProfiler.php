@@ -6,17 +6,35 @@ namespace CloudCastle\DI;
 
 /**
  * Сборщик замеров resolve/call контейнера (opt-in, #65).
+ *
+ * Хранит отдельные замеры каждой операции {@see ContainerProfilingSupport::measure()}.
+ * Не выполняет I/O и не зависит от {@see Container} — только агрегирует массив samples.
+ *
+ * @see ContainerProfilingSupport
+ * @see ContainerInterface::profileReport()
  */
 final class ContainerProfiler
 {
-    /** @var list<array{operation: string, target: string, elapsed_ms: float, cached: bool}> */
+    /**
+     * Накопленные замеры в порядке регистрации.
+     *
+     * @var list<array{
+     *     operation: string,
+     *     target: string,
+     *     elapsed_ms: float,
+     *     cached: bool
+     * }>
+     */
     private array $samples = [];
 
     /**
-     * @param string $operation Тип операции: `get`, `make`, `call`
-     * @param string $target Id сервиса или описание callable
-     * @param float $elapsedMs Длительность в миллисекундах
-     * @param bool $cached Был ли singleton уже в кэше до resolve
+     * Регистрирует один замер операции контейнера.
+     *
+     * @param string $operation Тип операции: `get`, `make` или `call`
+     * @param string $target Id сервиса (после alias) или описание callable из
+     *                       {@see ContainerProfilingSupport::describeCallable()}
+     * @param float $elapsedMs Длительность операции в миллисекундах
+     * @param bool $cached `true`, если singleton уже был в кэше до resolve (только для `get`)
      */
     public function record(string $operation, string $target, float $elapsedMs, bool $cached = false): void
     {
@@ -29,7 +47,9 @@ final class ContainerProfiler
     }
 
     /**
-     * Очищает накопленные замеры.
+     * Очищает все накопленные замеры.
+     *
+     * Не влияет на флаг enabled в {@see ContainerProfilingSupport}.
      */
     public function reset(): void
     {
@@ -37,9 +57,9 @@ final class ContainerProfiler
     }
 
     /**
-     * Формирует отчёт с агрегатами и top-N самых медленных операций.
+     * Формирует отчёт с агрегатами по типу операции и top-N самых медленных замеров.
      *
-     * @param int $limit Максимум записей в `top_slowest`
+     * @param int $limit Максимум записей в `top_slowest`; `0` — вернуть все замеры, отсортированные по убыванию времени
      *
      * @return array{
      *     sample_count: int,

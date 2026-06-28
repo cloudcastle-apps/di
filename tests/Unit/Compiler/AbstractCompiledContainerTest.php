@@ -171,6 +171,33 @@ final class AbstractCompiledContainerTest extends TestCase
         self::assertSame($firstInvoker, $secondInvoker);
     }
 
+    public function testProfilingRecordsCompiledGetMakeAndCall(): void
+    {
+        $container = new StubCompiledContainer();
+        $container->enableProfiling();
+
+        $container->get('value');
+        $container->get('value');
+        $container->make('value');
+        $container->call(static fn (): string => 'ok');
+
+        self::assertTrue($container->isProfilingEnabled());
+
+        $report = $container->profileReport();
+
+        self::assertSame(4, $report['sample_count']);
+        self::assertSame(2, $report['by_operation']['get']['count']);
+        self::assertSame(1, $report['by_operation']['make']['count']);
+        self::assertSame(1, $report['by_operation']['call']['count']);
+
+        $container->disableProfiling();
+        $container->get('value');
+        self::assertSame(4, $container->profileReport()['sample_count']);
+
+        $container->resetProfile();
+        self::assertSame(0, $container->profileReport()['sample_count']);
+    }
+
     public function testAutowiringFlagsAreDisabled(): void
     {
         $container = new StubCompiledContainer();

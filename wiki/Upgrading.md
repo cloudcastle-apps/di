@@ -235,8 +235,8 @@ Major **v2.0** — breaking changes и enterprise-parity (**contextual binding**
 |-------------|-------|
 | ⚡ Memory Pool — пул объектов для снижения GC | [#63](https://github.com/cloudcastle-apps/di/issues/63) |
 | 🎯 Smart Caching — интеллектуальное кэширование с TTL | [#64](https://github.com/cloudcastle-apps/di/issues/64) |
-| 📊 Performance Profiler — встроенный профилировщик | [#65](https://github.com/cloudcastle-apps/di/issues/65) |
-| 🧪 Advanced Benchmarks — расширенные бенчмарки | [#66](https://github.com/cloudcastle-apps/di/issues/66) |
+| 📊 Performance Profiler — opt-in get/make/call | ✅ v1.15.0 |
+| 🧪 Advanced Benchmarks — расширенные бенчмарки | ✅ v1.14.0 |
 
 ### Ongoing (1.x patch)
 

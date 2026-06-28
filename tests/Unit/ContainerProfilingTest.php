@@ -41,11 +41,13 @@ final class ContainerProfilingTest extends TestCase
         $report = $container->profileReport(limit: 10);
 
         self::assertTrue($report['enabled']);
-        self::assertSame(4, $report['sample_count']);
+        self::assertSame(5, $report['sample_count']);
         self::assertArrayHasKey('get', $report['by_operation']);
         self::assertArrayHasKey('make', $report['by_operation']);
         self::assertArrayHasKey('call', $report['by_operation']);
-        self::assertSame(2, $report['by_operation']['get']['count']);
+        self::assertSame(3, $report['by_operation']['get']['count']);
+        self::assertSame(1, $report['by_operation']['make']['count']);
+        self::assertSame(1, $report['by_operation']['call']['count']);
         self::assertTrue($report['top_slowest'][0]['elapsed_ms'] >= $report['top_slowest'][1]['elapsed_ms']);
     }
 
@@ -97,6 +99,14 @@ final class ContainerProfilingTest extends TestCase
             self::class . '::exampleStatic',
             ContainerProfilingSupport::describeCallable([self::class, 'exampleStatic']),
         );
+
+        $invokable = new class () {
+            public function __invoke(): void
+            {
+            }
+        };
+
+        self::assertSame($invokable::class . '::__invoke', ContainerProfilingSupport::describeCallable($invokable));
     }
 
     public static function exampleStatic(): void

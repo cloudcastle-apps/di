@@ -119,7 +119,7 @@ $service = $container->get(App\Service\OrderService::class);
 |---|---|---|
 | ⚡ | **Memory Pool** — пул объектов для снижения GC | [#63](https://github.com/cloudcastle-apps/di/issues/63) |
 | 🎯 | **Smart Caching** — кэширование с TTL | [#64](https://github.com/cloudcastle-apps/di/issues/64) |
-| 📊 | **Performance Profiler** — встроенный профилировщик | [#65](https://github.com/cloudcastle-apps/di/issues/65) |
+| 📊 | **Performance Profiler** — opt-in get/make/call (#65) | ✅ v1.15.0 |
 | 🧪 | **Advanced Benchmarks** — расширенные метрики | [#66](https://github.com/cloudcastle-apps/di/issues/66) |
 
 Подробнее — [Performance-and-load](Performance-and-load).

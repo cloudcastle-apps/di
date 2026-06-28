@@ -80,7 +80,7 @@ final class Container implements ContainerInterface
     /** Contextual when/needs/give (#25) */
     private readonly ContextualBindingSupport $contextual;
 
-    /** Opt-in профилирование get/make/call (#65) */
+    /** Opt-in профилирование get/make/call (#65); по умолчанию выключено */
     private readonly ContainerProfilingSupport $profiling;
 
     /**
@@ -301,13 +301,9 @@ final class Container implements ContainerInterface
     /**
      * {@inheritDoc}
      */
-    public function enableProfiling(bool $enabled = true): void
+    public function enableProfiling(): void
     {
-        if ($enabled) {
-            $this->profiling->enable();
-        } else {
-            $this->profiling->disable();
-        }
+        $this->profiling->enable();
     }
 
     /**
