@@ -153,4 +153,22 @@ final class ConfigurationApplicatorSectionsTest extends TestCase
             $container->contextualGive(ReportService::class, LoggerInterface::class),
         );
     }
+
+    public function testApplyContextualIgnoresInvalidEntries(): void
+    {
+        $container = new Container();
+
+        (new ConfigurationApplicator())->apply($container, [
+            'contextual' => [
+                123 => [LoggerInterface::class => 'skip'],
+                ReportService::class => 'not-a-needs-map',
+                AuditService::class => [
+                    456 => 'skip',
+                    LoggerInterface::class => 789,
+                ],
+            ],
+        ]);
+
+        self::assertNull($container->contextualGive(ReportService::class, LoggerInterface::class));
+    }
 }

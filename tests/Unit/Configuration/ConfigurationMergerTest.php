@@ -7,6 +7,7 @@ namespace CloudCastle\DI\Tests\Unit\Configuration;
 use CloudCastle\DI\Configuration\ConfigurationLayer;
 use CloudCastle\DI\Configuration\ConfigurationMerger;
 use CloudCastle\DI\Tests\Fixtures\Autowire\CustomServiceIdAttribute;
+use CloudCastle\DI\Tests\Fixtures\ContextualBinding\ReportService;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
@@ -259,5 +260,28 @@ final class ConfigurationMergerTest extends TestCase
         /** @var array<string, array<string, string>> $contextual */
         $contextual = $merged['contextual'];
         self::assertSame('log.high', $contextual[$consumer][$need]);
+    }
+
+    public function testMergerIgnoresInvalidContextualEntries(): void
+    {
+        $merger = new ConfigurationMerger();
+        $consumer = ReportService::class;
+        $need = \Psr\Log\LoggerInterface::class;
+
+        $merged = $merger->merge([
+            new ConfigurationLayer([
+                'contextual' => [
+                    123 => [$need => 'skip.invalid-consumer'],
+                    $consumer => 'not-a-needs-map',
+                    'App\\Orphan' => [
+                        456 => 'skip.invalid-need',
+                        $need => ['value' => 'skip.non-string-give'],
+                    ],
+                ],
+            ], 0, null),
+            new ConfigurationLayer(['contextual' => 'not-an-array'], 1, null),
+        ]);
+
+        self::assertSame([], $merged['contextual']);
     }
 }
