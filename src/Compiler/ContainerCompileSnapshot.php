@@ -13,11 +13,13 @@ final class ContainerCompileSnapshot
      * @param array<string, string> $aliases
      * @param array<string, list<string>> $tags
      * @param list<CompileServiceBinding> $bindings
+     * @param array<string, array<string, string>> $contextual
      */
     public function __construct(
         public readonly array $aliases,
         public readonly array $tags,
         public readonly array $bindings,
+        public readonly array $contextual = [],
     ) {
     }
 }

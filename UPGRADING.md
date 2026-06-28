@@ -2,6 +2,18 @@
 
 Руководство по переходу между версиями **cloudcastle/di**.
 
+## 1.12.0 → 1.13.0
+
+### Добавлено (обратно совместимо)
+
+- **Contextual binding в compiled container** ([#25](https://github.com/cloudcastle-apps/di/issues/25), часть 4)
+- `ContainerCompiler` встраивает contextual rules в generated PHP и `contextualGive()` на compiled-контейнере
+- `when()` на compiled-контейнере по-прежнему недоступен (immutable)
+
+```bash
+composer update cloudcastle/di
+```
+
 ## 1.11.0 → 1.12.0
 
 ### Добавлено (обратно совместимо)

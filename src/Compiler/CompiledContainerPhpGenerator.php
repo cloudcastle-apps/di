@@ -49,6 +49,7 @@ final class CompiledContainerPhpGenerator
             '            aliases: ' . $this->exportArray($snapshot->aliases) . ',',
             '            tags: ' . $this->exportArray($snapshot->tags) . ',',
             '            definitionIds: ' . $this->exportArray($definitionIds) . ',',
+            '            contextual: ' . $this->exportArray($snapshot->contextual) . ',',
             '        );',
             '    }',
             '',

@@ -33,12 +33,14 @@ abstract class AbstractCompiledContainer implements CompiledContainerInterface
      * @param array<string, string> $aliases
      * @param array<string, list<string>> $tags
      * @param list<string> $definitionIds
+     * @param array<string, array<string, string>> $contextual
      */
     public function __construct(
         private readonly string $compiledClassName,
         array $aliases,
         private readonly array $tags,
         private readonly array $definitionIds,
+        private readonly array $contextual = [],
     ) {
         $this->aliasResolver = new ServiceAliasResolver();
 
@@ -227,7 +229,7 @@ abstract class AbstractCompiledContainer implements CompiledContainerInterface
 
     public function contextualGive(string $consumerClass, string $need): ?string
     {
-        return null;
+        return $this->contextual[$consumerClass][$need] ?? null;
     }
 
     public function call(callable $callable, array $parameters = []): mixed

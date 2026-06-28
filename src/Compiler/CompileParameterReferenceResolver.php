@@ -65,6 +65,25 @@ final class CompileParameterReferenceResolver
             return '$this';
         }
 
+        $consumerClass = $parameter->getDeclaringClass()?->getName();
+
+        if ($consumerClass !== null) {
+            $contextualGive = $container->contextualGive($consumerClass, $typeName);
+
+            if ($contextualGive !== null) {
+                if (!$container->has($contextualGive)) {
+                    throw new ContainerCompileException(\sprintf(
+                        'Contextual give "%s" для %s::%s не зарегистрирован в контейнере.',
+                        $contextualGive,
+                        $consumerClass,
+                        $parameter->getName(),
+                    ));
+                }
+
+                return $this->serviceGetExpression($contextualGive);
+            }
+        }
+
         if (!$container->has($typeName)) {
             if ($parameter->isDefaultValueAvailable()) {
                 return var_export($parameter->getDefaultValue(), true);

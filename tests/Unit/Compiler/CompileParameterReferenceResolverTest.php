@@ -19,6 +19,7 @@ use CloudCastle\DI\Tests\Fixtures\Autowire\LegacyUntypedService;
 use CloudCastle\DI\Tests\Fixtures\Autowire\LoggerInterface;
 use CloudCastle\DI\Tests\Fixtures\Autowire\LoggerOrClockService;
 use CloudCastle\DI\Tests\Fixtures\Autowire\LoggerUser;
+use CloudCastle\DI\Tests\Fixtures\Autowire\LoggerInterface;
 use CloudCastle\DI\Tests\Fixtures\Autowire\NamedLoggerConsumer;
 use CloudCastle\DI\Tests\Fixtures\Autowire\OptionalDependency;
 use CloudCastle\DI\Tests\Fixtures\Autowire\PsrContainerConsumer;
@@ -26,6 +27,8 @@ use CloudCastle\DI\Tests\Fixtures\Autowire\RequiredClockService;
 use CloudCastle\DI\Tests\Fixtures\Autowire\StringOrNullService;
 use CloudCastle\DI\Tests\Fixtures\Autowire\UnionParameterService;
 use CloudCastle\DI\Tests\Fixtures\Autowire\UntypedParameterService;
+use CloudCastle\DI\Tests\Fixtures\ContextualBinding\MemoryLogger;
+use CloudCastle\DI\Tests\Fixtures\ContextualBinding\ReportService;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
@@ -97,6 +100,37 @@ final class CompileParameterReferenceResolverTest extends TestCase
             '$this->get(' . var_export(Clock::class, true) . ')',
             $this->resolver->resolveExpression($this->container, $parameter),
         );
+    }
+
+    public function testResolvesContextualGiveForConsumer(): void
+    {
+        $this->container->set('memory.logger', new MemoryLogger());
+        $this->container->set('default.logger', new FileLogger());
+        $this->container->bind(LoggerInterface::class, 'default.logger');
+        $this->container->when(ReportService::class)
+            ->needs(LoggerInterface::class)
+            ->give('memory.logger');
+
+        $parameter = $this->constructorParameter(ReportService::class, 'logger');
+
+        self::assertSame(
+            '$this->get(\'memory.logger\')',
+            $this->resolver->resolveExpression($this->container, $parameter),
+        );
+    }
+
+    public function testThrowsWhenContextualGiveTargetMissing(): void
+    {
+        $this->container->when(ReportService::class)
+            ->needs(LoggerInterface::class)
+            ->give('missing.logger');
+
+        $parameter = $this->constructorParameter(ReportService::class, 'logger');
+
+        $this->expectException(ContainerCompileException::class);
+        $this->expectExceptionMessage('Contextual give "missing.logger"');
+
+        $this->resolver->resolveExpression($this->container, $parameter);
     }
 
     public function testResolvesPsrContainerInterfaceAsThis(): void

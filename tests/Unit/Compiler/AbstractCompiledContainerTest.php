@@ -181,6 +181,16 @@ final class AbstractCompiledContainerTest extends TestCase
         self::assertFalse($container->isMethodAutowiringEnabled());
     }
 
+    public function testContextualGiveReturnsBakedRules(): void
+    {
+        $container = new StubCompiledContainer([
+            'App\\Report' => ['Psr\\Log\\LoggerInterface' => 'log.memory'],
+        ]);
+
+        self::assertSame('log.memory', $container->contextualGive('App\\Report', 'Psr\\Log\\LoggerInterface'));
+        self::assertNull($container->contextualGive('App\\Other', 'Psr\\Log\\LoggerInterface'));
+    }
+
     /**
      * @return iterable<string, array{string}>
      */

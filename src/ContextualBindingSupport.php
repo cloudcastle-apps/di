@@ -38,6 +38,14 @@ final class ContextualBindingSupport implements ContextualBindingRegistrarInterf
     }
 
     /**
+     * @return array<string, array<string, string>>
+     */
+    public function exportContextualMap(): array
+    {
+        return $this->registry->exportContextualMap();
+    }
+
+    /**
      * {@inheritDoc}
      */
     public function registerContextualBinding(ContextualBinding $binding): void

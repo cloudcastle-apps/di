@@ -190,6 +190,14 @@ final class Container implements ContainerInterface
     }
 
     /**
+     * @return array<string, array<string, string>>
+     */
+    public function exportContextualBindings(): array
+    {
+        return $this->contextual->exportContextualMap();
+    }
+
+    /**
      * {@inheritDoc}
      */
     public function call(callable $callable, array $parameters = []): mixed
