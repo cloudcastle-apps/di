@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace CloudCastle\DI;
 
+use Closure;
 use CloudCastle\DI\Contract\ContextualBindingNeedsInterface;
 use CloudCastle\DI\Contract\ContextualBindingRegistrarInterface;
 
@@ -16,13 +17,13 @@ final class ContextualBindingSupport implements ContextualBindingRegistrarInterf
 
     private readonly ContextualBindingConfigurator $configurator;
 
-    /** @var \Closure(): void|null */
-    private readonly ?\Closure $assertMutable;
+    /** @var Closure(): void|null */
+    private readonly ?Closure $assertMutable;
 
     /**
-     * @param \Closure(): void|null $assertMutable Проверка mutability контейнера перед register
+     * @param Closure(): void|null $assertMutable Проверка mutability контейнера перед register
      */
-    public function __construct(?\Closure $assertMutable = null)
+    public function __construct(?Closure $assertMutable = null)
     {
         $this->registry = new ContextualBindingRegistry();
         $this->configurator = new ContextualBindingConfigurator($this);
