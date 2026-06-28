@@ -9,6 +9,7 @@ use CloudCastle\DI\Container;
 use CloudCastle\DI\Tests\Fixtures\Autowire\Clock;
 use CloudCastle\DI\Tests\Fixtures\Autowire\CustomAttributePropertyService;
 use CloudCastle\DI\Tests\Fixtures\Autowire\CustomServiceIdAttribute;
+use CloudCastle\DI\Tests\Fixtures\Autowire\Scan\ScannedService;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
@@ -157,5 +158,41 @@ final class ConfigurationApplicatorMutationTest extends TestCase
         $service = $container->get(CustomAttributePropertyService::class);
         self::assertInstanceOf(CustomAttributePropertyService::class, $service);
         self::assertSame($container->get('app.clock'), $service->getClock());
+    }
+
+    public function testApplySkipsNonArrayScanEntryButProcessesFollowingDirectory(): void
+    {
+        $container = new Container();
+        $scanDirectory = \dirname(__DIR__, 2) . '/Fixtures/Autowire/Scan';
+
+        (new ConfigurationApplicator())->apply($container, [
+            'scan' => [
+                'invalid-entry',
+                [
+                    'directory' => $scanDirectory,
+                    'namespace' => 'CloudCastle\\DI\\Tests\\Fixtures\\Autowire\\Scan\\',
+                ],
+            ],
+        ]);
+
+        self::assertTrue($container->hasDefinition(ScannedService::class));
+    }
+
+    public function testApplySkipsScanWithoutDirectoryButProcessesFollowingEntry(): void
+    {
+        $container = new Container();
+        $scanDirectory = \dirname(__DIR__, 2) . '/Fixtures/Autowire/Scan';
+
+        (new ConfigurationApplicator())->apply($container, [
+            'scan' => [
+                ['namespace' => 'App\\Only'],
+                [
+                    'directory' => $scanDirectory,
+                    'namespace' => 'CloudCastle\\DI\\Tests\\Fixtures\\Autowire\\Scan\\',
+                ],
+            ],
+        ]);
+
+        self::assertTrue($container->hasDefinition(ScannedService::class));
     }
 }

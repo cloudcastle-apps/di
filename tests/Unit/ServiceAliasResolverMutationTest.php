@@ -32,6 +32,16 @@ final class ServiceAliasResolverMutationTest extends TestCase
         $resolver->alias('z', 'x');
     }
 
+    public function testHasCycleDetectsSelfLoopOnAliasRegistration(): void
+    {
+        $resolver = new ServiceAliasResolver();
+
+        $this->expectException(\CloudCastle\DI\Exception\ContainerException::class);
+        $this->expectExceptionMessage('циклическая цепочка alias');
+
+        $resolver->alias('loop', 'loop');
+    }
+
     public function testResolveThrowsOnThreeStepAliasCycle(): void
     {
         $resolver = new ServiceAliasResolver();

@@ -21,8 +21,20 @@ $infectionArgs = array_merge(
 
 $phpArgs = extension_loaded('yaml') ? [] : ['-d', 'extension=yaml'];
 
+$initialTestPhpOptions = [];
+
 if (!extension_loaded('yaml')) {
-    $infectionArgs[] = '--initial-tests-php-options=-d extension=yaml';
+    $initialTestPhpOptions[] = '-d extension=yaml';
+}
+
+if (extension_loaded('pcov')) {
+    $projectRoot = dirname(__DIR__);
+    $initialTestPhpOptions[] = '-d pcov.enabled=1';
+    $initialTestPhpOptions[] = '-d pcov.directory=' . $projectRoot . '/src';
+}
+
+if ($initialTestPhpOptions !== []) {
+    $infectionArgs[] = '--initial-tests-php-options=' . implode(' ', $initialTestPhpOptions);
 }
 
 $escaped = array_map(
