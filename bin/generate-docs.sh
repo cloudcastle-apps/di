@@ -52,8 +52,30 @@ if [[ ! -f "${output_tmp}/index.html" ]]; then
     exit 1
 fi
 
+preserve_tmp="$(mktemp -d)"
+for marker in .nojekyll CNAME; do
+    if [[ -f "${root}/docs/${marker}" ]]; then
+        cp -a "${root}/docs/${marker}" "${preserve_tmp}/${marker}"
+    fi
+done
+
 shopt -s dotglob nullglob
 rm -rf "${root}/docs"/*
 cp -a "${output_tmp}/." "${root}/docs/"
+
+for marker in .nojekyll CNAME; do
+    if [[ -f "${preserve_tmp}/${marker}" ]]; then
+        cp -a "${preserve_tmp}/${marker}" "${root}/docs/${marker}"
+    fi
+done
+rm -rf "${preserve_tmp}"
+
+if [[ ! -f "${root}/docs/CNAME" && -f "${root}/CNAME" ]]; then
+    cp "${root}/CNAME" "${root}/docs/CNAME"
+fi
+
+if [[ ! -f "${root}/docs/.nojekyll" ]]; then
+    : > "${root}/docs/.nojekyll"
+fi
 
 php "${root}/tools/docs-check.php" "${root}/docs"
