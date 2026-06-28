@@ -10,8 +10,8 @@ use CloudCastle\DI\Exception\ContainerException;
 use CloudCastle\DI\Tests\Fixtures\Autowire\SimpleService;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
-use ReflectionProperty;
 use ReflectionMethod;
+use ReflectionProperty;
 
 #[CoversClass(Container::class)]
 #[CoversClass(CallableInvoker::class)]
