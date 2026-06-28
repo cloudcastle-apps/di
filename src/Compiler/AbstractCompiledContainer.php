@@ -67,9 +67,9 @@ abstract class AbstractCompiledContainer implements CompiledContainerInterface
         $resolvedId = $this->aliasResolver->resolve($id);
         $wasCached = isset($this->resolved[$resolvedId]);
 
-        return $this->profiling->measure(
-            'get',
+        return $this->profiling->trackGet(
             $resolvedId,
+            $wasCached,
             function () use ($resolvedId, $id): mixed {
                 if (isset($this->resolved[$resolvedId])) {
                     return $this->resolved[$resolvedId];
@@ -81,7 +81,6 @@ abstract class AbstractCompiledContainer implements CompiledContainerInterface
 
                 return $this->resolveAndCache($resolvedId);
             },
-            $wasCached,
         );
     }
 
@@ -100,8 +99,7 @@ abstract class AbstractCompiledContainer implements CompiledContainerInterface
     {
         $resolvedId = $this->aliasResolver->resolve($id);
 
-        return $this->profiling->measure(
-            'make',
+        return $this->profiling->trackMake(
             $resolvedId,
             function () use ($resolvedId, $id): mixed {
                 if (!$this->canCreate($resolvedId)) {
@@ -256,8 +254,7 @@ abstract class AbstractCompiledContainer implements CompiledContainerInterface
     {
         $target = ContainerProfilingSupport::describeCallable($callable);
 
-        return $this->profiling->measure(
-            'call',
+        return $this->profiling->trackCall(
             $target,
             fn (): mixed => $this->callableInvoker()->invoke($callable, $parameters),
         );

@@ -116,11 +116,10 @@ final class Container implements ContainerInterface
         $resolvedId = $this->aliasResolver->resolve($id);
         $wasCached = isset($this->resolved[$resolvedId]);
 
-        return $this->profiling->measure(
-            'get',
+        return $this->profiling->trackGet(
             $resolvedId,
-            fn (): mixed => $this->resolveService($resolvedId, singleton: true),
             $wasCached,
+            fn (): mixed => $this->resolveService($resolvedId, singleton: true),
         );
     }
 
@@ -131,8 +130,7 @@ final class Container implements ContainerInterface
     {
         $resolvedId = $this->aliasResolver->resolve($id);
 
-        return $this->profiling->measure(
-            'make',
+        return $this->profiling->trackMake(
             $resolvedId,
             fn (): mixed => $this->resolveService($resolvedId, singleton: false),
         );
@@ -222,8 +220,7 @@ final class Container implements ContainerInterface
     {
         $target = ContainerProfilingSupport::describeCallable($callable);
 
-        return $this->profiling->measure(
-            'call',
+        return $this->profiling->trackCall(
             $target,
             fn (): mixed => $this->callableInvoker()->invoke($callable, $parameters),
         );

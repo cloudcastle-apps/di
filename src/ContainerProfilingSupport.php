@@ -85,6 +85,42 @@ final class ContainerProfilingSupport
     }
 
     /**
+     * @template T
+     *
+     * @param callable(): T $resolver
+     *
+     * @return T
+     */
+    public function trackGet(string $resolvedId, bool $wasCached, callable $resolver): mixed
+    {
+        return $this->measure('get', $resolvedId, $resolver, $wasCached);
+    }
+
+    /**
+     * @template T
+     *
+     * @param callable(): T $resolver
+     *
+     * @return T
+     */
+    public function trackMake(string $resolvedId, callable $resolver): mixed
+    {
+        return $this->measure('make', $resolvedId, $resolver);
+    }
+
+    /**
+     * @template T
+     *
+     * @param callable(): T $invoker
+     *
+     * @return T
+     */
+    public function trackCall(string $target, callable $invoker): mixed
+    {
+        return $this->measure('call', $target, $invoker);
+    }
+
+    /**
      * Выполняет callback с опциональным замером времени.
      *
      * Если profiling выключен, callback вызывается без накладных расходов на замер.
