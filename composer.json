@@ -113,7 +113,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-main": "1.13-dev"
+            "dev-main": "1.14-dev"
         }
     },
     "scripts": {
@@ -122,7 +122,8 @@
             "@psalm"
         ],
         "benchmark-check": "@php tools/benchmark-report.php --check --tolerance=1.5",
-        "benchmark-report": "@php tools/benchmark-report.php --markdown",
+        "benchmark-report": "@php tools/benchmark-report.php --markdown --output-dir=var/benchmark",
+        "benchmark-report-json": "@php tools/benchmark-report.php --json --output-dir=var/benchmark",
         "check": [
             "@lint",
             "@analyse",
@@ -211,8 +212,9 @@
     },
     "scripts-descriptions": {
         "analyse": "Статический анализ: PHPStan + Psalm",
-        "benchmark-check": "Проверка бенчмарков на регрессию (порог ×1.5 для CI)",
-        "benchmark-report": "Markdown-отчёт фактических времён бенчмарков",
+        "benchmark-check": "Проверка бенчмарков на регрессию (elapsed + memory peak, ×1.5)",
+        "benchmark-report": "Markdown + JSON отчёт бенчмарков в var/benchmark/",
+        "benchmark-report-json": "JSON-отчёт бенчмарков в var/benchmark/",
         "check": "Полный набор проверок качества перед коммитом",
         "ci": "Полный CI-пайплайн: meta → linters → static-analysis → tests",
         "ci:linters": "CI: синтаксис, PHP CS Fixer, PHPCS",

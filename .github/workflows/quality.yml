@@ -97,6 +97,17 @@ jobs:
       - name: Benchmark regression check
         run: composer benchmark-check
 
+      - name: Benchmark reports (artifacts)
+        run: composer benchmark-report
+
+      - name: Upload benchmark artifacts
+        if: matrix.php-version == '8.3'
+        uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-reports
+          path: var/benchmark/
+          if-no-files-found: error
+
       - name: Tests coverage
         run: composer test:coverage
 

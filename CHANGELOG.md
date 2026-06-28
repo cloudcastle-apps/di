@@ -3,6 +3,20 @@
 Формат основан на [Keep a Changelog](https://keepachangelog.com/ru/1.1.0/),
 версионирование — [SemVer](https://semver.org/lang/ru/).
 
+## [1.14.0] — 2026-06-28
+
+### Добавлено
+
+- **Advanced Benchmarks** ([#66](https://github.com/cloudcastle-apps/di/issues/66))
+- Метрики p50/p95/p99, ops/sec, memory peak в `tools/benchmark-lib.php`
+- Сценарии contextual binding, compiled container, runtime vs compiled parity
+- `--json`, `--output-dir` в `benchmark-report.php`; артефакты CI `benchmark-reports`
+- Регрессия по elapsed **и** memory peak (×1.5)
+
+### Изменено
+
+- **Тесты:** +4 unit (`BenchmarkLibTest`)
+
 ## [1.13.0] — 2026-06-28
 
 ### Добавлено
