@@ -53,4 +53,18 @@ final class ServiceTtlRegistryTest extends TestCase
 
         $this->registry->setTagTtl('group', 0);
     }
+
+    public function testSetServiceTtlAcceptsOneSecond(): void
+    {
+        $this->registry->setServiceTtl('svc', 1);
+
+        self::assertSame(1, $this->registry->effectiveTtl('svc', []));
+    }
+
+    public function testSetTagTtlAcceptsOneSecond(): void
+    {
+        $this->registry->setTagTtl('group', 1);
+
+        self::assertSame(1, $this->registry->effectiveTtl('svc', ['group']));
+    }
 }

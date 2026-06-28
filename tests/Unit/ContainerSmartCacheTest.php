@@ -32,6 +32,27 @@ final class ContainerSmartCacheTest extends TestCase
         self::assertSame(2, $calls);
     }
 
+    public function testCacheForExpiresSingletonAfterTtl(): void
+    {
+        $clock = new class () {
+            public float $now = 1_000.0;
+        };
+        $container = new Container(smartCacheClock: fn (): float => $clock->now);
+
+        $calls = 0;
+        $container->set('svc', static function () use (&$calls): stdClass {
+            ++$calls;
+
+            return new stdClass();
+        });
+        $container->cacheFor('svc', ttlSeconds: 10);
+        $container->get('svc');
+        $clock->now += 10.0;
+        $container->get('svc');
+
+        self::assertSame(2, $calls);
+    }
+
     public function testSetInvalidatesSingletonCache(): void
     {
         $container = new Container();

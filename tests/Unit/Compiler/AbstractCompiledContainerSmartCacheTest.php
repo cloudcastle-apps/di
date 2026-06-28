@@ -22,4 +22,19 @@ final class AbstractCompiledContainerSmartCacheTest extends TestCase
 
         self::assertSame(2, $container->createCount('value'));
     }
+
+    public function testCacheForExpiresSingletonInCompiledGet(): void
+    {
+        $clock = new class () {
+            public float $now = 1_000.0;
+        };
+        $container = new StubCompiledContainer(smartCacheClock: fn (): float => $clock->now);
+
+        $container->cacheFor('value', ttlSeconds: 5);
+        $container->get('value');
+        $clock->now += 5.0;
+        $container->get('value');
+
+        self::assertSame(2, $container->createCount('value'));
+    }
 }

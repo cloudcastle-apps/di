@@ -16,7 +16,7 @@ final class StubCompiledContainer extends AbstractCompiledContainer
     /** @var array<string, int> */
     private array $createCounts = [];
 
-    public function __construct(array $contextual = [])
+    public function __construct(array $contextual = [], ?callable $smartCacheClock = null)
     {
         parent::__construct(
             compiledClassName: self::class,
@@ -24,6 +24,7 @@ final class StubCompiledContainer extends AbstractCompiledContainer
             tags: ['group' => ['missing', 'value'], 'empty' => []],
             definitionIds: ['value', 'null-value', 'counter'],
             contextual: $contextual,
+            smartCacheClock: $smartCacheClock,
         );
     }
 

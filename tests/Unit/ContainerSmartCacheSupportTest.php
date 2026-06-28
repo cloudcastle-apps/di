@@ -26,6 +26,16 @@ final class ContainerSmartCacheSupportTest extends TestCase
         $this->resolved = [];
     }
 
+    public function testEvictIfExpiredRemovesEntryWithoutTimestamp(): void
+    {
+        $this->support->configureFor('svc', ttlSeconds: 10);
+        $this->resolved['svc'] = new stdClass();
+
+        $this->support->evictIfExpired('svc', [], $this->resolved);
+
+        self::assertArrayNotHasKey('svc', $this->resolved);
+    }
+
     public function testEvictIfExpiredRemovesStaleSingleton(): void
     {
         $this->support->configureFor('svc', ttlSeconds: 10);

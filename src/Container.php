@@ -95,8 +95,10 @@ final class Container implements ContainerInterface
 
     /**
      * Создаёт пустой контейнер с внутренними резолверами alias, экземпляров и after-resolving.
+     *
+     * @param callable(): float|null $smartCacheClock Источник времени для smart cache (только тесты)
      */
-    public function __construct()
+    public function __construct(?callable $smartCacheClock = null)
     {
         $this->aliasResolver = new ServiceAliasResolver();
         $this->instanceResolver = new ServiceInstanceResolver($this);
@@ -107,7 +109,7 @@ final class Container implements ContainerInterface
         });
         $this->profiling = new ContainerProfilingSupport();
         $this->memoryPool = new ContainerMemoryPoolSupport();
-        $this->smartCache = new ContainerSmartCacheSupport();
+        $this->smartCache = new ContainerSmartCacheSupport($smartCacheClock);
     }
 
     /**

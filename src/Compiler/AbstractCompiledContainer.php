@@ -50,6 +50,7 @@ abstract class AbstractCompiledContainer implements CompiledContainerInterface
      * @param array<string, list<string>> $tags
      * @param list<string> $definitionIds
      * @param array<string, array<string, string>> $contextual
+     * @param callable(): float|null $smartCacheClock Источник времени для smart cache (только тесты)
      */
     public function __construct(
         private readonly string $compiledClassName,
@@ -57,6 +58,7 @@ abstract class AbstractCompiledContainer implements CompiledContainerInterface
         private readonly array $tags,
         private readonly array $definitionIds,
         private readonly array $contextual = [],
+        ?callable $smartCacheClock = null,
     ) {
         $this->aliasResolver = new ServiceAliasResolver();
 
@@ -66,7 +68,7 @@ abstract class AbstractCompiledContainer implements CompiledContainerInterface
 
         $this->profiling = new ContainerProfilingSupport();
         $this->memoryPool = new ContainerMemoryPoolSupport();
-        $this->smartCache = new ContainerSmartCacheSupport();
+        $this->smartCache = new ContainerSmartCacheSupport($smartCacheClock);
     }
 
     abstract protected function create(string $id): mixed;
