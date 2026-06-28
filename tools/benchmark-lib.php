@@ -217,7 +217,9 @@ function benchmark_collect(): array
             return $container;
         },
         static function (Container $container): void {
-            $container->getTaggedIds('handlers');
+            if ($container->getTaggedIds('handlers') === []) {
+                throw new RuntimeException('Ожидались tagged ids.');
+            }
         },
         64.0,
     );
@@ -306,25 +308,39 @@ function benchmark_collect(): array
         'runtime vs compiled parity get()',
         1000,
         2.0,
-        static function (): array {
-            $runtime = benchmark_create_frozen_contextual_container();
-            $compiled = benchmark_create_compiled_contextual_container();
-
-            return ['runtime' => $runtime, 'compiled' => $compiled];
-        },
-        static function (array $pair, int $index): void {
-            if ($index % 2 === 0) {
-                $pair['runtime']->get(ReportService::class);
-                $pair['compiled']->get(ReportService::class);
-            } else {
-                $pair['runtime']->get(AuditService::class);
-                $pair['compiled']->get(AuditService::class);
-            }
-        },
+        static fn (): array => benchmark_create_runtime_compiled_pair(),
+        'benchmark_resolve_runtime_compiled_pair',
         96.0,
     );
 
     return $results;
+}
+
+/**
+ * @return array{runtime: Container, compiled: CompiledContainerInterface}
+ */
+function benchmark_create_runtime_compiled_pair(): array
+{
+    return [
+        'runtime' => benchmark_create_frozen_contextual_container(),
+        'compiled' => benchmark_create_compiled_contextual_container(),
+    ];
+}
+
+/**
+ * @param array{runtime: Container, compiled: CompiledContainerInterface} $pair
+ */
+function benchmark_resolve_runtime_compiled_pair(array $pair, int $index): void
+{
+    if ($index % 2 === 0) {
+        $pair['runtime']->get(ReportService::class);
+        $pair['compiled']->get(ReportService::class);
+
+        return;
+    }
+
+    $pair['runtime']->get(AuditService::class);
+    $pair['compiled']->get(AuditService::class);
 }
 
 function benchmark_create_frozen_contextual_container(): Container
@@ -438,9 +454,37 @@ function benchmark_find_regressions(array $results, float $tolerance): array
 }
 
 /**
- * @param list<array<string, mixed>> $results
+ * @param list<array{
+ *     label: string,
+ *     iterations: int,
+ *     budget_ms: float|null,
+ *     memory_budget_mb: float|null,
+ *     elapsed_ms: float,
+ *     p50_ms: float,
+ *     p95_ms: float,
+ *     p99_ms: float,
+ *     ops_sec: float,
+ *     memory_peak_mb: float
+ * }> $results
  *
- * @return array<string, mixed>
+ * @return array{
+ *     generated_at: string,
+ *     php_version: string,
+ *     tolerance: float,
+ *     scenarios: list<array{
+ *         label: string,
+ *         iterations: int,
+ *         budget_ms: float|null,
+ *         memory_budget_mb: float|null,
+ *         elapsed_ms: float,
+ *         p50_ms: float,
+ *         p95_ms: float,
+ *         p99_ms: float,
+ *         ops_sec: float,
+ *         memory_peak_mb: float
+ *     }>,
+ *     regressions: list<array<string, mixed>>
+ * }
  */
 function benchmark_build_report_payload(array $results, float $tolerance): array
 {
