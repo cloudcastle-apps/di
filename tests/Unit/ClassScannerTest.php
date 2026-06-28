@@ -234,6 +234,43 @@ final class ClassScannerTest extends TestCase
         self::assertSame([ScanOrderTarget::class], $classNames);
     }
 
+    public function testScanReturnsClassesInPathnameOrder(): void
+    {
+        $directory = sys_get_temp_dir() . '/cloudcastle-di-scan-order-' . uniqid('', true);
+        mkdir($directory);
+        file_put_contents(
+            $directory . '/Zzz.php',
+            '<?php declare(strict_types=1);'
+            . "\n namespace CloudCastle\\DI\\Tests\\Fixtures\\ScanOrderTmp;"
+            . ' final class Zzz {}',
+        );
+        file_put_contents(
+            $directory . '/Aaa.php',
+            '<?php declare(strict_types=1);'
+            . "\n namespace CloudCastle\\DI\\Tests\\Fixtures\\ScanOrderTmp;"
+            . ' final class Aaa {}',
+        );
+        require_once $directory . '/Zzz.php';
+        require_once $directory . '/Aaa.php';
+
+        try {
+            $scanner = new ClassScanner();
+            $classNames = $scanner->scan($directory, 'CloudCastle\\DI\\Tests\\Fixtures\\ScanOrderTmp\\');
+
+            self::assertSame(
+                [
+                    'CloudCastle\\DI\\Tests\\Fixtures\\ScanOrderTmp\\Aaa',
+                    'CloudCastle\\DI\\Tests\\Fixtures\\ScanOrderTmp\\Zzz',
+                ],
+                $classNames,
+            );
+        } finally {
+            unlink($directory . '/Aaa.php');
+            unlink($directory . '/Zzz.php');
+            rmdir($directory);
+        }
+    }
+
     public function testScanFindsConcreteClassAfterAbstractInSameFile(): void
     {
         $scanner = new ClassScanner();

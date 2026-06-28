@@ -35,6 +35,9 @@ if (extension_loaded('xdebug')) {
     $initialTestPhpOptions[] = '-d pcov.directory=' . $projectRoot . '/src';
 }
 
+$initialTestPhpOptions[] = '-d opcache.enable=0';
+$initialTestPhpOptions[] = '-d opcache.enable_cli=0';
+
 if ($initialTestPhpOptions !== []) {
     $infectionArgs[] = '--initial-tests-php-options=' . implode(' ', $initialTestPhpOptions);
 }
