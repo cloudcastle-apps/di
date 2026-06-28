@@ -113,7 +113,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-main": "1.14-dev"
+            "dev-main": "1.15-dev"
         }
     },
     "scripts": {

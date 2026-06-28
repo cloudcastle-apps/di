@@ -370,4 +370,39 @@ interface ContainerInterface extends PsrContainerInterface
      * }
      */
     public function dump(): array;
+
+    /**
+     * Включает сбор замеров {@see get()}, {@see make()} и {@see call()} (opt-in, dev/staging).
+     */
+    public function enableProfiling(bool $enabled = true): void;
+
+    /**
+     * Отключает профилирование без сброса накопленных замеров.
+     */
+    public function disableProfiling(): void;
+
+    /**
+     * Проверяет, включён ли сбор замеров.
+     */
+    public function isProfilingEnabled(): bool;
+
+    /**
+     * Сбрасывает накопленные замеры профилировщика.
+     */
+    public function resetProfile(): void;
+
+    /**
+     * Возвращает отчёт профилировщика: агрегаты и top-N медленных операций.
+     *
+     * @param int $limit Максимум записей в `top_slowest` (0 — без ограничения)
+     *
+     * @return array{
+     *     enabled: bool,
+     *     sample_count: int,
+     *     total_ms: float,
+     *     by_operation: array<string, array{count: int, total_ms: float, avg_ms: float}>,
+     *     top_slowest: list<array{operation: string, target: string, elapsed_ms: float, cached: bool}>
+     * }
+     */
+    public function profileReport(int $limit = 10): array;
 }

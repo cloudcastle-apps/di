@@ -46,6 +46,16 @@
 
 `tools/benchmark-lib.php` — сценарии runtime/compiled/contextual binding; артефакты CI (PHP 8.3): `benchmark-reports`.
 
+### Performance Profiler (v1.15.0, #65)
+
+Opt-in замеры `get()` / `make()` / `call()` без overhead в prod:
+
+| Метод | Назначение |
+|-------|------------|
+| `enableProfiling()` / `disableProfiling()` | Включить/выключить сбор |
+| `profileReport($limit)` | top-N медленных операций + агрегаты по типу |
+| `resetProfile()` | Очистить накопленные замеры |
+
 ---
 
 ## Load: `ContainerLoadTest` (базовый API)
@@ -274,8 +284,7 @@ composer benchmark-check    # проверка регрессии (как в CI)
 |---|---|---|
 | ⚡ | **Memory Pool** — пул объектов для снижения GC | [#63](https://github.com/cloudcastle-apps/di/issues/63) |
 | 🎯 | **Smart Caching** — кэширование с TTL | [#64](https://github.com/cloudcastle-apps/di/issues/64) |
-| 📊 | **Performance Profiler** — встроенный профилировщик | [#65](https://github.com/cloudcastle-apps/di/issues/65) |
-| 🧪 | **Advanced Benchmarks** — p50/p95, memory, ops/sec | [#66](https://github.com/cloudcastle-apps/di/issues/66) |
+| 🧪 | **Advanced Benchmarks** — p50/p95, memory, ops/sec | [#66](https://github.com/cloudcastle-apps/di/issues/66) ✅ v1.14.0 |
 
 Обзор roadmap — [Home](Home) · [UPGRADING](Upgrading).
 

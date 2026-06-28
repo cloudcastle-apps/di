@@ -80,6 +80,9 @@ final class Container implements ContainerInterface
     /** Contextual when/needs/give (#25) */
     private readonly ContextualBindingSupport $contextual;
 
+    /** Opt-in профилирование get/make/call (#65) */
+    private readonly ContainerProfilingSupport $profiling;
+
     /**
      * Создаёт пустой контейнер с внутренними резолверами alias, экземпляров и after-resolving.
      */
@@ -92,6 +95,7 @@ final class Container implements ContainerInterface
         $this->contextual = new ContextualBindingSupport(function (): void {
             $this->assertMutable();
         });
+        $this->profiling = new ContainerProfilingSupport();
     }
 
     /**
@@ -109,7 +113,15 @@ final class Container implements ContainerInterface
      */
     public function get(string $id): mixed
     {
-        return $this->resolveService($this->aliasResolver->resolve($id), singleton: true);
+        $resolvedId = $this->aliasResolver->resolve($id);
+        $wasCached = isset($this->resolved[$resolvedId]);
+
+        return $this->profiling->measure(
+            'get',
+            $resolvedId,
+            fn (): mixed => $this->resolveService($resolvedId, singleton: true),
+            $wasCached,
+        );
     }
 
     /**
@@ -117,7 +129,13 @@ final class Container implements ContainerInterface
      */
     public function make(string $id): mixed
     {
-        return $this->resolveService($this->aliasResolver->resolve($id), singleton: false);
+        $resolvedId = $this->aliasResolver->resolve($id);
+
+        return $this->profiling->measure(
+            'make',
+            $resolvedId,
+            fn (): mixed => $this->resolveService($resolvedId, singleton: false),
+        );
     }
 
     /**
@@ -202,7 +220,13 @@ final class Container implements ContainerInterface
      */
     public function call(callable $callable, array $parameters = []): mixed
     {
-        return $this->callableInvoker()->invoke($callable, $parameters);
+        $target = ContainerProfilingSupport::describeCallable($callable);
+
+        return $this->profiling->measure(
+            'call',
+            $target,
+            fn (): mixed => $this->callableInvoker()->invoke($callable, $parameters),
+        );
     }
 
     /**
@@ -272,6 +296,50 @@ final class Container implements ContainerInterface
     public function dump(): array
     {
         return $this->introspector()->dump();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function enableProfiling(bool $enabled = true): void
+    {
+        if ($enabled) {
+            $this->profiling->enable();
+        } else {
+            $this->profiling->disable();
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function disableProfiling(): void
+    {
+        $this->profiling->disable();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function isProfilingEnabled(): bool
+    {
+        return $this->profiling->isEnabled();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function resetProfile(): void
+    {
+        $this->profiling->reset();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function profileReport(int $limit = 10): array
+    {
+        return $this->profiling->report($limit);
     }
 
     /**

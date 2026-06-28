@@ -3,6 +3,19 @@
 Формат основан на [Keep a Changelog](https://keepachangelog.com/ru/1.1.0/),
 версионирование — [SemVer](https://semver.org/lang/ru/).
 
+## [1.15.0] — 2026-06-28
+
+### Добавлено
+
+- **Performance Profiler** ([#65](https://github.com/cloudcastle-apps/di/issues/65))
+- `Container::enableProfiling()` / `disableProfiling()` / `profileReport()` / `resetProfile()` — opt-in замеры get/make/call
+- `ContainerProfiler`, `ContainerProfilingSupport` — агрегаты и top-N медленных операций
+
+### Изменено
+
+- **Тесты:** +9 PHPUnit (profiler)
+- PHPMD: `maxfields` 18→20 для `Container`
+
 ## [1.14.0] — 2026-06-28
 
 ### Добавлено
