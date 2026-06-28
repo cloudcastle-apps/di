@@ -174,7 +174,7 @@
         "coverage-check": "@php tools/coverage-check.php var/coverage/clover.xml",
         "cs-check": "php-cs-fixer fix --dry-run --diff --verbose",
         "cs-fix": "php-cs-fixer fix --verbose",
-        "deps-audit": "composer audit --no-ansi",
+        "deps-audit": "bash tools/deps-audit.sh",
         "deptrac": "deptrac analyse --fail-on-uncovered --report-uncovered",
         "docs": "bash bin/generate-docs.sh",
         "docs:check": "bash bin/generate-docs.sh",
