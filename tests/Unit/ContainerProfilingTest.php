@@ -133,6 +133,46 @@ final class ContainerProfilingTest extends TestCase
         self::assertFalse($container->profileReport()['enabled']);
     }
 
+    public function testProfilingLifecycle(): void
+    {
+        $container = new Container();
+        $container->set('svc', new stdClass());
+
+        self::assertFalse($container->isProfilingEnabled());
+
+        $container->enableProfiling();
+        self::assertTrue($container->isProfilingEnabled());
+
+        $container->get('svc');
+
+        self::assertSame(1, $container->profileReport()['sample_count']);
+        self::assertTrue($container->profileReport()['enabled']);
+
+        $container->disableProfiling();
+        self::assertFalse($container->isProfilingEnabled());
+
+        $container->get('svc');
+        self::assertSame(1, $container->profileReport()['sample_count']);
+
+        $container->resetProfile();
+        self::assertSame(0, $container->profileReport()['sample_count']);
+        self::assertFalse($container->isProfilingEnabled());
+    }
+
+    public function testProfileReportLimitIsForwarded(): void
+    {
+        $container = new Container();
+        $container->enableProfiling();
+
+        for ($index = 0; $index < 3; ++$index) {
+            $container->set('svc-' . $index, new stdClass());
+            $container->get('svc-' . $index);
+        }
+
+        self::assertCount(1, $container->profileReport(limit: 1)['top_slowest']);
+        self::assertCount(3, $container->profileReport(limit: 0)['top_slowest']);
+    }
+
     public function testDescribeCallableFormatsTargets(): void
     {
         self::assertSame('closure', ContainerProfilingSupport::describeCallable(static fn (): int => 1));

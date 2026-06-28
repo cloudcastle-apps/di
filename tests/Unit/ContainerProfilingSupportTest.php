@@ -118,10 +118,12 @@ final class ContainerProfilingSupportTest extends TestCase
             usleep(2000);
         });
 
-        $elapsedMs = $this->support->report()['top_slowest'][0]['elapsed_ms'];
+        $sample = $this->support->report()['top_slowest'][0];
 
-        self::assertGreaterThan(0.5, $elapsedMs);
-        self::assertLessThan(50.0, $elapsedMs);
+        self::assertSame('get', $sample['operation']);
+        self::assertSame('slow', $sample['target']);
+        self::assertGreaterThan(0.5, $sample['elapsed_ms']);
+        self::assertLessThan(50.0, $sample['elapsed_ms']);
     }
 
     public function testDescribeCallableFormatsClassStringArrayCallable(): void
