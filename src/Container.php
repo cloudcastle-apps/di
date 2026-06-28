@@ -28,6 +28,7 @@ final class Container implements ContainerInterface
 {
     use ContainerMemoryPoolApi;
     use ContainerProfilingApi;
+    use ContainerSmartCacheApi;
 
     /** @var array<string, mixed> Определения сервисов: экземпляр, скаляр или фабрика */
     private array $definitions = [];
@@ -89,6 +90,9 @@ final class Container implements ContainerInterface
     /** Opt-in object pool для {@see make()} (#63); по умолчанию выключен */
     private readonly ContainerMemoryPoolSupport $memoryPool;
 
+    /** Opt-in TTL для singleton-кэша {@see get()} (#64); по умолчанию без ограничения */
+    private readonly ContainerSmartCacheSupport $smartCache;
+
     /**
      * Создаёт пустой контейнер с внутренними резолверами alias, экземпляров и after-resolving.
      */
@@ -103,6 +107,7 @@ final class Container implements ContainerInterface
         });
         $this->profiling = new ContainerProfilingSupport();
         $this->memoryPool = new ContainerMemoryPoolSupport();
+        $this->smartCache = new ContainerSmartCacheSupport();
     }
 
     /**
@@ -121,6 +126,11 @@ final class Container implements ContainerInterface
     public function get(string $id): mixed
     {
         $resolvedId = $this->aliasResolver->resolve($id);
+        $this->smartCache->evictIfExpired(
+            $resolvedId,
+            $this->tagsForService($resolvedId),
+            $this->resolved,
+        );
         $wasCached = isset($this->resolved[$resolvedId]);
 
         return $this->profiling->trackGet(
@@ -191,6 +201,7 @@ final class Container implements ContainerInterface
         }
 
         $this->alias($abstract, $concrete);
+        $this->smartCache->forget($this->aliasResolver->resolve($concrete), $this->resolved);
     }
 
     /**
@@ -386,7 +397,7 @@ final class Container implements ContainerInterface
     public function set(string $id, mixed $concrete): void
     {
         $this->assertMutable();
-        unset($this->resolved[$id]);
+        $this->smartCache->forget($id, $this->resolved);
         $this->definitions[$id] = $concrete;
     }
 
@@ -620,11 +631,15 @@ final class Container implements ContainerInterface
                 $this->resolveHooks->dispatch($id, $instance, $this);
             } catch (Throwable $exception) {
                 if ($singleton) {
-                    unset($this->resolved[$id]);
+                    $this->smartCache->forget($id, $this->resolved);
                 }
 
                 throw $exception;
             }
+        }
+
+        if ($singleton && isset($this->resolved[$id]) && !$wasCached) {
+            $this->smartCache->touch($id);
         }
 
         return $instance;

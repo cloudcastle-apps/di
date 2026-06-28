@@ -3,6 +3,21 @@
 Формат основан на [Keep a Changelog](https://keepachangelog.com/ru/1.1.0/),
 версионирование — [SemVer](https://semver.org/lang/ru/).
 
+## [1.17.0] — 2026-06-28
+
+### Добавлено
+
+- **Smart Caching** ([#64](https://github.com/cloudcastle-apps/di/issues/64))
+- TTL per binding и per tag: `cacheFor()`, `cacheTagFor()`
+- Явная инвалидация: `forget()`, `forgetTag()`, `forgetAll()`, `cacheStats()`
+- Авто-инвалидация singleton-кэша при `set()` и `bind()`
+- `ServiceTtlRegistry`, `ContainerSmartCacheSupport` — TTL для `get()` без изменений по умолчанию
+
+### Изменено
+
+- **Тесты:** +13 PHPUnit (smart cache)
+- PHPMD: `maxfields` 22→24 для `Container`
+
 ## [1.16.0] — 2026-06-28
 
 ### Добавлено

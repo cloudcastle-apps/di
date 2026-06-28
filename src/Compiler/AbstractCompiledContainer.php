@@ -8,6 +8,7 @@ use CloudCastle\DI\AttributeServiceIdReader;
 use CloudCastle\DI\CallableInvoker;
 use CloudCastle\DI\ContainerMemoryPoolSupport;
 use CloudCastle\DI\ContainerProfilingSupport;
+use CloudCastle\DI\ContainerSmartCacheSupport;
 use CloudCastle\DI\Contract\CompiledContainerInterface;
 use CloudCastle\DI\Contract\ContextualBindingNeedsInterface;
 use CloudCastle\DI\Exception\ContainerException;
@@ -26,6 +27,7 @@ abstract class AbstractCompiledContainer implements CompiledContainerInterface
 {
     use \CloudCastle\DI\ContainerMemoryPoolApi;
     use \CloudCastle\DI\ContainerProfilingApi;
+    use \CloudCastle\DI\ContainerSmartCacheApi;
 
     /** @var array<string, mixed> */
     private array $resolved = [];
@@ -39,6 +41,9 @@ abstract class AbstractCompiledContainer implements CompiledContainerInterface
 
     /** Opt-in object pool для {@see make()} (#63) */
     private readonly ContainerMemoryPoolSupport $memoryPool;
+
+    /** Opt-in TTL для singleton-кэша {@see get()} (#64) */
+    private readonly ContainerSmartCacheSupport $smartCache;
 
     /**
      * @param array<string, string> $aliases
@@ -61,6 +66,7 @@ abstract class AbstractCompiledContainer implements CompiledContainerInterface
 
         $this->profiling = new ContainerProfilingSupport();
         $this->memoryPool = new ContainerMemoryPoolSupport();
+        $this->smartCache = new ContainerSmartCacheSupport();
     }
 
     abstract protected function create(string $id): mixed;
@@ -73,6 +79,11 @@ abstract class AbstractCompiledContainer implements CompiledContainerInterface
     public function get(string $id): mixed
     {
         $resolvedId = $this->aliasResolver->resolve($id);
+        $this->smartCache->evictIfExpired(
+            $resolvedId,
+            $this->tagsForService($resolvedId),
+            $this->resolved,
+        );
         $wasCached = isset($this->resolved[$resolvedId]);
 
         return $this->profiling->trackGet(
@@ -347,6 +358,7 @@ abstract class AbstractCompiledContainer implements CompiledContainerInterface
 
         if ($instance !== null) {
             $this->resolved[$resolvedId] = $instance;
+            $this->smartCache->touch($resolvedId);
         }
 
         return $instance;

@@ -1,0 +1,25 @@
+<?php
+
+declare(strict_types=1);
+
+namespace CloudCastle\DI\Tests\Unit\Compiler;
+
+use CloudCastle\DI\Compiler\AbstractCompiledContainer;
+use CloudCastle\DI\Tests\Fixtures\Compiled\StubCompiledContainer;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\TestCase;
+
+#[CoversClass(AbstractCompiledContainer::class)]
+final class AbstractCompiledContainerSmartCacheTest extends TestCase
+{
+    public function testForgetForcesRecreationInCompiledGet(): void
+    {
+        $container = new StubCompiledContainer();
+
+        $container->get('value');
+        $container->forget('value');
+        $container->get('value');
+
+        self::assertSame(2, $container->createCount('value'));
+    }
+}

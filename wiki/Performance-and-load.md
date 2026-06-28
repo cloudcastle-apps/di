@@ -56,6 +56,17 @@ Opt-in замеры `get()` / `make()` / `call()` без overhead в prod:
 | `profileReport($limit)` | top-N медленных операций + агрегаты по типу |
 | `resetProfile()` | Очистить накопленные замеры |
 
+### Smart Caching (v1.17.0, #64)
+
+Opt-in TTL для singleton-кэша `get()`:
+
+| Метод | Назначение |
+|-------|------------|
+| `cacheFor($id, $ttlSeconds)` | TTL для id |
+| `cacheTagFor($tag, $ttlSeconds)` | TTL для всех сервисов с тегом |
+| `forget($id)` / `forgetTag($tag)` / `forgetAll()` | Явная инвалидация |
+| `cacheStats($id)` | TTL, cached, expires_at |
+
 ### Memory Pool (v1.16.0, #63)
 
 Opt-in переиспользование экземпляров для `make()`:
@@ -293,7 +304,7 @@ composer benchmark-check    # проверка регрессии (как в CI)
 | | Направление | Issue |
 |---|---|---|
 | ⚡ | **Memory Pool** — пул объектов для снижения GC | [#63](https://github.com/cloudcastle-apps/di/issues/63) ✅ v1.16.0 |
-| 🎯 | **Smart Caching** — кэширование с TTL | [#64](https://github.com/cloudcastle-apps/di/issues/64) |
+| 🎯 | **Smart Caching** — кэширование с TTL | [#64](https://github.com/cloudcastle-apps/di/issues/64) ✅ v1.17.0 |
 | 🧪 | **Advanced Benchmarks** — p50/p95, memory, ops/sec | [#66](https://github.com/cloudcastle-apps/di/issues/66) ✅ v1.14.0 |
 
 Обзор roadmap — [Home](Home) · [UPGRADING](Upgrading).
