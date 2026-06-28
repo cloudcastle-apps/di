@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace CloudCastle\DI\Tests\Unit;
 
+use CloudCastle\DI\ClassDependencyResolver;
 use CloudCastle\DI\Container;
 use CloudCastle\DI\ContextualBinding;
 use CloudCastle\DI\ContextualBindingConfigurator;
@@ -20,6 +21,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
 #[CoversClass(Container::class)]
+#[CoversClass(ClassDependencyResolver::class)]
 #[CoversClass(ContextualBinding::class)]
 #[CoversClass(ContextualBindingConfigurator::class)]
 #[CoversClass(ContextualBindingGive::class)]
@@ -82,5 +84,23 @@ final class ContainerContextualBindingTest extends TestCase
         $this->expectExceptionMessage('заморожен');
 
         $needs->needs(LoggerInterface::class)->give('memory.logger');
+    }
+
+    public function testClassDependencyResolverUsesContextualGive(): void
+    {
+        $container = new Container();
+        $container->set('memory.logger', new MemoryLogger());
+        $container->when(ReportService::class)
+            ->needs(LoggerInterface::class)
+            ->give('memory.logger');
+
+        $resolver = new ClassDependencyResolver($container);
+
+        self::assertTrue($resolver->canResolve(LoggerInterface::class, ReportService::class));
+        self::assertInstanceOf(
+            MemoryLogger::class,
+            $resolver->resolve(LoggerInterface::class, ReportService::class),
+        );
+        self::assertFalse($resolver->canResolve(LoggerInterface::class, AuditService::class));
     }
 }
