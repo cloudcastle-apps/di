@@ -9,7 +9,6 @@ use CloudCastle\DI\Configuration\Loader\XmlConfigurationLoader;
 use CloudCastle\DI\Configuration\Loader\YamlConfigurationLoader;
 use CloudCastle\DI\Container;
 use CloudCastle\DI\Tests\Fixtures\Autowire\FileLogger;
-use CloudCastle\DI\Tests\Fixtures\Autowire\LoggerInterface;
 use CloudCastle\DI\Tests\Fixtures\ContextualBinding\AuditService;
 use CloudCastle\DI\Tests\Fixtures\ContextualBinding\MemoryLogger;
 use CloudCastle\DI\Tests\Fixtures\ContextualBinding\ReportService;
