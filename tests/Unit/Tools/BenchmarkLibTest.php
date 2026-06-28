@@ -10,6 +10,11 @@ use PHPUnit\Framework\TestCase;
 #[CoversNothing]
 final class BenchmarkLibTest extends TestCase
 {
+    public static function setUpBeforeClass(): void
+    {
+        require_once \dirname(__DIR__, 3) . '/tools/benchmark-lib.php';
+    }
+
     public function testPercentileReturnsMedian(): void
     {
         self::assertSame(2.0, benchmark_percentile([1.0, 2.0, 3.0, 4.0], 50));

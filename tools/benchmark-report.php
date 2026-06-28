@@ -11,7 +11,7 @@ declare(strict_types=1);
  */
 
 require dirname(__DIR__) . '/vendor/autoload.php';
-require __DIR__ . '/benchmark-lib.php';
+require_once __DIR__ . '/benchmark-lib.php';
 
 /** @param list<string> $argv */
 function benchmark_parse_tolerance(array $argv): float
