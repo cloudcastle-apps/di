@@ -61,10 +61,6 @@ $infectionArgs = array_merge(
     array_slice($argv, 1),
 );
 
-if (getenv('GITHUB_ACTIONS') === 'true' && !$usePrecoverage) {
-    $infectionArgs[] = '--map-source-class-to-test';
-}
-
 $phpArgs = extension_loaded('yaml') ? [] : ['-d', 'extension=yaml'];
 
 if (getenv('GITHUB_ACTIONS') === 'true' && extension_loaded('xdebug')) {
