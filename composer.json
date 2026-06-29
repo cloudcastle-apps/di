@@ -197,8 +197,7 @@
             "@test:load"
         ],
         "test:coverage": [
-            "@putenv XDEBUG_MODE=coverage",
-            "@php tools/run-with-yaml.php vendor/bin/phpunit --configuration phpunit.coverage.xml.dist --coverage-text --coverage-clover var/coverage/clover.xml",
+            "@php tools/run-coverage.php",
             "@coverage-check"
         ],
         "test:integration": "@phpunit --testsuite integration",
