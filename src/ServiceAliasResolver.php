@@ -56,19 +56,14 @@ final class ServiceAliasResolver
         $visited = [];
 
         while (isset($this->aliases[$id])) {
-            if (!isset($visited[$id])) {
-                $visited[$id] = 0;
-            }
-
-            ++$visited[$id];
-
-            if ($visited[$id] > 1) {
+            if (isset($visited[$id])) {
                 throw new ContainerException(\sprintf(
                     'Обнаружена циклическая цепочка alias для "%s".',
                     $id,
                 ));
             }
 
+            $visited[$id] = true;
             $id = $this->aliases[$id];
         }
 
@@ -110,16 +105,11 @@ final class ServiceAliasResolver
         $id = $startAlias;
 
         while (isset($this->aliases[$id])) {
-            if (!isset($visited[$id])) {
-                $visited[$id] = 0;
-            }
-
-            ++$visited[$id];
-
-            if ($visited[$id] > 1) {
+            if (isset($visited[$id])) {
                 return true;
             }
 
+            $visited[$id] = true;
             $id = $this->aliases[$id];
         }
 

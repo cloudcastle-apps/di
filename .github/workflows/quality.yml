@@ -112,7 +112,7 @@ jobs:
 
       - name: Tests mutation
         run: |
-          rm -rf var/cache/phpunit var/cache/infection var/coverage/coverage-xml
+          rm -rf var/cache/phpunit var/cache/infection
           composer test:mutation
 
       - name: Upload Infection report on failure

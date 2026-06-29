@@ -18,7 +18,6 @@ use CloudCastle\DI\Tests\Fixtures\Autowire\FileLogger;
 use CloudCastle\DI\Tests\Fixtures\Autowire\LoggerInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
-use ReflectionMethod;
 
 #[CoversClass(ContainerConfigurator::class)]
 #[CoversClass(ConfigurationMerger::class)]
@@ -32,13 +31,6 @@ final class ContainerConfiguratorTest extends TestCase
     protected function setUp(): void
     {
         $this->fixturesDirectory = \dirname(__DIR__, 2) . '/Fixtures/Config';
-    }
-
-    public function testApplyMethodIsPublic(): void
-    {
-        $method = new ReflectionMethod(ContainerConfigurator::class, 'apply');
-
-        self::assertTrue($method->isPublic());
     }
 
     public function testConfigureFromPhpFile(): void

@@ -147,10 +147,8 @@ final class CallableInvoker
             if (!$reflection->isStatic()) {
                 if (\is_object($callable)) {
                     $target = $callable;
-                } elseif (\is_array($callable)) {
-                    if (isset($callable[0]) && \is_object($callable[0])) {
-                        $target = $callable[0];
-                    }
+                } elseif (\is_array($callable) && \array_key_exists(0, $callable) && \is_object($callable[0])) {
+                    $target = $callable[0];
                 }
 
                 if (!\is_object($target)) {

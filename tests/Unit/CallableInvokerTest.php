@@ -181,6 +181,23 @@ final class CallableInvokerTest extends TestCase
         $method->invoke($invoker, $callable, $reflection, []);
     }
 
+    public function testInvokeWithArgumentsThrowsWhenArrayCallableOmitsIndexZero(): void
+    {
+        $handler = new class () {
+            public function run(): void
+            {
+            }
+        };
+        $reflection = new ReflectionMethod($handler, 'run');
+        $invoker = new CallableInvoker(new Container());
+        $method = new ReflectionMethod(CallableInvoker::class, 'invokeWithArguments');
+
+        $this->expectException(ContainerException::class);
+        $this->expectExceptionMessage('Callable метода требует объект.');
+
+        $method->invoke($invoker, [1 => $handler, 'run'], $reflection, []);
+    }
+
     public function testInvokeWithArgumentsThrowsWhenCallableIsNeitherArrayNorObject(): void
     {
         $handler = new class () {
