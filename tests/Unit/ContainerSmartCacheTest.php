@@ -7,10 +7,10 @@ namespace CloudCastle\DI\Tests\Unit;
 use CloudCastle\DI\Container;
 use CloudCastle\DI\ContainerSmartCacheSupport;
 use PHPUnit\Framework\Attributes\CoversClass;
+use CloudCastle\DI\Tests\Support\ContainerInternalAccess;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
-#[CoversClass(Container::class)]
 #[CoversClass(ContainerSmartCacheSupport::class)]
 final class ContainerSmartCacheTest extends TestCase
 {
@@ -26,7 +26,7 @@ final class ContainerSmartCacheTest extends TestCase
 
         $container->get('svc');
         $container->get('svc');
-        $container->forget('svc');
+        ContainerInternalAccess::forget($container, 'svc');
         $container->get('svc');
 
         self::assertSame(2, $calls);
@@ -45,7 +45,7 @@ final class ContainerSmartCacheTest extends TestCase
 
             return new stdClass();
         });
-        $container->cacheFor('svc', ttlSeconds: 10);
+        ContainerInternalAccess::cacheFor($container, 'svc', ttlSeconds: 10);
         $container->get('svc');
         $clock->now += 10.0;
         $container->get('svc');
@@ -87,10 +87,10 @@ final class ContainerSmartCacheTest extends TestCase
         $container->set('beta', static fn (): stdClass => new stdClass());
         $container->tag('alpha', 'workers');
         $container->tag('beta', 'workers');
-        $container->cacheTagFor('workers', ttlSeconds: 60);
+        ContainerInternalAccess::cacheTagFor($container, 'workers', ttlSeconds: 60);
 
-        self::assertTrue($container->cacheStats('alpha')['configured']);
-        self::assertTrue($container->cacheStats('beta')['configured']);
+        self::assertTrue(ContainerInternalAccess::cacheStats($container, 'alpha')['configured']);
+        self::assertTrue(ContainerInternalAccess::cacheStats($container, 'beta')['configured']);
     }
 
     public function testForgetTagClearsTaggedSingletons(): void
@@ -112,7 +112,7 @@ final class ContainerSmartCacheTest extends TestCase
 
         $container->get('alpha');
         $container->get('beta');
-        $container->forgetTag('batch');
+        ContainerInternalAccess::forgetTag($container, 'batch');
         $container->get('alpha');
         $container->get('beta');
 
@@ -136,7 +136,7 @@ final class ContainerSmartCacheTest extends TestCase
 
         $container->get('first');
         $container->get('second');
-        $container->forgetAll();
+        ContainerInternalAccess::forgetAll($container);
         $container->get('first');
         $container->get('second');
 
@@ -152,7 +152,7 @@ final class ContainerSmartCacheTest extends TestCase
 
             return new stdClass();
         });
-        $container->cacheFor('proto', ttlSeconds: 3600);
+        ContainerInternalAccess::cacheFor($container, 'proto', ttlSeconds: 3600);
 
         $container->make('proto');
         $container->make('proto');
@@ -167,12 +167,12 @@ final class ContainerSmartCacheTest extends TestCase
         };
         $container = new Container(smartCacheClock: fn (): float => $clock->now);
         $container->set('svc', static fn (): stdClass => new stdClass());
-        $container->cacheFor('svc', ttlSeconds: 15);
+        ContainerInternalAccess::cacheFor($container, 'svc', ttlSeconds: 15);
         $container->get('svc');
 
         $clock->now = 1_015.0;
 
-        self::assertTrue($container->cacheStats('svc')['expired']);
+        self::assertTrue(ContainerInternalAccess::cacheStats($container, 'svc')['expired']);
     }
 
     public function testCacheStatsReportsExpiresAtAfterGet(): void
@@ -182,10 +182,10 @@ final class ContainerSmartCacheTest extends TestCase
         };
         $container = new Container(smartCacheClock: fn (): float => $clock->now);
         $container->set('svc', static fn (): stdClass => new stdClass());
-        $container->cacheFor('svc', ttlSeconds: 20);
+        ContainerInternalAccess::cacheFor($container, 'svc', ttlSeconds: 20);
         $container->get('svc');
 
-        self::assertSame(1_020.0, $container->cacheStats('svc')['expires_at']);
+        self::assertSame(1_020.0, ContainerInternalAccess::cacheStats($container, 'svc')['expires_at']);
     }
 
     public function testTouchTimestampNotUpdatedOnSubsequentGetWithinTtl(): void
@@ -195,13 +195,13 @@ final class ContainerSmartCacheTest extends TestCase
         };
         $container = new Container(smartCacheClock: fn (): float => $clock->now);
         $container->set('svc', static fn (): stdClass => new stdClass());
-        $container->cacheFor('svc', ttlSeconds: 30);
+        ContainerInternalAccess::cacheFor($container, 'svc', ttlSeconds: 30);
         $container->get('svc');
 
         $clock->now = 1_005.0;
         $container->get('svc');
 
-        self::assertSame(1_030.0, $container->cacheStats('svc')['expires_at']);
+        self::assertSame(1_030.0, ContainerInternalAccess::cacheStats($container, 'svc')['expires_at']);
     }
 
     public function testMakeDoesNotUpdateTouchTimestamp(): void
@@ -211,21 +211,21 @@ final class ContainerSmartCacheTest extends TestCase
         };
         $container = new Container(smartCacheClock: fn (): float => $clock->now);
         $container->set('svc', static fn (): stdClass => new stdClass());
-        $container->cacheFor('svc', ttlSeconds: 25);
+        ContainerInternalAccess::cacheFor($container, 'svc', ttlSeconds: 25);
         $container->get('svc');
 
         $clock->now = 1_010.0;
         $container->make('svc');
 
-        self::assertSame(1_025.0, $container->cacheStats('svc')['expires_at']);
+        self::assertSame(1_025.0, ContainerInternalAccess::cacheStats($container, 'svc')['expires_at']);
     }
 
     public function testCacheStatsReportsNotExpiredWhenServiceIsNotCached(): void
     {
         $container = new Container();
         $container->set('svc', static fn (): stdClass => new stdClass());
-        $container->cacheFor('svc', ttlSeconds: 60);
+        ContainerInternalAccess::cacheFor($container, 'svc', ttlSeconds: 60);
 
-        self::assertFalse($container->cacheStats('svc')['expired']);
+        self::assertFalse(ContainerInternalAccess::cacheStats($container, 'svc')['expired']);
     }
 }

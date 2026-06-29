@@ -12,6 +12,7 @@ use CloudCastle\DI\Tests\Fixtures\Compiled\StubCompiledContainer;
 use CloudCastle\DI\Tests\Fixtures\MemoryPool\ResetCounter;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
+use CloudCastle\DI\Tests\Support\ContainerInternalAccess;
 use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
 
@@ -175,39 +176,39 @@ final class AbstractCompiledContainerTest extends TestCase
     public function testProfilingRecordsCompiledGetMakeAndCall(): void
     {
         $container = new StubCompiledContainer();
-        $container->enableProfiling();
+        ContainerInternalAccess::enableProfiling($container);
 
         $container->get('value');
         $container->get('value');
         $container->make('value');
         $container->call(static fn (): string => 'ok');
 
-        self::assertTrue($container->isProfilingEnabled());
+        self::assertTrue(ContainerInternalAccess::isProfilingEnabled($container));
 
-        $report = $container->profileReport();
+        $report = ContainerInternalAccess::profileReport($container);
 
         self::assertSame(4, $report['sample_count']);
         self::assertSame(2, $report['by_operation']['get']['count']);
         self::assertSame(1, $report['by_operation']['make']['count']);
         self::assertSame(1, $report['by_operation']['call']['count']);
 
-        $container->disableProfiling();
+        ContainerInternalAccess::disableProfiling($container);
         $container->get('value');
-        self::assertSame(4, $container->profileReport()['sample_count']);
+        self::assertSame(4, ContainerInternalAccess::profileReport($container)['sample_count']);
 
-        $container->resetProfile();
-        self::assertSame(0, $container->profileReport()['sample_count']);
+        ContainerInternalAccess::resetProfile($container);
+        self::assertSame(0, ContainerInternalAccess::profileReport($container)['sample_count']);
     }
 
     public function testPoolingReusesReleasedInstanceInCompiledMake(): void
     {
         ResetCounter::resetCounters();
         $container = new StubCompiledContainer();
-        $container->enablePooling('counter');
+        ContainerInternalAccess::enablePooling($container, 'counter');
 
         $first = $container->make('counter');
         self::assertInstanceOf(ResetCounter::class, $first);
-        $container->releaseToPool('counter', $first);
+        ContainerInternalAccess::releaseToPool($container, 'counter', $first);
         $second = $container->make('counter');
         self::assertInstanceOf(ResetCounter::class, $second);
 

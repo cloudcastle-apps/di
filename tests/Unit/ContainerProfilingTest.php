@@ -8,11 +8,11 @@ use CloudCastle\DI\Container;
 use CloudCastle\DI\ContainerProfilingSupport;
 use CloudCastle\DI\Tests\Fixtures\Autowire\Clock;
 use CloudCastle\DI\Tests\Fixtures\Autowire\RequiredClockService;
+use CloudCastle\DI\Tests\Support\ContainerInternalAccess;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
-#[CoversClass(Container::class)]
 #[CoversClass(ContainerProfilingSupport::class)]
 final class ContainerProfilingTest extends TestCase
 {
@@ -20,8 +20,8 @@ final class ContainerProfilingTest extends TestCase
     {
         $container = new Container();
 
-        self::assertFalse($container->isProfilingEnabled());
-        self::assertSame(0, $container->profileReport()['sample_count']);
+        self::assertFalse(ContainerInternalAccess::isProfilingEnabled($container));
+        self::assertSame(0, ContainerInternalAccess::profileReport($container)['sample_count']);
     }
 
     public function testEnableProfilingRecordsGetMakeAndCall(): void
@@ -31,14 +31,14 @@ final class ContainerProfilingTest extends TestCase
         $container->enableAutowiring();
         $container->set('app.clock', new Clock());
         $container->autowire(RequiredClockService::class);
-        $container->enableProfiling();
+        ContainerInternalAccess::enableProfiling($container);
 
         $container->get('proto');
         $container->get('proto');
         $container->make('proto');
         $container->call(static fn (Clock $clock): string => $clock::class);
 
-        $report = $container->profileReport(limit: 10);
+        $report = ContainerInternalAccess::profileReport($container, limit: 10);
 
         self::assertTrue($report['enabled']);
         self::assertSame(5, $report['sample_count']);
@@ -55,12 +55,12 @@ final class ContainerProfilingTest extends TestCase
     {
         $container = new Container();
         $container->set('cached', new stdClass());
-        $container->enableProfiling();
+        ContainerInternalAccess::enableProfiling($container);
 
         $container->get('cached');
         $container->get('cached');
 
-        $samples = $container->profileReport()['top_slowest'];
+        $samples = ContainerInternalAccess::profileReport($container)['top_slowest'];
 
         self::assertFalse($samples[0]['cached']);
         self::assertTrue($samples[1]['cached']);
@@ -77,49 +77,49 @@ final class ContainerProfilingTest extends TestCase
     {
         $container = new Container();
         $container->set('svc', new stdClass());
-        $container->enableProfiling();
+        ContainerInternalAccess::enableProfiling($container);
         $container->get('svc');
-        $container->resetProfile();
+        ContainerInternalAccess::resetProfile($container);
 
-        self::assertSame(0, $container->profileReport()['sample_count']);
+        self::assertSame(0, ContainerInternalAccess::profileReport($container)['sample_count']);
     }
 
     public function testDisableProfilingStopsRecording(): void
     {
         $container = new Container();
         $container->set('svc', new stdClass());
-        $container->enableProfiling();
+        ContainerInternalAccess::enableProfiling($container);
         $container->get('svc');
-        $container->disableProfiling();
+        ContainerInternalAccess::disableProfiling($container);
         $container->get('svc');
 
-        self::assertSame(1, $container->profileReport()['sample_count']);
+        self::assertSame(1, ContainerInternalAccess::profileReport($container)['sample_count']);
     }
 
     public function testProfileReportDefaultLimitReturnsTenEntries(): void
     {
         $container = new Container();
-        $container->enableProfiling();
+        ContainerInternalAccess::enableProfiling($container);
 
         for ($index = 0; $index < 11; ++$index) {
             $container->set('svc-' . $index, new stdClass());
             $container->get('svc-' . $index);
         }
 
-        self::assertCount(10, $container->profileReport()['top_slowest']);
+        self::assertCount(10, ContainerInternalAccess::profileReport($container)['top_slowest']);
     }
 
     public function testProfileReportListsOperationNames(): void
     {
         $container = new Container();
         $container->set('proto', new stdClass());
-        $container->enableProfiling();
+        ContainerInternalAccess::enableProfiling($container);
 
         $container->get('proto');
         $container->make('proto');
         $container->call(static fn (): int => 1);
 
-        $operations = array_keys($container->profileReport()['by_operation']);
+        $operations = array_keys(ContainerInternalAccess::profileReport($container)['by_operation']);
 
         self::assertEqualsCanonicalizing(['get', 'make', 'call'], $operations);
     }
@@ -127,10 +127,10 @@ final class ContainerProfilingTest extends TestCase
     public function testProfileReportReflectsDisabledState(): void
     {
         $container = new Container();
-        $container->enableProfiling();
-        $container->disableProfiling();
+        ContainerInternalAccess::enableProfiling($container);
+        ContainerInternalAccess::disableProfiling($container);
 
-        self::assertFalse($container->profileReport()['enabled']);
+        self::assertFalse(ContainerInternalAccess::profileReport($container)['enabled']);
     }
 
     public function testProfilingLifecycle(): void
@@ -138,39 +138,39 @@ final class ContainerProfilingTest extends TestCase
         $container = new Container();
         $container->set('svc', new stdClass());
 
-        self::assertFalse($container->isProfilingEnabled());
+        self::assertFalse(ContainerInternalAccess::isProfilingEnabled($container));
 
-        $container->enableProfiling();
-        self::assertTrue($container->isProfilingEnabled());
-
-        $container->get('svc');
-
-        self::assertSame(1, $container->profileReport()['sample_count']);
-        self::assertTrue($container->profileReport()['enabled']);
-
-        $container->disableProfiling();
-        self::assertFalse($container->isProfilingEnabled());
+        ContainerInternalAccess::enableProfiling($container);
+        self::assertTrue(ContainerInternalAccess::isProfilingEnabled($container));
 
         $container->get('svc');
-        self::assertSame(1, $container->profileReport()['sample_count']);
 
-        $container->resetProfile();
-        self::assertSame(0, $container->profileReport()['sample_count']);
-        self::assertFalse($container->isProfilingEnabled());
+        self::assertSame(1, ContainerInternalAccess::profileReport($container)['sample_count']);
+        self::assertTrue(ContainerInternalAccess::profileReport($container)['enabled']);
+
+        ContainerInternalAccess::disableProfiling($container);
+        self::assertFalse(ContainerInternalAccess::isProfilingEnabled($container));
+
+        $container->get('svc');
+        self::assertSame(1, ContainerInternalAccess::profileReport($container)['sample_count']);
+
+        ContainerInternalAccess::resetProfile($container);
+        self::assertSame(0, ContainerInternalAccess::profileReport($container)['sample_count']);
+        self::assertFalse(ContainerInternalAccess::isProfilingEnabled($container));
     }
 
     public function testProfileReportLimitIsForwarded(): void
     {
         $container = new Container();
-        $container->enableProfiling();
+        ContainerInternalAccess::enableProfiling($container);
 
         for ($index = 0; $index < 3; ++$index) {
             $container->set('svc-' . $index, new stdClass());
             $container->get('svc-' . $index);
         }
 
-        self::assertCount(1, $container->profileReport(limit: 1)['top_slowest']);
-        self::assertCount(3, $container->profileReport(limit: 0)['top_slowest']);
+        self::assertCount(1, ContainerInternalAccess::profileReport($container, limit: 1)['top_slowest']);
+        self::assertCount(3, ContainerInternalAccess::profileReport($container, limit: 0)['top_slowest']);
     }
 
     public function testGetProfileTargetUsesResolvedIdAfterAlias(): void
@@ -178,11 +178,11 @@ final class ContainerProfilingTest extends TestCase
         $container = new Container();
         $container->alias('alias.id', 'target.id');
         $container->set('target.id', new stdClass());
-        $container->enableProfiling();
+        ContainerInternalAccess::enableProfiling($container);
 
         $container->get('alias.id');
 
-        self::assertSame('target.id', $container->profileReport()['top_slowest'][0]['target']);
+        self::assertSame('target.id', ContainerInternalAccess::profileReport($container)['top_slowest'][0]['target']);
     }
 
     public function testProfilingPreservesSingletonCaching(): void
@@ -194,7 +194,7 @@ final class ContainerProfilingTest extends TestCase
 
             return new stdClass();
         });
-        $container->enableProfiling();
+        ContainerInternalAccess::enableProfiling($container);
 
         /** @var object $first */
         $first = $container->get('svc');
@@ -209,21 +209,21 @@ final class ContainerProfilingTest extends TestCase
     {
         $container = new Container();
         $container->set('proto', new stdClass());
-        $container->enableProfiling();
+        ContainerInternalAccess::enableProfiling($container);
 
         $container->make('proto');
 
-        self::assertSame('make', $container->profileReport()['top_slowest'][0]['operation']);
+        self::assertSame('make', ContainerInternalAccess::profileReport($container)['top_slowest'][0]['operation']);
     }
 
     public function testCallProfileTargetDescribesCallable(): void
     {
         $container = new Container();
-        $container->enableProfiling();
+        ContainerInternalAccess::enableProfiling($container);
         $container->call(static fn (): int => 1);
 
-        self::assertSame('call', $container->profileReport()['top_slowest'][0]['operation']);
-        self::assertSame('closure', $container->profileReport()['top_slowest'][0]['target']);
+        self::assertSame('call', ContainerInternalAccess::profileReport($container)['top_slowest'][0]['operation']);
+        self::assertSame('closure', ContainerInternalAccess::profileReport($container)['top_slowest'][0]['target']);
     }
 
     public function testDescribeCallableFormatsTargets(): void
