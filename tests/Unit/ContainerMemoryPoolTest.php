@@ -22,6 +22,25 @@ final class ContainerMemoryPoolTest extends TestCase
         ResetCounter::resetCounters();
     }
 
+    public function testPoolingApiMethodsRemainPublic(): void
+    {
+        $methods = [
+            'enablePooling',
+            'disablePooling',
+            'isPoolingEnabled',
+            'releaseToPool',
+            'clearPool',
+            'clearAllPools',
+            'poolStats',
+        ];
+
+        foreach ($methods as $methodName) {
+            $method = new ReflectionMethod(Container::class, $methodName);
+
+            self::assertTrue($method->isPublic(), $methodName);
+        }
+    }
+
     public function testMakeWithoutPoolingAlwaysCreatesNewInstance(): void
     {
         $container = new Container();
@@ -136,24 +155,5 @@ final class ContainerMemoryPoolTest extends TestCase
         self::assertTrue($container->isPoolingEnabled('other'));
         self::assertSame(0, $container->poolStats('counter')['available']);
         self::assertSame(0, $container->poolStats('other')['available']);
-    }
-
-    public function testPoolingApiMethodsRemainPublic(): void
-    {
-        $methods = [
-            'enablePooling',
-            'disablePooling',
-            'isPoolingEnabled',
-            'releaseToPool',
-            'clearPool',
-            'clearAllPools',
-            'poolStats',
-        ];
-
-        foreach ($methods as $methodName) {
-            $method = new ReflectionMethod(Container::class, $methodName);
-
-            self::assertTrue($method->isPublic(), $methodName);
-        }
     }
 }

@@ -34,6 +34,13 @@ final class ContainerConfiguratorTest extends TestCase
         $this->fixturesDirectory = \dirname(__DIR__, 2) . '/Fixtures/Config';
     }
 
+    public function testApplyMethodIsPublic(): void
+    {
+        $method = new ReflectionMethod(ContainerConfigurator::class, 'apply');
+
+        self::assertTrue($method->isPublic());
+    }
+
     public function testConfigureFromPhpFile(): void
     {
         $container = new Container();
@@ -178,12 +185,5 @@ final class ContainerConfiguratorTest extends TestCase
         ]);
 
         self::assertSame('from-layer-json', $container->get('app.label'));
-    }
-
-    public function testApplyMethodIsPublic(): void
-    {
-        $method = new ReflectionMethod(ContainerConfigurator::class, 'apply');
-
-        self::assertTrue($method->isPublic());
     }
 }
