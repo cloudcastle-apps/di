@@ -114,7 +114,7 @@ jobs:
         env:
           XDEBUG_MODE: off
         run: |
-          rm -rf var/cache/phpunit var/cache/infection
+          rm -rf var/cache/infection
           composer test:mutation
 
       - name: Upload Infection report on failure

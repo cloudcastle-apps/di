@@ -46,8 +46,7 @@ function infectionCoverageXmlIncludesTestMetadata(string $directory): bool
 }
 
 $coverageXmlDir = dirname(__DIR__) . '/var/coverage/coverage-xml';
-$usePrecoverage = infectionCoverageXmlIncludesTestMetadata($coverageXmlDir)
-    && getenv('GITHUB_ACTIONS') !== 'true';
+$usePrecoverage = infectionCoverageXmlIncludesTestMetadata($coverageXmlDir);
 
 $infectionArgs = array_merge(
     [
