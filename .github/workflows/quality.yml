@@ -115,7 +115,7 @@ jobs:
           XDEBUG_MODE: coverage
         run: |
           rm -rf var/cache/phpunit var/cache/infection var/coverage/coverage-xml
-          php -d pcov.enabled=0 composer test:mutation
+          composer test:mutation
 
       - name: Upload Infection report on failure
         if: failure()
