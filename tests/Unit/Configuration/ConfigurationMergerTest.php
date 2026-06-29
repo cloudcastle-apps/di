@@ -8,11 +8,9 @@ use CloudCastle\DI\Configuration\ConfigurationLayer;
 use CloudCastle\DI\Configuration\ConfigurationMerger;
 use CloudCastle\DI\Tests\Fixtures\Autowire\Clock;
 use CloudCastle\DI\Tests\Fixtures\Autowire\CustomServiceIdAttribute;
-use CloudCastle\DI\Tests\Fixtures\Autowire\FileLogger;
 use CloudCastle\DI\Tests\Fixtures\ContextualBinding\ReportService;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
-use Psr\Log\LoggerInterface;
 
 #[CoversClass(ConfigurationMerger::class)]
 #[CoversClass(ConfigurationLayer::class)]
