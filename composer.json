@@ -96,7 +96,9 @@
         },
         "classmap": [
             "tests/Fixtures/Autowire/Scan/MultiScanPair.php",
-            "tests/Fixtures/Autowire/Scan/MixedScanProgression.php"
+            "tests/Fixtures/Autowire/Scan/MixedScanProgression.php",
+            "tests/Fixtures/Autowire/ScanPrefix/PrefixFilterTargets.php",
+            "tests/Fixtures/Autowire/ScanPrefix/AbstractThenConcrete.php"
         ]
     },
     "config": {
