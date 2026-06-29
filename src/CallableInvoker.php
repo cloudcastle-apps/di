@@ -148,6 +148,7 @@ final class CallableInvoker
                 if (\is_object($callable)) {
                     $target = $callable;
                 } elseif (\is_array($callable)) {
+                    /** @var mixed $candidate */
                     $candidate = $callable[0] ?? null;
                     $target = \is_object($candidate) ? $candidate : null;
                 }
