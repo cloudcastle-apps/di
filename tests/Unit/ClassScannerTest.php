@@ -13,7 +13,9 @@ use CloudCastle\DI\Tests\Fixtures\Autowire\Scan\MultiScanAlpha;
 use CloudCastle\DI\Tests\Fixtures\Autowire\Scan\MultiScanBeta;
 use CloudCastle\DI\Tests\Fixtures\Autowire\Scan\ScannedService;
 use CloudCastle\DI\Tests\Fixtures\Autowire\Scan\SpacedNamespaceService;
+use CloudCastle\DI\Tests\Fixtures\Autowire\ScanOrder\AaaOrder;
 use CloudCastle\DI\Tests\Fixtures\Autowire\ScanOrder\ScanOrderTarget;
+use CloudCastle\DI\Tests\Fixtures\Autowire\ScanOrder\ZzzOrder;
 use CloudCastle\DI\Tests\Fixtures\Autowire\ScanOverflowService;
 use CloudCastle\DI\Tests\Fixtures\Autowire\SimpleService;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -231,44 +233,27 @@ final class ClassScannerTest extends TestCase
             'CloudCastle\\DI\\Tests\\Fixtures\\Autowire\\ScanOrder\\',
         );
 
-        self::assertSame([ScanOrderTarget::class], $classNames);
+        self::assertContains(ScanOrderTarget::class, $classNames);
+        self::assertCount(3, $classNames);
     }
 
     public function testScanReturnsClassesInPathnameOrder(): void
     {
-        $directory = sys_get_temp_dir() . '/cloudcastle-di-scan-order-' . uniqid('', true);
-        mkdir($directory);
-        file_put_contents(
-            $directory . '/Zzz.php',
-            '<?php declare(strict_types=1);'
-            . "\n namespace CloudCastle\\DI\\Tests\\Fixtures\\ScanOrderTmp;"
-            . ' final class Zzz {}',
+        $directory = \dirname(__DIR__) . '/Fixtures/Autowire/ScanOrder';
+        $scanner = new ClassScanner();
+        $classNames = $scanner->scan(
+            $directory,
+            'CloudCastle\\DI\\Tests\\Fixtures\\Autowire\\ScanOrder\\',
         );
-        file_put_contents(
-            $directory . '/Aaa.php',
-            '<?php declare(strict_types=1);'
-            . "\n namespace CloudCastle\\DI\\Tests\\Fixtures\\ScanOrderTmp;"
-            . ' final class Aaa {}',
+
+        self::assertSame(
+            [
+                AaaOrder::class,
+                ScanOrderTarget::class,
+                ZzzOrder::class,
+            ],
+            $classNames,
         );
-        require_once $directory . '/Zzz.php';
-        require_once $directory . '/Aaa.php';
-
-        try {
-            $scanner = new ClassScanner();
-            $classNames = $scanner->scan($directory, 'CloudCastle\\DI\\Tests\\Fixtures\\ScanOrderTmp\\');
-
-            self::assertSame(
-                [
-                    'CloudCastle\\DI\\Tests\\Fixtures\\ScanOrderTmp\\Aaa',
-                    'CloudCastle\\DI\\Tests\\Fixtures\\ScanOrderTmp\\Zzz',
-                ],
-                $classNames,
-            );
-        } finally {
-            unlink($directory . '/Aaa.php');
-            unlink($directory . '/Zzz.php');
-            rmdir($directory);
-        }
     }
 
     public function testScanFindsConcreteClassAfterAbstractInSameFile(): void
