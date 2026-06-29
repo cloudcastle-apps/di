@@ -46,7 +46,7 @@ jobs:
           php-version: ${{ matrix.php-version }}
           extensions: zip, yaml
           tools: composer:v2
-          coverage: xdebug
+          coverage: pcov
 
       - name: Get Composer cache directory
         id: composer-cache
@@ -111,11 +111,17 @@ jobs:
         run: composer test:coverage
 
       - name: Tests mutation
-        env:
-          XDEBUG_MODE: off
         run: |
           rm -rf var/cache/phpunit var/cache/infection var/coverage/coverage-xml
           composer test:mutation
+
+      - name: Upload Infection report on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: infection-php-${{ matrix.php-version }}
+          path: var/infection/
+          if-no-files-found: ignore
 
       - name: Documentation
         run: composer docs:check
