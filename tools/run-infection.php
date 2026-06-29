@@ -28,8 +28,10 @@ if (!extension_loaded('yaml')) {
 }
 
 $coverageXmlDir = dirname(__DIR__) . '/var/coverage/coverage-xml';
+$usePrecoverage = is_file($coverageXmlDir . '/index.xml')
+    && getenv('GITHUB_ACTIONS') !== 'true';
 
-if (is_file($coverageXmlDir . '/index.xml')) {
+if ($usePrecoverage) {
     $infectionArgs[] = '--skip-initial-tests';
     $infectionArgs[] = '--coverage=' . $coverageXmlDir;
 } else {
