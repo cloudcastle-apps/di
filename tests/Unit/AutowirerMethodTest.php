@@ -221,6 +221,9 @@ final class AutowirerMethodTest extends TestCase
         $this->expectException(ContainerException::class);
         $this->expectExceptionMessage('Ошибка вызова inject-метода');
 
-        $injector->inject($owner, new ReflectionClass($otherClass));
+        /** @var ReflectionClass<object> $otherReflection */
+        $otherReflection = new ReflectionClass($otherClass);
+
+        $injector->inject($owner, $otherReflection);
     }
 }
