@@ -122,4 +122,11 @@ final class ClassScannerExtendedTest extends TestCase
             }
         }
     }
+
+    public function testExtractDeclaredTypeNamesReturnsEmptyWhenFileGetContentsFails(): void
+    {
+        $method = new ReflectionMethod(ClassScanner::class, 'extractDeclaredTypeNames');
+
+        self::assertSame([], $method->invoke(new ClassScanner(), sys_get_temp_dir()));
+    }
 }

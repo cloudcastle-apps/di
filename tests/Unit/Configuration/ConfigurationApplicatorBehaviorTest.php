@@ -106,6 +106,20 @@ final class ConfigurationApplicatorBehaviorTest extends TestCase
         self::assertFalse($container->isMethodAutowiringEnabled());
     }
 
+    public function testApplyAutowiringDoesNotEnableWhenEnabledKeyIsOmitted(): void
+    {
+        $container = new Container();
+
+        (new ConfigurationApplicator())->apply($container, [
+            'autowiring' => [
+                'parameter_name' => true,
+            ],
+        ]);
+
+        self::assertFalse($container->isAutowiringEnabled());
+        self::assertTrue($container->isParameterNameAutowiringEnabled());
+    }
+
     public function testContainerConfiguratorUsesCustomLoaderRegistry(): void
     {
         $registry = new ConfigurationLoaderRegistry([new JsonConfigurationLoader()]);

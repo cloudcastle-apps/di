@@ -19,6 +19,10 @@ $infectionArgs = array_merge(
     array_slice($argv, 1),
 );
 
+if (getenv('GITHUB_ACTIONS') === 'true') {
+    $infectionArgs[] = '--map-source-class-to-test';
+}
+
 $phpArgs = extension_loaded('yaml') ? [] : ['-d', 'extension=yaml'];
 
 $initialTestPhpOptions = [];

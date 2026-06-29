@@ -149,12 +149,7 @@ final class CallableInvoker
                     $target = $callable;
                 } elseif (\is_array($callable)) {
                     $candidate = $callable[0] ?? null;
-
-                    if (!\is_object($candidate)) {
-                        throw new ContainerException('Callable метода требует объект.');
-                    }
-
-                    $target = $candidate;
+                    $target = \is_object($candidate) ? $candidate : null;
                 }
 
                 if (!\is_object($target)) {

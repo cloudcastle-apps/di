@@ -129,4 +129,45 @@ final class ConfigurationLoaderErrorsTest extends TestCase
 
         $loader->load($this->fixturesDirectory . '/missing.php');
     }
+
+    public function testJsonLoaderParsesConfigWithinDefaultMaxDepth(): void
+    {
+        $path = sys_get_temp_dir() . '/cloudcastle-di-depth.json';
+        $levels = $this->resolveDeepJsonNestingWithinLimit();
+        file_put_contents($path, $this->buildDeepJsonObject($levels));
+
+        try {
+            $config = (new JsonConfigurationLoader())->load($path);
+
+            self::assertIsArray($config);
+            self::assertArrayHasKey('node', $config);
+        } finally {
+            if (is_file($path)) {
+                unlink($path);
+            }
+        }
+    }
+
+    /**
+     * @return non-empty-string
+     */
+    private function buildDeepJsonObject(int $levels): string
+    {
+        $json = '"value":"ok"';
+
+        for ($level = 0; $level < $levels; ++$level) {
+            $json = '"node":{' . $json . '}';
+        }
+
+        return '{' . $json . '}';
+    }
+
+    private function resolveDeepJsonNestingWithinLimit(): int
+    {
+        if (getenv('GITHUB_ACTIONS') === 'true') {
+            return 510;
+        }
+
+        return 200;
+    }
 }

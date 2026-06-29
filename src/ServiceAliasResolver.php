@@ -56,7 +56,11 @@ final class ServiceAliasResolver
         $visited = [];
 
         while (isset($this->aliases[$id])) {
-            $visited[$id] = ($visited[$id] ?? 0) + 1;
+            if (!isset($visited[$id])) {
+                $visited[$id] = 0;
+            }
+
+            ++$visited[$id];
 
             if ($visited[$id] > 1) {
                 throw new ContainerException(\sprintf(
@@ -106,7 +110,11 @@ final class ServiceAliasResolver
         $id = $startAlias;
 
         while (isset($this->aliases[$id])) {
-            $visited[$id] = ($visited[$id] ?? 0) + 1;
+            if (!isset($visited[$id])) {
+                $visited[$id] = 0;
+            }
+
+            ++$visited[$id];
 
             if ($visited[$id] > 1) {
                 return true;

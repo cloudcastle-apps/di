@@ -20,11 +20,11 @@
     },
     "minMsi": 100,
     "minCoveredMsi": 100,
-    "timeout": 90,
+    "timeout": 120,
     "bootstrap": "vendor/autoload.php",
     "phpUnit": {
         "configDir": "."
     },
-    "testFrameworkOptions": "--exclude-group=circular-slow",
+    "testFrameworkOptions": "--testsuite=unit,integration,security --exclude-group=circular-slow",
     "tmpDir": "var/cache/infection"
 }

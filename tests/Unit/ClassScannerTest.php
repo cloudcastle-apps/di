@@ -20,6 +20,7 @@ use CloudCastle\DI\Tests\Fixtures\Autowire\ScanOverflowService;
 use CloudCastle\DI\Tests\Fixtures\Autowire\SimpleService;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
+use ReflectionMethod;
 
 /**
  * Сканирование PHP-классов в каталоге.
@@ -297,6 +298,88 @@ final class ClassScannerTest extends TestCase
         } finally {
             if (is_file($noisePath)) {
                 unlink($noisePath);
+            }
+        }
+    }
+
+    public function testResolveInstantiableClassesContinuesAfterNamespacePrefixMismatch(): void
+    {
+        $path = sys_get_temp_dir() . '/cloudcastle-di-prefix-filter.php';
+        file_put_contents(
+            $path,
+            <<<'PHP'
+                <?php
+
+                declare(strict_types=1);
+
+                namespace CloudCastle\DI\Tests\Fixtures\Autowire\ScanPrefix;
+
+                final class Alpha
+                {
+                }
+
+                final class Beta
+                {
+                }
+                PHP,
+        );
+
+        try {
+            require_once $path;
+
+            $method = new ReflectionMethod(ClassScanner::class, 'resolveInstantiableClasses');
+            $classNames = $method->invoke(
+                new ClassScanner(),
+                $path,
+                'CloudCastle\\DI\\Tests\\Fixtures\\Autowire\\ScanPrefix\\Bet',
+            );
+
+            self::assertSame(
+                ['CloudCastle\\DI\\Tests\\Fixtures\\Autowire\\ScanPrefix\\Beta'],
+                $classNames,
+            );
+        } finally {
+            if (is_file($path)) {
+                unlink($path);
+            }
+        }
+    }
+
+    public function testResolveInstantiableClassesContinuesAfterNonInstantiableClass(): void
+    {
+        $path = sys_get_temp_dir() . '/cloudcastle-di-abstract-first.php';
+        file_put_contents(
+            $path,
+            <<<'PHP'
+                <?php
+
+                declare(strict_types=1);
+
+                namespace CloudCastle\DI\Tests\Fixtures\Autowire\ScanPrefix;
+
+                abstract class AbstractFirst
+                {
+                }
+
+                final class ConcreteSecond
+                {
+                }
+                PHP,
+        );
+
+        try {
+            require_once $path;
+
+            $method = new ReflectionMethod(ClassScanner::class, 'resolveInstantiableClasses');
+            $classNames = $method->invoke(new ClassScanner(), $path, null);
+
+            self::assertSame(
+                ['CloudCastle\\DI\\Tests\\Fixtures\\Autowire\\ScanPrefix\\ConcreteSecond'],
+                $classNames,
+            );
+        } finally {
+            if (is_file($path)) {
+                unlink($path);
             }
         }
     }
