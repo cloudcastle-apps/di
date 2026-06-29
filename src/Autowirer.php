@@ -34,7 +34,7 @@ final class Autowirer
 
     /**
      * @param ContainerInterface $container Контейнер для разрешения зависимостей
-     * @param AttributeServiceIdReader|null $attributeReader Читатель id из PHP attributes (по умолчанию новый экземпляр)
+     * @param AttributeServiceIdReader|null $attributeReader Читатель PHP attributes
      */
     public function __construct(
         ContainerInterface $container,

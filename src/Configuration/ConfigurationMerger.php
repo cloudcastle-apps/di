@@ -121,8 +121,11 @@ final class ConfigurationMerger
     /**
      * Преобразует карту победителей в итоговую структуру contextual-секции.
      *
-     * @param array<int|string, array{effectivePriority: int, order: int, value: mixed}> $winners
-     *                                                                                            Победители с ключом `consumerClass::need`
+     * @param array<int|string, array{
+     *     effectivePriority: int,
+     *     order: int,
+     *     value: mixed
+     * }> $winners Победители с ключом `consumerClass::need`
      *
      * @return array<string, array<string, string>> Карта consumerClass → need → id сервиса
      */
@@ -197,8 +200,11 @@ final class ConfigurationMerger
     /**
      * Объединяет элементы списковой секции (autowire, register_attributes, scan).
      *
-     * @param array<string|int, array{effectivePriority: int, order: int, value: mixed}> $winners
-     *                                                                                            Накопленные победители по ключу элемента (изменяется по ссылке)
+     * @param array<string|int, array{
+     *     effectivePriority: int,
+     *     order: int,
+     *     value: mixed
+     * }> $winners Накопленные победители по ключу элемента (по ссылке)
      * @param string $section Имя списковой секции
      * @param array<mixed> $sectionData Данные секции из текущего слоя
      * @param int $order Порядковый индекс слоя
@@ -245,8 +251,11 @@ final class ConfigurationMerger
     /**
      * Объединяет элементы ассоциативной секции (services, aliases, bind, tags и т.д.).
      *
-     * @param array<string|int, array{effectivePriority: int, order: int, value: mixed}> $winners
-     *                                                                                            Накопленные победители по ключу (изменяется по ссылке)
+     * @param array<string|int, array{
+     *     effectivePriority: int,
+     *     order: int,
+     *     value: mixed
+     * }> $winners Накопленные победители по ключу (по ссылке)
      * @param array<mixed> $sectionData Данные секции из текущего слоя
      * @param int $order Порядковый индекс слоя
      * @param int $layerDefaultPriority Приоритет слоя по умолчанию
@@ -270,8 +279,11 @@ final class ConfigurationMerger
      *
      * При равном приоритете побеждает слой с большим порядковым индексом.
      *
-     * @param array<string|int, array{effectivePriority: int, order: int, value: mixed}> $winners
-     *                                                                                            Карта победителей (изменяется по ссылке)
+     * @param array<string|int, array{
+     *     effectivePriority: int,
+     *     order: int,
+     *     value: mixed
+     * }> $winners Карта победителей (по ссылке)
      * @param string $key Ключ элемента в секции
      * @param int $effectivePriority Эффективный приоритет записи
      * @param int $order Порядковый индекс слоя

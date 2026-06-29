@@ -14,7 +14,8 @@ final class CompileServiceBinding
      *
      * @param string $id Идентификатор сервиса
      * @param CompileServiceKind $kind Способ создания экземпляра
-     * @param string|null $className FQCN класса для {@see CompileServiceKind::NewInstance} и {@see CompileServiceKind::Autowired}
+     * @param string|null $className FQCN для {@see CompileServiceKind::NewInstance}
+     *                               и {@see CompileServiceKind::Autowired}
      * @param mixed $literalValue Готовое значение для {@see CompileServiceKind::Literal}
      * @param list<string> $argumentExpressions PHP-выражения аргументов конструктора (для NewInstance)
      */

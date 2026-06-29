@@ -53,8 +53,8 @@ final class ConfigurationSourceResolver
     /**
      * Преобразует один элемент списка источников в список файлов с приоритетами.
      *
-     * @param string|ConfigurationSource|ConfigurationDirectorySource|ConfigurationFilesSource $source
-     *                                                                                                 Путь, файл, каталог или явный список файлов
+     * @param string|ConfigurationSource|ConfigurationDirectorySource
+     *     |ConfigurationFilesSource $source Путь, файл, каталог или явный список файлов
      *
      * @throws ContainerException Если файл не найден или формат не поддерживается
      *
