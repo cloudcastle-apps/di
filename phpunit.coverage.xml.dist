@@ -22,9 +22,6 @@
         <testsuite name="security">
             <directory>tests/Security</directory>
         </testsuite>
-        <testsuite name="load">
-            <directory>tests/Load</directory>
-        </testsuite>
     </testsuites>
 
     <logging>

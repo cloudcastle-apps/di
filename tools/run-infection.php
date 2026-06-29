@@ -19,7 +19,7 @@ $infectionArgs = array_merge(
     array_slice($argv, 1),
 );
 
-if (getenv('GITHUB_ACTIONS') === 'true') {
+if (getenv('GITHUB_ACTIONS') === 'true' && !$usePrecoverage) {
     $infectionArgs[] = '--map-source-class-to-test';
 }
 

@@ -12,7 +12,6 @@ use CloudCastle\DI\Tests\Fixtures\MemoryPool\ResetCounter;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
-#[CoversClass(Container::class)]
 #[CoversClass(ContainerMemoryPoolSupport::class)]
 final class ContainerMemoryPoolTest extends TestCase
 {
