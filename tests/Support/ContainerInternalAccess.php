@@ -117,6 +117,7 @@ final class ContainerInternalAccess
 
     public static function forgetTag(object $container, string $tag): void
     {
+        /** @var array<string, list<string>> $tags */
         $tags = self::readProperty($container, 'tags');
         $serviceIds = [];
 
@@ -159,22 +160,34 @@ final class ContainerInternalAccess
 
     private static function memoryPool(object $container): ContainerMemoryPoolSupport
     {
-        return self::readProperty($container, 'memoryPool');
+        /** @var ContainerMemoryPoolSupport $support */
+        $support = self::readProperty($container, 'memoryPool');
+
+        return $support;
     }
 
     private static function profiling(object $container): ContainerProfilingSupport
     {
-        return self::readProperty($container, 'profiling');
+        /** @var ContainerProfilingSupport $support */
+        $support = self::readProperty($container, 'profiling');
+
+        return $support;
     }
 
     private static function smartCache(object $container): ContainerSmartCacheSupport
     {
-        return self::readProperty($container, 'smartCache');
+        /** @var ContainerSmartCacheSupport $support */
+        $support = self::readProperty($container, 'smartCache');
+
+        return $support;
     }
 
     private static function aliasResolver(object $container): ServiceAliasResolver
     {
-        return self::readProperty($container, 'aliasResolver');
+        /** @var ServiceAliasResolver $resolver */
+        $resolver = self::readProperty($container, 'aliasResolver');
+
+        return $resolver;
     }
 
     /**
@@ -182,7 +195,10 @@ final class ContainerInternalAccess
      */
     private static function resolved(object $container): array
     {
-        return self::readProperty($container, 'resolved');
+        /** @var array<string, mixed> $resolved */
+        $resolved = self::readProperty($container, 'resolved');
+
+        return $resolved;
     }
 
     /**
@@ -198,6 +214,7 @@ final class ContainerInternalAccess
      */
     private static function tagsForService(object $container, string $serviceId): array
     {
+        /** @var array<string, list<string>> $tags */
         $tags = self::readProperty($container, 'tags');
         $serviceTags = [];
 
