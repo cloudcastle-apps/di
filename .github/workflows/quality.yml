@@ -55,9 +55,7 @@ jobs:
       - name: Cache dependencies
         uses: actions/cache@v6
         with:
-          path: |
-            vendor
-            ${{ steps.composer-cache.outputs.dir }}
+          path: ${{ steps.composer-cache.outputs.dir }}
           key: ${{ runner.os }}-php-${{ matrix.php-version }}-composer-${{ hashFiles('composer.lock') }}
           restore-keys: |
             ${{ runner.os }}-php-${{ matrix.php-version }}-composer-
@@ -108,7 +106,9 @@ jobs:
           if-no-files-found: error
 
       - name: Tests coverage
-        run: composer test:coverage
+        run: |
+          rm -rf var/cache/phpunit
+          composer test:coverage
 
       - name: Tests mutation
         env:

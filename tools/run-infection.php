@@ -49,6 +49,17 @@ function infectionCoverageXmlIncludesTestMetadata(string $directory): bool
 $coverageXmlDir = dirname(__DIR__) . '/var/coverage/coverage-xml';
 $usePrecoverage = infectionCoverageXmlIncludesTestMetadata($coverageXmlDir);
 
+if ($usePrecoverage) {
+    passthru(
+        escapeshellarg(PHP_BINARY) . ' ' . escapeshellarg(dirname(__FILE__) . '/expand-infection-coverage-xml.php') . ' ' . escapeshellarg($coverageXmlDir),
+        $expandExitCode,
+    );
+
+    if ($expandExitCode !== 0) {
+        exit($expandExitCode);
+    }
+}
+
 $infectionArgs = array_merge(
     [
         'vendor/bin/infection',
