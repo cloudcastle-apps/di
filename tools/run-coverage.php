@@ -13,14 +13,20 @@ $coveragePhpOptions = [];
 
 if (extension_loaded('pcov')) {
     $projectRoot = dirname(__DIR__);
-    $coveragePhpOptions[] = '-d pcov.enabled=1';
-    $coveragePhpOptions[] = '-d pcov.directory=' . $projectRoot . '/src';
+    $coveragePhpOptions[] = '-d';
+    $coveragePhpOptions[] = 'pcov.enabled=1';
+    $coveragePhpOptions[] = '-d';
+    $coveragePhpOptions[] = 'pcov.directory=' . $projectRoot . '/src';
 } elseif (extension_loaded('xdebug')) {
-    $coveragePhpOptions[] = '-d xdebug.mode=coverage';
+    \putenv('XDEBUG_MODE=coverage');
+    $coveragePhpOptions[] = '-d';
+    $coveragePhpOptions[] = 'xdebug.mode=coverage';
 }
 
-$coveragePhpOptions[] = '-d opcache.enable=0';
-$coveragePhpOptions[] = '-d opcache.enable_cli=0';
+$coveragePhpOptions[] = '-d';
+$coveragePhpOptions[] = 'opcache.enable=0';
+$coveragePhpOptions[] = '-d';
+$coveragePhpOptions[] = 'opcache.enable_cli=0';
 
 $phpunitArgs = [
     'vendor/bin/phpunit',
