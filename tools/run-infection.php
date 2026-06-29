@@ -51,6 +51,10 @@ if (getenv('GITHUB_ACTIONS') === 'true' && !$usePrecoverage) {
 
 $phpArgs = extension_loaded('yaml') ? [] : ['-d', 'extension=yaml'];
 
+if (getenv('GITHUB_ACTIONS') === 'true' && extension_loaded('xdebug')) {
+    $phpArgs = array_merge($phpArgs, ['-d', 'pcov.enabled=0', '-d', 'xdebug.mode=coverage']);
+}
+
 $initialTestPhpOptions = [];
 
 if (!extension_loaded('yaml')) {
