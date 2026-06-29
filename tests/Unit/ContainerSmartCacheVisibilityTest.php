@@ -17,6 +17,9 @@ use stdClass;
 #[CoversClass(ContainerSmartCacheSupport::class)]
 final class ContainerSmartCacheVisibilityTest extends TestCase
 {
+    /**
+     * @covers \CloudCastle\DI\ContainerSmartCacheApi::cacheFor
+     */
     public function testCacheForMethodIsPublic(): void
     {
         $method = new ReflectionMethod(Container::class, 'cacheFor');
@@ -28,6 +31,9 @@ final class ContainerSmartCacheVisibilityTest extends TestCase
         self::assertTrue($container->cacheStats('svc')['configured']);
     }
 
+    /**
+     * @covers \CloudCastle\DI\ContainerSmartCacheApi::cacheTagFor
+     */
     public function testCacheTagForMethodIsPublic(): void
     {
         $method = new ReflectionMethod(Container::class, 'cacheTagFor');
@@ -40,6 +46,9 @@ final class ContainerSmartCacheVisibilityTest extends TestCase
         self::assertTrue($container->cacheStats('svc')['configured']);
     }
 
+    /**
+     * @covers \CloudCastle\DI\ContainerSmartCacheApi::forget
+     */
     public function testForgetMethodIsPublic(): void
     {
         $method = new ReflectionMethod(Container::class, 'forget');
@@ -52,6 +61,9 @@ final class ContainerSmartCacheVisibilityTest extends TestCase
         self::assertFalse($container->cacheStats('svc')['cached']);
     }
 
+    /**
+     * @covers \CloudCastle\DI\ContainerSmartCacheApi::forgetTag
+     */
     public function testForgetTagMethodIsPublic(): void
     {
         $method = new ReflectionMethod(Container::class, 'forgetTag');
@@ -65,6 +77,9 @@ final class ContainerSmartCacheVisibilityTest extends TestCase
         self::assertFalse($container->cacheStats('svc')['cached']);
     }
 
+    /**
+     * @covers \CloudCastle\DI\ContainerSmartCacheApi::forgetAll
+     */
     public function testForgetAllMethodIsPublic(): void
     {
         $method = new ReflectionMethod(Container::class, 'forgetAll');
@@ -77,6 +92,9 @@ final class ContainerSmartCacheVisibilityTest extends TestCase
         self::assertFalse($container->cacheStats('svc')['cached']);
     }
 
+    /**
+     * @covers \CloudCastle\DI\ContainerSmartCacheApi::cacheStats
+     */
     public function testCacheStatsMethodIsPublic(): void
     {
         $method = new ReflectionMethod(Container::class, 'cacheStats');

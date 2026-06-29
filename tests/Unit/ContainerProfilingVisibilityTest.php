@@ -17,6 +17,9 @@ use stdClass;
 #[CoversClass(ContainerProfilingSupport::class)]
 final class ContainerProfilingVisibilityTest extends TestCase
 {
+    /**
+     * @covers \CloudCastle\DI\ContainerProfilingApi::enableProfiling
+     */
     public function testEnableProfilingMethodIsPublic(): void
     {
         $method = new ReflectionMethod(Container::class, 'enableProfiling');
@@ -28,6 +31,9 @@ final class ContainerProfilingVisibilityTest extends TestCase
         self::assertTrue($container->isProfilingEnabled());
     }
 
+    /**
+     * @covers \CloudCastle\DI\ContainerProfilingApi::disableProfiling
+     */
     public function testDisableProfilingMethodIsPublic(): void
     {
         $method = new ReflectionMethod(Container::class, 'disableProfiling');
@@ -40,6 +46,9 @@ final class ContainerProfilingVisibilityTest extends TestCase
         self::assertFalse($container->isProfilingEnabled());
     }
 
+    /**
+     * @covers \CloudCastle\DI\ContainerProfilingApi::isProfilingEnabled
+     */
     public function testIsProfilingEnabledMethodIsPublic(): void
     {
         $method = new ReflectionMethod(Container::class, 'isProfilingEnabled');
@@ -52,6 +61,9 @@ final class ContainerProfilingVisibilityTest extends TestCase
         self::assertTrue($container->isProfilingEnabled());
     }
 
+    /**
+     * @covers \CloudCastle\DI\ContainerProfilingApi::resetProfile
+     */
     public function testResetProfileMethodIsPublic(): void
     {
         $method = new ReflectionMethod(Container::class, 'resetProfile');
@@ -65,6 +77,9 @@ final class ContainerProfilingVisibilityTest extends TestCase
         self::assertSame(0, $container->profileReport()['sample_count']);
     }
 
+    /**
+     * @covers \CloudCastle\DI\ContainerProfilingApi::profileReport
+     */
     public function testProfileReportMethodIsPublic(): void
     {
         $method = new ReflectionMethod(Container::class, 'profileReport');

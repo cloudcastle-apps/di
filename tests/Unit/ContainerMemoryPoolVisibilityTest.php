@@ -22,6 +22,9 @@ final class ContainerMemoryPoolVisibilityTest extends TestCase
         ResetCounter::resetCounters();
     }
 
+    /**
+     * @covers \CloudCastle\DI\ContainerMemoryPoolApi::enablePooling
+     */
     public function testEnablePoolingMethodIsPublic(): void
     {
         $method = new ReflectionMethod(Container::class, 'enablePooling');
@@ -33,6 +36,9 @@ final class ContainerMemoryPoolVisibilityTest extends TestCase
         self::assertTrue($container->isPoolingEnabled('counter'));
     }
 
+    /**
+     * @covers \CloudCastle\DI\ContainerMemoryPoolApi::disablePooling
+     */
     public function testDisablePoolingMethodIsPublic(): void
     {
         $method = new ReflectionMethod(Container::class, 'disablePooling');
@@ -45,6 +51,9 @@ final class ContainerMemoryPoolVisibilityTest extends TestCase
         self::assertFalse($container->isPoolingEnabled('counter'));
     }
 
+    /**
+     * @covers \CloudCastle\DI\ContainerMemoryPoolApi::isPoolingEnabled
+     */
     public function testIsPoolingEnabledMethodIsPublic(): void
     {
         $method = new ReflectionMethod(Container::class, 'isPoolingEnabled');
@@ -57,6 +66,9 @@ final class ContainerMemoryPoolVisibilityTest extends TestCase
         self::assertTrue($container->isPoolingEnabled('counter'));
     }
 
+    /**
+     * @covers \CloudCastle\DI\ContainerMemoryPoolApi::releaseToPool
+     */
     public function testReleaseToPoolMethodIsPublic(): void
     {
         $method = new ReflectionMethod(Container::class, 'releaseToPool');
@@ -72,6 +84,9 @@ final class ContainerMemoryPoolVisibilityTest extends TestCase
         self::assertSame(1, $container->poolStats('counter')['available']);
     }
 
+    /**
+     * @covers \CloudCastle\DI\ContainerMemoryPoolApi::clearPool
+     */
     public function testClearPoolMethodIsPublic(): void
     {
         $method = new ReflectionMethod(Container::class, 'clearPool');
@@ -88,6 +103,9 @@ final class ContainerMemoryPoolVisibilityTest extends TestCase
         self::assertSame(0, $container->poolStats('counter')['available']);
     }
 
+    /**
+     * @covers \CloudCastle\DI\ContainerMemoryPoolApi::clearAllPools
+     */
     public function testClearAllPoolsMethodIsPublic(): void
     {
         $method = new ReflectionMethod(Container::class, 'clearAllPools');
@@ -104,6 +122,9 @@ final class ContainerMemoryPoolVisibilityTest extends TestCase
         self::assertSame(0, $container->poolStats('counter')['available']);
     }
 
+    /**
+     * @covers \CloudCastle\DI\ContainerMemoryPoolApi::poolStats
+     */
     public function testPoolStatsMethodIsPublic(): void
     {
         $method = new ReflectionMethod(Container::class, 'poolStats');

@@ -18,15 +18,31 @@ function infectionCoverageXmlIncludesTestMetadata(string $directory): bool
         return false;
     }
 
-    foreach (glob($directory . '/*.php.xml') ?: [] as $file) {
-        $contents = file_get_contents($file);
+    $requiredProbes = [
+        'ContainerMemoryPoolApi.php.xml' => 'ContainerMemoryPoolVisibilityTest',
+        'ContainerProfilingApi.php.xml' => 'ContainerProfilingVisibilityTest',
+        'ContainerSmartCacheApi.php.xml' => 'ContainerSmartCacheVisibilityTest',
+    ];
 
-        if ($contents !== false && str_contains($contents, '<covered by=')) {
-            return true;
+    foreach ($requiredProbes as $file => $testClassFragment) {
+        $path = $directory . '/' . $file;
+
+        if (!is_file($path)) {
+            return false;
+        }
+
+        $contents = file_get_contents($path);
+
+        if ($contents === false || !str_contains($contents, '<covered by=')) {
+            return false;
+        }
+
+        if (!str_contains($contents, $testClassFragment)) {
+            return false;
         }
     }
 
-    return false;
+    return true;
 }
 
 $coverageXmlDir = dirname(__DIR__) . '/var/coverage/coverage-xml';
