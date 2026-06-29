@@ -11,6 +11,7 @@ use CloudCastle\DI\Tests\Fixtures\Autowire\IntClockService;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
+use ReflectionFunction;
 use ReflectionMethod;
 use ReflectionNamedType;
 
@@ -62,7 +63,7 @@ final class ParameterTypeResolverParameterTest extends TestCase
         $closure = static function (Clock $clock): void {
             unset($clock);
         };
-        $parameter = (new \ReflectionFunction($closure))->getParameters()[0];
+        $parameter = (new ReflectionFunction($closure))->getParameters()[0];
 
         $resolver = new ParameterTypeResolver($container);
 

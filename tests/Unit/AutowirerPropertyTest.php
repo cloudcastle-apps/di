@@ -30,7 +30,6 @@ use CloudCastle\DI\Tests\Fixtures\Autowire\UntypedPropertyHolder;
 use Iterator;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
-use ReflectionClass;
 use ReflectionProperty;
 
 /**
