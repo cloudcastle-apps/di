@@ -10,9 +10,9 @@ use CloudCastle\DI\Exception\ContainerException;
 use CloudCastle\DI\Exception\NotFoundException;
 use CloudCastle\DI\Tests\Fixtures\Compiled\StubCompiledContainer;
 use CloudCastle\DI\Tests\Fixtures\MemoryPool\ResetCounter;
+use CloudCastle\DI\Tests\Support\ContainerInternalAccess;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
-use CloudCastle\DI\Tests\Support\ContainerInternalAccess;
 use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
 

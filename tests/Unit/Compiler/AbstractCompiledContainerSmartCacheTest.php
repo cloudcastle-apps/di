@@ -6,8 +6,8 @@ namespace CloudCastle\DI\Tests\Unit\Compiler;
 
 use CloudCastle\DI\Compiler\AbstractCompiledContainer;
 use CloudCastle\DI\Tests\Fixtures\Compiled\StubCompiledContainer;
-use PHPUnit\Framework\Attributes\CoversClass;
 use CloudCastle\DI\Tests\Support\ContainerInternalAccess;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
 #[CoversClass(AbstractCompiledContainer::class)]

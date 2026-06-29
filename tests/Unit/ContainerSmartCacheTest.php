@@ -6,8 +6,8 @@ namespace CloudCastle\DI\Tests\Unit;
 
 use CloudCastle\DI\Container;
 use CloudCastle\DI\ContainerSmartCacheSupport;
-use PHPUnit\Framework\Attributes\CoversClass;
 use CloudCastle\DI\Tests\Support\ContainerInternalAccess;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 

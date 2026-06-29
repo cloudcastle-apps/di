@@ -11,6 +11,7 @@ use CloudCastle\DI\ServiceAliasResolver;
 use CloudCastle\DI\ServiceObjectPool;
 use ReflectionObject;
 use ReflectionProperty;
+use RuntimeException;
 
 /**
  * Доступ к внутренним support-объектам контейнера в behavior-тестах без вызова public trait API.
@@ -227,7 +228,7 @@ final class ContainerInternalAccess
             $parent = $reflection->getParentClass();
 
             if ($parent === false) {
-                throw new \RuntimeException(\sprintf('Свойство "%s" не найдено у %s.', $name, $object::class));
+                throw new RuntimeException(\sprintf('Свойство "%s" не найдено у %s.', $name, $object::class));
             }
 
             $reflection = $parent;
