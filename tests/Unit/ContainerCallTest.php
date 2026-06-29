@@ -57,16 +57,18 @@ final class ContainerCallTest extends TestCase
 
     public function testCallThrowsWhenInstanceMethodArrayUsesClassNameString(): void
     {
-        $container = new Container();
         $handler = new class () {
             public function run(): void
             {
             }
         };
+        /** @var callable $callable */
+        $callable = [$handler::class, 'run'];
+        $invoker = new CallableInvoker(new Container());
 
         $this->expectException(ContainerException::class);
         $this->expectExceptionMessage('Callable метода требует объект.');
 
-        $container->call([$handler::class, 'run']);
+        $invoker->invoke($callable);
     }
 }
