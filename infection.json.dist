@@ -32,6 +32,6 @@
     "phpUnit": {
         "configDir": "."
     },
-    "testFrameworkOptions": "--testsuite=unit,integration,security --exclude-group=circular-slow",
+    "testFrameworkOptions": "--testsuite=unit,integration,security --exclude-group=circular-slow --do-not-cache-result",
     "tmpDir": "var/cache/infection"
 }

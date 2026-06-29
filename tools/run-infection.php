@@ -10,7 +10,8 @@ declare(strict_types=1);
 
 /**
  * Precoverage Infection требует PHPUnit XML с привязкой строк к тестам ({@code <covered by=}).
- * PCOV на CI часто отдаёт только счётчики без имён тестов — тогда precoverage даёт ERRORED.
+ * На CI precoverage берётся из {@see composer test:coverage} (Xdebug + phpunit.coverage.xml.dist).
+ * Без метаданных — initial test suite (PCOV на CI часто отдаёт только счётчики без имён тестов).
  */
 function infectionCoverageXmlIncludesTestMetadata(string $directory): bool
 {
@@ -46,8 +47,7 @@ function infectionCoverageXmlIncludesTestMetadata(string $directory): bool
 }
 
 $coverageXmlDir = dirname(__DIR__) . '/var/coverage/coverage-xml';
-$usePrecoverage = infectionCoverageXmlIncludesTestMetadata($coverageXmlDir)
-    && getenv('GITHUB_ACTIONS') !== 'true';
+$usePrecoverage = infectionCoverageXmlIncludesTestMetadata($coverageXmlDir);
 
 $infectionArgs = array_merge(
     [
