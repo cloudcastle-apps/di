@@ -111,10 +111,8 @@ jobs:
         run: composer test:coverage
 
       - name: Tests mutation
-        env:
-          XDEBUG_MODE: coverage
         run: |
-          rm -rf var/cache/phpunit var/cache/infection var/coverage/coverage-xml
+          rm -rf var/cache/phpunit var/cache/infection
           composer test:mutation
 
       - name: Upload Infection report on failure
