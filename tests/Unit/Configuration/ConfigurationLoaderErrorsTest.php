@@ -7,6 +7,7 @@ namespace CloudCastle\DI\Tests\Unit\Configuration;
 use CloudCastle\DI\Configuration\Loader\JsonConfigurationLoader;
 use CloudCastle\DI\Configuration\Loader\PhpConfigurationLoader;
 use CloudCastle\DI\Configuration\Loader\XmlConfigurationLoader;
+use CloudCastle\DI\Configuration\Loader\YamlConfigurationLoader;
 use CloudCastle\DI\Exception\ContainerException;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
@@ -14,6 +15,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversClass(PhpConfigurationLoader::class)]
 #[CoversClass(JsonConfigurationLoader::class)]
 #[CoversClass(XmlConfigurationLoader::class)]
+#[CoversClass(YamlConfigurationLoader::class)]
 final class ConfigurationLoaderErrorsTest extends TestCase
 {
     private string $fixturesDirectory;
@@ -130,11 +132,94 @@ final class ConfigurationLoaderErrorsTest extends TestCase
         $loader->load($this->fixturesDirectory . '/missing.php');
     }
 
+    public function testJsonLoaderThrowsForUnreadableExistingFile(): void
+    {
+        $path = sys_get_temp_dir() . '/cloudcastle-di-unreadable.json';
+        file_put_contents($path, '{"services":{}}');
+
+        try {
+            chmod($path, 0o000);
+            $loader = new JsonConfigurationLoader();
+
+            $this->expectException(ContainerException::class);
+            $this->expectExceptionMessage('не найден');
+
+            $loader->load($path);
+        } finally {
+            if (is_file($path)) {
+                chmod($path, 0o644);
+                unlink($path);
+            }
+        }
+    }
+
+    public function testXmlLoaderThrowsForUnreadableExistingFile(): void
+    {
+        $path = sys_get_temp_dir() . '/cloudcastle-di-unreadable.xml';
+        file_put_contents($path, '<?xml version="1.0"?><container/>');
+
+        try {
+            chmod($path, 0o000);
+            $loader = new XmlConfigurationLoader();
+
+            $this->expectException(ContainerException::class);
+            $this->expectExceptionMessage('не найден');
+
+            $loader->load($path);
+        } finally {
+            if (is_file($path)) {
+                chmod($path, 0o644);
+                unlink($path);
+            }
+        }
+    }
+
+    public function testPhpLoaderThrowsForUnreadableExistingFile(): void
+    {
+        $path = sys_get_temp_dir() . '/cloudcastle-di-unreadable.php';
+        file_put_contents($path, '<?php declare(strict_types=1); return [];');
+
+        try {
+            chmod($path, 0o000);
+            $loader = new PhpConfigurationLoader();
+
+            $this->expectException(ContainerException::class);
+            $this->expectExceptionMessage('не найден');
+
+            $loader->load($path);
+        } finally {
+            if (is_file($path)) {
+                chmod($path, 0o644);
+                unlink($path);
+            }
+        }
+    }
+
+    public function testYamlLoaderThrowsForUnreadableExistingFile(): void
+    {
+        $path = sys_get_temp_dir() . '/cloudcastle-di-unreadable.yaml';
+        file_put_contents($path, "services: {}\n");
+
+        try {
+            chmod($path, 0o000);
+            $loader = new YamlConfigurationLoader();
+
+            $this->expectException(ContainerException::class);
+            $this->expectExceptionMessage('не найден');
+
+            $loader->load($path);
+        } finally {
+            if (is_file($path)) {
+                chmod($path, 0o644);
+                unlink($path);
+            }
+        }
+    }
+
     public function testJsonLoaderParsesConfigWithinDefaultMaxDepth(): void
     {
         $path = sys_get_temp_dir() . '/cloudcastle-di-depth.json';
-        $levels = $this->resolveDeepJsonNestingWithinLimit();
-        file_put_contents($path, $this->buildDeepJsonObject($levels));
+        file_put_contents($path, $this->buildDeepJsonObject(200));
 
         try {
             $config = (new JsonConfigurationLoader())->load($path);
@@ -159,14 +244,5 @@ final class ConfigurationLoaderErrorsTest extends TestCase
         }
 
         return '{' . $json . '}';
-    }
-
-    private function resolveDeepJsonNestingWithinLimit(): int
-    {
-        if (getenv('GITHUB_ACTIONS') === 'true') {
-            return 510;
-        }
-
-        return 200;
     }
 }
