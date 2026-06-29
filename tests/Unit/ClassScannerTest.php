@@ -315,7 +315,7 @@ final class ClassScannerTest extends TestCase
         );
 
         self::assertSame(
-            ['CloudCastle\\DI\\Tests\\Fixtures\\Autowire\\ScanPrefix\\Beta'],
+            [\CloudCastle\DI\Tests\Fixtures\Autowire\ScanPrefix\Beta::class],
             $classNames,
         );
     }
@@ -329,7 +329,7 @@ final class ClassScannerTest extends TestCase
         $classNames = $method->invoke(new ClassScanner(), $path, null);
 
         self::assertSame(
-            ['CloudCastle\\DI\\Tests\\Fixtures\\Autowire\\ScanPrefix\\ConcreteSecond'],
+            [\CloudCastle\DI\Tests\Fixtures\Autowire\ScanPrefix\ConcreteSecond::class],
             $classNames,
         );
     }
