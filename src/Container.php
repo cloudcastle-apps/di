@@ -373,6 +373,11 @@ final class Container implements ContainerInterface
         ];
     }
 
+    /**
+     * Создаёт снимок внутреннего состояния контейнера для introspection API.
+     *
+     * @return ContainerIntrospector Объект без побочных эффектов на resolve сервисов
+     */
     private function introspector(): ContainerIntrospector
     {
         return new ContainerIntrospector(

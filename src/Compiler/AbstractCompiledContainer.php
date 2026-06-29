@@ -22,7 +22,12 @@ use CloudCastle\DI\TaggedServiceLocator;
 /**
  * Базовый runtime-класс для compiled-контейнеров, сгенерированных {@see ContainerCompiler}.
  *
+ * Определения зафиксированы на этапе компиляции; мутация API контейнера запрещена.
+ * Создание сервисов делегируется подклассу через {@see create()}.
+ *
  * @psalm-api Используется сгенерированными подклассами в deploy/build.
+ *
+ * @see CompiledContainerInterface
  */
 abstract class AbstractCompiledContainer implements CompiledContainerInterface
 {
@@ -30,11 +35,13 @@ abstract class AbstractCompiledContainer implements CompiledContainerInterface
     use \CloudCastle\DI\ContainerProfilingApi;
     use \CloudCastle\DI\ContainerSmartCacheApi;
 
-    /** @var array<string, mixed> */
+    /** @var array<string, mixed> Singleton-кэш созданных экземпляров по resolved id */
     private array $resolved = [];
 
+    /** Разрешение цепочек {@see alias()} */
     private readonly ServiceAliasResolver $aliasResolver;
 
+    /** Ленивый {@see CallableInvoker} для {@see call()} */
     private ?CallableInvoker $callableInvoker = null;
 
     /** Opt-in профилирование get/make/call (#65) */
@@ -47,10 +54,13 @@ abstract class AbstractCompiledContainer implements CompiledContainerInterface
     private readonly ContainerSmartCacheSupport $smartCache;
 
     /**
-     * @param array<string, string> $aliases
-     * @param array<string, list<string>> $tags
-     * @param list<string> $definitionIds
-     * @param array<string, array<string, string>> $contextual
+     * Инициализирует compiled-контейнер снимком определений, собранным при компиляции.
+     *
+     * @param string $compiledClassName FQCN сгенерированного класса
+     * @param array<string, string> $aliases Карта alias → target id
+     * @param array<string, list<string>> $tags Карта тег → список id сервисов
+     * @param list<string> $definitionIds Идентификаторы всех определений
+     * @param array<string, array<string, string>> $contextual Contextual give по consumer FQCN
      * @param callable(): float|null $smartCacheClock Источник времени для smart cache (только тесты)
      */
     public function __construct(
@@ -72,13 +82,28 @@ abstract class AbstractCompiledContainer implements CompiledContainerInterface
         $this->smartCache = new ContainerSmartCacheSupport($smartCacheClock);
     }
 
+    /**
+     * Создаёт экземпляр сервиса по идентификатору (реализуется сгенерированным подклассом).
+     *
+     * @param string $id Resolved идентификатор сервиса
+     *
+     * @return mixed Новый экземпляр, скалярное значение или `null`
+     */
     abstract protected function create(string $id): mixed;
 
+    /**
+     * {@inheritDoc}
+     */
     public function getCompiledClassName(): string
     {
         return $this->compiledClassName;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @throws NotFoundException Если сервис не зарегистрирован
+     */
     public function get(string $id): mixed
     {
         $resolvedId = $this->aliasResolver->resolve($id);
@@ -106,6 +131,9 @@ abstract class AbstractCompiledContainer implements CompiledContainerInterface
         );
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function has(string $id): bool
     {
         if ($this->aliasResolver->isAlias($id)) {
@@ -117,6 +145,11 @@ abstract class AbstractCompiledContainer implements CompiledContainerInterface
         return isset($this->resolved[$resolvedId]) || $this->canCreate($resolvedId);
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @throws NotFoundException Если сервис не зарегистрирован
+     */
     public function make(string $id): mixed
     {
         $resolvedId = $this->aliasResolver->resolve($id);
@@ -136,16 +169,29 @@ abstract class AbstractCompiledContainer implements CompiledContainerInterface
         );
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function hasDefinition(string $id): bool
     {
         return \in_array($id, $this->definitionIds, true) || $this->aliasResolver->isAlias($id);
     }
 
+    /**
+     * Запрещено после компиляции.
+     *
+     * {@inheritDoc}
+     *
+     * @throws ContainerException Всегда: compiled-контейнер неизменяем
+     */
     public function tag(string $id, string $tag): void
     {
         $this->assertImmutable();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function getTagged(string $tag): array
     {
         /** @var array<string, mixed> $services */
@@ -163,96 +209,207 @@ abstract class AbstractCompiledContainer implements CompiledContainerInterface
         return $services;
     }
 
+    /**
+     * Запрещено после компиляции.
+     *
+     * {@inheritDoc}
+     *
+     * @throws ContainerException Всегда: compiled-контейнер неизменяем
+     */
     public function decorate(string $id, callable $decorator): void
     {
         $this->assertImmutable();
     }
 
+    /**
+     * Запрещено после компиляции.
+     *
+     * {@inheritDoc}
+     *
+     * @throws ContainerException Всегда: compiled-контейнер неизменяем
+     */
     public function enableAutowiring(): void
     {
         $this->assertImmutable();
     }
 
+    /**
+     * Запрещено после компиляции.
+     *
+     * {@inheritDoc}
+     *
+     * @throws ContainerException Всегда: compiled-контейнер неизменяем
+     */
     public function disableAutowiring(): void
     {
         $this->assertImmutable();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function isAutowiringEnabled(): bool
     {
         return false;
     }
 
+    /**
+     * Запрещено после компиляции.
+     *
+     * {@inheritDoc}
+     *
+     * @throws ContainerException Всегда: compiled-контейнер неизменяем
+     */
     public function enableParameterNameAutowiring(): void
     {
         $this->assertImmutable();
     }
 
+    /**
+     * Запрещено после компиляции.
+     *
+     * {@inheritDoc}
+     *
+     * @throws ContainerException Всегда: compiled-контейнер неизменяем
+     */
     public function disableParameterNameAutowiring(): void
     {
         $this->assertImmutable();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function isParameterNameAutowiringEnabled(): bool
     {
         return false;
     }
 
+    /**
+     * Запрещено после компиляции.
+     *
+     * {@inheritDoc}
+     *
+     * @throws ContainerException Всегда: compiled-контейнер неизменяем
+     */
     public function enablePropertyAutowiring(): void
     {
         $this->assertImmutable();
     }
 
+    /**
+     * Запрещено после компиляции.
+     *
+     * {@inheritDoc}
+     *
+     * @throws ContainerException Всегда: compiled-контейнер неизменяем
+     */
     public function disablePropertyAutowiring(): void
     {
         $this->assertImmutable();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function isPropertyAutowiringEnabled(): bool
     {
         return false;
     }
 
+    /**
+     * Запрещено после компиляции.
+     *
+     * {@inheritDoc}
+     *
+     * @throws ContainerException Всегда: compiled-контейнер неизменяем
+     */
     public function enableMethodAutowiring(): void
     {
         $this->assertImmutable();
     }
 
+    /**
+     * Запрещено после компиляции.
+     *
+     * {@inheritDoc}
+     *
+     * @throws ContainerException Всегда: compiled-контейнер неизменяем
+     */
     public function disableMethodAutowiring(): void
     {
         $this->assertImmutable();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function isMethodAutowiringEnabled(): bool
     {
         return false;
     }
 
+    /**
+     * Запрещено после компиляции.
+     *
+     * {@inheritDoc}
+     *
+     * @throws ContainerException Всегда: compiled-контейнер неизменяем
+     */
     public function registerAttribute(string $attributeClass): void
     {
         $this->assertImmutable();
     }
 
+    /**
+     * Запрещено после компиляции.
+     *
+     * {@inheritDoc}
+     *
+     * @throws ContainerException Всегда: compiled-контейнер неизменяем
+     */
     public function autowire(string $className): void
     {
         $this->assertImmutable();
     }
 
+    /**
+     * Запрещено после компиляции.
+     *
+     * {@inheritDoc}
+     *
+     * @throws ContainerException Всегда: compiled-контейнер неизменяем
+     */
     public function scan(string $directory, ?string $namespace = null): void
     {
         $this->assertImmutable();
     }
 
+    /**
+     * Запрещено после компиляции.
+     *
+     * {@inheritDoc}
+     *
+     * @throws ContainerException Всегда: compiled-контейнер неизменяем
+     */
     public function alias(string $alias, string $targetId): void
     {
         $this->assertImmutable();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function lazy(string $serviceId): LazyService
     {
         return new LazyService($this, $serviceId);
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @throws ContainerException Если symfony/var-exporter недоступен
+     */
     public function lazyGhost(string $type, string $serviceId): object
     {
         /** @infection-ignore-all */
@@ -267,16 +424,37 @@ abstract class AbstractCompiledContainer implements CompiledContainerInterface
         );
     }
 
+    /**
+     * Запрещено после компиляции.
+     *
+     * {@inheritDoc}
+     *
+     * @throws ContainerException Всегда: compiled-контейнер неизменяем
+     */
     public function addDefinitions(array $definitions): void
     {
         $this->assertImmutable();
     }
 
+    /**
+     * Запрещено после компиляции.
+     *
+     * {@inheritDoc}
+     *
+     * @throws ContainerException Всегда: compiled-контейнер неизменяем
+     */
     public function bind(string $abstract, string $concrete): void
     {
         $this->assertImmutable();
     }
 
+    /**
+     * Запрещено после компиляции.
+     *
+     * {@inheritDoc}
+     *
+     * @throws ContainerException Всегда: compiled-контейнер неизменяем
+     */
     public function when(string $consumerClass): ContextualBindingNeedsInterface
     {
         $this->assertImmutable();
@@ -284,11 +462,19 @@ abstract class AbstractCompiledContainer implements CompiledContainerInterface
         throw new ContainerException('Contextual binding недоступен в compiled-контейнере.');
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function contextualGive(string $consumerClass, string $need): ?string
     {
         return $this->contextual[$consumerClass][$need] ?? null;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @throws ContainerException Если callable не разрешается
+     */
     public function call(callable $callable, array $parameters = []): mixed
     {
         $target = ContainerProfilingSupport::describeCallable($callable);
@@ -299,35 +485,60 @@ abstract class AbstractCompiledContainer implements CompiledContainerInterface
         );
     }
 
+    /**
+     * Запрещено после компиляции.
+     *
+     * {@inheritDoc}
+     *
+     * @throws ContainerException Всегда: compiled-контейнер неизменяем
+     */
     public function afterResolving(string $id, callable $callback): void
     {
         $this->assertImmutable();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function getTaggedIds(string $tag): array
     {
         return $this->tags[$tag] ?? [];
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function getTaggedIterator(string $tag): TaggedServiceIterator
     {
         return new TaggedServiceIterator($this, $tag);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function getTaggedLocator(string $tag): TaggedServiceLocator
     {
         return new TaggedServiceLocator($this, $tag);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function freeze(): void
     {
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function isFrozen(): bool
     {
         return true;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function getDefinitionIds(): array
     {
         $ids = $this->definitionIds;
@@ -336,6 +547,9 @@ abstract class AbstractCompiledContainer implements CompiledContainerInterface
         return $ids;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function dump(): array
     {
         $definitions = $this->definitionIds;
@@ -358,16 +572,37 @@ abstract class AbstractCompiledContainer implements CompiledContainerInterface
         ];
     }
 
+    /**
+     * Запрещено после компиляции.
+     *
+     * {@inheritDoc}
+     *
+     * @throws ContainerException Всегда: compiled-контейнер неизменяем
+     */
     public function set(string $id, mixed $concrete): void
     {
         $this->assertImmutable();
     }
 
+    /**
+     * Проверяет, зарегистрирован ли сервис в снимке определений compiled-контейнера.
+     *
+     * @param string $id Resolved идентификатор сервиса
+     *
+     * @return bool `true`, если id присутствует в списке definitionIds
+     */
     private function canCreate(string $id): bool
     {
         return \in_array($id, $this->definitionIds, true);
     }
 
+    /**
+     * Создаёт сервис через {@see create()} и кэширует singleton, если экземпляр не `null`.
+     *
+     * @param string $resolvedId Resolved идентификатор сервиса
+     *
+     * @return mixed Созданный экземпляр или скалярное значение
+     */
     private function resolveAndCache(string $resolvedId): mixed
     {
         /** @psalm-suppress MixedAssignment */
@@ -381,6 +616,11 @@ abstract class AbstractCompiledContainer implements CompiledContainerInterface
         return $instance;
     }
 
+    /**
+     * Возвращает ленивый {@see CallableInvoker}, общий для всех вызовов {@see call()}.
+     *
+     * @return CallableInvoker Invoker с autowiring через текущий контейнер
+     */
     private function callableInvoker(): CallableInvoker
     {
         return $this->callableInvoker ??= new CallableInvoker(
@@ -389,6 +629,11 @@ abstract class AbstractCompiledContainer implements CompiledContainerInterface
         );
     }
 
+    /**
+     * Блокирует мутацию определений compiled-контейнера.
+     *
+     * @throws ContainerException Всегда при попытке изменить определения
+     */
     private function assertImmutable(): void
     {
         throw new ContainerException('Compiled container заморожен: изменение определений запрещено.');

@@ -15,13 +15,24 @@ use ReflectionUnionType;
 
 /**
  * Разрешает параметры конструктора и свойства по reflection-типам.
+ *
+ * Поддерживает named, union и intersection типы; builtin-типы — через значение по умолчанию.
  */
 final class ParameterTypeResolver
 {
+    /**
+     * Проверяет и получает class-зависимости из контейнера.
+     */
     private readonly ClassDependencyResolver $classResolver;
 
+    /**
+     * Разрешает intersection-типы (A&B).
+     */
     private readonly IntersectionTypeResolver $intersection;
 
+    /**
+     * @param ContainerInterface $container Контейнер для разрешения class-зависимостей
+     */
     public function __construct(
         private readonly ContainerInterface $container,
     ) {
@@ -30,7 +41,13 @@ final class ParameterTypeResolver
     }
 
     /**
+     * Разрешает значение параметра конструктора или метода по его reflection-типу.
+     *
+     * @param ReflectionParameter $parameter Reflection параметра
+     *
      * @throws ContainerException Если обязательный параметр не разрешается
+     *
+     * @return mixed Значение для передачи в вызов
      */
     public function resolve(ReflectionParameter $parameter): mixed
     {
@@ -54,7 +71,13 @@ final class ParameterTypeResolver
     }
 
     /**
+     * Разрешает значение свойства по его reflection-типу.
+     *
+     * @param ReflectionProperty $property Reflection свойства
+     *
      * @throws ContainerException Если обязательное свойство не разрешается
+     *
+     * @return mixed Значение для присвоения свойству
      */
     public function resolveProperty(ReflectionProperty $property): mixed
     {
@@ -80,6 +103,17 @@ final class ParameterTypeResolver
         return $this->resolveNamedTypeProperty($property, $type, $consumerClass);
     }
 
+    /**
+     * Разрешает union-тип параметра: первый доступный object-тип из контейнера.
+     *
+     * @param ReflectionParameter $parameter Reflection параметра
+     * @param ReflectionUnionType $type Union reflection-тип
+     * @param string|null $consumerClass Класс-потребитель для contextual binding
+     *
+     * @throws ContainerException Если обязательный параметр не разрешается
+     *
+     * @return mixed Разрешённое значение или значение по умолчанию
+     */
     private function resolveUnionParameter(
         ReflectionParameter $parameter,
         ReflectionUnionType $type,
@@ -94,6 +128,17 @@ final class ParameterTypeResolver
         return $this->resolveDefaultValue($parameter);
     }
 
+    /**
+     * Разрешает union-тип свойства: первый доступный object-тип или `null`.
+     *
+     * @param ReflectionProperty $property Reflection свойства
+     * @param ReflectionUnionType $type Union reflection-тип
+     * @param string $consumerClass Класс-потребитель для contextual binding
+     *
+     * @throws ContainerException Если свойство обязательно и ни один тип не разрешается
+     *
+     * @return mixed Разрешённое значение или `null`
+     */
     private function resolveUnionProperty(
         ReflectionProperty $property,
         ReflectionUnionType $type,
@@ -115,6 +160,17 @@ final class ParameterTypeResolver
         ));
     }
 
+    /**
+     * Разрешает named-тип параметра (один class/interface или builtin).
+     *
+     * @param ReflectionParameter $parameter Reflection параметра
+     * @param ReflectionNamedType $type Named reflection-тип
+     * @param string|null $consumerClass Класс-потребитель для contextual binding
+     *
+     * @throws ContainerException Если обязательный параметр не разрешается
+     *
+     * @return mixed Разрешённое значение, `null` или значение по умолчанию
+     */
     private function resolveNamedTypeParameter(
         ReflectionParameter $parameter,
         ReflectionNamedType $type,
@@ -141,6 +197,17 @@ final class ParameterTypeResolver
         return $this->resolveDefaultValue($parameter);
     }
 
+    /**
+     * Разрешает named-тип свойства (один class/interface).
+     *
+     * @param ReflectionProperty $property Reflection свойства
+     * @param ReflectionNamedType $type Named reflection-тип
+     * @param string $consumerClass Класс-потребитель для contextual binding
+     *
+     * @throws ContainerException Если свойство обязательно и тип не разрешается
+     *
+     * @return mixed Разрешённое значение или `null`
+     */
     private function resolveNamedTypeProperty(
         ReflectionProperty $property,
         ReflectionNamedType $type,
@@ -170,7 +237,13 @@ final class ParameterTypeResolver
     }
 
     /**
+     * Возвращает значение по умолчанию параметра или выбрасывает исключение.
+     *
+     * @param ReflectionParameter $parameter Reflection параметра
+     *
      * @throws ContainerException Если значение по умолчанию недоступно
+     *
+     * @return mixed Значение по умолчанию
      */
     private function resolveDefaultValue(ReflectionParameter $parameter): mixed
     {
@@ -185,9 +258,11 @@ final class ParameterTypeResolver
     }
 
     /**
-     * @param array<ReflectionType> $types
+     * Оставляет только object named-типы, исключая builtin и вложенные union/intersection.
      *
-     * @return list<ReflectionNamedType>
+     * @param array<ReflectionType> $types Список reflection-типов из union или intersection
+     *
+     * @return list<ReflectionNamedType> Named-типы классов и интерфейсов
      */
     private function filterObjectNamedTypes(array $types): array
     {

@@ -11,15 +11,27 @@ use CloudCastle\DI\Exception\ContainerCompileException;
 
 /**
  * Компилирует замороженный {@see Container} в PHP-класс wiring (#24).
+ *
+ * @see ContainerCompilerInterface
  */
 final class ContainerCompiler implements ContainerCompilerInterface
 {
+    /**
+     * @param ContainerCompileSnapshotBuilder $snapshotBuilder Сборщик снимка определений контейнера
+     * @param CompiledContainerPhpGenerator $generator Генератор PHP-кода compiled-контейнера
+     */
     public function __construct(
         private readonly ContainerCompileSnapshotBuilder $snapshotBuilder = new ContainerCompileSnapshotBuilder(),
         private readonly CompiledContainerPhpGenerator $generator = new CompiledContainerPhpGenerator(),
     ) {
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @throws ContainerCompileException Если контейнер не {@see Container}, состояние несовместимо
+     *                                   с компиляцией или запись файла не удалась
+     */
     public function compile(
         ContainerInterface $container,
         string $outputPath,
@@ -40,6 +52,15 @@ final class ContainerCompiler implements ContainerCompilerInterface
         return new ContainerCompileResult($resolvedClassName, $outputPath);
     }
 
+    /**
+     * Выводит FQCN класса из имени выходного `.php` файла.
+     *
+     * @param string $outputPath Путь к файлу compiled-контейнера
+     *
+     * @throws ContainerCompileException Если путь не оканчивается на `.php` или имя файла пустое
+     *
+     * @return string FQCN вида `CloudCastle\DI\Compiled\<ShortName>`
+     */
     private function classNameFromPath(string $outputPath): string
     {
         $basename = basename($outputPath);
@@ -57,6 +78,14 @@ final class ContainerCompiler implements ContainerCompilerInterface
         return 'CloudCastle\\DI\\Compiled\\' . $shortName;
     }
 
+    /**
+     * Записывает сгенерированный исходник на диск, создавая каталог при необходимости.
+     *
+     * @param string $outputPath Целевой путь к `.php` файлу
+     * @param string $source Содержимое сгенерированного класса
+     *
+     * @throws ContainerCompileException Если каталог нельзя создать или путь указывает на каталог
+     */
     private function writeFile(string $outputPath, string $source): void
     {
         $directory = \dirname($outputPath);

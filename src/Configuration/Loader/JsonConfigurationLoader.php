@@ -48,7 +48,13 @@ final class JsonConfigurationLoader implements ConfigurationLoaderInterface
     }
 
     /**
-     * @throws ContainerException
+     * Читает содержимое файла конфигурации с диска.
+     *
+     * @param string $path Путь к файлу
+     *
+     * @throws ContainerException Если файл не найден или недоступен для чтения
+     *
+     * @return string Содержимое файла
      */
     private function readFile(string $path): string
     {

@@ -14,6 +14,8 @@ namespace CloudCastle\DI\Contract;
 interface ServiceIdAttribute
 {
     /**
+     * Возвращает id сервиса из attribute или `null`, если attribute не переопределяет стратегию.
+     *
      * @return string|null Id сервиса; `null` — не переопределять стратегию autowiring
      */
     public function serviceId(): ?string;

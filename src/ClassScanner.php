@@ -88,6 +88,14 @@ final class ClassScanner
         }
     }
 
+    /**
+     * Сравнивает файлы по полному пути для стабильной лексикографической сортировки.
+     *
+     * @param SplFileInfo $left Левый элемент сравнения
+     * @param SplFileInfo $right Правый элемент сравнения
+     *
+     * @return int Результат strcmp для путей файлов
+     */
     private function compareSplFileInfoByPath(SplFileInfo $left, SplFileInfo $right): int
     {
         return strcmp($left->getPathname(), $right->getPathname());

@@ -54,7 +54,9 @@ final class AfterResolvingDispatcher
     }
 
     /**
-     * @return bool `true`, если зарегистрирован хотя бы один callback
+     * Проверяет, зарегистрирован ли хотя бы один after-resolving callback.
+     *
+     * @return bool `true`, если {@see register()} вызывался хотя бы раз
      */
     public function hasCallbacks(): bool
     {

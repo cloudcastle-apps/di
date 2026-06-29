@@ -19,10 +19,14 @@ use CloudCastle\DI\Contract\ContainerInterface;
  */
 final class LazyService
 {
-    /** Кэшированное значение после первого {@see getValue()} */
+    /**
+     * Кэшированное значение после первого {@see getValue()}.
+     */
     private mixed $value = null;
 
-    /** Был ли уже вызван {@see ContainerInterface::get()} для {@see $serviceId} */
+    /**
+     * Флаг: был ли уже вызван {@see ContainerInterface::get()} для {@see $serviceId}.
+     */
     private bool $initialized = false;
 
     /**

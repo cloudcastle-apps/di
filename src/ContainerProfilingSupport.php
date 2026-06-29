@@ -85,11 +85,15 @@ final class ContainerProfilingSupport
     }
 
     /**
+     * Регистрирует замер операции {@see ContainerInterface::get()} с учётом флага кэша.
+     *
      * @template T
      *
-     * @param callable(): T $resolver
+     * @param string $resolvedId Id сервиса после разрешения alias
+     * @param bool $wasCached `true`, если singleton уже был в кэше до resolve
+     * @param callable(): T $resolver Операция resolve сервиса
      *
-     * @return T
+     * @return T Результат `$resolver`
      */
     public function trackGet(string $resolvedId, bool $wasCached, callable $resolver): mixed
     {
@@ -97,11 +101,14 @@ final class ContainerProfilingSupport
     }
 
     /**
+     * Регистрирует замер операции {@see ContainerInterface::make()}.
+     *
      * @template T
      *
-     * @param callable(): T $resolver
+     * @param string $resolvedId Id сервиса после разрешения alias
+     * @param callable(): T $resolver Операция создания нового экземпляра
      *
-     * @return T
+     * @return T Результат `$resolver`
      */
     public function trackMake(string $resolvedId, callable $resolver): mixed
     {
@@ -109,11 +116,14 @@ final class ContainerProfilingSupport
     }
 
     /**
+     * Регистрирует замер операции {@see ContainerInterface::call()}.
+     *
      * @template T
      *
-     * @param callable(): T $invoker
+     * @param string $target Описание callable из {@see describeCallable()}
+     * @param callable(): T $invoker Вызов callable с autowiring параметров
      *
-     * @return T
+     * @return T Результат `$invoker`
      */
     public function trackCall(string $target, callable $invoker): mixed
     {

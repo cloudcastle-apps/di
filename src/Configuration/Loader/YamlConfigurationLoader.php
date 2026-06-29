@@ -46,7 +46,11 @@ final class YamlConfigurationLoader implements ConfigurationLoaderInterface
     }
 
     /**
-     * @return mixed|false
+     * Разбирает YAML-файл через {@see yaml_parse_file()} с преобразованием ошибок в {@see ContainerException}.
+     *
+     * @param string $path Путь к YAML-файлу
+     *
+     * @return mixed|false Результат {@see yaml_parse_file()} или `false` при ошибке парсера
      */
     private function parseYamlFile(string $path): mixed
     {

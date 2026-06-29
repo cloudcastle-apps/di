@@ -10,7 +10,13 @@ namespace CloudCastle\DI\Compiler;
 final class CompileServiceBinding
 {
     /**
-     * @param list<string> $argumentExpressions PHP-выражения для аргументов конструктора
+     * Описание одного сервиса для генерации метода `create()` в compiled-контейнере.
+     *
+     * @param string $id Идентификатор сервиса
+     * @param CompileServiceKind $kind Способ создания экземпляра
+     * @param string|null $className FQCN класса для {@see CompileServiceKind::NewInstance} и {@see CompileServiceKind::Autowired}
+     * @param mixed $literalValue Готовое значение для {@see CompileServiceKind::Literal}
+     * @param list<string> $argumentExpressions PHP-выражения аргументов конструктора (для NewInstance)
      */
     public function __construct(
         public readonly string $id,

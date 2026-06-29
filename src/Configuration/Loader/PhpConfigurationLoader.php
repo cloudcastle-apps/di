@@ -48,7 +48,11 @@ final class PhpConfigurationLoader implements ConfigurationLoaderInterface
     }
 
     /**
-     * @throws ContainerException
+     * Проверяет существование и доступность файла конфигурации для `require`.
+     *
+     * @param string $path Путь к файлу
+     *
+     * @throws ContainerException Если файл не найден или недоступен для чтения
      */
     private function assertReadableFile(string $path): void
     {

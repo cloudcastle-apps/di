@@ -14,6 +14,11 @@ namespace CloudCastle\DI\Configuration;
  */
 final class ConfigurationMerger
 {
+    /**
+     * Имена секций конфигурации, которые объединяются при слиянии слоёв.
+     *
+     * @var list<string>
+     */
     private const MERGE_SECTIONS = [
         'services',
         'aliases',
@@ -27,9 +32,11 @@ final class ConfigurationMerger
     ];
 
     /**
-     * @param list<ConfigurationLayer> $layers
+     * Сливает несколько слоёв конфигурации с учётом приоритетов.
      *
-     * @return array<string, mixed>
+     * @param list<ConfigurationLayer> $layers Слои в порядке загрузки
+     *
+     * @return array<string, mixed> Объединённая конфигурация по секциям
      */
     public function merge(array $layers): array
     {
@@ -50,9 +57,11 @@ final class ConfigurationMerger
     }
 
     /**
-     * @param list<ConfigurationLayer> $layers
+     * Сливает секцию contextual с учётом приоритетов по парам consumerClass/need.
      *
-     * @return array<string, array<string, string>>
+     * @param list<ConfigurationLayer> $layers Слои конфигурации в порядке загрузки
+     *
+     * @return array<string, array<string, string>> Карта consumerClass → need → id сервиса
      */
     private function mergeContextualSection(array $layers): array
     {
@@ -62,7 +71,9 @@ final class ConfigurationMerger
     }
 
     /**
-     * @param list<ConfigurationLayer> $layers
+     * Собирает победителей для каждой пары consumerClass/need по приоритету и порядку слоя.
+     *
+     * @param list<ConfigurationLayer> $layers Слои конфигурации в порядке загрузки
      *
      * @return array<int|string, array{effectivePriority: int, order: int, value: mixed}>
      */
@@ -108,9 +119,12 @@ final class ConfigurationMerger
     }
 
     /**
-     * @param array<int|string, array{effectivePriority: int, order: int, value: mixed}> $winners
+     * Преобразует карту победителей в итоговую структуру contextual-секции.
      *
-     * @return array<string, array<string, string>>
+     * @param array<int|string, array{effectivePriority: int, order: int, value: mixed}> $winners
+     *                                                                                            Победители с ключом `consumerClass::need`
+     *
+     * @return array<string, array<string, string>> Карта consumerClass → need → id сервиса
      */
     private function buildContextualResult(array $winners): array
     {
@@ -143,9 +157,12 @@ final class ConfigurationMerger
     }
 
     /**
-     * @param list<ConfigurationLayer> $layers
+     * Сливает одну именованную секцию конфигурации из всех слоёв.
      *
-     * @return array<mixed>
+     * @param list<ConfigurationLayer> $layers Слои конфигурации в порядке загрузки
+     * @param string $section Имя секции из {@see MERGE_SECTIONS}
+     *
+     * @return array<mixed> Ассоциативная или списковая секция в зависимости от типа
      */
     private function mergeSection(array $layers, string $section): array
     {
@@ -178,8 +195,14 @@ final class ConfigurationMerger
     }
 
     /**
+     * Объединяет элементы списковой секции (autowire, register_attributes, scan).
+     *
      * @param array<string|int, array{effectivePriority: int, order: int, value: mixed}> $winners
-     * @param array<mixed> $sectionData
+     *                                                                                            Накопленные победители по ключу элемента (изменяется по ссылке)
+     * @param string $section Имя списковой секции
+     * @param array<mixed> $sectionData Данные секции из текущего слоя
+     * @param int $order Порядковый индекс слоя
+     * @param int $layerDefaultPriority Приоритет слоя по умолчанию
      */
     private function mergeListSection(
         array &$winners,
@@ -197,6 +220,15 @@ final class ConfigurationMerger
         }
     }
 
+    /**
+     * Формирует ключ элемента списковой секции для разрешения конфликтов.
+     *
+     * @param string $section Имя секции
+     * @param mixed $value Значение элемента
+     * @param int|string $index Индекс элемента в массиве слоя
+     *
+     * @return string Уникальный ключ победителя (например, `scan:/path` или `autowire:FQCN`)
+     */
     private function resolveListEntryKey(string $section, mixed $value, int|string $index): string
     {
         if ($section === 'scan' && \is_array($value) && isset($value['directory']) && \is_string($value['directory'])) {
@@ -211,8 +243,13 @@ final class ConfigurationMerger
     }
 
     /**
+     * Объединяет элементы ассоциативной секции (services, aliases, bind, tags и т.д.).
+     *
      * @param array<string|int, array{effectivePriority: int, order: int, value: mixed}> $winners
-     * @param array<mixed> $sectionData
+     *                                                                                            Накопленные победители по ключу (изменяется по ссылке)
+     * @param array<mixed> $sectionData Данные секции из текущего слоя
+     * @param int $order Порядковый индекс слоя
+     * @param int $layerDefaultPriority Приоритет слоя по умолчанию
      */
     private function mergeMapSection(array &$winners, array $sectionData, int $order, int $layerDefaultPriority): void
     {
@@ -229,7 +266,16 @@ final class ConfigurationMerger
     }
 
     /**
+     * Сравнивает кандидата с текущим победителем и обновляет карту при более высоком приоритете.
+     *
+     * При равном приоритете побеждает слой с большим порядковым индексом.
+     *
      * @param array<string|int, array{effectivePriority: int, order: int, value: mixed}> $winners
+     *                                                                                            Карта победителей (изменяется по ссылке)
+     * @param string $key Ключ элемента в секции
+     * @param int $effectivePriority Эффективный приоритет записи
+     * @param int $order Порядковый индекс слоя
+     * @param mixed $value Значение записи
      */
     private function considerWinner(
         array &$winners,
@@ -263,9 +309,11 @@ final class ConfigurationMerger
     }
 
     /**
+     * Собирает ассоциативную секцию из значений победителей.
+     *
      * @param array<string|int, array{effectivePriority: int, order: int, value: mixed}> $winners
      *
-     * @return array<mixed>
+     * @return array<mixed> Итоговая ассоциативная секция
      */
     private function buildMapResult(array $winners): array
     {
@@ -279,9 +327,11 @@ final class ConfigurationMerger
     }
 
     /**
+     * Собирает списковую секцию, упорядоченную по порядку загрузки слоёв.
+     *
      * @param array<string|int, array{effectivePriority: int, order: int, value: mixed}> $winners
      *
-     * @return list<mixed>
+     * @return list<mixed> Итоговый список значений
      */
     private function buildListResult(array $winners): array
     {
@@ -299,6 +349,13 @@ final class ConfigurationMerger
         return $result;
     }
 
+    /**
+     * Определяет приоритет слоя: явный в конфиге, приоритет файла или порядковый индекс.
+     *
+     * @param ConfigurationLayer $layer Слой конфигурации
+     *
+     * @return int Эффективный приоритет по умолчанию для записей без собственного priority
+     */
     private function resolveLayerDefaultPriority(ConfigurationLayer $layer): int
     {
         $configPriority = $layer->config['priority'] ?? null;
@@ -315,7 +372,13 @@ final class ConfigurationMerger
     }
 
     /**
-     * @return array{0: mixed, 1: int|null}
+     * Извлекает значение и необязательный приоритет из записи конфигурации.
+     *
+     * Поддерживает форматы: скаляр, `['value' => ..., 'priority' => int]` и inline `priority`.
+     *
+     * @param mixed $entry Элемент секции из слоя
+     *
+     * @return array{0: mixed, 1: int|null} Кортеж [значение, приоритет или null]
      */
     private function unwrapEntry(mixed $entry): array
     {
@@ -330,6 +393,13 @@ final class ConfigurationMerger
         return [$entry['value'], \is_int($priority) ? $priority : null];
     }
 
+    /**
+     * Удаляет ключ `priority` из массива записи, не меняя остальное значение.
+     *
+     * @param mixed $entry Элемент секции
+     *
+     * @return mixed Значение без поля priority
+     */
     private function stripPriority(mixed $entry): mixed
     {
         if (!\is_array($entry) || !isset($entry['priority'])) {
@@ -341,6 +411,13 @@ final class ConfigurationMerger
         return $entry;
     }
 
+    /**
+     * Извлекает inline-приоритет из массива записи, если он задан целым числом.
+     *
+     * @param mixed $entry Элемент секции
+     *
+     * @return int|null Приоритет или null, если не указан
+     */
     private function extractInlinePriority(mixed $entry): ?int
     {
         if (!\is_array($entry)) {
@@ -352,6 +429,13 @@ final class ConfigurationMerger
         return \is_int($priority) ? $priority : null;
     }
 
+    /**
+     * Проверяет, хранится ли секция в виде списка, а не ассоциативного массива.
+     *
+     * @param string $section Имя секции
+     *
+     * @return bool true для autowire, register_attributes и scan
+     */
     private function isListSection(string $section): bool
     {
         return \in_array($section, ['autowire', 'register_attributes', 'scan'], true);

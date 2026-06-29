@@ -10,10 +10,12 @@ namespace CloudCastle\DI\Compiler;
 final class ContainerCompileSnapshot
 {
     /**
-     * @param array<string, string> $aliases
-     * @param array<string, list<string>> $tags
-     * @param list<CompileServiceBinding> $bindings
-     * @param array<string, array<string, string>> $contextual
+     * Снимок alias, тегов, bindings и contextual-правил замороженного контейнера.
+     *
+     * @param array<string, string> $aliases Карта alias → target id
+     * @param array<string, list<string>> $tags Карта тег → список id сервисов
+     * @param list<CompileServiceBinding> $bindings Описания сервисов для компиляции
+     * @param array<string, array<string, string>> $contextual Contextual give: consumer FQCN → need → give
      */
     public function __construct(
         public readonly array $aliases,

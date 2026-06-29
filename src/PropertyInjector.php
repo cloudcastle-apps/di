@@ -12,13 +12,25 @@ use ReflectionType;
 
 /**
  * Внедряет зависимости в свойства экземпляра после создания.
+ *
+ * Обрабатывает свойства с inject-attributes или при включённом property autowiring.
  */
 final class PropertyInjector
 {
+    /**
+     * Проверяет наличие inject-attributes на свойствах.
+     */
     private readonly AttributeServiceIdReader $attributeReader;
 
+    /**
+     * Разрешает значения для inject-свойств.
+     */
     private readonly MemberResolver $memberResolver;
 
+    /**
+     * @param ContainerInterface $container Контейнер для разрешения зависимостей
+     * @param AttributeServiceIdReader|null $attributeReader Читатель id из attributes (по умолчанию новый экземпляр)
+     */
     public function __construct(
         private readonly ContainerInterface $container,
         ?AttributeServiceIdReader $attributeReader = null,
@@ -29,8 +41,10 @@ final class PropertyInjector
     }
 
     /**
+     * Внедряет зависимости во все подходящие свойства экземпляра.
      *
-     * @param ReflectionClass<object> $reflection
+     * @param object $instance Целевой экземпляр
+     * @param ReflectionClass<object> $reflection Reflection класса экземпляра
      *
      * @throws ContainerException Если свойство не удаётся разрешить
      */
@@ -45,6 +59,14 @@ final class PropertyInjector
         }
     }
 
+    /**
+     * Определяет, нужно ли внедрять значение в свойство.
+     *
+     * @param ReflectionProperty $property Reflection свойства
+     * @param object $instance Целевой экземпляр
+     *
+     * @return bool `true`, если свойство подлежит injection
+     */
     private function shouldInjectProperty(ReflectionProperty $property, object $instance): bool
     {
         if ($property->isStatic() || $property->isPromoted() || $property->isInitialized($instance)) {
@@ -58,6 +80,13 @@ final class PropertyInjector
         return $this->container->isPropertyAutowiringEnabled() && $property->getType() instanceof ReflectionType;
     }
 
+    /**
+     * Проверяет наличие inject-attributes на свойстве.
+     *
+     * @param ReflectionProperty $property Reflection свойства
+     *
+     * @return bool `true`, если найден известный inject-attribute
+     */
     private function hasInjectAttributes(ReflectionProperty $property): bool
     {
         return $this->attributeReader->hasAny($property->getAttributes());

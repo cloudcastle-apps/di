@@ -30,7 +30,9 @@ final class ConfigurationLoaderRegistry
     }
 
     /**
-     * @return list<ConfigurationLoaderInterface>
+     * Создаёт реестр с набором загрузчиков по умолчанию (PHP, JSON, YAML, XML).
+     *
+     * @return list<ConfigurationLoaderInterface> Загрузчики в порядке приоритета при совпадении формата
      */
     public static function createDefaultLoaders(): array
     {
@@ -44,6 +46,10 @@ final class ConfigurationLoaderRegistry
 
     /**
      * Проверяет, поддерживается ли файл одним из зарегистрированных загрузчиков.
+     *
+     * @param string $path Путь к файлу конфигурации
+     *
+     * @return bool `true`, если хотя бы один загрузчик вернёт `true` из {@see ConfigurationLoaderInterface::supports()}
      */
     public function supports(string $path): bool
     {
@@ -57,10 +63,13 @@ final class ConfigurationLoaderRegistry
     }
 
     /**
+     * Загружает конфигурацию из файла первым подходящим загрузчиком.
      *
-     * @throws ContainerException Если формат не поддерживается
+     * @param string $path Путь к файлу конфигурации
      *
-     * @return array<string, mixed>
+     * @throws ContainerException Если формат не поддерживается ни одним загрузчиком
+     *
+     * @return array<string, mixed> Распарсенная конфигурация
      */
     public function load(string $path): array
     {

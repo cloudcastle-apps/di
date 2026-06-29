@@ -19,6 +19,11 @@ final class ServiceTtlRegistry
 
     /**
      * Задаёт TTL для singleton-кэша id.
+     *
+     * @param string $serviceId Id сервиса
+     * @param int $ttlSeconds Длительность кэша в секундах (не меньше 1)
+     *
+     * @throws ContainerException Если `$ttlSeconds` меньше 1
      */
     public function setServiceTtl(string $serviceId, int $ttlSeconds): void
     {
@@ -35,6 +40,11 @@ final class ServiceTtlRegistry
 
     /**
      * Задаёт TTL для всех сервисов с указанным тегом.
+     *
+     * @param string $tag Имя тега
+     * @param int $ttlSeconds Длительность кэша в секундах (не меньше 1)
+     *
+     * @throws ContainerException Если `$ttlSeconds` меньше 1
      */
     public function setTagTtl(string $tag, int $ttlSeconds): void
     {
@@ -52,7 +62,10 @@ final class ServiceTtlRegistry
     /**
      * Возвращает эффективный TTL: явный для id или минимальный среди тегов сервиса.
      *
-     * @param list<string> $serviceTags
+     * @param string $serviceId Id сервиса
+     * @param list<string> $serviceTags Имена тегов, в которых зарегистрирован сервис
+     *
+     * @return int|null TTL в секундах или `null`, если TTL не настроен
      */
     public function effectiveTtl(string $serviceId, array $serviceTags): ?int
     {

@@ -32,9 +32,13 @@ final class LazyGhostProxyFactory
     /**
      * Создаёт lazy proxy для интерфейса; реализация загружается при первом вызове метода.
      *
+     * @param ContainerInterface $container Контейнер для {@see ContainerInterface::get()} при инициализации proxy
      * @param class-string $type Интерфейс, который должен реализовать proxy
+     * @param string $serviceId Id сервиса с реализацией интерфейса
      *
      * @throws ContainerException Если пакет не установлен, тип не интерфейс или proxy несовместим
+     *
+     * @return object Lazy ghost, реализующий `$type`
      */
     public static function create(ContainerInterface $container, string $type, string $serviceId): object
     {
@@ -72,9 +76,11 @@ final class LazyGhostProxyFactory
     }
 
     /**
-     * @param ReflectionClass<object> $interface
+     * Разрешает или генерирует FQCN lazy-proxy класса для интерфейса.
      *
-     * @return class-string
+     * @param ReflectionClass<object> $interface Reflection интерфейса сервиса
+     *
+     * @return class-string FQCN сгенерированного proxy-класса
      *
      * @infection-ignore-all
      */

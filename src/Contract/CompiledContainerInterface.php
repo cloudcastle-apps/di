@@ -16,7 +16,9 @@ namespace CloudCastle\DI\Contract;
 interface CompiledContainerInterface extends ContainerInterface
 {
     /**
-     * FQCN сгенерированного класса compiled-контейнера.
+     * Возвращает FQCN сгенерированного класса compiled-контейнера.
+     *
+     * @return string Полное имя класса, созданного {@see ContainerCompilerInterface::compile()}
      */
     public function getCompiledClassName(): string;
 }
