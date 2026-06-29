@@ -139,7 +139,6 @@ final class ConfigurationLoaderErrorsTest extends TestCase
         try {
             $config = (new JsonConfigurationLoader())->load($path);
 
-            self::assertIsArray($config);
             self::assertArrayHasKey('node', $config);
         } finally {
             if (is_file($path)) {
