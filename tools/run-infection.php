@@ -7,6 +7,31 @@ declare(strict_types=1);
  *
  * @param list<string> $argv
  */
+
+/**
+ * Precoverage Infection требует PHPUnit XML с привязкой строк к тестам ({@code <covered by=}).
+ * PCOV на CI часто отдаёт только счётчики без имён тестов — тогда precoverage даёт ERRORED.
+ */
+function infectionCoverageXmlIncludesTestMetadata(string $directory): bool
+{
+    if (!is_file($directory . '/index.xml')) {
+        return false;
+    }
+
+    foreach (glob($directory . '/*.php.xml') ?: [] as $file) {
+        $contents = file_get_contents($file);
+
+        if ($contents !== false && str_contains($contents, '<covered by=')) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+$coverageXmlDir = dirname(__DIR__) . '/var/coverage/coverage-xml';
+$usePrecoverage = infectionCoverageXmlIncludesTestMetadata($coverageXmlDir);
+
 $infectionArgs = array_merge(
     [
         'vendor/bin/infection',
@@ -30,9 +55,6 @@ $initialTestPhpOptions = [];
 if (!extension_loaded('yaml')) {
     $initialTestPhpOptions[] = '-d extension=yaml';
 }
-
-$coverageXmlDir = dirname(__DIR__) . '/var/coverage/coverage-xml';
-$usePrecoverage = is_file($coverageXmlDir . '/index.xml');
 
 if ($usePrecoverage) {
     $infectionArgs[] = '--skip-initial-tests';
