@@ -148,8 +148,9 @@ final class CallableInvoker
                 if (\is_object($callable)) {
                     $target = $callable;
                 } elseif (\is_array($callable)) {
-                    $candidate = $callable[0] ?? null;
-                    $target = \is_object($candidate) ? $candidate : null;
+                    if (isset($callable[0]) && \is_object($callable[0])) {
+                        $target = $callable[0];
+                    }
                 }
 
                 if (!\is_object($target)) {
