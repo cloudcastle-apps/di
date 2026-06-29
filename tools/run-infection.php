@@ -61,7 +61,10 @@ if ($usePrecoverage) {
     $infectionArgs[] = '--skip-initial-tests';
     $infectionArgs[] = '--coverage=' . $coverageXmlDir;
 } else {
-    if (extension_loaded('xdebug')) {
+    if (getenv('GITHUB_ACTIONS') === 'true' && extension_loaded('xdebug')) {
+        $initialTestPhpOptions[] = '-d pcov.enabled=0';
+        $initialTestPhpOptions[] = '-d xdebug.mode=coverage';
+    } elseif (extension_loaded('xdebug')) {
         $initialTestPhpOptions[] = '-d xdebug.mode=coverage';
     } elseif (extension_loaded('pcov')) {
         $projectRoot = dirname(__DIR__);

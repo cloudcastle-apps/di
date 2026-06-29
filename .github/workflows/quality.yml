@@ -44,7 +44,7 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php-version }}
-          extensions: zip, yaml
+          extensions: zip, yaml, xdebug
           tools: composer:v2
           coverage: pcov
 
@@ -111,9 +111,11 @@ jobs:
         run: composer test:coverage
 
       - name: Tests mutation
+        env:
+          XDEBUG_MODE: coverage
         run: |
-          rm -rf var/cache/phpunit var/cache/infection
-          composer test:mutation
+          rm -rf var/cache/phpunit var/cache/infection var/coverage/coverage-xml
+          php -d pcov.enabled=0 composer test:mutation
 
       - name: Upload Infection report on failure
         if: failure()
