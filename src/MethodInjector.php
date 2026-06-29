@@ -7,6 +7,7 @@ namespace CloudCastle\DI;
 use CloudCastle\DI\Contract\ContainerInterface;
 use CloudCastle\DI\Exception\ContainerException;
 use ReflectionClass;
+use ReflectionException;
 use ReflectionMethod;
 
 /**
@@ -62,7 +63,16 @@ final class MethodInjector
                 $arguments[] = $this->memberResolver->resolveParameter($parameter);
             }
 
-            $method->invoke($instance, ...$arguments);
+            try {
+                $method->invoke($instance, ...$arguments);
+            } catch (ReflectionException $e) {
+                throw new ContainerException(\sprintf(
+                    'Ошибка вызова inject-метода %s::%s: %s',
+                    $reflection->getName(),
+                    $method->getName(),
+                    $e->getMessage(),
+                ), 0, $e);
+            }
         }
     }
 

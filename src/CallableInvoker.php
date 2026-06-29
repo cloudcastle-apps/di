@@ -7,6 +7,7 @@ namespace CloudCastle\DI;
 use Closure;
 use CloudCastle\DI\Contract\ContainerInterface;
 use CloudCastle\DI\Exception\ContainerException;
+use ReflectionException;
 use ReflectionFunction;
 use ReflectionFunctionAbstract;
 use ReflectionMethod;
@@ -109,8 +110,16 @@ final class CallableInvoker
                 throw new ContainerException('Неподдерживаемый тип callable.');
             }
 
-            /** @var class-string $objectOrMethod */
-            return new ReflectionMethod($objectOrMethod, $method);
+            try {
+                /** @var class-string|object $objectOrMethod */
+                return new ReflectionMethod($objectOrMethod, $method);
+            } catch (ReflectionException $reflectionException) {
+                throw new ContainerException(
+                    'Метод callable не найден или недоступен: ' . $reflectionException->getMessage(),
+                    0,
+                    $reflectionException,
+                );
+            }
         }
 
         if (\is_object($callable)) {
@@ -141,28 +150,40 @@ final class CallableInvoker
         ReflectionFunctionAbstract $reflection,
         array $arguments,
     ): mixed {
-        if ($reflection instanceof ReflectionMethod) {
-            $target = null;
+        try {
+            if ($reflection instanceof ReflectionMethod) {
+                $target = $reflection->isStatic() ? null : $this->resolveTarget($callable);
 
-            if (!$reflection->isStatic()) {
-                if (\is_object($callable)) {
-                    $target = $callable;
-                } elseif (\is_array($callable) && \array_key_exists(0, $callable) && \is_object($callable[0])) {
-                    $target = $callable[0];
-                }
-
-                if (!\is_object($target)) {
-                    throw new ContainerException('Callable метода требует объект.');
-                }
+                return $reflection->invokeArgs($target, $arguments);
             }
 
-            return $reflection->invokeArgs($target, $arguments);
+            if (!$reflection instanceof ReflectionFunction) {
+                throw new ContainerException('Неподдерживаемый тип reflection callable.');
+            }
+
+            return $reflection->invokeArgs($arguments);
+        } catch (ReflectionException $reflectionException) {
+            throw new ContainerException(
+                \sprintf('Ошибка вызова callable: %s', $reflectionException->getMessage()),
+                0,
+                $reflectionException,
+            );
+        }
+    }
+
+    /**
+     * @throws ContainerException Если callable не содержит объект-получатель
+     */
+    private function resolveTarget(mixed $callable): object
+    {
+        if (\is_object($callable)) {
+            return $callable;
         }
 
-        if (!$reflection instanceof ReflectionFunction) {
-            throw new ContainerException('Неподдерживаемый тип reflection callable.');
+        if (\is_array($callable) && \array_key_exists(0, $callable) && \is_object($callable[0])) {
+            return $callable[0];
         }
 
-        return $reflection->invokeArgs($arguments);
+        throw new ContainerException('Callable метода требует объект.');
     }
 }

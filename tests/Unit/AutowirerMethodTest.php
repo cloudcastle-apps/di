@@ -8,6 +8,7 @@ use CloudCastle\DI\AttributeServiceIdReader;
 use CloudCastle\DI\AttributeServiceIdRegistry;
 use CloudCastle\DI\Autowirer;
 use CloudCastle\DI\Container;
+use CloudCastle\DI\Exception\ContainerException;
 use CloudCastle\DI\MemberResolver;
 use CloudCastle\DI\MethodInjector;
 use CloudCastle\DI\Tests\Fixtures\Autowire\ChildSetterService;
@@ -24,6 +25,7 @@ use CloudCastle\DI\Tests\Fixtures\Autowire\StaticMethodInjectService;
 use CloudCastle\DI\Tests\Fixtures\Autowire\StaticThrowMethodService;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
+use ReflectionClass;
 use ReflectionProperty;
 
 /**
@@ -189,11 +191,36 @@ final class AutowirerMethodTest extends TestCase
     {
         $registry = new AttributeServiceIdRegistry();
         $registry->register(CustomServiceIdAttribute::class);
+
         $reader = new AttributeServiceIdReader($registry);
         $container = new Container();
         $injector = new MethodInjector($container, $reader);
         $property = new ReflectionProperty(MethodInjector::class, 'attributeReader');
 
         self::assertSame($reader, $property->getValue($injector));
+    }
+
+    public function testMethodInjectorWrapsReflectionExceptionInContainerException(): void
+    {
+        $container = new Container();
+        $container->enableMethodAutowiring();
+        $container->set(Clock::class, new Clock());
+
+        $owner = new SetterInjectService();
+        $otherClass = new class () {
+            public ?Clock $injected = null;
+
+            public function setClock(Clock $clock): void
+            {
+                $this->injected = $clock;
+            }
+        };
+
+        $injector = new MethodInjector($container);
+
+        $this->expectException(ContainerException::class);
+        $this->expectExceptionMessage('Ошибка вызова inject-метода');
+
+        $injector->inject($owner, new ReflectionClass($otherClass));
     }
 }
