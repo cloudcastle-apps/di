@@ -16,7 +16,14 @@
         "perMutator": "var/infection/per-mutator.md"
     },
     "mutators": {
-        "@default": true
+        "@default": true,
+        "PublicVisibility": {
+            "ignore": [
+                "CloudCastle\\DI\\ContainerMemoryPoolApi",
+                "CloudCastle\\DI\\ContainerProfilingApi",
+                "CloudCastle\\DI\\ContainerSmartCacheApi"
+            ]
+        }
     },
     "minMsi": 100,
     "minCoveredMsi": 100,
