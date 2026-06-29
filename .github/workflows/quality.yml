@@ -111,6 +111,8 @@ jobs:
         run: composer test:coverage
 
       - name: Tests mutation
+        env:
+          XDEBUG_MODE: off
         run: |
           rm -rf var/cache/phpunit var/cache/infection
           composer test:mutation
