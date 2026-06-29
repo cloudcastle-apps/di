@@ -10,7 +10,6 @@ use CloudCastle\DI\Exception\ContainerException;
 use CloudCastle\DI\Tests\Fixtures\Autowire\SimpleService;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
-use ReflectionMethod;
 use ReflectionProperty;
 
 #[CoversClass(Container::class)]
@@ -58,19 +57,16 @@ final class ContainerCallTest extends TestCase
 
     public function testCallThrowsWhenInstanceMethodArrayUsesClassNameString(): void
     {
+        $container = new Container();
         $handler = new class () {
             public function run(): void
             {
             }
         };
-        $callable = [$handler::class, 'run'];
-        $reflection = new ReflectionMethod($callable[0], $callable[1]);
-        $invoker = new CallableInvoker(new Container());
-        $method = new ReflectionMethod(CallableInvoker::class, 'invokeWithArguments');
 
         $this->expectException(ContainerException::class);
         $this->expectExceptionMessage('Callable метода требует объект.');
 
-        $method->invoke($invoker, $callable, $reflection, []);
+        $container->call([$handler::class, 'run']);
     }
 }

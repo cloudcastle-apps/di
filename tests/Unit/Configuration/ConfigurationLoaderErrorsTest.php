@@ -81,6 +81,22 @@ final class ConfigurationLoaderErrorsTest extends TestCase
         }
     }
 
+    public function testJsonLoaderAcceptsPayloadAtMaxDepth(): void
+    {
+        $path = sys_get_temp_dir() . '/cloudcastle-di-max-depth.json';
+        file_put_contents($path, str_repeat('{"n":', 511) . '1' . str_repeat('}', 511));
+
+        try {
+            $config = (new JsonConfigurationLoader())->load($path);
+
+            self::assertIsArray($config);
+        } finally {
+            if (is_file($path)) {
+                unlink($path);
+            }
+        }
+    }
+
     public function testXmlLoaderThrowsForMissingRequiredAttribute(): void
     {
         $loader = new XmlConfigurationLoader();

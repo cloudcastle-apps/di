@@ -34,7 +34,7 @@ jobs:
     env:
       COMPOSER_ALLOW_SUPERUSER: '1'
       COMPOSER_NO_INTERACTION: '1'
-      XDEBUG_MODE: 'off'
+      XDEBUG_MODE: coverage
 
     steps:
       - name: Checkout
@@ -46,7 +46,7 @@ jobs:
           php-version: ${{ matrix.php-version }}
           extensions: zip, yaml
           tools: composer:v2
-          coverage: pcov
+          coverage: xdebug
 
       - name: Get Composer cache directory
         id: composer-cache

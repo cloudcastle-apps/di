@@ -10,6 +10,9 @@ use CloudCastle\DI\Exception\ContainerException;
 use CloudCastle\DI\Tests\Fixtures\Autowire\AbstractWorker;
 use CloudCastle\DI\Tests\Fixtures\Autowire\Clock;
 use CloudCastle\DI\Tests\Fixtures\Autowire\Scan\ScannedService;
+use CloudCastle\DI\Tests\Fixtures\Autowire\ScanOrder\AaaOrder;
+use CloudCastle\DI\Tests\Fixtures\Autowire\ScanOrder\ScanOrderTarget;
+use CloudCastle\DI\Tests\Fixtures\Autowire\ScanOrder\ZzzOrder;
 use CloudCastle\DI\Tests\Fixtures\Autowire\SimpleService;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
@@ -67,5 +70,27 @@ final class ContainerScanTest extends TestCase
         $this->expectExceptionMessage('не найден');
 
         $container->scan('/tmp/cloudcastle-di-missing-directory');
+    }
+
+    public function testScanRegistersScanOrderClassesInPathnameOrder(): void
+    {
+        $directory = $this->fixturesDirectory . '/ScanOrder';
+        $scanner = new ClassScanner();
+        $classNames = $scanner->scan(
+            $directory,
+            'CloudCastle\\DI\\Tests\\Fixtures\\Autowire\\ScanOrder\\',
+        );
+
+        self::assertSame(
+            [AaaOrder::class, ScanOrderTarget::class, ZzzOrder::class],
+            $classNames,
+        );
+
+        $container = new Container();
+        $container->scan($directory, 'CloudCastle\\DI\\Tests\\Fixtures\\Autowire\\ScanOrder\\');
+
+        self::assertTrue($container->hasDefinition(AaaOrder::class));
+        self::assertTrue($container->hasDefinition(ScanOrderTarget::class));
+        self::assertTrue($container->hasDefinition(ZzzOrder::class));
     }
 }
