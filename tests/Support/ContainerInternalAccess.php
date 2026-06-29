@@ -22,8 +22,11 @@ use RuntimeException;
  */
 final class ContainerInternalAccess
 {
-    public static function enablePooling(object $container, string $serviceId, int $maxSize = ServiceObjectPool::DEFAULT_MAX_SIZE): void
-    {
+    public static function enablePooling(
+        object $container,
+        string $serviceId,
+        int $maxSize = ServiceObjectPool::DEFAULT_MAX_SIZE,
+    ): void {
         self::memoryPool($container)->enable($serviceId, $maxSize);
     }
 
