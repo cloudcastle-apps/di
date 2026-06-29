@@ -44,9 +44,9 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php-version }}
-          extensions: zip, yaml, xdebug
+          extensions: zip, yaml
           tools: composer:v2
-          coverage: pcov
+          coverage: xdebug
 
       - name: Get Composer cache directory
         id: composer-cache
