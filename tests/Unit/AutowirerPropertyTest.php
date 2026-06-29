@@ -256,6 +256,7 @@ final class AutowirerPropertyTest extends TestCase
     {
         $registry = new AttributeServiceIdRegistry();
         $registry->register(CustomServiceIdAttribute::class);
+
         $reader = new AttributeServiceIdReader($registry);
         $container = new Container();
         $injector = new PropertyInjector($container, $reader);
