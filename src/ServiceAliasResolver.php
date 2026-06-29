@@ -57,12 +57,14 @@ final class ServiceAliasResolver
 
         while (isset($this->aliases[$id])) {
             if (isset($visited[$id])) {
+                /** @infection-ignore-all Throw_ removal → бесконечный цикл (timeout на CI) */
                 throw new ContainerException(\sprintf(
                     'Обнаружена циклическая цепочка alias для "%s".',
                     $id,
                 ));
             }
 
+            /** @infection-ignore-all TrueValue: isset($visited[$id]) не зависит от значения */
             $visited[$id] = true;
             $id = $this->aliases[$id];
         }
@@ -109,6 +111,7 @@ final class ServiceAliasResolver
                 return true;
             }
 
+            /** @infection-ignore-all TrueValue: isset($visited[$id]) не зависит от значения */
             $visited[$id] = true;
             $id = $this->aliases[$id];
         }

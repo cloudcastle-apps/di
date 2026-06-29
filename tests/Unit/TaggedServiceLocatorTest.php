@@ -12,6 +12,7 @@ use PHPUnit\Framework\TestCase;
 use stdClass;
 
 #[CoversClass(TaggedServiceLocator::class)]
+#[CoversClass(Container::class)]
 final class TaggedServiceLocatorTest extends TestCase
 {
     public function testLocatorHasRequiresRegisteredDefinition(): void

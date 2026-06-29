@@ -11,6 +11,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
+#[CoversClass(Container::class)]
 #[CoversClass(ContainerSmartCacheSupport::class)]
 final class ContainerSmartCacheTest extends TestCase
 {
@@ -227,5 +228,29 @@ final class ContainerSmartCacheTest extends TestCase
         ContainerInternalAccess::cacheFor($container, 'svc', ttlSeconds: 60);
 
         self::assertFalse(ContainerInternalAccess::cacheStats($container, 'svc')['expired']);
+    }
+
+    public function testGetEvictsUsingShortestTtlAmongMultipleServiceTags(): void
+    {
+        $clock = new class () {
+            public float $now = 1_000.0;
+        };
+        $container = new Container(smartCacheClock: fn (): float => $clock->now);
+        $calls = 0;
+        $container->set('svc', static function () use (&$calls): stdClass {
+            ++$calls;
+
+            return new stdClass();
+        });
+        $container->tag('svc', 'slow');
+        $container->tag('svc', 'fast');
+        ContainerInternalAccess::cacheTagFor($container, 'slow', ttlSeconds: 120);
+        ContainerInternalAccess::cacheTagFor($container, 'fast', ttlSeconds: 5);
+        $container->get('svc');
+
+        $clock->now += 5.0;
+        $container->get('svc');
+
+        self::assertSame(2, $calls);
     }
 }

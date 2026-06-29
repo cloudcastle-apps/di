@@ -294,4 +294,36 @@ final class ConfigurationSourceResolverTest extends TestCase
             ]),
         ]);
     }
+
+    public function testRecursiveScanFollowsSymlinkToConfigFile(): void
+    {
+        $directory = sys_get_temp_dir() . '/cloudcastle-di-symlink-' . uniqid('', true);
+        $linkedDirectory = $directory . '/linked';
+        mkdir($linkedDirectory, 0o755, true);
+        symlink($this->fixturesDirectory . '/base.php', $linkedDirectory . '/base.php');
+
+        try {
+            $layers = (new ConfigurationSourceResolver(new ConfigurationLoaderRegistry()))->resolve([
+                new ConfigurationDirectorySource(
+                    $directory,
+                    scan: ConfigurationDirectoryScan::Recursive,
+                ),
+            ]);
+
+            self::assertCount(1, $layers);
+            self::assertArrayHasKey('services', $layers[0]->config);
+        } finally {
+            if (is_link($linkedDirectory . '/base.php')) {
+                unlink($linkedDirectory . '/base.php');
+            }
+
+            if (is_dir($linkedDirectory)) {
+                rmdir($linkedDirectory);
+            }
+
+            if (is_dir($directory)) {
+                rmdir($directory);
+            }
+        }
+    }
 }

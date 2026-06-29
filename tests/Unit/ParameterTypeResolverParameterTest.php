@@ -53,4 +53,19 @@ final class ParameterTypeResolverParameterTest extends TestCase
         self::assertCount(1, $namedTypes);
         self::assertSame(Clock::class, $namedTypes[0]->getName());
     }
+
+    public function testResolveUsesNullSafeDeclaringClassForClosureParameter(): void
+    {
+        $container = new Container();
+        $container->set(Clock::class, new Clock());
+
+        $closure = static function (Clock $clock): void {
+            unset($clock);
+        };
+        $parameter = (new \ReflectionFunction($closure))->getParameters()[0];
+
+        $resolver = new ParameterTypeResolver($container);
+
+        self::assertInstanceOf(Clock::class, $resolver->resolve($parameter));
+    }
 }

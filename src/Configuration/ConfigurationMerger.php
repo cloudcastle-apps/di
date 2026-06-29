@@ -412,6 +412,9 @@ final class ConfigurationMerger
      *
      * @return mixed Значение без поля priority
      */
+    /**
+     * @infection-ignore-all LogicalOr на guard эквивалентен для всех веток merge
+     */
     private function stripPriority(mixed $entry): mixed
     {
         if (!\is_array($entry) || !isset($entry['priority'])) {

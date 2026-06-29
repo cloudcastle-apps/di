@@ -147,6 +147,18 @@ final class ContainerSmartCacheSupportTest extends TestCase
         self::assertNull($this->support->stats('svc', [], $this->resolved)['expires_at']);
     }
 
+    public function testStatsExpiresAtIsFloatWhenTtlConfigured(): void
+    {
+        $this->support->configureFor('svc', ttlSeconds: 10);
+        $this->resolved['svc'] = new stdClass();
+        $this->support->touch('svc');
+
+        $expiresAt = $this->support->stats('svc', [], $this->resolved)['expires_at'];
+
+        self::assertIsFloat($expiresAt);
+        self::assertSame(1_010.0, $expiresAt);
+    }
+
     public function testStatsReportsNotExpiredWhenServiceIsNotCached(): void
     {
         $this->support->configureFor('svc', ttlSeconds: 30);

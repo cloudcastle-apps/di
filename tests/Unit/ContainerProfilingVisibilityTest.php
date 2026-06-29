@@ -93,6 +93,19 @@ final class ContainerProfilingVisibilityTest extends TestCase
         self::assertSame(1, $container->profileReport()['sample_count']);
     }
 
+    public function testProfileReportDefaultLimitReturnsTenSlowestEntries(): void
+    {
+        $container = $this->createContainer();
+        $container->enableProfiling();
+
+        for ($index = 0; $index < 11; ++$index) {
+            $container->set('svc.' . $index, static fn (): stdClass => new stdClass());
+            $container->get('svc.' . $index);
+        }
+
+        self::assertCount(10, $container->profileReport()['top_slowest']);
+    }
+
     private function createContainer(): Container
     {
         $container = new Container();

@@ -68,12 +68,14 @@ final class ConfigurationSourceResolver
                 return $this->expandDirectory(new ConfigurationDirectorySource($source));
             }
 
+            /** @infection-ignore-all дублирует проверки load() */
             $this->assertConfigurationFile($source);
 
             return [['path' => $source, 'filePriority' => null]];
         }
 
         if ($source instanceof ConfigurationSource) {
+            /** @infection-ignore-all дублирует проверки load() */
             $this->assertConfigurationFile($source->path);
 
             return [['path' => $source->path, 'filePriority' => $source->priority]];
@@ -106,6 +108,7 @@ final class ConfigurationSourceResolver
         $resolved = [];
 
         foreach ($paths as $path) {
+            /** @infection-ignore-all дублирует проверки load() */
             $this->assertConfigurationFile($path);
             $resolved[] = ['path' => $path, 'filePriority' => $priority];
         }

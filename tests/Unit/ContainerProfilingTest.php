@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace CloudCastle\DI\Tests\Unit;
 
 use CloudCastle\DI\Container;
+use CloudCastle\DI\ContainerProfilingApi;
 use CloudCastle\DI\ContainerProfilingSupport;
 use CloudCastle\DI\Tests\Fixtures\Autowire\Clock;
 use CloudCastle\DI\Tests\Fixtures\Autowire\RequiredClockService;
@@ -13,7 +14,9 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 
+#[CoversClass(Container::class)]
 #[CoversClass(ContainerProfilingSupport::class)]
+#[CoversClass(ContainerProfilingApi::class)]
 final class ContainerProfilingTest extends TestCase
 {
     public function testProfilingDisabledByDefault(): void

@@ -120,6 +120,7 @@ final class ClassScanner
             }
 
             if (!class_exists($className)) {
+                /** @infection-ignore-all break vs continue эквивалентны: следующий тип из того же файла */
                 continue;
             }
 

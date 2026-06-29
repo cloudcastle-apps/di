@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace CloudCastle\DI\Tests\Unit;
 
 use CloudCastle\DI\AttributeServiceIdReader;
+use CloudCastle\DI\AttributeServiceIdRegistry;
 use CloudCastle\DI\Autowirer;
 use CloudCastle\DI\Container;
 use CloudCastle\DI\MemberResolver;
@@ -12,6 +13,7 @@ use CloudCastle\DI\MethodInjector;
 use CloudCastle\DI\Tests\Fixtures\Autowire\ChildSetterService;
 use CloudCastle\DI\Tests\Fixtures\Autowire\Clock;
 use CloudCastle\DI\Tests\Fixtures\Autowire\ConstructCountService;
+use CloudCastle\DI\Tests\Fixtures\Autowire\CustomServiceIdAttribute;
 use CloudCastle\DI\Tests\Fixtures\Autowire\MagicMethodInjectService;
 use CloudCastle\DI\Tests\Fixtures\Autowire\MethodInjectService;
 use CloudCastle\DI\Tests\Fixtures\Autowire\MethodParameterInjectService;
@@ -181,5 +183,17 @@ final class AutowirerMethodTest extends TestCase
         $container->get(ConstructCountService::class);
 
         self::assertSame(1, ConstructCountService::$constructCount);
+    }
+
+    public function testMethodInjectorUsesProvidedAttributeReader(): void
+    {
+        $registry = new AttributeServiceIdRegistry();
+        $registry->register(CustomServiceIdAttribute::class);
+        $reader = new AttributeServiceIdReader($registry);
+        $container = new Container();
+        $injector = new MethodInjector($container, $reader);
+        $property = new ReflectionProperty(MethodInjector::class, 'attributeReader');
+
+        self::assertSame($reader, $property->getValue($injector));
     }
 }

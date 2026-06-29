@@ -6,6 +6,7 @@ namespace CloudCastle\DI\Tests\Unit;
 
 use ArrayIterator;
 use CloudCastle\DI\AttributeServiceIdReader;
+use CloudCastle\DI\AttributeServiceIdRegistry;
 use CloudCastle\DI\Autowirer;
 use CloudCastle\DI\Container;
 use CloudCastle\DI\Exception\ContainerException;
@@ -14,6 +15,7 @@ use CloudCastle\DI\ParameterTypeResolver;
 use CloudCastle\DI\PropertyInjector;
 use CloudCastle\DI\Tests\Fixtures\Autowire\AttributeReaderFixtures;
 use CloudCastle\DI\Tests\Fixtures\Autowire\Clock;
+use CloudCastle\DI\Tests\Fixtures\Autowire\CustomServiceIdAttribute;
 use CloudCastle\DI\Tests\Fixtures\Autowire\ManualInitPropertyService;
 use CloudCastle\DI\Tests\Fixtures\Autowire\NullablePropertyService;
 use CloudCastle\DI\Tests\Fixtures\Autowire\PromotedAndPlainPropertyService;
@@ -28,6 +30,7 @@ use CloudCastle\DI\Tests\Fixtures\Autowire\UntypedPropertyHolder;
 use Iterator;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
+use ReflectionClass;
 use ReflectionProperty;
 
 /**
@@ -248,5 +251,17 @@ final class AutowirerPropertyTest extends TestCase
         self::assertInstanceOf(PromotedAndPlainPropertyService::class, $service);
         self::assertSame($clock, $service->getPromoted());
         self::assertSame($clock, $service->getPlain());
+    }
+
+    public function testPropertyInjectorUsesProvidedAttributeReader(): void
+    {
+        $registry = new AttributeServiceIdRegistry();
+        $registry->register(CustomServiceIdAttribute::class);
+        $reader = new AttributeServiceIdReader($registry);
+        $container = new Container();
+        $injector = new PropertyInjector($container, $reader);
+        $property = new ReflectionProperty(PropertyInjector::class, 'attributeReader');
+
+        self::assertSame($reader, $property->getValue($injector));
     }
 }

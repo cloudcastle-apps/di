@@ -40,6 +40,13 @@ final class ContainerTaggedAndDecoratorTest extends TestCase
         self::assertSame([], $container->getTagged('missing'));
     }
 
+    public function testGetTaggedIdsReturnsEmptyForUnknownTag(): void
+    {
+        $container = new Container();
+
+        self::assertSame([], $container->getTaggedIds('missing'));
+    }
+
     public function testTagDoesNotDuplicateServiceId(): void
     {
         $container = new Container();
