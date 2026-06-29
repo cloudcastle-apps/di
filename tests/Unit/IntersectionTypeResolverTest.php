@@ -9,11 +9,15 @@ use CloudCastle\DI\ClassDependencyResolver;
 use CloudCastle\DI\Container;
 use CloudCastle\DI\Contract\ContainerInterface;
 use CloudCastle\DI\IntersectionTypeResolver;
+use CloudCastle\DI\Tests\Fixtures\Autowire\ConstructorIntersectionService;
+use CloudCastle\DI\Tests\Fixtures\Autowire\PsrCountableStub;
 use Countable;
 use Iterator;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
+use Psr\Container\ContainerInterface as PsrContainerInterface;
 use ReflectionIntersectionType;
+use ReflectionMethod;
 use ReflectionNamedType;
 use ReflectionParameter;
 use ReflectionProperty;
@@ -227,5 +231,51 @@ final class IntersectionTypeResolverTest extends TestCase
         $intersectionType->method('getTypes')->willReturn([$iteratorType, $containerType]);
 
         self::assertNull($resolver->resolve($parameter, $intersectionType));
+    }
+
+    public function testSatisfiesIntersectionAcceptsPsrContainerWithCountable(): void
+    {
+        $psrContainer = new PsrCountableStub();
+
+        $resolver = new IntersectionTypeResolver(new ClassDependencyResolver(new Container()));
+        $method = new ReflectionMethod(IntersectionTypeResolver::class, 'satisfiesIntersection');
+
+        self::assertTrue($method->invoke($resolver, $psrContainer, [
+            PsrContainerInterface::class,
+            Countable::class,
+        ]));
+    }
+
+    public function testSatisfiesIntersectionRejectsNonObjectCandidate(): void
+    {
+        $resolver = new IntersectionTypeResolver(new ClassDependencyResolver(new Container()));
+        $method = new ReflectionMethod(IntersectionTypeResolver::class, 'satisfiesIntersection');
+
+        self::assertFalse($method->invoke($resolver, 'not-an-object', [Iterator::class]));
+    }
+
+    public function testSatisfiesIntersectionRejectsCandidateMissingPsrContainerInterface(): void
+    {
+        $storage = new ArrayIterator(['value']);
+
+        $resolver = new IntersectionTypeResolver(new ClassDependencyResolver(new Container()));
+        $method = new ReflectionMethod(IntersectionTypeResolver::class, 'satisfiesIntersection');
+
+        self::assertFalse($method->invoke($resolver, $storage, [
+            PsrContainerInterface::class,
+            Iterator::class,
+        ]));
+    }
+
+    public function testConstructorIntersectionWithoutDefinitionThrows(): void
+    {
+        $container = new Container();
+        $container->enableAutowiring();
+        $container->autowire(ConstructorIntersectionService::class);
+
+        $this->expectException(\CloudCastle\DI\Exception\ContainerException::class);
+        $this->expectExceptionMessage('Не удалось разрешить intersection-тип для параметра $storage.');
+
+        $container->get(ConstructorIntersectionService::class);
     }
 }

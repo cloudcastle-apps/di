@@ -92,4 +92,46 @@ final class ServiceAliasResolverTest extends TestCase
 
         $resolver->resolve('a');
     }
+
+    public function testResolveTracksVisitedAliases(): void
+    {
+        $resolver = new ServiceAliasResolver();
+        $resolver->alias('a', 'b');
+        $resolver->alias('b', 'target');
+
+        self::assertSame('target', $resolver->resolve('a'));
+    }
+
+    public function testHasCycleDetectsIndirectLoop(): void
+    {
+        $resolver = new ServiceAliasResolver();
+        $resolver->alias('x', 'y');
+        $resolver->alias('y', 'z');
+
+        $this->expectException(ContainerException::class);
+
+        $resolver->alias('z', 'x');
+    }
+
+    public function testHasCycleDetectsSelfLoopOnAliasRegistration(): void
+    {
+        $resolver = new ServiceAliasResolver();
+
+        $this->expectException(ContainerException::class);
+        $this->expectExceptionMessage('циклическая цепочка alias');
+
+        $resolver->alias('loop', 'loop');
+    }
+
+    public function testResolveThrowsOnThreeStepAliasCycle(): void
+    {
+        $resolver = new ServiceAliasResolver();
+        $aliases = (new ReflectionClass(ServiceAliasResolver::class))->getProperty('aliases');
+        $aliases->setValue($resolver, ['first' => 'second', 'second' => 'third', 'third' => 'first']);
+
+        $this->expectException(ContainerException::class);
+        $this->expectExceptionMessage('циклическая цепочка alias');
+
+        $resolver->resolve('first');
+    }
 }

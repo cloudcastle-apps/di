@@ -279,4 +279,25 @@ final class ClassScannerTest extends TestCase
         self::assertContains(MultiScanBeta::class, $classNames);
         self::assertContains(ScannedService::class, $classNames);
     }
+
+    public function testScanSkipsNonPhpFilesAndContinuesScanningPhpSources(): void
+    {
+        $scanDirectory = $this->fixturesDirectory . '/Scan';
+        $noisePath = $scanDirectory . '/AAAA-mutation-noise.txt';
+        file_put_contents($noisePath, 'noise');
+
+        try {
+            $classNames = (new ClassScanner())->scan(
+                $scanDirectory,
+                'CloudCastle\\DI\\Tests\\Fixtures\\Autowire\\Scan\\',
+            );
+
+            self::assertContains(MultiScanAlpha::class, $classNames);
+            self::assertContains(MultiScanBeta::class, $classNames);
+        } finally {
+            if (is_file($noisePath)) {
+                unlink($noisePath);
+            }
+        }
+    }
 }
