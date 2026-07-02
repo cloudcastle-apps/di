@@ -14,12 +14,27 @@ use ReflectionClass;
  */
 final class CompileConstructorPlanner
 {
+    /**
+     * @param CompileParameterReferenceResolver $parameterResolver Преобразует параметры конструктора в PHP-выражения
+     * @param AttributeServiceIdReader $attributeReader Читает PHP attributes для service id
+     */
     public function __construct(
         private readonly CompileParameterReferenceResolver $parameterResolver = new CompileParameterReferenceResolver(),
         private readonly AttributeServiceIdReader $attributeReader = new AttributeServiceIdReader(),
     ) {
     }
 
+    /**
+     * Планирует autowired-привязку: `new Class(...)` с выражениями аргументов конструктора.
+     *
+     * @param Container $container Контейнер-источник для разрешения зависимостей
+     * @param string $className FQCN autowired-класса
+     *
+     * @throws ContainerCompileException Если класс не найден, не instantiable, использует property/method injection
+     *                                   или параметр конструктора не разрешается
+     *
+     * @return CompileServiceBinding Привязка вида {@see CompileServiceKind::Autowired}
+     */
     public function plan(Container $container, string $className): CompileServiceBinding
     {
         if (!class_exists($className)) {
@@ -55,7 +70,11 @@ final class CompileConstructorPlanner
     }
 
     /**
-     * @param ReflectionClass<object> $reflection
+     * Запрещает property и method injection — compiled-контейнер поддерживает только конструктор.
+     *
+     * @param ReflectionClass<object> $reflection Reflection autowired-класса
+     *
+     * @throws ContainerCompileException Если найдены DI-attributes на свойствах или методах
      */
     private function assertConstructorOnlyDependencies(ReflectionClass $reflection): void
     {

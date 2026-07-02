@@ -13,11 +13,24 @@ use ReflectionClass;
  */
 final class ContainerCompileSnapshotBuilder
 {
+    /**
+     * @param CompileConstructorPlanner $constructorPlanner Планировщик autowired-привязок по конструктору
+     */
     public function __construct(
         private readonly CompileConstructorPlanner $constructorPlanner = new CompileConstructorPlanner(),
     ) {
     }
 
+    /**
+     * Формирует неизменяемый снимок определений для генерации compiled-контейнера.
+     *
+     * @param Container $container Замороженный runtime-контейнер-источник
+     *
+     * @throws ContainerCompileException Если состояние контейнера несовместимо с компиляцией
+     *                                   или определение сервиса не поддерживается
+     *
+     * @return ContainerCompileSnapshot Снимок aliases, tags, bindings и contextual-правил
+     */
     public function build(Container $container): ContainerCompileSnapshot
     {
         $dump = $container->dump();
@@ -40,7 +53,15 @@ final class ContainerCompileSnapshotBuilder
     }
 
     /**
-     * @param list<string> $decorators
+     * Проверяет, что контейнер можно скомпилировать без runtime-only возможностей.
+     *
+     * @param Container $container Контейнер-источник
+     * @param list<string> $decorators Зарегистрированные декораторы из {@see Container::dump()}
+     * @param bool $globalAutowire Включён ли глобальный autowiring
+     * @param bool $propertyAutowire Включён ли property autowiring
+     * @param bool $methodAutowire Включён ли method autowiring
+     *
+     * @throws ContainerCompileException Если хотя бы одно ограничение compiled-контейнера нарушено
      */
     private function assertCompilableState(
         Container $container,
@@ -81,9 +102,12 @@ final class ContainerCompileSnapshotBuilder
     }
 
     /**
-     * @param list<string> $autowiredClassNames
+     * Собирает список привязок из явных определений и autowired-классов.
      *
-     * @return list<CompileServiceBinding>
+     * @param Container $container Контейнер-источник
+     * @param list<string> $autowiredClassNames FQCN, зарегистрированные через {@see Container::autowire()}
+     *
+     * @return list<CompileServiceBinding> Привязки для генерации метода `create()`
      */
     private function collectBindings(Container $container, array $autowiredClassNames): array
     {
@@ -101,6 +125,16 @@ final class ContainerCompileSnapshotBuilder
         return $bindings;
     }
 
+    /**
+     * Преобразует одно runtime-определение в {@see CompileServiceBinding}.
+     *
+     * @param string $id Идентификатор сервиса
+     * @param mixed $concrete Экземпляр, скаляр или class-string из {@see Container::set()}
+     *
+     * @throws ContainerCompileException Если concrete — callable-фабрика или объект с DI-конструктором
+     *
+     * @return CompileServiceBinding Привязка literal или `new Class()`
+     */
     private function bindingForDefinition(string $id, mixed $concrete): CompileServiceBinding
     {
         if (\is_callable($concrete) && !\is_string($concrete)) {
@@ -121,6 +155,16 @@ final class ContainerCompileSnapshotBuilder
         );
     }
 
+    /**
+     * Строит привязку для готового экземпляра, зарегистрированного через {@see Container::set()}.
+     *
+     * @param string $id Идентификатор сервиса
+     * @param object $instance Готовый объект
+     *
+     * @throws ContainerCompileException Если у класса экземпляра есть параметризованный конструктор
+     *
+     * @return CompileServiceBinding Привязка `new Class()` без аргументов
+     */
     private function bindingForPrebuiltObject(string $id, object $instance): CompileServiceBinding
     {
         $reflection = new ReflectionClass($instance);

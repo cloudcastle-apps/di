@@ -133,6 +133,8 @@ final class ContainerProfiler
     }
 
     /**
+     * Округляет длительность в миллисекундах для отчёта профилировщика.
+     *
      * @infection-ignore-all
      */
     private static function roundMilliseconds(float $milliseconds): float
@@ -141,6 +143,8 @@ final class ContainerProfiler
     }
 
     /**
+     * Вычисляет среднее время одного замера в миллисекундах.
+     *
      * @infection-ignore-all
      */
     private function averageMilliseconds(float $totalMilliseconds, int $sampleCount): float

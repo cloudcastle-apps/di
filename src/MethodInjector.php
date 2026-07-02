@@ -7,17 +7,30 @@ namespace CloudCastle\DI;
 use CloudCastle\DI\Contract\ContainerInterface;
 use CloudCastle\DI\Exception\ContainerException;
 use ReflectionClass;
+use ReflectionException;
 use ReflectionMethod;
 
 /**
  * Вызывает методы экземпляра с autowiring параметров (setter и прочие inject-методы).
+ *
+ * Обрабатывает public/protected методы с inject-attributes или при включённом method autowiring.
  */
 final class MethodInjector
 {
+    /**
+     * Проверяет наличие inject-attributes на методах и их параметрах.
+     */
     private readonly AttributeServiceIdReader $attributeReader;
 
+    /**
+     * Разрешает значения параметров inject-методов.
+     */
     private readonly MemberResolver $memberResolver;
 
+    /**
+     * @param ContainerInterface $container Контейнер для разрешения зависимостей
+     * @param AttributeServiceIdReader|null $attributeReader Читатель id из attributes (по умолчанию новый экземпляр)
+     */
     public function __construct(
         private readonly ContainerInterface $container,
         ?AttributeServiceIdReader $attributeReader = null,
@@ -28,8 +41,10 @@ final class MethodInjector
     }
 
     /**
+     * Вызывает все подходящие inject-методы экземпляра с autowiring параметров.
      *
-     * @param ReflectionClass<object> $reflection
+     * @param object $instance Целевой экземпляр
+     * @param ReflectionClass<object> $reflection Reflection класса экземпляра
      *
      * @throws ContainerException Если параметр метода не разрешается
      */
@@ -48,12 +63,26 @@ final class MethodInjector
                 $arguments[] = $this->memberResolver->resolveParameter($parameter);
             }
 
-            $method->invoke($instance, ...$arguments);
+            try {
+                $method->invoke($instance, ...$arguments);
+            } catch (ReflectionException $e) {
+                throw new ContainerException(\sprintf(
+                    'Ошибка вызова inject-метода %s::%s: %s',
+                    $reflection->getName(),
+                    $method->getName(),
+                    $e->getMessage(),
+                ), 0, $e);
+            }
         }
     }
 
     /**
-     * @param ReflectionClass<object> $reflection
+     * Определяет, нужно ли вызывать метод как inject-метод.
+     *
+     * @param ReflectionMethod $method Reflection метода
+     * @param ReflectionClass<object> $reflection Reflection класса экземпляра
+     *
+     * @return bool `true`, если метод подлежит вызову с autowiring
      */
     private function shouldInjectMethod(ReflectionMethod $method, ReflectionClass $reflection): bool
     {
@@ -80,6 +109,13 @@ final class MethodInjector
         return $this->container->isMethodAutowiringEnabled();
     }
 
+    /**
+     * Проверяет наличие inject-attributes на методе или его параметрах.
+     *
+     * @param ReflectionMethod $method Reflection метода
+     *
+     * @return bool `true`, если найден известный inject-attribute
+     */
     private function hasInjectAttributes(ReflectionMethod $method): bool
     {
         if ($this->attributeReader->hasAny($method->getAttributes())) {

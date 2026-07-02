@@ -12,13 +12,25 @@ use ReflectionProperty;
 
 /**
  * Разрешает зависимости для параметров, свойств и методов при autowiring.
+ *
+ * Порядок: PHP attributes → autowiring по имени (если включён) → разрешение по типу.
  */
 final class MemberResolver
 {
+    /**
+     * Извлекает явный id сервиса из PHP attributes.
+     */
     private readonly AttributeServiceIdReader $attributeReader;
 
+    /**
+     * Разрешает значения по reflection-типам параметров и свойств.
+     */
     private readonly ParameterTypeResolver $typeResolver;
 
+    /**
+     * @param ContainerInterface $container Контейнер для получения зависимостей
+     * @param AttributeServiceIdReader|null $attributeReader Читатель id из attributes (по умолчанию новый экземпляр)
+     */
     public function __construct(
         private readonly ContainerInterface $container,
         ?AttributeServiceIdReader $attributeReader = null,
@@ -28,7 +40,13 @@ final class MemberResolver
     }
 
     /**
+     * Разрешает значение параметра конструктора, метода или callable.
+     *
+     * @param ReflectionParameter $parameter Reflection параметра
+     *
      * @throws ContainerException Если обязательный параметр не разрешается
+     *
+     * @return mixed Значение для передачи в вызов
      */
     public function resolveParameter(ReflectionParameter $parameter): mixed
     {
@@ -40,7 +58,13 @@ final class MemberResolver
     }
 
     /**
+     * Разрешает значение свойства для property injection.
+     *
+     * @param ReflectionProperty $property Reflection свойства
+     *
      * @throws ContainerException Если обязательное свойство не разрешается
+     *
+     * @return mixed Значение для присвоения свойству
      */
     public function resolveProperty(ReflectionProperty $property): mixed
     {
@@ -52,10 +76,15 @@ final class MemberResolver
     }
 
     /**
-     * @param list<ReflectionAttribute<object>> $attributes
-     * @param callable(): mixed $resolveByType
+     * Общая логика разрешения: attributes, autowire по имени, fallback по типу.
      *
-     * @throws ContainerException
+     * @param list<ReflectionAttribute<object>> $attributes Attributes параметра или свойства
+     * @param string $name Имя параметра или свойства
+     * @param callable(): mixed $resolveByType Callback разрешения по reflection-типу
+     *
+     * @throws ContainerException Если обязательный член не разрешается
+     *
+     * @return mixed Разрешённое значение
      */
     private function resolveMember(array $attributes, string $name, callable $resolveByType): mixed
     {

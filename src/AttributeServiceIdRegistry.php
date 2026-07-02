@@ -24,7 +24,11 @@ final class AttributeServiceIdRegistry
         Autowire::class => true,
     ];
 
-    /** @var list<string> */
+    /**
+     * Пользовательские attribute-классы, зарегистрированные через {@see register()}.
+     *
+     * @var list<string>
+     */
     private array $customClasses = [];
 
     /**

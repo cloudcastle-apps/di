@@ -10,24 +10,35 @@ use CloudCastle\DI\Exception\NotFoundException;
 
 /**
  * Создаёт экземпляры сервисов с опциональным singleton-кэшированием.
+ *
+ * Обрабатывает явные definitions, autowiring и цепочку декораторов.
  */
 final class ServiceInstanceResolver
 {
+    /**
+     * @param ContainerInterface $container Контейнер для фабрик и декораторов
+     */
     public function __construct(
         private readonly ContainerInterface $container,
     ) {
     }
 
     /**
-     * @param array<string, mixed> $definitions
-     * @param array<string, mixed> $resolved
-     * @param array<string, true> $resolving
-     * @param array<string, list<callable(mixed, ContainerInterface): mixed>> $decorators
-     * @param callable(string): bool $canAutowire
-     * @param callable(string): object $instantiate
+     * Разрешает экземпляр сервиса по id с учётом singleton, definition и autowiring.
      *
-     * @throws NotFoundException
-     * @throws ContainerException
+     * @param string $id Идентификатор сервиса
+     * @param bool $singleton Кэшировать ли экземпляр после создания
+     * @param array<string, mixed> $definitions Карта id → concrete (фабрика или экземпляр)
+     * @param array<string, mixed> $resolved Кэш уже созданных singleton-экземпляров
+     * @param array<string, true> $resolving Стек id в процессе разрешения (обнаружение циклов)
+     * @param array<string, list<callable(mixed, ContainerInterface): mixed>> $decorators Декораторы по id
+     * @param callable(string): bool $canAutowire Проверка возможности autowiring по id
+     * @param callable(string): object $instantiate Создание экземпляра через autowiring
+     *
+     * @throws NotFoundException Если сервис не зарегистрирован и autowiring недоступен
+     * @throws ContainerException При циклической зависимости autowiring
+     *
+     * @return mixed Экземпляр сервиса после декораторов
      */
     public function resolve(
         string $id,
@@ -55,9 +66,15 @@ final class ServiceInstanceResolver
     }
 
     /**
-     * @param array<string, mixed> $definitions
-     * @param array<string, mixed> $resolved
-     * @param array<string, list<callable(mixed, ContainerInterface): mixed>> $decorators
+     * Создаёт экземпляр из явного definition (фабрика или готовое значение).
+     *
+     * @param string $id Идентификатор сервиса
+     * @param bool $singleton Кэшировать ли экземпляр после создания
+     * @param array<string, mixed> $definitions Карта id → concrete
+     * @param array<string, mixed> $resolved Кэш singleton-экземпляров
+     * @param array<string, list<callable(mixed, ContainerInterface): mixed>> $decorators Декораторы по id
+     *
+     * @return mixed Экземпляр после декораторов
      *
      * @psalm-suppress MixedAssignment
      */
@@ -77,10 +94,18 @@ final class ServiceInstanceResolver
     }
 
     /**
-     * @param array<string, mixed> $resolved
-     * @param array<string, true> $resolving
-     * @param array<string, list<callable(mixed, ContainerInterface): mixed>> $decorators
-     * @param callable(string): object $instantiate
+     * Создаёт экземпляр через autowiring с защитой от циклических зависимостей.
+     *
+     * @param string $id Идентификатор сервиса (обычно FQCN)
+     * @param bool $singleton Кэшировать ли экземпляр после создания
+     * @param array<string, mixed> $resolved Кэш singleton-экземпляров
+     * @param array<string, true> $resolving Стек id в процессе разрешения
+     * @param array<string, list<callable(mixed, ContainerInterface): mixed>> $decorators Декораторы по id
+     * @param callable(string): object $instantiate Создание экземпляра через autowiring
+     *
+     * @throws ContainerException При циклической зависимости autowiring
+     *
+     * @return mixed Экземпляр после декораторов
      */
     private function resolveAutowired(
         string $id,
@@ -109,8 +134,15 @@ final class ServiceInstanceResolver
     }
 
     /**
-     * @param array<string, mixed> $resolved
-     * @param array<string, list<callable(mixed, ContainerInterface): mixed>> $decorators
+     * Применяет декораторы и сохраняет экземпляр в singleton-кэш при необходимости.
+     *
+     * @param string $id Идентификатор сервиса
+     * @param mixed $instance Исходный экземпляр до декораторов
+     * @param bool $singleton Кэшировать ли результат
+     * @param array<string, mixed> $resolved Кэш singleton-экземпляров
+     * @param array<string, list<callable(mixed, ContainerInterface): mixed>> $decorators Декораторы по id
+     *
+     * @return mixed Финальный экземпляр после декораторов
      *
      * @psalm-suppress MixedAssignment
      */

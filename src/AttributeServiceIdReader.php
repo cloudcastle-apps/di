@@ -14,15 +14,20 @@ use ReflectionAttribute;
  */
 final class AttributeServiceIdReader
 {
+    /**
+     * @param AttributeServiceIdRegistry $registry Реестр известных inject-attributes
+     */
     public function __construct(
         private readonly AttributeServiceIdRegistry $registry = new AttributeServiceIdRegistry(),
     ) {
     }
 
     /**
-     * @param list<ReflectionAttribute<object>> $attributes
+     * Возвращает явный id сервиса из первого подходящего attribute.
      *
-     * @return string|null Явный id сервиса или `null`
+     * @param list<ReflectionAttribute<object>> $attributes Attributes параметра, свойства или метода
+     *
+     * @return string|null Явный id сервиса или `null`, если attribute не найден
      */
     public function read(array $attributes): ?string
     {
@@ -38,7 +43,11 @@ final class AttributeServiceIdReader
     }
 
     /**
-     * @param list<ReflectionAttribute<object>> $attributes
+     * Проверяет, есть ли среди attributes хотя бы один известный inject-attribute.
+     *
+     * @param list<ReflectionAttribute<object>> $attributes Attributes параметра, свойства или метода
+     *
+     * @return bool `true`, если найден attribute из реестра
      */
     public function hasAny(array $attributes): bool
     {
@@ -52,7 +61,11 @@ final class AttributeServiceIdReader
     }
 
     /**
-     * @param ReflectionAttribute<object> $attribute
+     * Извлекает id сервиса из одного reflection-attribute.
+     *
+     * @param ReflectionAttribute<object> $attribute Reflection PHP attribute
+     *
+     * @return string|null Id сервиса или `null`, если attribute неизвестен или не реализует контракт
      */
     private function readOne(ReflectionAttribute $attribute): ?string
     {

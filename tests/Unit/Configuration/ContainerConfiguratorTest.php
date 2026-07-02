@@ -18,6 +18,7 @@ use CloudCastle\DI\Tests\Fixtures\Autowire\FileLogger;
 use CloudCastle\DI\Tests\Fixtures\Autowire\LoggerInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
+use ReflectionMethod;
 
 #[CoversClass(ContainerConfigurator::class)]
 #[CoversClass(ConfigurationMerger::class)]
@@ -177,5 +178,15 @@ final class ContainerConfiguratorTest extends TestCase
         ]);
 
         self::assertSame('from-layer-json', $container->get('app.label'));
+    }
+
+    public function testApplyMethodIsPublicAndInvocable(): void
+    {
+        $container = new Container();
+        $configurator = new ContainerConfigurator();
+        $apply = new ReflectionMethod(ContainerConfigurator::class, 'apply');
+
+        self::assertTrue($apply->isPublic());
+        $apply->invoke($configurator, $container, []);
     }
 }

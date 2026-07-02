@@ -9,10 +9,10 @@ use CloudCastle\DI\ContainerMemoryPoolSupport;
 use CloudCastle\DI\Exception\ContainerException;
 use CloudCastle\DI\ServiceObjectPool;
 use CloudCastle\DI\Tests\Fixtures\MemoryPool\ResetCounter;
+use CloudCastle\DI\Tests\Support\ContainerInternalAccess;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
-#[CoversClass(Container::class)]
 #[CoversClass(ContainerMemoryPoolSupport::class)]
 final class ContainerMemoryPoolTest extends TestCase
 {
@@ -34,12 +34,12 @@ final class ContainerMemoryPoolTest extends TestCase
     {
         $container = new Container();
         $container->set('counter', static fn (): ResetCounter => new ResetCounter(value: 5));
-        $container->enablePooling('counter', maxSize: 4);
+        ContainerInternalAccess::enablePooling($container, 'counter', maxSize: 4);
 
         $first = $container->make('counter');
         self::assertInstanceOf(ResetCounter::class, $first);
         self::assertSame(5, $first->value);
-        $container->releaseToPool('counter', $first);
+        ContainerInternalAccess::releaseToPool($container, 'counter', $first);
 
         $second = $container->make('counter');
         self::assertInstanceOf(ResetCounter::class, $second);
@@ -54,7 +54,7 @@ final class ContainerMemoryPoolTest extends TestCase
     {
         $container = new Container();
         $container->set('counter', static fn (): ResetCounter => new ResetCounter());
-        $container->enablePooling('counter');
+        ContainerInternalAccess::enablePooling($container, 'counter');
 
         self::assertSame($container->get('counter'), $container->get('counter'));
         self::assertSame(1, ResetCounter::createdCount());
@@ -64,17 +64,17 @@ final class ContainerMemoryPoolTest extends TestCase
     {
         $container = new Container();
         $container->set('counter', static fn (): ResetCounter => new ResetCounter());
-        $container->enablePooling('counter');
+        ContainerInternalAccess::enablePooling($container, 'counter');
 
         $instance = $container->make('counter');
         self::assertInstanceOf(ResetCounter::class, $instance);
-        $container->releaseToPool('counter', $instance);
-        $container->disablePooling('counter');
+        ContainerInternalAccess::releaseToPool($container, 'counter', $instance);
+        ContainerInternalAccess::disablePooling($container, 'counter');
 
-        self::assertFalse($container->isPoolingEnabled('counter'));
+        self::assertFalse(ContainerInternalAccess::isPoolingEnabled($container, 'counter'));
         self::assertSame(
             ['configured' => false, 'max_size' => 0, 'available' => 0],
-            $container->poolStats('counter'),
+            ContainerInternalAccess::poolStats($container, 'counter'),
         );
     }
 
@@ -87,18 +87,18 @@ final class ContainerMemoryPoolTest extends TestCase
 
         $instance = $container->make('counter');
         self::assertInstanceOf(ResetCounter::class, $instance);
-        $container->releaseToPool('counter', $instance);
+        ContainerInternalAccess::releaseToPool($container, 'counter', $instance);
     }
 
     public function testDefaultMaxSizeMatchesServiceObjectPoolConstant(): void
     {
         $container = new Container();
         $container->set('counter', static fn (): ResetCounter => new ResetCounter());
-        $container->enablePooling('counter');
+        ContainerInternalAccess::enablePooling($container, 'counter');
 
         self::assertSame(
             ServiceObjectPool::DEFAULT_MAX_SIZE,
-            $container->poolStats('counter')['max_size'],
+            ContainerInternalAccess::poolStats($container, 'counter')['max_size'],
         );
     }
 
@@ -106,15 +106,15 @@ final class ContainerMemoryPoolTest extends TestCase
     {
         $container = new Container();
         $container->set('counter', static fn (): ResetCounter => new ResetCounter());
-        $container->enablePooling('counter');
+        ContainerInternalAccess::enablePooling($container, 'counter');
 
         $instance = $container->make('counter');
         self::assertInstanceOf(ResetCounter::class, $instance);
-        $container->releaseToPool('counter', $instance);
-        $container->clearPool('counter');
+        ContainerInternalAccess::releaseToPool($container, 'counter', $instance);
+        ContainerInternalAccess::clearPool($container, 'counter');
 
-        self::assertSame(0, $container->poolStats('counter')['available']);
-        self::assertTrue($container->isPoolingEnabled('counter'));
+        self::assertSame(0, ContainerInternalAccess::poolStats($container, 'counter')['available']);
+        self::assertTrue(ContainerInternalAccess::isPoolingEnabled($container, 'counter'));
     }
 
     public function testClearAllPoolsEmptiesEveryConfiguredPool(): void
@@ -122,18 +122,18 @@ final class ContainerMemoryPoolTest extends TestCase
         $container = new Container();
         $container->set('counter', static fn (): ResetCounter => new ResetCounter());
         $container->set('other', static fn (): ResetCounter => new ResetCounter());
-        $container->enablePooling('counter');
-        $container->enablePooling('other');
+        ContainerInternalAccess::enablePooling($container, 'counter');
+        ContainerInternalAccess::enablePooling($container, 'other');
 
         self::assertInstanceOf(ResetCounter::class, $counter = $container->make('counter'));
         self::assertInstanceOf(ResetCounter::class, $other = $container->make('other'));
-        $container->releaseToPool('counter', $counter);
-        $container->releaseToPool('other', $other);
-        $container->clearAllPools();
+        ContainerInternalAccess::releaseToPool($container, 'counter', $counter);
+        ContainerInternalAccess::releaseToPool($container, 'other', $other);
+        ContainerInternalAccess::clearAllPools($container);
 
-        self::assertTrue($container->isPoolingEnabled('counter'));
-        self::assertTrue($container->isPoolingEnabled('other'));
-        self::assertSame(0, $container->poolStats('counter')['available']);
-        self::assertSame(0, $container->poolStats('other')['available']);
+        self::assertTrue(ContainerInternalAccess::isPoolingEnabled($container, 'counter'));
+        self::assertTrue(ContainerInternalAccess::isPoolingEnabled($container, 'other'));
+        self::assertSame(0, ContainerInternalAccess::poolStats($container, 'counter')['available']);
+        self::assertSame(0, ContainerInternalAccess::poolStats($container, 'other')['available']);
     }
 }

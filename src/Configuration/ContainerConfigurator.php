@@ -16,6 +16,11 @@ use CloudCastle\DI\Contract\ContainerInterface;
  */
 final class ContainerConfigurator
 {
+    /**
+     * @param ConfigurationLoaderRegistry $loaderRegistry Реестр загрузчиков по расширению файла
+     * @param ConfigurationMerger $merger Объединяет слои конфигурации с учётом приоритетов
+     * @param ConfigurationApplicator $applicator Применяет итоговый массив к контейнеру
+     */
     public function __construct(
         private readonly ConfigurationLoaderRegistry $loaderRegistry = new ConfigurationLoaderRegistry(),
         private readonly ConfigurationMerger $merger = new ConfigurationMerger(),
@@ -32,6 +37,7 @@ final class ContainerConfigurator
      * - {@see ConfigurationFilesSource} — явный список файлов;
      * - {@see ConfigurationDirectorySource} — все поддерживаемые файлы каталога.
      *
+     * @param ContainerInterface $container Контейнер для регистрации сервисов и настроек
      * @param list<string|ConfigurationSource|ConfigurationDirectorySource|ConfigurationFilesSource> $sources
      */
     public function configure(ContainerInterface $container, array $sources): void
@@ -56,6 +62,8 @@ final class ContainerConfigurator
     /**
      * Загружает один файл конфигурации.
      *
+     * @param string $path Путь к файлу конфигурации
+     *
      * @return array<string, mixed>
      */
     public function load(string $path): array
@@ -66,7 +74,8 @@ final class ContainerConfigurator
     /**
      * Применяет уже объединённый массив конфигурации к контейнеру.
      *
-     * @param array<string, mixed> $config
+     * @param ContainerInterface $container Контейнер для применения конфигурации
+     * @param array<string, mixed> $config Объединённый массив секций конфигурации
      */
     public function apply(ContainerInterface $container, array $config): void
     {

@@ -259,7 +259,7 @@
 | `load(string $path): array` | Один файл |
 | `apply(ContainerInterface, array $config): void` | Применить массив |
 
-`$sources` — `list<string|ConfigurationSource>`.
+`$sources` — `list<string|ConfigurationSource|ConfigurationDirectorySource|ConfigurationFilesSource>`.
 
 Подробнее — [Configuration](Configuration).
 
@@ -267,10 +267,35 @@
 
 ## `CloudCastle\DI\Configuration\ConfigurationSource`
 
+Один файл конфигурации с опциональным приоритетом.
+
 | Свойство | Описание |
 |----------|----------|
 | `path` | Путь к файлу |
 | `priority` | `?int` — приоритет слоя при слиянии |
+
+---
+
+## `CloudCastle\DI\Configuration\ConfigurationDirectorySource`
+
+Все поддерживаемые файлы конфигурации из каталога (неподдерживаемые расширения пропускаются).
+
+| Свойство | Описание |
+|----------|----------|
+| `directory` | `string` — путь к каталогу |
+| `priority` | `?int` — приоритет слоя; `null` — порядок в списке источников |
+| `scan` | `ConfigurationDirectoryScan` — режим обхода (`Flat` по умолчанию) |
+
+---
+
+## `CloudCastle\DI\Configuration\ConfigurationFilesSource`
+
+Явный список файлов конфигурации с общим приоритетом.
+
+| Свойство | Описание |
+|----------|----------|
+| `paths` | `list<string>` — пути к файлам в порядке слияния |
+| `priority` | `?int` — приоритет слоя; `null` — порядок в списке источников |
 
 ---
 

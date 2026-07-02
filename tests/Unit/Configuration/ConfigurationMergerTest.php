@@ -6,6 +6,7 @@ namespace CloudCastle\DI\Tests\Unit\Configuration;
 
 use CloudCastle\DI\Configuration\ConfigurationLayer;
 use CloudCastle\DI\Configuration\ConfigurationMerger;
+use CloudCastle\DI\Tests\Fixtures\Autowire\Clock;
 use CloudCastle\DI\Tests\Fixtures\Autowire\CustomServiceIdAttribute;
 use CloudCastle\DI\Tests\Fixtures\ContextualBinding\ReportService;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -15,6 +16,8 @@ use PHPUnit\Framework\TestCase;
 #[CoversClass(ConfigurationLayer::class)]
 final class ConfigurationMergerTest extends TestCase
 {
+    use ConfigurationArrayAssertTrait;
+
     public function testLastSourceWinsByDefault(): void
     {
         $merger = new ConfigurationMerger();
@@ -283,5 +286,116 @@ final class ConfigurationMergerTest extends TestCase
         ]);
 
         self::assertSame([], $merged['contextual']);
+    }
+
+    public function testMergerSkipsInvalidContextualLayerButProcessesFollowingLayer(): void
+    {
+        $consumer = ReportService::class;
+        $need = \Psr\Log\LoggerInterface::class;
+
+        $merged = (new ConfigurationMerger())->merge([
+            new ConfigurationLayer(['contextual' => 'not-an-array'], 0, null),
+            new ConfigurationLayer([
+                'contextual' => [
+                    $consumer => [$need => 'log.memory'],
+                ],
+            ], 1, null),
+        ]);
+
+        self::assertIsArray($merged['contextual']);
+        /** @var array<string, array<string, string>> $contextual */
+        $contextual = $merged['contextual'];
+        self::assertSame('log.memory', $contextual[$consumer][$need]);
+    }
+
+    public function testScanInlineEntryPriorityBeatsLayerFilePriority(): void
+    {
+        $merged = (new ConfigurationMerger())->merge([
+            new ConfigurationLayer(
+                ['scan' => [['directory' => '/shared', 'namespace' => 'Old', 'priority' => 50]]],
+                0,
+                10,
+            ),
+            new ConfigurationLayer(
+                ['scan' => [['directory' => '/shared', 'namespace' => 'New']]],
+                1,
+                20,
+            ),
+        ]);
+
+        $scan = $this->assertConfigList($merged, 'scan');
+        self::assertIsArray($scan[0]);
+        /** @var array<string, mixed> $scanEntry */
+        $scanEntry = $scan[0];
+        self::assertSame('Old', $scanEntry['namespace']);
+    }
+
+    public function testAutowireArrayWithDirectoryDoesNotUseScanMergeKey(): void
+    {
+        $merged = (new ConfigurationMerger())->merge([
+            new ConfigurationLayer(
+                ['autowire' => [['directory' => '/one'], ['directory' => '/two']]],
+                0,
+                null,
+            ),
+        ]);
+
+        self::assertCount(2, $this->assertConfigList($merged, 'autowire'));
+    }
+
+    public function testAutowireNonStringValueUsesIndexInKey(): void
+    {
+        $merged = (new ConfigurationMerger())->merge([
+            new ConfigurationLayer(
+                ['autowire' => [['marker' => 'a'], ['marker' => 'b']]],
+                0,
+                null,
+            ),
+        ]);
+
+        self::assertCount(2, $this->assertConfigList($merged, 'autowire'));
+    }
+
+    public function testAutowireListEntryKeyIncludesSectionPrefix(): void
+    {
+        $merged = (new ConfigurationMerger())->merge([
+            new ConfigurationLayer(['autowire' => [Clock::class]], 0, null),
+            new ConfigurationLayer(['register_attributes' => [Clock::class]], 0, null),
+        ]);
+
+        self::assertSame([Clock::class], $merged['autowire']);
+        self::assertSame([Clock::class], $merged['register_attributes']);
+    }
+
+    public function testMapSectionSkipsNonStringKeys(): void
+    {
+        $merged = (new ConfigurationMerger())->merge([
+            new ConfigurationLayer(['services' => [99 => 'skip', 'keep' => 'value']], 0, null),
+        ]);
+
+        self::assertSame(['keep' => 'value'], $merged['services']);
+    }
+
+    public function testFirstWinnerStoredWhenKeyWasMissing(): void
+    {
+        $merged = (new ConfigurationMerger())->merge([
+            new ConfigurationLayer(['services' => ['only' => 'value']], 0, null),
+        ]);
+
+        $services = $this->assertConfigMap($merged, 'services');
+
+        self::assertSame('value', $services['only']);
+    }
+
+    public function testHigherPriorityCandidateReplacesExistingWinner(): void
+    {
+        $merged = (new ConfigurationMerger())->merge([
+            new ConfigurationLayer(['services' => ['id' => 'low']], 0, 1),
+            new ConfigurationLayer(['services' => ['id' => 'high']], 1, 100),
+        ]);
+
+        $services = $this->assertConfigMap($merged, 'services');
+
+        self::assertSame('high', $services['id']);
     }
 }

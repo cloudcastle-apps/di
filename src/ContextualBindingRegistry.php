@@ -47,7 +47,11 @@ final class ContextualBindingRegistry implements ContextualBindingRegistryInterf
     }
 
     /**
-     * @return array<string, array<string, string>>
+     * Экспортирует contextual-привязки в карту consumer → need → give для компиляции.
+     *
+     * При нескольких правилах для одной пары (consumer, need) побеждает последнее зарегистрированное.
+     *
+     * @return array<string, array<string, string>> FQCN потребителя → карта need → give
      */
     public function exportContextualMap(): array
     {

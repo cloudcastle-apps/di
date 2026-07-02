@@ -76,7 +76,7 @@ composer ci
 | `composer benchmark-report` | Markdown-отчёт фактических времён |
 | `composer benchmark-check` | Проверка регрессии бенчмарков (×1.5, CI) |
 | `composer test:coverage` | Покрытие (≥95% line per-file, ~99.8% типично) |
-| `composer test:mutation` | Infection (MSI ≥94% по `src/`, PHP 8.1–8.5 в CI) |
+| `composer test:mutation` | Infection (MSI **100%** по `src/`, PHP 8.1–8.5 в CI) |
 | `composer docs` | Генерация API-документации в `docs/` |
 
 ## Стиль кода

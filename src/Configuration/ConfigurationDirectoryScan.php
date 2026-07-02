@@ -9,6 +9,9 @@ namespace CloudCastle\DI\Configuration;
  */
 enum ConfigurationDirectoryScan
 {
+    /** Только файлы непосредственно в указанном каталоге */
     case Flat;
+
+    /** Рекурсивный обход подкаталогов */
     case Recursive;
 }

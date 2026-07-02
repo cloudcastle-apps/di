@@ -8,6 +8,7 @@ use CloudCastle\DI\Configuration\Loader\JsonConfigurationLoader;
 use CloudCastle\DI\Configuration\Loader\PhpConfigurationLoader;
 use CloudCastle\DI\Configuration\Loader\XmlConfigurationLoader;
 use CloudCastle\DI\Configuration\Loader\YamlConfigurationLoader;
+use CloudCastle\DI\Exception\ContainerException;
 use CloudCastle\DI\Tests\Fixtures\Autowire\Clock;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
@@ -18,6 +19,8 @@ use PHPUnit\Framework\TestCase;
 #[CoversClass(YamlConfigurationLoader::class)]
 final class ConfigurationLoaderTest extends TestCase
 {
+    use ConfigurationArrayAssertTrait;
+
     private string $fixturesDirectory;
 
     protected function setUp(): void
@@ -107,5 +110,49 @@ final class ConfigurationLoaderTest extends TestCase
         /** @var list<string> $autowire */
         $autowire = $config['autowire'];
         self::assertSame(Clock::class, $autowire[0]);
+    }
+
+    public function testLoadThrowsWhenFileIsMissing(): void
+    {
+        $loader = new XmlConfigurationLoader();
+
+        $this->expectException(ContainerException::class);
+        $this->expectExceptionMessage('не найден');
+
+        $loader->load($this->fixturesDirectory . '/missing.xml');
+    }
+
+    public function testAutowiringFalseFlagsAreOmitted(): void
+    {
+        $path = sys_get_temp_dir() . '/cloudcastle-di-autowiring-false.xml';
+        file_put_contents(
+            $path,
+            '<?xml version="1.0"?><container><autowiring enabled="false"/></container>',
+        );
+
+        try {
+            $config = (new XmlConfigurationLoader())->load($path);
+
+            self::assertSame([], $config['autowiring'] ?? []);
+        } finally {
+            if (is_file($path)) {
+                unlink($path);
+            }
+        }
+    }
+
+    public function testParseAutowireSkipsEmptyClassElements(): void
+    {
+        self::assertCount(1, $this->assertConfigList(
+            (new XmlConfigurationLoader())->load($this->fixturesDirectory . '/xml-details.xml'),
+            'autowire',
+        ));
+    }
+
+    public function testSupportsUsesLowercaseExtension(): void
+    {
+        $loader = new XmlConfigurationLoader();
+
+        self::assertTrue($loader->supports('/path/config.Xml'));
     }
 }

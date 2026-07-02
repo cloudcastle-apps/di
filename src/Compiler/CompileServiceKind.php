@@ -9,7 +9,12 @@ namespace CloudCastle\DI\Compiler;
  */
 enum CompileServiceKind
 {
+    /** Готовое скалярное значение или экземпляр без autowiring */
     case Literal;
+
+    /** Создание через `new ClassName(...)` с фиксированными аргументами */
     case NewInstance;
+
+    /** Autowiring конструктора по снимку контейнера на момент компиляции */
     case Autowired;
 }

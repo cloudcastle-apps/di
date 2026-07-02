@@ -13,6 +13,9 @@ use CloudCastle\DI\Contract\ContextualBindingRegistrarInterface;
  */
 final class ContextualBindingConfigurator implements ContextualBindingConfiguratorInterface
 {
+    /**
+     * @param ContextualBindingRegistrarInterface $registrar Регистратор contextual-привязок
+     */
     public function __construct(
         private readonly ContextualBindingRegistrarInterface $registrar,
     ) {

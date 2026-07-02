@@ -14,7 +14,7 @@
 | `composer test:security` | `tests/Security/` | 17 | Инъекции, утечки в сообщениях об ошибках |
 | `composer test:load` | `tests/Load/` | 15 | Массовые операции (~6000 resolve) |
 | `composer test:performance` | `tests/Performance/` | 12 | PHPBench, регрессия hot path |
-| `composer test:mutation` | Infection | — | MSI ≥94%, Covered MSI ≥94% (`src/`, без `Compiler/`) |
+| `composer test:mutation` | Infection | — | MSI **100%**, Covered MSI **100%** (`src/`, без `Compiler/`) |
 | `composer test:coverage` | PHPUnit + PCOV | 731* | ≥95% строк **и** ≥95% per-file (`tools/coverage-check.php`) |
 | `composer benchmark-check` | PHPBench | — | Регрессия производительности (×1.5 порог) |
 
@@ -27,8 +27,8 @@
 | Метрика | Порог CI | Фактически (типично) |
 |---------|----------|----------------------|
 | Line coverage | ≥95% проект + **каждый файл** | ~99.8% |
-| Infection MSI | ≥94% | ~99% |
-| Infection Covered MSI | ≥94% | 100% |
+| Infection MSI | **100%** | 100% |
+| Infection Covered MSI | **100%** | 100% |
 | PHPStan | level **max** | 0 errors |
 | Psalm | strict + plugins | 0 errors |
 | Deptrac | fail on uncovered | 0 violations |

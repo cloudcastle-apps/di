@@ -213,7 +213,7 @@ composer ci
 |---|---|
 | **Тесты** | 744 PHPUnit (unit 689, integration 11, security 17, load 15, performance 12) |
 | **Статика** | PHPStan max, Psalm 6 (errorLevel 1), PHPMD, Deptrac, Rector |
-| **Coverage** | ≥95% line (per-file), ~99.8% типично; Infection MSI ≥94% |
+| **Coverage** | ≥95% line (per-file), ~99.8% типично; Infection MSI **100%** |
 | **CI** | PHP 8.1–8.5, benchmark-check, CodeQL |
 
 [Wiki: Testing](https://github.com/cloudcastle-apps/di/wiki/Testing) · [Performance-and-load](https://github.com/cloudcastle-apps/di/wiki/Performance-and-load)

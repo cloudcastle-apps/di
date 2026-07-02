@@ -9,7 +9,9 @@ use CloudCastle\DI\Contract\ContextualBindingNeedsInterface;
 use CloudCastle\DI\Contract\ContextualBindingRegistrarInterface;
 
 /**
- * Runtime contextual when/needs/give (#25, часть 2).
+ * Поддержка runtime contextual binding: when/needs/give (#25, часть 2).
+ *
+ * Делегирует fluent API конфигуратору и хранит зарегистрированные правила в реестре.
  */
 final class ContextualBindingSupport implements ContextualBindingRegistrarInterface
 {
@@ -27,18 +29,35 @@ final class ContextualBindingSupport implements ContextualBindingRegistrarInterf
         $this->configurator = new ContextualBindingConfigurator($this);
     }
 
+    /**
+     * Начинает цепочку contextual binding для класса-потребителя.
+     *
+     * @param string $consumerClass FQCN класса (when)
+     *
+     * @return ContextualBindingNeedsInterface Следующий шаг fluent API — {@see needs()}
+     */
     public function when(string $consumerClass): ContextualBindingNeedsInterface
     {
         return $this->configurator->when($consumerClass);
     }
 
+    /**
+     * Возвращает id сервиса для пары consumer/need, если правило зарегистрировано.
+     *
+     * @param string $consumerClass FQCN класса-потребителя
+     * @param string $need FQCN зависимости или id сервиса
+     *
+     * @return string|null id сервиса или null, если contextual-привязка не найдена
+     */
     public function contextualGive(string $consumerClass, string $need): ?string
     {
         return $this->registry->resolve($consumerClass, $need);
     }
 
     /**
-     * @return array<string, array<string, string>>
+     * Экспортирует все зарегистрированные contextual-привязки.
+     *
+     * @return array<string, array<string, string>> Карта consumerClass → need → id сервиса
      */
     public function exportContextualMap(): array
     {

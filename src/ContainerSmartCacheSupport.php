@@ -142,6 +142,14 @@ final class ContainerSmartCacheSupport
         ];
     }
 
+    /**
+     * Проверяет, истёк ли TTL singleton-кэша для id.
+     *
+     * @param string $serviceId Id сервиса
+     * @param int $ttl Длительность кэша в секундах
+     *
+     * @return bool `true`, если метка времени отсутствует или TTL истёк
+     */
     private function isExpired(string $serviceId, int $ttl): bool
     {
         if (!isset($this->cachedAt[$serviceId])) {

@@ -69,14 +69,36 @@ final class ClassScanner
             new RecursiveDirectoryIterator($directory, FilesystemIterator::SKIP_DOTS),
         );
 
+        /** @var list<SplFileInfo> $allFiles */
+        $allFiles = [];
+
         foreach ($iterator as $file) {
             /** @var SplFileInfo $file */
+            $allFiles[] = $file;
+        }
+
+        usort($allFiles, $this->compareSplFileInfoByPath(...));
+
+        foreach ($allFiles as $file) {
             if ($file->getExtension() !== 'php') {
                 continue;
             }
 
             yield $file;
         }
+    }
+
+    /**
+     * Сравнивает файлы по полному пути для стабильной лексикографической сортировки.
+     *
+     * @param SplFileInfo $left Левый элемент сравнения
+     * @param SplFileInfo $right Правый элемент сравнения
+     *
+     * @return int Результат strcmp для путей файлов
+     */
+    private function compareSplFileInfoByPath(SplFileInfo $left, SplFileInfo $right): int
+    {
+        return strcmp($left->getPathname(), $right->getPathname());
     }
 
     /**
@@ -98,6 +120,7 @@ final class ClassScanner
             }
 
             if (!class_exists($className)) {
+                /** @infection-ignore-all break vs continue эквивалентны: следующий тип из того же файла */
                 continue;
             }
 

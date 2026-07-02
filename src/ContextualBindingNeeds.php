@@ -13,6 +13,10 @@ use CloudCastle\DI\Contract\ContextualBindingRegistrarInterface;
  */
 final class ContextualBindingNeeds implements ContextualBindingNeedsInterface
 {
+    /**
+     * @param ContextualBindingRegistrarInterface $registrar Регистратор contextual-привязок
+     * @param string $consumerClass FQCN класса-потребителя из цепочки when()
+     */
     public function __construct(
         private readonly ContextualBindingRegistrarInterface $registrar,
         private readonly string $consumerClass,

@@ -50,7 +50,11 @@ final class XmlConfigurationLoader implements ConfigurationLoaderInterface
     }
 
     /**
-     * @return array<string, mixed>
+     * Разбирает корневой элемент `<container>` в массив секций конфигурации.
+     *
+     * @param SimpleXMLElement $xml Корневой XML-элемент
+     *
+     * @return array<string, mixed> Секции конфигурации и необязательный ключ `priority`
      */
     private function parseRoot(SimpleXMLElement $xml): array
     {
@@ -77,6 +81,8 @@ final class XmlConfigurationLoader implements ConfigurationLoaderInterface
     }
 
     /**
+     * Возвращает карту имён секций и функций их разбора.
+     *
      * @return array<string, Closure(SimpleXMLElement): mixed>
      */
     private function sectionParsers(): array
@@ -95,6 +101,10 @@ final class XmlConfigurationLoader implements ConfigurationLoaderInterface
     }
 
     /**
+     * Разбирает секцию `<services>` в карту id → определение сервиса.
+     *
+     * @param SimpleXMLElement $services Узел секции services
+     *
      * @return array<string, mixed>
      */
     private function parseServices(SimpleXMLElement $services): array
@@ -110,7 +120,11 @@ final class XmlConfigurationLoader implements ConfigurationLoaderInterface
     }
 
     /**
-     * @return array<string, mixed>|string
+     * Разбирает одно определение `<service>`: класс, ленивость, приоритет или текстовое значение.
+     *
+     * @param SimpleXMLElement $service Узел service
+     *
+     * @return array<string, mixed>|string Определение сервиса или id другого сервиса
      */
     private function parseServiceValue(SimpleXMLElement $service): array|string
     {
@@ -141,6 +155,10 @@ final class XmlConfigurationLoader implements ConfigurationLoaderInterface
     }
 
     /**
+     * Разбирает секцию `<aliases>` в карту псевдоним → целевой id.
+     *
+     * @param SimpleXMLElement $aliases Узел секции aliases
+     *
      * @return array<string, string|array{value: string, priority?: int}>
      */
     private function parseAliases(SimpleXMLElement $aliases): array
@@ -157,6 +175,10 @@ final class XmlConfigurationLoader implements ConfigurationLoaderInterface
     }
 
     /**
+     * Разбирает секцию `<bind>` в карту abstract → concrete.
+     *
+     * @param SimpleXMLElement $bind Узел секции bind
+     *
      * @return array<string, string|array{value: string, priority?: int}>
      */
     private function parseBind(SimpleXMLElement $bind): array
@@ -173,6 +195,10 @@ final class XmlConfigurationLoader implements ConfigurationLoaderInterface
     }
 
     /**
+     * Разбирает секцию `<contextual>` в карту when → needs → give.
+     *
+     * @param SimpleXMLElement $contextual Узел секции contextual
+     *
      * @return array<string, array<string, string|array{value: string, priority?: int}>>
      */
     private function parseContextual(SimpleXMLElement $contextual): array
@@ -196,6 +222,10 @@ final class XmlConfigurationLoader implements ConfigurationLoaderInterface
     }
 
     /**
+     * Разбирает список классов для autowire из секции `<autowire>`.
+     *
+     * @param SimpleXMLElement $autowire Узел секции autowire
+     *
      * @return list<string|array{value: string, priority?: int}>
      */
     private function parseAutowireList(SimpleXMLElement $autowire): array
@@ -217,6 +247,10 @@ final class XmlConfigurationLoader implements ConfigurationLoaderInterface
     }
 
     /**
+     * Разбирает секцию `<tags>` в карту имени тега → список id сервисов.
+     *
+     * @param SimpleXMLElement $tags Узел секции tags
+     *
      * @return array<string, list<string>>
      */
     private function parseTags(SimpleXMLElement $tags): array
@@ -238,6 +272,10 @@ final class XmlConfigurationLoader implements ConfigurationLoaderInterface
     }
 
     /**
+     * Разбирает секцию `<scan>` в список каталогов для автоматического сканирования.
+     *
+     * @param SimpleXMLElement $scan Узел секции scan
+     *
      * @return list<array{directory: string, namespace?: string}>
      */
     private function parseScan(SimpleXMLElement $scan): array
@@ -260,6 +298,10 @@ final class XmlConfigurationLoader implements ConfigurationLoaderInterface
     }
 
     /**
+     * Разбирает список строковых значений из дочерних `<attribute class="...">`.
+     *
+     * @param SimpleXMLElement $parent Родительский узел секции
+     *
      * @return list<string|array{value: string, priority?: int}>
      */
     private function parseStringList(SimpleXMLElement $parent): array
@@ -274,7 +316,11 @@ final class XmlConfigurationLoader implements ConfigurationLoaderInterface
     }
 
     /**
-     * @return array<string, bool>
+     * Разбирает флаги autowiring из секции `<autowiring>`.
+     *
+     * @param SimpleXMLElement $autowiring Узел секции autowiring
+     *
+     * @return array<string, bool> Включённые флаги (только со значением true)
      */
     private function parseAutowiringFlags(SimpleXMLElement $autowiring): array
     {
@@ -293,6 +339,11 @@ final class XmlConfigurationLoader implements ConfigurationLoaderInterface
     }
 
     /**
+     * Оборачивает строковое значение в структуру с приоритетом, если атрибут `priority` задан.
+     *
+     * @param string $value Строковое значение записи
+     * @param SimpleXMLElement $element XML-элемент с необязательным атрибутом priority
+     *
      * @return string|array{value: string, priority?: int}
      */
     private function wrapWithPriority(string $value, SimpleXMLElement $element): array|string
@@ -307,6 +358,11 @@ final class XmlConfigurationLoader implements ConfigurationLoaderInterface
     }
 
     /**
+     * Оборачивает элемент списковой секции с учётом атрибута `priority`.
+     *
+     * @param string $value Строковое значение элемента
+     * @param SimpleXMLElement $element XML-элемент списка
+     *
      * @return string|array{value: string, priority?: int}
      */
     private function wrapListEntry(string $value, SimpleXMLElement $element): array|string
@@ -314,6 +370,16 @@ final class XmlConfigurationLoader implements ConfigurationLoaderInterface
         return $this->wrapWithPriority($value, $element);
     }
 
+    /**
+     * Читает обязательный строковый атрибут XML-элемента.
+     *
+     * @param SimpleXMLElement $element XML-элемент
+     * @param string $name Имя атрибута
+     *
+     * @throws ContainerException Если атрибут отсутствует
+     *
+     * @return string Значение атрибута
+     */
     private function readRequiredAttribute(SimpleXMLElement $element, string $name): string
     {
         $attributes = $element->attributes();
@@ -325,6 +391,14 @@ final class XmlConfigurationLoader implements ConfigurationLoaderInterface
         return (string) $attributes[$name];
     }
 
+    /**
+     * Читает необязательный строковый атрибут XML-элемента.
+     *
+     * @param SimpleXMLElement $element XML-элемент
+     * @param string $name Имя атрибута
+     *
+     * @return string|null Значение атрибута или null, если не задан
+     */
     private function readOptionalAttribute(SimpleXMLElement $element, string $name): ?string
     {
         $attributes = $element->attributes();
@@ -336,6 +410,16 @@ final class XmlConfigurationLoader implements ConfigurationLoaderInterface
         return (string) $attributes[$name];
     }
 
+    /**
+     * Читает необязательный целочисленный атрибут XML-элемента.
+     *
+     * @param SimpleXMLElement $element XML-элемент
+     * @param string $name Имя атрибута
+     *
+     * @throws ContainerException Если атрибут задан, но не является числом
+     *
+     * @return int|null Значение атрибута или null, если не задан
+     */
     private function readOptionalIntAttribute(SimpleXMLElement $element, string $name): ?int
     {
         $value = $this->readOptionalAttribute($element, $name);
@@ -351,6 +435,16 @@ final class XmlConfigurationLoader implements ConfigurationLoaderInterface
         return (int) $value;
     }
 
+    /**
+     * Читает необязательный логический атрибут XML-элемента.
+     *
+     * Допустимые истинные значения: `1`, `true`, `yes`, `on` (без учёта регистра).
+     *
+     * @param SimpleXMLElement $element XML-элемент
+     * @param string $name Имя атрибута
+     *
+     * @return bool|null true, если атрибут задан истинным; false или null — иначе
+     */
     private function readOptionalBoolAttribute(SimpleXMLElement $element, string $name): ?bool
     {
         $value = $this->readOptionalAttribute($element, $name);

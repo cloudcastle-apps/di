@@ -6,6 +6,7 @@ namespace CloudCastle\DI\Tests\Unit\Compiler;
 
 use CloudCastle\DI\Compiler\AbstractCompiledContainer;
 use CloudCastle\DI\Tests\Fixtures\Compiled\StubCompiledContainer;
+use CloudCastle\DI\Tests\Support\ContainerInternalAccess;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
@@ -17,7 +18,7 @@ final class AbstractCompiledContainerSmartCacheTest extends TestCase
         $container = new StubCompiledContainer();
 
         $container->get('value');
-        $container->forget('value');
+        ContainerInternalAccess::forget($container, 'value');
         $container->get('value');
 
         self::assertSame(2, $container->createCount('value'));
@@ -30,7 +31,7 @@ final class AbstractCompiledContainerSmartCacheTest extends TestCase
         };
         $container = new StubCompiledContainer(smartCacheClock: fn (): float => $clock->now);
 
-        $container->cacheFor('value', ttlSeconds: 5);
+        ContainerInternalAccess::cacheFor($container, 'value', ttlSeconds: 5);
         $container->get('value');
         $clock->now += 5.0;
         $container->get('value');

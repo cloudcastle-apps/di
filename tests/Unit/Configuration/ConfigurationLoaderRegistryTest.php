@@ -64,4 +64,11 @@ final class ConfigurationLoaderRegistryTest extends TestCase
 
         self::assertIsArray($config['services'] ?? null);
     }
+
+    public function testEmptyLoaderListDoesNotFallBackToDefaults(): void
+    {
+        $registry = new ConfigurationLoaderRegistry([]);
+
+        self::assertFalse($registry->supports($this->fixturesDirectory . '/base.php'));
+    }
 }

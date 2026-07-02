@@ -21,6 +21,19 @@ final class ServiceObjectPoolTest extends TestCase
         $this->pool = new ServiceObjectPool();
     }
 
+    public function testIsConfiguredReflectsConfigureAndRemove(): void
+    {
+        self::assertFalse($this->pool->isConfigured('svc'));
+
+        $this->pool->configure('svc');
+
+        self::assertTrue($this->pool->isConfigured('svc'));
+
+        $this->pool->remove('svc');
+
+        self::assertFalse($this->pool->isConfigured('svc'));
+    }
+
     public function testAcquireCreatesWhenPoolIsEmpty(): void
     {
         $this->pool->configure('svc');

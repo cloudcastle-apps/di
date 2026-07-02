@@ -130,6 +130,91 @@ final class CallableInvokerTest extends TestCase
         self::assertSame(3, $result);
     }
 
+    public function testReflectCallableValueThrowsForUnsupportedType(): void
+    {
+        $invoker = new CallableInvoker(new Container());
+        $method = new ReflectionMethod(CallableInvoker::class, 'reflectCallableValue');
+
+        $this->expectException(ContainerException::class);
+        $this->expectExceptionMessage('Неподдерживаемый тип callable.');
+
+        $method->invoke($invoker, 123);
+    }
+
+    public function testReflectCallableValueThrowsWhenArrayCallableHasNonStringMethod(): void
+    {
+        $invoker = new CallableInvoker(new Container());
+        $method = new ReflectionMethod(CallableInvoker::class, 'reflectCallableValue');
+
+        $this->expectException(ContainerException::class);
+        $this->expectExceptionMessage('Неподдерживаемый тип callable.');
+
+        $method->invoke($invoker, ['target', 456]);
+    }
+
+    public function testReflectCallableValueThrowsWhenArrayCallableHasInvalidTarget(): void
+    {
+        $invoker = new CallableInvoker(new Container());
+        $method = new ReflectionMethod(CallableInvoker::class, 'reflectCallableValue');
+
+        $this->expectException(ContainerException::class);
+        $this->expectExceptionMessage('Неподдерживаемый тип callable.');
+
+        $method->invoke($invoker, [123, 'handle']);
+    }
+
+    public function testInvokeWithArgumentsThrowsWhenInstanceMethodTargetIsNotObject(): void
+    {
+        $handler = new class () {
+            public function handle(): void
+            {
+            }
+        };
+        $callable = [$handler::class, 'handle'];
+        $reflection = new ReflectionMethod($callable[0], $callable[1]);
+        $invoker = new CallableInvoker(new Container());
+        $method = new ReflectionMethod(CallableInvoker::class, 'invokeWithArguments');
+
+        $this->expectException(ContainerException::class);
+        $this->expectExceptionMessage('Callable метода требует объект.');
+
+        $method->invoke($invoker, $callable, $reflection, []);
+    }
+
+    public function testInvokeWithArgumentsThrowsWhenArrayCallableOmitsIndexZero(): void
+    {
+        $handler = new class () {
+            public function run(): void
+            {
+            }
+        };
+        $reflection = new ReflectionMethod($handler, 'run');
+        $invoker = new CallableInvoker(new Container());
+        $method = new ReflectionMethod(CallableInvoker::class, 'invokeWithArguments');
+
+        $this->expectException(ContainerException::class);
+        $this->expectExceptionMessage('Callable метода требует объект.');
+
+        $method->invoke($invoker, [1 => $handler, 'run'], $reflection, []);
+    }
+
+    public function testInvokeWithArgumentsThrowsWhenCallableIsNeitherArrayNorObject(): void
+    {
+        $handler = new class () {
+            public function run(): void
+            {
+            }
+        };
+        $reflection = new ReflectionMethod($handler, 'run');
+        $invoker = new CallableInvoker(new Container());
+        $method = new ReflectionMethod(CallableInvoker::class, 'invokeWithArguments');
+
+        $this->expectException(ContainerException::class);
+        $this->expectExceptionMessage('Callable метода требует объект.');
+
+        $method->invoke($invoker, 'strlen', $reflection, []);
+    }
+
     public function testInvokeWithArgumentsThrowsForUnsupportedReflectionType(): void
     {
         $invoker = new CallableInvoker(new Container());

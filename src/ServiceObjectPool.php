@@ -24,11 +24,16 @@ final class ServiceObjectPool
      */
     private array $available = [];
 
-    /** @var array<string, int> */
+    /** @var array<string, int> Максимальный размер пула (свободных экземпляров) по id сервиса */
     private array $maxSizes = [];
 
     /**
      * Включает пул для id с ограничением вместимости.
+     *
+     * @param string $serviceId Id сервиса
+     * @param int $maxSize Максимум свободных экземпляров в пуле
+     *
+     * @throws ContainerException Если `$maxSize` меньше 1
      */
     public function configure(string $serviceId, int $maxSize = self::DEFAULT_MAX_SIZE): void
     {
@@ -45,6 +50,8 @@ final class ServiceObjectPool
 
     /**
      * Отключает пул и удаляет накопленные экземпляры для id.
+     *
+     * @param string $serviceId Id сервиса
      */
     public function remove(string $serviceId): void
     {
@@ -53,6 +60,10 @@ final class ServiceObjectPool
 
     /**
      * Проверяет, включён ли пул для id.
+     *
+     * @param string $serviceId Id сервиса
+     *
+     * @return bool `true`, если для id вызывался {@see configure()}
      */
     public function isConfigured(string $serviceId): bool
     {
@@ -61,6 +72,11 @@ final class ServiceObjectPool
 
     /**
      * Возвращает экземпляр из пула или создаёт новый через фабрику.
+     *
+     * @param string $serviceId Id сервиса
+     * @param callable(): mixed $factory Фабрика нового экземпляра, если пул пуст
+     *
+     * @return mixed Экземпляр из пула или результат `$factory`
      */
     public function acquire(string $serviceId, callable $factory): mixed
     {
@@ -83,6 +99,11 @@ final class ServiceObjectPool
 
     /**
      * Возвращает экземпляр в пул после {@see PoolableInterface::reset()}, если есть место.
+     *
+     * @param string $serviceId Id сервиса
+     * @param object $instance Экземпляр, созданный через {@see acquire()}
+     *
+     * @throws ContainerException Если пул для id не включён
      */
     public function release(string $serviceId, object $instance): void
     {
@@ -109,6 +130,8 @@ final class ServiceObjectPool
 
     /**
      * Удаляет все свободные экземпляры для id, не отключая пул.
+     *
+     * @param string $serviceId Id сервиса
      */
     public function clear(string $serviceId): void
     {
@@ -124,7 +147,11 @@ final class ServiceObjectPool
     }
 
     /**
-     * @return array{configured: bool, max_size: int, available: int}
+     * Возвращает статистику пула для id сервиса.
+     *
+     * @param string $serviceId Id сервиса
+     *
+     * @return array{configured: bool, max_size: int, available: int} Флаги пула и число свободных экземпляров
      */
     public function stats(string $serviceId): array
     {

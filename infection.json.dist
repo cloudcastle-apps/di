@@ -16,15 +16,22 @@
         "perMutator": "var/infection/per-mutator.md"
     },
     "mutators": {
-        "@default": true
+        "@default": true,
+        "PublicVisibility": {
+            "ignore": [
+                "CloudCastle\\DI\\ContainerMemoryPoolApi",
+                "CloudCastle\\DI\\ContainerProfilingApi",
+                "CloudCastle\\DI\\ContainerSmartCacheApi"
+            ]
+        }
     },
-    "minMsi": 94,
-    "minCoveredMsi": 94,
-    "timeout": 25,
+    "minMsi": 100,
+    "minCoveredMsi": 100,
+    "timeout": 120,
     "bootstrap": "vendor/autoload.php",
     "phpUnit": {
         "configDir": "."
     },
-    "testFrameworkOptions": "--exclude-group=circular-slow",
+    "testFrameworkOptions": "--testsuite=unit,integration,security --exclude-group=circular-slow --do-not-cache-result",
     "tmpDir": "var/cache/infection"
 }

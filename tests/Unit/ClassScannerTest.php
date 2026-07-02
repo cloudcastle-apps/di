@@ -13,10 +13,14 @@ use CloudCastle\DI\Tests\Fixtures\Autowire\Scan\MultiScanAlpha;
 use CloudCastle\DI\Tests\Fixtures\Autowire\Scan\MultiScanBeta;
 use CloudCastle\DI\Tests\Fixtures\Autowire\Scan\ScannedService;
 use CloudCastle\DI\Tests\Fixtures\Autowire\Scan\SpacedNamespaceService;
+use CloudCastle\DI\Tests\Fixtures\Autowire\ScanOrder\AaaOrder;
+use CloudCastle\DI\Tests\Fixtures\Autowire\ScanOrder\ScanOrderTarget;
+use CloudCastle\DI\Tests\Fixtures\Autowire\ScanOrder\ZzzOrder;
 use CloudCastle\DI\Tests\Fixtures\Autowire\ScanOverflowService;
 use CloudCastle\DI\Tests\Fixtures\Autowire\SimpleService;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
+use ReflectionMethod;
 
 /**
  * Сканирование PHP-классов в каталоге.
@@ -219,5 +223,114 @@ final class ClassScannerTest extends TestCase
             unlink($directory . '/AbstractOnly.php');
             rmdir($directory);
         }
+    }
+
+    public function testScanFindsClassWhenCommittedNonPhpMarkerIsSortedFirst(): void
+    {
+        $directory = \dirname(__DIR__) . '/Fixtures/Autowire/ScanOrder';
+        $scanner = new ClassScanner();
+        $classNames = $scanner->scan(
+            $directory,
+            'CloudCastle\\DI\\Tests\\Fixtures\\Autowire\\ScanOrder\\',
+        );
+
+        self::assertContains(ScanOrderTarget::class, $classNames);
+        self::assertCount(3, $classNames);
+    }
+
+    public function testScanReturnsClassesInPathnameOrder(): void
+    {
+        $directory = \dirname(__DIR__) . '/Fixtures/Autowire/ScanOrder';
+        $scanner = new ClassScanner();
+        $classNames = $scanner->scan(
+            $directory,
+            'CloudCastle\\DI\\Tests\\Fixtures\\Autowire\\ScanOrder\\',
+        );
+
+        self::assertSame(
+            [
+                AaaOrder::class,
+                ScanOrderTarget::class,
+                ZzzOrder::class,
+            ],
+            $classNames,
+        );
+    }
+
+    public function testScanFindsConcreteClassAfterAbstractInSameFile(): void
+    {
+        $scanner = new ClassScanner();
+        $classNames = $scanner->scan(
+            $this->fixturesDirectory . '/Scan',
+            'CloudCastle\\DI\\Tests\\Fixtures\\Autowire\\Scan\\',
+        );
+
+        self::assertContains(MixedScanConcreteNext::class, $classNames);
+    }
+
+    public function testScanFindsMultipleClassesInSingleFile(): void
+    {
+        $scanner = new ClassScanner();
+        $classNames = $scanner->scan(
+            $this->fixturesDirectory . '/Scan',
+            'CloudCastle\\DI\\Tests\\Fixtures\\Autowire\\Scan\\',
+        );
+
+        self::assertContains(MultiScanAlpha::class, $classNames);
+        self::assertContains(MultiScanBeta::class, $classNames);
+        self::assertContains(ScannedService::class, $classNames);
+    }
+
+    public function testScanSkipsNonPhpFilesAndContinuesScanningPhpSources(): void
+    {
+        $scanDirectory = $this->fixturesDirectory . '/Scan';
+        $noisePath = $scanDirectory . '/AAAA-mutation-noise.txt';
+        file_put_contents($noisePath, 'noise');
+
+        try {
+            $classNames = (new ClassScanner())->scan(
+                $scanDirectory,
+                'CloudCastle\\DI\\Tests\\Fixtures\\Autowire\\Scan\\',
+            );
+
+            self::assertContains(MultiScanAlpha::class, $classNames);
+            self::assertContains(MultiScanBeta::class, $classNames);
+        } finally {
+            if (is_file($noisePath)) {
+                unlink($noisePath);
+            }
+        }
+    }
+
+    public function testResolveInstantiableClassesContinuesAfterNamespacePrefixMismatch(): void
+    {
+        $path = \dirname(__DIR__) . '/Fixtures/Autowire/ScanPrefix/PrefixFilterTargets.php';
+        require_once $path;
+
+        $method = new ReflectionMethod(ClassScanner::class, 'resolveInstantiableClasses');
+        $classNames = $method->invoke(
+            new ClassScanner(),
+            $path,
+            'CloudCastle\\DI\\Tests\\Fixtures\\Autowire\\ScanPrefix\\Bet',
+        );
+
+        self::assertSame(
+            [\CloudCastle\DI\Tests\Fixtures\Autowire\ScanPrefix\Beta::class],
+            $classNames,
+        );
+    }
+
+    public function testResolveInstantiableClassesContinuesAfterNonInstantiableClass(): void
+    {
+        $path = \dirname(__DIR__) . '/Fixtures/Autowire/ScanPrefix/AbstractThenConcrete.php';
+        require_once $path;
+
+        $method = new ReflectionMethod(ClassScanner::class, 'resolveInstantiableClasses');
+        $classNames = $method->invoke(new ClassScanner(), $path, null);
+
+        self::assertSame(
+            [\CloudCastle\DI\Tests\Fixtures\Autowire\ScanPrefix\ConcreteSecond::class],
+            $classNames,
+        );
     }
 }

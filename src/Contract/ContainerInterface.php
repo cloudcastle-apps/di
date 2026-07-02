@@ -471,7 +471,11 @@ interface ContainerInterface extends PsrContainerInterface
     public function clearAllPools(): void;
 
     /**
-     * @return array{configured: bool, max_size: int, available: int}
+     * Возвращает статистику object pool для id сервиса.
+     *
+     * @param string $serviceId Id сервиса (после alias)
+     *
+     * @return array{configured: bool, max_size: int, available: int} Флаги пула и число свободных экземпляров
      */
     public function poolStats(string $serviceId): array;
 
@@ -507,13 +511,17 @@ interface ContainerInterface extends PsrContainerInterface
     public function forgetAll(): void;
 
     /**
+     * Возвращает статистику smart cache для singleton id.
+     *
+     * @param string $serviceId Id сервиса (после alias)
+     *
      * @return array{
      *     configured: bool,
      *     ttl_seconds: int|null,
      *     cached: bool,
      *     expires_at: float|null,
      *     expired: bool
-     * }
+     * } Состояние TTL и кэша для id
      */
     public function cacheStats(string $serviceId): array;
 }

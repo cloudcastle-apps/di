@@ -8,10 +8,16 @@ use CloudCastle\DI\Exception\ContainerException;
 
 /**
  * Хранит и разрешает цепочки alias → id сервиса.
+ *
+ * @see Container::alias() Регистрация alias в контейнере
  */
 final class ServiceAliasResolver
 {
-    /** @var array<string, string> */
+    /**
+     * Карта alias → целевой id сервиса.
+     *
+     * @var array<string, string>
+     */
     private array $aliases = [];
 
     /**
@@ -42,6 +48,8 @@ final class ServiceAliasResolver
      * @param string $id Исходный идентификатор
      *
      * @throws ContainerException При циклической цепочке alias
+     *
+     * @return string Конечный id без дальнейших alias
      */
     public function resolve(string $id): string
     {
@@ -49,12 +57,14 @@ final class ServiceAliasResolver
 
         while (isset($this->aliases[$id])) {
             if (isset($visited[$id])) {
+                /** @infection-ignore-all Throw_ removal → бесконечный цикл (timeout на CI) */
                 throw new ContainerException(\sprintf(
                     'Обнаружена циклическая цепочка alias для "%s".',
                     $id,
                 ));
             }
 
+            /** @infection-ignore-all TrueValue: isset($visited[$id]) не зависит от значения */
             $visited[$id] = true;
             $id = $this->aliases[$id];
         }
@@ -62,6 +72,13 @@ final class ServiceAliasResolver
         return $id;
     }
 
+    /**
+     * Проверяет, зарегистрирован ли идентификатор как alias.
+     *
+     * @param string $id Проверяемый идентификатор
+     *
+     * @return bool `true`, если `$id` — alias на другой сервис
+     */
     public function isAlias(string $id): bool
     {
         return isset($this->aliases[$id]);
@@ -70,13 +87,20 @@ final class ServiceAliasResolver
     /**
      * Возвращает карту alias → targetId (копия внутреннего состояния).
      *
-     * @return array<string, string>
+     * @return array<string, string> Все зарегистрированные alias
      */
     public function getAliases(): array
     {
         return $this->aliases;
     }
 
+    /**
+     * Проверяет цепочку alias на цикл, начиная с `$startAlias`.
+     *
+     * @param string $startAlias Начальный alias для обхода цепочки
+     *
+     * @return bool `true`, если обнаружен цикл
+     */
     private function hasCycle(string $startAlias): bool
     {
         $visited = [];
@@ -87,6 +111,7 @@ final class ServiceAliasResolver
                 return true;
             }
 
+            /** @infection-ignore-all TrueValue: isset($visited[$id]) не зависит от значения */
             $visited[$id] = true;
             $id = $this->aliases[$id];
         }

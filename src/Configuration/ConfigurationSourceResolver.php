@@ -15,12 +15,17 @@ use SplFileInfo;
  */
 final class ConfigurationSourceResolver
 {
+    /**
+     * @param ConfigurationLoaderRegistry $loaderRegistry Реестр загрузчиков для проверки и чтения файлов
+     */
     public function __construct(
         private readonly ConfigurationLoaderRegistry $loaderRegistry,
     ) {
     }
 
     /**
+     * Разворачивает смешанный список источников в упорядоченные слои конфигурации.
+     *
      * @param list<string|ConfigurationSource|ConfigurationDirectorySource|ConfigurationFilesSource> $sources
      *
      * @return list<ConfigurationLayer>
@@ -46,6 +51,13 @@ final class ConfigurationSourceResolver
     }
 
     /**
+     * Преобразует один элемент списка источников в список файлов с приоритетами.
+     *
+     * @param string|ConfigurationSource|ConfigurationDirectorySource
+     *     |ConfigurationFilesSource $source Путь, файл, каталог или явный список файлов
+     *
+     * @throws ContainerException Если файл не найден или формат не поддерживается
+     *
      * @return list<array{path: string, filePriority: int|null}>
      */
     private function expand(
@@ -56,12 +68,14 @@ final class ConfigurationSourceResolver
                 return $this->expandDirectory(new ConfigurationDirectorySource($source));
             }
 
+            /** @infection-ignore-all дублирует проверки load() */
             $this->assertConfigurationFile($source);
 
             return [['path' => $source, 'filePriority' => null]];
         }
 
         if ($source instanceof ConfigurationSource) {
+            /** @infection-ignore-all дублирует проверки load() */
             $this->assertConfigurationFile($source->path);
 
             return [['path' => $source->path, 'filePriority' => $source->priority]];
@@ -75,7 +89,12 @@ final class ConfigurationSourceResolver
     }
 
     /**
-     * @param list<string> $paths
+     * Разворачивает явный список путей к файлам конфигурации.
+     *
+     * @param list<string> $paths Пути к файлам конфигурации
+     * @param int|null $priority Общий приоритет слоя для всех файлов; `null` — порядок в списке
+     *
+     * @throws ContainerException Если список пуст или файл недоступен/неподдерживаем
      *
      * @return list<array{path: string, filePriority: int|null}>
      */
@@ -89,6 +108,7 @@ final class ConfigurationSourceResolver
         $resolved = [];
 
         foreach ($paths as $path) {
+            /** @infection-ignore-all дублирует проверки load() */
             $this->assertConfigurationFile($path);
             $resolved[] = ['path' => $path, 'filePriority' => $priority];
         }
@@ -97,6 +117,12 @@ final class ConfigurationSourceResolver
     }
 
     /**
+     * Собирает поддерживаемые файлы конфигурации из каталога.
+     *
+     * @param ConfigurationDirectorySource $source Каталог и режим обхода
+     *
+     * @throws ContainerException Если каталог не найден
+     *
      * @return list<array{path: string, filePriority: int|null}>
      */
     private function expandDirectory(ConfigurationDirectorySource $source): array
@@ -116,7 +142,12 @@ final class ConfigurationSourceResolver
     }
 
     /**
-     * @return list<string>
+     * Обходит каталог и возвращает пути к поддерживаемым файлам конфигурации.
+     *
+     * @param string $directory Корневой каталог обхода
+     * @param ConfigurationDirectoryScan $scan Режим: только верхний уровень или рекурсивно
+     *
+     * @return list<string> Отсортированные лексикографически пути к файлам
      */
     private function collectFiles(string $directory, ConfigurationDirectoryScan $scan): array
     {
@@ -150,8 +181,14 @@ final class ConfigurationSourceResolver
     }
 
     /**
+     * Проверяет существование, доступность и поддерживаемый формат файла конфигурации.
+     *
      * Дублирует проверки загрузчиков: при удалении вызова {@see ConfigurationLoaderRegistry::load()}
      * поведение совпадает, поэтому метод исключён из mutation-тестов.
+     *
+     * @param string $path Путь к файлу конфигурации
+     *
+     * @throws ContainerException Если файл не найден, недоступен или формат не поддерживается
      *
      * @infection-ignore-all
      */

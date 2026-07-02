@@ -5,20 +5,27 @@ declare(strict_types=1);
 namespace CloudCastle\DI\Tests\Unit;
 
 use CloudCastle\DI\AttributeServiceIdReader;
+use CloudCastle\DI\AttributeServiceIdRegistry;
 use CloudCastle\DI\Autowirer;
 use CloudCastle\DI\Container;
+use CloudCastle\DI\Exception\ContainerException;
 use CloudCastle\DI\MemberResolver;
 use CloudCastle\DI\MethodInjector;
 use CloudCastle\DI\Tests\Fixtures\Autowire\ChildSetterService;
 use CloudCastle\DI\Tests\Fixtures\Autowire\Clock;
+use CloudCastle\DI\Tests\Fixtures\Autowire\ConstructCountService;
+use CloudCastle\DI\Tests\Fixtures\Autowire\CustomServiceIdAttribute;
 use CloudCastle\DI\Tests\Fixtures\Autowire\MagicMethodInjectService;
 use CloudCastle\DI\Tests\Fixtures\Autowire\MethodInjectService;
 use CloudCastle\DI\Tests\Fixtures\Autowire\MethodParameterInjectService;
+use CloudCastle\DI\Tests\Fixtures\Autowire\NoopMethodService;
 use CloudCastle\DI\Tests\Fixtures\Autowire\ParentSetterService;
 use CloudCastle\DI\Tests\Fixtures\Autowire\SetterInjectService;
 use CloudCastle\DI\Tests\Fixtures\Autowire\StaticMethodInjectService;
+use CloudCastle\DI\Tests\Fixtures\Autowire\StaticThrowMethodService;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
+use ReflectionClass;
 use ReflectionProperty;
 
 /**
@@ -31,6 +38,11 @@ use ReflectionProperty;
 #[CoversClass(MethodInjector::class)]
 final class AutowirerMethodTest extends TestCase
 {
+    protected function tearDown(): void
+    {
+        ConstructCountService::$constructCount = 0;
+    }
+
     public function testInstantiateCallsInjectMethodWithAttribute(): void
     {
         $clock = new Clock();
@@ -120,5 +132,98 @@ final class AutowirerMethodTest extends TestCase
 
         self::assertInstanceOf(MagicMethodInjectService::class, $magicService);
         self::assertSame($clock, $magicService->getClock());
+    }
+
+    public function testMethodAutowiringDisabledSkipsSetterWithoutAttributes(): void
+    {
+        $container = new Container();
+        $container->autowire(SetterInjectService::class);
+
+        $service = $container->get(SetterInjectService::class);
+
+        self::assertInstanceOf(SetterInjectService::class, $service);
+        self::assertFalse((new ReflectionProperty(SetterInjectService::class, 'clock'))->isInitialized($service));
+    }
+
+    public function testMethodAutowiringDoesNotInvokeStaticInjectMethod(): void
+    {
+        $clock = new Clock();
+        $container = new Container();
+        $container->set(Clock::class, $clock);
+        $container->enableMethodAutowiring();
+        $container->autowire(StaticThrowMethodService::class);
+
+        $service = $container->get(StaticThrowMethodService::class);
+
+        self::assertInstanceOf(StaticThrowMethodService::class, $service);
+        self::assertSame($clock, $service->getClock());
+    }
+
+    public function testMethodAutowiringDoesNotInvokeNoopMethod(): void
+    {
+        $clock = new Clock();
+        $container = new Container();
+        $container->set(Clock::class, $clock);
+        $container->enableMethodAutowiring();
+        $container->autowire(NoopMethodService::class);
+
+        $service = $container->get(NoopMethodService::class);
+
+        self::assertInstanceOf(NoopMethodService::class, $service);
+        self::assertFalse($service->noopCalled);
+        self::assertSame($clock, $service->getClock());
+    }
+
+    public function testMethodAutowiringDoesNotReinvokeConstructor(): void
+    {
+        $clock = new Clock();
+        $container = new Container();
+        $container->set(Clock::class, $clock);
+        $container->enableMethodAutowiring();
+        $container->autowire(ConstructCountService::class);
+
+        $container->get(ConstructCountService::class);
+
+        self::assertSame(1, ConstructCountService::$constructCount);
+    }
+
+    public function testMethodInjectorUsesProvidedAttributeReader(): void
+    {
+        $registry = new AttributeServiceIdRegistry();
+        $registry->register(CustomServiceIdAttribute::class);
+
+        $reader = new AttributeServiceIdReader($registry);
+        $container = new Container();
+        $injector = new MethodInjector($container, $reader);
+        $property = new ReflectionProperty(MethodInjector::class, 'attributeReader');
+
+        self::assertSame($reader, $property->getValue($injector));
+    }
+
+    public function testMethodInjectorWrapsReflectionExceptionInContainerException(): void
+    {
+        $container = new Container();
+        $container->enableMethodAutowiring();
+        $container->set(Clock::class, new Clock());
+
+        $owner = new SetterInjectService();
+        $otherClass = new class () {
+            public ?Clock $injected = null;
+
+            public function setClock(Clock $clock): void
+            {
+                $this->injected = $clock;
+            }
+        };
+
+        $injector = new MethodInjector($container);
+
+        $this->expectException(ContainerException::class);
+        $this->expectExceptionMessage('Ошибка вызова inject-метода');
+
+        /** @var ReflectionClass<object> $otherReflection */
+        $otherReflection = new ReflectionClass($otherClass);
+
+        $injector->inject($owner, $otherReflection);
     }
 }

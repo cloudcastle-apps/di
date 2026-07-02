@@ -14,9 +14,12 @@ use CloudCastle\DI\Contract\ContainerInterface;
 final class ConfigurationApplicator
 {
     /**
-     * @param array<string, mixed> $config
+     * Возвращает нормализованную секцию конфигурации как массив.
      *
-     * @return array<mixed>
+     * @param array<string, mixed> $config Объединённая конфигурация
+     * @param string $key Ключ секции (например `services`, `bind`)
+     *
+     * @return array<mixed> Секция как массив или пустой массив, если ключ отсутствует или не массив
      */
     private function sectionList(array $config, string $key): array
     {
@@ -26,7 +29,10 @@ final class ConfigurationApplicator
     }
 
     /**
-     * @param array<string, mixed> $config
+     * Применяет объединённую конфигурацию к контейнеру: autowiring, scan, services, bind и т.д.
+     *
+     * @param ContainerInterface $container Целевой контейнер
+     * @param array<string, mixed> $config Объединённая конфигурация после {@see ConfigurationMerger}
      */
     public function apply(ContainerInterface $container, array $config): void
     {
@@ -42,7 +48,9 @@ final class ConfigurationApplicator
     }
 
     /**
-     * @param array<string, mixed> $config
+     * Регистрирует пользовательские PHP attributes из секции `register_attributes`.
+     *
+     * @param array<string, mixed> $config Объединённая конфигурация
      */
     private function applyRegisterAttributes(ContainerInterface $container, array $config): void
     {
@@ -56,7 +64,9 @@ final class ConfigurationApplicator
     }
 
     /**
-     * @param array<string, mixed> $config
+     * Включает режимы autowiring из секции `autowiring` конфигурации.
+     *
+     * @param array<string, mixed> $config Объединённая конфигурация
      */
     private function applyAutowiring(ContainerInterface $container, array $config): void
     {
@@ -84,7 +94,9 @@ final class ConfigurationApplicator
     }
 
     /**
-     * @param array<string, mixed> $config
+     * Выполняет {@see ContainerInterface::scan()} для записей секции `scan`.
+     *
+     * @param array<string, mixed> $config Объединённая конфигурация
      */
     private function applyScan(ContainerInterface $container, array $config): void
     {
@@ -105,7 +117,9 @@ final class ConfigurationApplicator
     }
 
     /**
-     * @param array<string, mixed> $config
+     * Регистрирует сервисы из секции `services` через {@see set()}, {@see autowire()} или {@see bind()}.
+     *
+     * @param array<string, mixed> $config Объединённая конфигурация
      */
     private function applyServices(ContainerInterface $container, array $config): void
     {
@@ -127,7 +141,10 @@ final class ConfigurationApplicator
     }
 
     /**
-     * @param array{class: string, lazy?: bool} $definition
+     * Регистрирует сервис с ключом `class` (опционально `lazy`) из YAML/JSON/PHP-конфигурации.
+     *
+     * @param string $id Идентификатор сервиса в конфигурации
+     * @param array{class: string, lazy?: bool} $definition Описание класса и флага lazy
      */
     private function registerClassService(ContainerInterface $container, string $id, array $definition): void
     {
@@ -149,7 +166,9 @@ final class ConfigurationApplicator
     }
 
     /**
-     * @param array<string, mixed> $config
+     * Регистрирует классы из секции `autowire` через {@see ContainerInterface::autowire()}.
+     *
+     * @param array<string, mixed> $config Объединённая конфигурация
      */
     private function applyAutowire(ContainerInterface $container, array $config): void
     {
@@ -161,7 +180,9 @@ final class ConfigurationApplicator
     }
 
     /**
-     * @param array<string, mixed> $config
+     * Применяет привязки абстракций из секции `bind`.
+     *
+     * @param array<string, mixed> $config Объединённая конфигурация
      */
     private function applyBind(ContainerInterface $container, array $config): void
     {
@@ -173,7 +194,9 @@ final class ConfigurationApplicator
     }
 
     /**
-     * @param array<string, mixed> $config
+     * Регистрирует contextual-привязки when/needs/give из секции `contextual`.
+     *
+     * @param array<string, mixed> $config Объединённая конфигурация
      */
     private function applyContextual(ContainerInterface $container, array $config): void
     {
@@ -193,7 +216,9 @@ final class ConfigurationApplicator
     }
 
     /**
-     * @param array<string, mixed> $config
+     * Регистрирует alias из секции `aliases`.
+     *
+     * @param array<string, mixed> $config Объединённая конфигурация
      */
     private function applyAliases(ContainerInterface $container, array $config): void
     {
@@ -205,7 +230,9 @@ final class ConfigurationApplicator
     }
 
     /**
-     * @param array<string, mixed> $config
+     * Привязывает id сервисов к тегам из секции `tags`.
+     *
+     * @param array<string, mixed> $config Объединённая конфигурация
      */
     private function applyTags(ContainerInterface $container, array $config): void
     {

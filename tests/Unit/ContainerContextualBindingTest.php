@@ -124,4 +124,17 @@ final class ContainerContextualBindingTest extends TestCase
         );
         self::assertFalse($resolver->canResolve(LoggerInterface::class, AuditService::class));
     }
+
+    public function testContextualBindingSupportRegistersWithoutMutableGuard(): void
+    {
+        $support = new ContextualBindingSupport();
+        $binding = new ContextualBinding(ReportService::class, LoggerInterface::class, 'memory.logger');
+
+        $support->registerContextualBinding($binding);
+
+        self::assertSame(
+            'memory.logger',
+            $support->contextualGive(ReportService::class, LoggerInterface::class),
+        );
+    }
 }

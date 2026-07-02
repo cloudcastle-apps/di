@@ -4,12 +4,17 @@ declare(strict_types=1);
 
 namespace CloudCastle\DI\Tests\Unit;
 
+use CloudCastle\DI\CallableInvoker;
 use CloudCastle\DI\Container;
+use CloudCastle\DI\Exception\ContainerException;
 use CloudCastle\DI\Tests\Fixtures\Autowire\SimpleService;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
+use ReflectionMethod;
+use ReflectionProperty;
 
 #[CoversClass(Container::class)]
+#[CoversClass(CallableInvoker::class)]
 final class ContainerCallTest extends TestCase
 {
     public function testCallDelegatesToCallableInvoker(): void
@@ -34,5 +39,38 @@ final class ContainerCallTest extends TestCase
         );
 
         self::assertSame('explicit', $label);
+    }
+
+    public function testCallReusesLazyCallableInvokerInstance(): void
+    {
+        $container = new Container();
+        $invokerProperty = new ReflectionProperty(Container::class, 'callableInvoker');
+
+        $container->call(static fn (): int => 1);
+        $firstInvoker = $invokerProperty->getValue($container);
+
+        $container->call(static fn (): int => 2);
+        $secondInvoker = $invokerProperty->getValue($container);
+
+        self::assertInstanceOf(CallableInvoker::class, $firstInvoker);
+        self::assertSame($firstInvoker, $secondInvoker);
+    }
+
+    public function testCallThrowsWhenInstanceMethodArrayUsesClassNameString(): void
+    {
+        $handler = new class () {
+            public function run(): void
+            {
+            }
+        };
+        $callable = [$handler::class, 'run'];
+        $reflection = new ReflectionMethod($callable[0], $callable[1]);
+        $invoker = new CallableInvoker(new Container());
+        $method = new ReflectionMethod(CallableInvoker::class, 'invokeWithArguments');
+
+        $this->expectException(ContainerException::class);
+        $this->expectExceptionMessage('Callable метода требует объект.');
+
+        $method->invoke($invoker, $callable, $reflection, []);
     }
 }

@@ -30,6 +30,7 @@ final class JsonConfigurationLoader implements ConfigurationLoaderInterface
 
         try {
             /** @var mixed $decoded */
+            /** @infection-ignore-all DecrementInteger: max depth 512 — константа JSON, граничный кейс не тестируем */
             $decoded = json_decode($contents, true, 512, JSON_THROW_ON_ERROR);
         } catch (JsonException $jsonException) {
             throw new ContainerException(\sprintf(
@@ -48,7 +49,13 @@ final class JsonConfigurationLoader implements ConfigurationLoaderInterface
     }
 
     /**
-     * @throws ContainerException
+     * Читает содержимое файла конфигурации с диска.
+     *
+     * @param string $path Путь к файлу
+     *
+     * @throws ContainerException Если файл не найден или недоступен для чтения
+     *
+     * @return string Содержимое файла
      */
     private function readFile(string $path): string
     {

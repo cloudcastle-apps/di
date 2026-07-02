@@ -15,14 +15,30 @@ use ReflectionType;
 
 /**
  * Разрешает intersection-типы параметров конструктора и свойств.
+ *
+ * Перебирает кандидатов из контейнера и проверяет, что экземпляр удовлетворяет всем типам пересечения.
  */
 final class IntersectionTypeResolver
 {
+    /**
+     * @param ClassDependencyResolver $classResolver Разрешитель class-зависимостей
+     */
     public function __construct(
         private readonly ClassDependencyResolver $classResolver,
     ) {
     }
 
+    /**
+     * Разрешает intersection-тип параметра или свойства.
+     *
+     * @param ReflectionParameter|ReflectionProperty $member Reflection параметра или свойства
+     * @param ReflectionIntersectionType $type Intersection reflection-тип
+     * @param string|null $consumerClass Класс-потребитель для contextual binding
+     *
+     * @throws ContainerException Если обязательный член не разрешается
+     *
+     * @return mixed Экземпляр, удовлетворяющий всем типам пересечения, или `null`
+     */
     public function resolve(
         ReflectionParameter|ReflectionProperty $member,
         ReflectionIntersectionType $type,
@@ -54,6 +70,13 @@ final class IntersectionTypeResolver
         ));
     }
 
+    /**
+     * Проверяет, допускает ли параметр или свойство значение `null`.
+     *
+     * @param ReflectionParameter|ReflectionProperty $member Reflection параметра или свойства
+     *
+     * @return bool `true`, если `null` допустим
+     */
     private function allowsNull(ReflectionParameter|ReflectionProperty $member): bool
     {
         if ($member instanceof ReflectionParameter) {
@@ -64,7 +87,12 @@ final class IntersectionTypeResolver
     }
 
     /**
-     * @param list<string> $typeNames
+     * Проверяет, что экземпляр реализует все типы intersection.
+     *
+     * @param mixed $instance Кандидат из контейнера
+     * @param list<string> $typeNames FQCN всех типов пересечения
+     *
+     * @return bool `true`, если экземпляр удовлетворяет каждому типу
      */
     private function satisfiesIntersection(mixed $instance, array $typeNames): bool
     {
@@ -90,9 +118,11 @@ final class IntersectionTypeResolver
     }
 
     /**
-     * @param array<ReflectionType> $types
+     * Оставляет только object named-типы из списка reflection-типов.
      *
-     * @return list<ReflectionNamedType>
+     * @param array<ReflectionType> $types Список reflection-типов intersection
+     *
+     * @return list<ReflectionNamedType> Named-типы классов и интерфейсов
      */
     private function filterObjectNamedTypes(array $types): array
     {
@@ -111,9 +141,11 @@ final class IntersectionTypeResolver
     }
 
     /**
-     * @param list<ReflectionNamedType> $namedTypes
+     * Извлекает FQCN из списка named-типов.
      *
-     * @return list<string>
+     * @param list<ReflectionNamedType> $namedTypes Named reflection-типы
+     *
+     * @return list<string> Имена классов и интерфейсов
      */
     private function collectTypeNames(array $namedTypes): array
     {

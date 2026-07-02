@@ -12,15 +12,30 @@ use ReflectionClass;
  * Создаёт экземпляры классов с autowiring конструктора, свойств и методов.
  *
  * Порядок: конструктор → свойства → методы.
+ *
+ * @see Container::get() Точка входа autowiring в контейнере
  */
 final class Autowirer
 {
+    /**
+     * Разрешает зависимости параметров конструктора.
+     */
     private readonly MemberResolver $memberResolver;
 
+    /**
+     * Внедряет зависимости в свойства после создания экземпляра.
+     */
     private readonly PropertyInjector $propertyInjector;
 
+    /**
+     * Вызывает inject-методы экземпляра с autowiring параметров.
+     */
     private readonly MethodInjector $methodInjector;
 
+    /**
+     * @param ContainerInterface $container Контейнер для разрешения зависимостей
+     * @param AttributeServiceIdReader|null $attributeReader Читатель PHP attributes
+     */
     public function __construct(
         ContainerInterface $container,
         ?AttributeServiceIdReader $attributeReader = null,
@@ -32,6 +47,8 @@ final class Autowirer
     }
 
     /**
+     * Создаёт экземпляр класса с autowiring конструктора, свойств и методов.
+     *
      * @param string $className Полное имя класса (class-string)
      *
      * @throws ContainerException Если класс не найден, не instantiable или зависимость не разрешается
@@ -58,7 +75,13 @@ final class Autowirer
     }
 
     /**
-     * @param ReflectionClass<object> $reflection
+     * Создаёт экземпляр через конструктор с autowiring параметров или без аргументов.
+     *
+     * @param ReflectionClass<object> $reflection Reflection целевого класса
+     *
+     * @throws ContainerException Если обязательный параметр конструктора не разрешается
+     *
+     * @return object Новый экземпляр без property/method injection
      */
     private function createInstance(ReflectionClass $reflection): object
     {
